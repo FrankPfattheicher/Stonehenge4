@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI-develop
+
+on: 
+  push:
+    branches: 
+      - develop
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core 3.1
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Setup .NET Core 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.x
+    - name: Setup Nuget
+      uses: NuGet/setup-nuget@v1
+    - name: Prepare Artifacts
+      run: |
+        mkdir artifacts
+        mkdir artifacts/lib
+        mkdir artifacts/images
+        cp IctBaden.Stonehenge3/icon64.png artifacts/images
+    - name: Build Core
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes3.md)
+        echo Version=$version
+        dotnet build --configuration Release ./IctBaden.Stonehenge3/IctBaden.Stonehenge3.csproj -p:AssemblyVersion=$version -p:Version=3.0
+        cp IctBaden.Stonehenge3/bin/Release/netcoreapp3.1/IctBaden.Stonehenge3.dll artifacts/lib
+    - name: Build Kestrel
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes3.md)
+        echo Version=$version
+        dotnet build --configuration Release ./IctBaden.Stonehenge3.Kestrel/IctBaden.Stonehenge3.Kestrel.csproj -p:AssemblyVersion=$version -p:Version=3.0
+        cp IctBaden.Stonehenge3.Kestrel/bin/Release/netcoreapp3.1/IctBaden.Stonehenge3.Kestrel.dll artifacts/lib
+    - name: Build SimpleHttp
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes3.md)
+        echo Version=$version
+        dotnet build --configuration Release ./IctBaden.Stonehenge3.SimpleHttp/IctBaden.Stonehenge3.SimpleHttp.csproj -p:AssemblyVersion=$version -p:Version=3.0
+        cp IctBaden.Stonehenge3.SimpleHttp/bin/Release/netcoreapp3.1/IctBaden.Stonehenge3.SimpleHttp.dll artifacts/lib
+    - name: Build Vue
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes3.md)
+        echo Version=$version
+        dotnet build --configuration Release ./IctBaden.Stonehenge3.Vue/IctBaden.Stonehenge3.Vue.csproj -p:AssemblyVersion=$version -p:Version=3.0
+        cp IctBaden.Stonehenge3.Vue/bin/Release/netcoreapp3.1/IctBaden.Stonehenge3.Vue.dll artifacts/lib
+    - name: Test with dotnet
+      env: 
+        SkipPerformanceTests: true
+      run: dotnet test ./Stonehenge3.sln --configuration Release
+    - name: Pack Nuget
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes3.md)
+        echo Version=$version
+        cd artifacts
+        nuget pack ../Stonehenge3.nuspec -BasePath . -Version $version
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Stonehenge3_develop
+        path: artifacts

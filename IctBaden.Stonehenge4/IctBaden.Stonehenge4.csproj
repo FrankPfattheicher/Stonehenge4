@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Copyright>Copyright ©2013-2021 ICT Baden GmbH</Copyright>
+    <Company>ICT Baden GmbH</Company>
+    <Authors>Frank Pfattheicher</Authors>
+    <Product>Web Application Framework</Product>
+    <ApplicationIcon>app\favicon.ico</ApplicationIcon>
+    <LangVersion>10</LangVersion>
+    <PackageIcon>icon64.png</PackageIcon>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="app\favicon.ico" />
+    <None Remove="app\icon.png" />
+    <None Remove="app\icon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="app\favicon.ico" />
+    <EmbeddedResource Include="app\icon.png" />
+    <EmbeddedResource Include="app\icon32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CryptSharpStandard" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+</Project>

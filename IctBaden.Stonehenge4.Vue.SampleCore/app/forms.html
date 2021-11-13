@@ -1,0 +1,42 @@
+<!--ViewModel:FormsVm-->
+<!--Title:Forms:20-->
+<div>
+
+	<h3>Form Controls</h3>
+	<p>
+		<b>Range</b>
+		<br/>
+		<datalist id="steplist">
+			<option>0</option>
+			<option>5</option>
+			<option>10</option>
+			<option>15</option>
+			<option>20</option>
+			<option>25</option>
+			<option>30</option>
+			<option>35</option>
+			<option>40</option>
+		</datalist>
+		<input type="range" style="width: 300px;" v-focus list="steplist"
+			   :min="RangeMin" :max="RangeMax"  v-model="Range" 
+			   @change="RangeChanged()" />
+		{{Range}}%
+	</p>
+
+	<p>
+		<b>C3 Chart</b> see <a href="https://c3js.org/gettingstarted.html" target="_blank">https://c3js.org/gettingstarted.html</a>
+		<br/>
+		<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">
+			<c3chart :chartdata="ChartData" style="width: 300px; height: 200px;"></c3chart>
+		</div>
+	</p>
+
+	<p>
+		<b>Cookies-Page</b>
+		<br/>
+		Currently visible: {{ShowCookies}}
+		<br/>
+		<button class="btn btn-sm btn-secondary" @click="ToggleShowCookies()">Toggle</button>		
+	</p>
+	
+</div>

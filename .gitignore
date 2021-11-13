@@ -1,0 +1,12 @@
+.vs
+.idea
+.fake
+bin
+obj
+nuget
+/packages
+/builds
+/tests
+/artifacts
+/xunit.html
+/IctBaden.Stonehenge3/app/Thumbs.db

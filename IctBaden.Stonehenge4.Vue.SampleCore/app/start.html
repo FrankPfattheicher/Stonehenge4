@@ -1,0 +1,65 @@
+<!--ViewModel:StartVm-->
+<!--Title:Intro:10-->
+<div xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+    <h3 id="pagetop"><i class="fas fa-play-circle"></i>&nbsp;Start V{{Version}}</h3>
+    
+    <p>
+        Uhrzeit: <span>{{TimeStamp}}</span>
+    </p>
+    <p>
+        StonehengeInitialLoading = <span v-if="StonehengeInitialLoading"><b>TRUE</b></span><span v-else>false</span><br/>
+        StonehengeIsLoading = <span v-if="StonehengeIsLoading"><b>TRUE</b></span><span v-else>false</span><br/>
+        StonehengeIsDirty = <span v-if="StonehengeIsDirty"><b>TRUE</b></span><span v-else>false</span><br/>
+        StonehengeIsDisconnected = <span v-if="StonehengeIsDisconnected"><b>TRUE</b></span><span v-else>false</span><br/>
+        StonehengePostActive = <span v-if="StonehengePostActive"><b>TRUE</b></span><span v-else>false</span><br/>
+        StonehengeSession = {{StonehengeSession}}<br/>
+        Session.IsLocal = <span v-if="IsLocal"><b>TRUE</b></span><span v-else>false</span><br/>
+        Session.ClientAddress = {{ClientAddress}}<br/>
+        Session.UserIdentity = {{UserIdentity}}<br/>
+        Session.Parameters = {{Parameters}}<br/>
+        NotInitialized = {{NotInitialized}}<br/>
+    </p>
+    <p  id="insertion-point">
+    </p>
+    <p>
+        <h3>File Download and Upload</h3>
+        <a href="/Data/Test.txt">Load user file Test.txt</a>
+        <form action="/Data/Test.txt" method="post" enctype="multipart/form-data">
+            <input type="file" name="uploadFile">
+            <input class="btn btn-sm btn-secondary" type="submit">
+        </form>
+    </p>
+    <p>
+        <a href="/Data/Date.ics">Termin</a>
+    </p>
+    <p>
+        <h3>Application wide commands</h3>
+        <a href="#" onclick="AppCommand('FileOpen')">AppCommand FileOpen</a>
+    </p>
+
+    <h3>Form input</h3>
+    <p>
+        <input v-model="Test" v-select />
+        <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="CopyTest()">Copy To Clipboard</button>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="ShowMessageBox()">MessageBox</button>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="ExecJavaScript()">Execute JavaScript Code</button>
+    </p>
+    <p>
+        <a href="#/tree">Link To Tree</a>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="NavigateToTree()">Navigate To Tree</button>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="NavigateOnPage()">Navigate On Page (top of page)</button>
+    </p>
+
+</div>
