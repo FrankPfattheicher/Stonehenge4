@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using IctBaden.Stonehenge4.Core;
 using IctBaden.Stonehenge4.Hosting;
 using IctBaden.Stonehenge4.Resources;
 using IctBaden.Stonehenge4.ViewModel;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
@@ -179,7 +179,7 @@ namespace IctBaden.Stonehenge4.Vue.Client
             }
             catch (Exception)
             {
-                return new Type[0];
+                return Type.EmptyTypes;
             }
         }
 
@@ -352,7 +352,7 @@ namespace IctBaden.Stonehenge4.Vue.Client
                 elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
 
                 var template = LoadResourceText($"{source}.html");
-                template = JsonConvert.SerializeObject(template);
+                template = JsonSerializer.Serialize(template);
                 elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
 
                 var methods = LoadResourceText($"{source}.js");

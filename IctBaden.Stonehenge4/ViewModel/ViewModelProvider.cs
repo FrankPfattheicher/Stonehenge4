@@ -5,14 +5,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge4.Core;
 using IctBaden.Stonehenge4.Hosting;
 using IctBaden.Stonehenge4.Resources;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
 namespace IctBaden.Stonehenge4.ViewModel
@@ -136,10 +137,10 @@ namespace IctBaden.Stonehenge4.ViewModel
                 _logger.LogError("ViewModelProvider: " + ex.Message);
                 _logger.LogError("ViewModelProvider: " + ex.StackTrace);
 
-                var exResource = new JObject
+                var exResource = new Dictionary<string, string>
                 {
-                    ["Message"] = ex.Message,
-                    ["StackTrace"] = ex.StackTrace
+                    {"Message", ex.Message},
+                    {"StackTrace", ex.StackTrace}
                 };
                 return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
                     Resource.Cache.None);
@@ -228,7 +229,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                     foreach (var property in events)
                     {
                         var value = activeVm.TryGetMember(property);
-                        data.Add($"\"{property}\":{JsonSerializer.SerializeObjectString(null, value)}");
+                        data.Add($"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value))}");
                     }
 
                     AddStonehengeInternalProperties(data, activeVm);
@@ -250,7 +251,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                 var title = activeVm.MessageBoxTitle ?? "";
                 var text = activeVm.MessageBoxText ?? "";
                 var script = $"alert('{HttpUtility.JavaScriptStringEncode(title)}\\r\\n{HttpUtility.JavaScriptStringEncode(text)}');";
-                data.Add($"\"StonehengeEval\":{JsonSerializer.SerializeObjectString(null, script)}");
+                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script))}");
                 activeVm.MessageBoxTitle = null;
                 activeVm.MessageBoxText = null;
             }
@@ -258,13 +259,13 @@ namespace IctBaden.Stonehenge4.ViewModel
             if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
             {
                 var route = activeVm.NavigateToRoute;
-                data.Add($"\"StonehengeNavigate\":{JsonSerializer.SerializeObjectString(null, route)}");
+                data.Add($"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route))}");
                 activeVm.NavigateToRoute = null;
             }
             else if (!string.IsNullOrEmpty(activeVm.ClientScript))
             {
                 var script = activeVm.ClientScript;
-                data.Add($"\"StonehengeEval\":{JsonSerializer.SerializeObjectString(null, script)}");
+                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script))}");
                 activeVm.ClientScript = null;
             }
         }
@@ -337,7 +338,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                 }
                 if (propValue != null)
                 {
-                    return JsonConvert.DeserializeObject(propValue, propType);
+                    return JsonSerializer.Deserialize(propValue, propType);
                 }
             }
             catch (Exception ex)
@@ -364,7 +365,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                         object structObj = activeVm.TryGetMember(propName);
                         if (structObj != null)
                         {
-                            if (JsonConvert.DeserializeObject(newValue, typeof(Dictionary<string, string>)) is
+                            if (JsonSerializer.Deserialize(newValue, typeof(Dictionary<string, string>)) is
                                 Dictionary<string, string> members)
                             {
                                 foreach (var member in members)
@@ -429,7 +430,13 @@ namespace IctBaden.Stonehenge4.ViewModel
                     foreach (var model in activeVm.ActiveModels)
                     {
                         context = model.TypeName;
-                        data.AddRange(JsonSerializer.SerializeObject(model.Prefix, model.Model));
+                        var dd = JsonSerializer.SerializeToDocument(model.Model).RootElement.EnumerateObject();
+                        foreach (var element in dd)
+                        {
+                            data.Add(string.Format("\"{0}\":{1}", element.Name,
+                                JsonSerializer.SerializeToElement(activeVm.TryGetMember(element.Name))));
+                        }
+                        Debug.Assert(false);
                     }
 
                     context = "internal properties";
@@ -441,12 +448,16 @@ namespace IctBaden.Stonehenge4.ViewModel
                     {
                         // ReSharper disable once UseStringInterpolation
                         data.Add(string.Format("\"{0}\":{1}", name,
-                            JsonConvert.SerializeObject(activeVm.TryGetMember(name))));
+                            JsonSerializer.SerializeToElement(activeVm.TryGetMember(name))));
                     }
                 }
 
                 context = "view model";
-                data.AddRange(JsonSerializer.SerializeObject(null, viewModel));
+                var vm = JsonSerializer.SerializeToDocument(viewModel);
+                foreach (var jsonElement in vm.RootElement.EnumerateObject())
+                {
+                    data.Add(jsonElement.ToString());
+                }
             }
             catch (Exception ex)
             {
@@ -454,12 +465,12 @@ namespace IctBaden.Stonehenge4.ViewModel
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
 
-                var exResource = new JObject
+                var exResource = new Dictionary<string, string>
                 {
-                    ["Message"] = ex.Message,
-                    ["StackTrace"] = ex.StackTrace
+                    {"Message", ex.Message},
+                    {"StackTrace", ex.StackTrace }
                 };
-                return JsonConvert.SerializeObject(exResource);
+                return JsonSerializer.SerializeToElement(exResource).ToString();
             }
 
             var json = "{" + string.Join(",", data) + "}";

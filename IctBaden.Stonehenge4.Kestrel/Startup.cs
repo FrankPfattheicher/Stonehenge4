@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using IctBaden.Stonehenge4.Core;
 using IctBaden.Stonehenge4.Hosting;
 using IctBaden.Stonehenge4.Kestrel.Middleware;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace IctBaden.Stonehenge4.Kestrel
 {
@@ -29,7 +29,7 @@ namespace IctBaden.Stonehenge4.Kestrel
             _logger = logger;
             _resourceLoader = resourceLoader;
             _appTitle = Configuration["AppTitle"];
-            _options = JsonConvert.DeserializeObject<StonehengeHostOptions>(Configuration["HostOptions"]);
+            _options = JsonSerializer.Deserialize<StonehengeHostOptions>(Configuration["HostOptions"]);
         }
 
         // ReSharper disable once MemberCanBePrivate.Global

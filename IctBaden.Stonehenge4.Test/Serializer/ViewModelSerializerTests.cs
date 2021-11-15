@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using IctBaden.Stonehenge4.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
-using JsonSerializer = IctBaden.Stonehenge4.ViewModel.JsonSerializer;
+
 // ReSharper disable LocalFunctionCanBeMadeStatic
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
@@ -29,9 +30,9 @@ namespace IctBaden.Stonehenge4.Test.Serializer
                 Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc)
             };
 
-            var json = JsonSerializer.SerializeObjectString(null, model);
-
-            var obj = JsonConvert.DeserializeObject(json);
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(model));
+            
+            var obj = JsonSerializer.Deserialize<object>(json);
             Assert.NotNull(obj);
 
             // public properties - not NULL
@@ -63,9 +64,9 @@ namespace IctBaden.Stonehenge4.Test.Serializer
                 Text = "line1" + Environment.NewLine + "line2"
             };
 
-            var json = JsonSerializer.SerializeObjectString(null, model);
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(model));
 
-            var obj = JsonConvert.DeserializeObject(json);
+            var obj = JsonSerializer.Deserialize<object>(json);
             Assert.NotNull(obj);
 
             Assert.Contains("\\n", json);
@@ -108,9 +109,9 @@ namespace IctBaden.Stonehenge4.Test.Serializer
             };
 
 
-            var json = JsonSerializer.SerializeObjectString(null, model);
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(model));
 
-            var obj = JsonConvert.DeserializeObject(json);
+            var obj = JsonSerializer.Deserialize<object>(json);
             Assert.NotNull(obj);
 
             Assert.StartsWith("{", json);
@@ -138,12 +139,12 @@ namespace IctBaden.Stonehenge4.Test.Serializer
             var watch = new Stopwatch();
             watch.Start();
             
-            var json = JsonSerializer.SerializeObjectString(null, hierarchy);
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(hierarchy));
 
             watch.Stop();
             _logger.LogTrace($"HierarchicalClassesSerialization: {watch.ElapsedMilliseconds}ms");
             
-            var obj = JsonConvert.DeserializeObject(json);
+            var obj = JsonSerializer.Deserialize<object>(json);
             Assert.NotNull(obj);
 
             Assert.StartsWith("{", json);
@@ -162,15 +163,15 @@ namespace IctBaden.Stonehenge4.Test.Serializer
                 { "Timestamp", dt }
             };
             
-            var json = JsonSerializer.SerializeObjectString(null, dict);
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(dict));
  
-            var obj = JsonConvert.DeserializeObject<JObject>(json);
+            var obj = JsonSerializer.Deserialize<JsonObject>(json);
             Assert.NotNull(obj);
 
-            Assert.Equal(5, obj["Integer"].Value<int>());
-            Assert.Equal(1.23, obj["FloatingPoint"].Value<double>());
-            Assert.Equal("test", obj["Text"].Value<string>());
-            Assert.Equal(dt, obj["Timestamp"].Value<DateTime>());
+            Assert.Equal(5, obj["Integer"]?.GetValue<int>());
+            Assert.Equal(1.23, obj["FloatingPoint"]?.GetValue<double>());
+            Assert.Equal("test", obj["Text"]?.GetValue<string>());
+            Assert.Equal(dt, obj["Timestamp"]?.GetValue<DateTime>());
         }
 
         

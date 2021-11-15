@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Web;
 using HttpMultipartParser;
@@ -17,8 +18,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
@@ -108,7 +107,7 @@ namespace IctBaden.Stonehenge4.Kestrel.Middleware
                         if (content == null && appSession != null &&
                             resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            logger.LogError(
+                            logger?.LogError(
                                 $"Invalid path in index resource {resourceName} - redirecting to root index");
 
                             var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
@@ -137,18 +136,18 @@ namespace IctBaden.Stonehenge4.Kestrel.Middleware
                                 {
                                     try
                                     {
-                                        var jsonData = JsonConvert.DeserializeObject<JObject>(body)
-                                            .AsJEnumerable().Cast<JProperty>()
-                                            .ToDictionary(data => data.Name,
-                                                data => Convert.ToString(data.Value, CultureInfo.InvariantCulture));
-                                        foreach (var kv in jsonData)
+                                        var jsonObject = JsonSerializer.Deserialize<JsonObject>(body);
+                                        if (jsonObject != null)
                                         {
-                                            formData.Add(kv.Key, kv.Value);
+                                            foreach (var kv in jsonObject.AsObject())
+                                            {
+                                                formData.Add(kv.Key, kv.Value?.ToString());
+                                            }
                                         }
                                     }
                                     catch (Exception)
                                     {
-                                        logger.LogWarning("Failed to parse post data as json");
+                                        logger?.LogWarning("Failed to parse post data as json");
                                     }
                                 }
                                 else
@@ -174,7 +173,7 @@ namespace IctBaden.Stonehenge4.Kestrel.Middleware
                                     }
                                     catch (Exception)
                                     {
-                                        logger.LogWarning("Failed to parse post data as multipart form data");
+                                        logger?.LogWarning("Failed to parse post data as multipart form data");
                                     }
                                 }
                             }
@@ -187,13 +186,13 @@ namespace IctBaden.Stonehenge4.Kestrel.Middleware
                             logger.LogError(ex.Message);
                             logger.LogError(ex.StackTrace);
 
-                            var exResource = new JObject
+                            var exResource = new Dictionary<string,string>
                             {
-                                ["Message"] = ex.Message,
-                                ["StackTrace"] = ex.StackTrace
+                                { "Message", ex.Message },
+                                {"StackTrace", ex.StackTrace }
                             };
                             content = new Resource(resourceName, "StonehengeContent.Invoke.POST", ResourceType.Json,
-                                JsonConvert.SerializeObject(exResource), Resource.Cache.None);
+                                JsonSerializer.Serialize(exResource), Resource.Cache.None);
                         }
 
                         break;
@@ -293,7 +292,7 @@ namespace IctBaden.Stonehenge4.Kestrel.Middleware
 
         private string GetUserNameFromContext(HttpContext context)
         {
-            var identityName = context.User.Identity.Name;
+            var identityName = context.User.Identity?.Name;
             if (identityName != null) return identityName;
 
             var auth = context.Request.Headers["Authorization"].FirstOrDefault();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge4.Hosting;
@@ -14,7 +15,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using AuthenticationSchemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes;
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 // ReSharper disable StringLiteralTypo
@@ -106,7 +106,7 @@ namespace IctBaden.Stonehenge4.Kestrel
                     InitialData = new[]
                     {
                         new KeyValuePair<string, string>("AppTitle", _options.Title),
-                        new KeyValuePair<string, string>("HostOptions", JsonConvert.SerializeObject(_options))
+                        new KeyValuePair<string, string>("HostOptions", JsonSerializer.Serialize(_options))
                     }
                 };
 
