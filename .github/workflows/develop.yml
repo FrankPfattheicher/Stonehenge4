@@ -38,12 +38,12 @@ jobs:
         echo Version=$version
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=$version -p:Version=4.0
         cp IctBaden.Stonehenge4.Kestrel/bin/Release/net6.0/IctBaden.Stonehenge4.Kestrel.dll artifacts/lib
-    - name: Build SimpleHttp
+    - name: Build App
       run: |
         version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
         echo Version=$version
         dotnet build --configuration Release ./IctBaden.Stonehenge4.App/IctBaden.Stonehenge4.App.csproj -p:AssemblyVersion=$version -p:Version=4.0
-        cp IctBaden.Stonehenge4.SimpleHttp/bin/Release/net6.0/IctBaden.Stonehenge4.App.dll artifacts/lib
+        cp IctBaden.Stonehenge4.App/bin/Release/net6.0/IctBaden.Stonehenge4.App.dll artifacts/lib
     - name: Build Vue
       run: |
         version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
