@@ -135,7 +135,7 @@ END:VCALENDAR
         public void ExecJavaScript()
         {
             ExecuteClientScript("var dateSpan = document.createElement('span');");
-            ExecuteClientScript($"dateSpan.innerHTML = '{DateTime.Now:U}';");
+            ExecuteClientScript($"dateSpan.innerHTML = '<span style=\"color: green;\">{DateTime.Now:U}</span>';");
             ExecuteClientScript("var insert = document.getElementById('insertion-point');");
             ExecuteClientScript("insert.appendChild(dateSpan)");
             ExecuteClientScript("insert.appendChild(document.createElement('br'));");
