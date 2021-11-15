@@ -13,7 +13,7 @@ Also Newtonsoft.JSON is removed, using NET's own JSON serializer.
 Used technology
 
 * [Kestrel](https://docs.microsoft.com/de-de/aspnet/core/fundamentals/servers/kestrel) - the Microsoft netcore web stack for self hosting
-* [Vue.js 3](https://vuejs.org/) client framework
+* [Vue.js 2](https://vuejs.org/) client framework (bootstrap-vue currently not support Vue 3)
 * [Bootstrap 5](https://getbootstrap.com/) front-end open source toolkit
 * [Fontawesome 6](https://fontawesome.com/) icon library
 
