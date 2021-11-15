@@ -49,7 +49,7 @@ jobs:
         version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
         echo Version=$version
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Vue/IctBaden.Stonehenge4.Vue.csproj -p:AssemblyVersion=$version -p:Version=4.0
-        cp IctBaden.Stonehenge3.Vue/bin/Release/net6.0/IctBaden.Stonehenge4.Vue.dll artifacts/lib
+        cp IctBaden.Stonehenge4.Vue/bin/Release/net6.0/IctBaden.Stonehenge4.Vue.dll artifacts/lib
     - name: Test with dotnet
       env: 
         SkipPerformanceTests: true
