@@ -427,18 +427,6 @@ namespace IctBaden.Stonehenge4.ViewModel
             {
                 if (viewModel is ActiveViewModel activeVm)
                 {
-                    foreach (var model in activeVm.ActiveModels)
-                    {
-                        context = model.TypeName;
-                        var dd = JsonSerializer.SerializeToDocument(model.Model).RootElement.EnumerateObject();
-                        foreach (var element in dd)
-                        {
-                            data.Add(string.Format("\"{0}\":{1}", element.Name,
-                                JsonSerializer.SerializeToElement(activeVm.TryGetMember(element.Name))));
-                        }
-                        Debug.Assert(false);
-                    }
-
                     context = "internal properties";
                     AddStonehengeInternalProperties(data, activeVm);
 

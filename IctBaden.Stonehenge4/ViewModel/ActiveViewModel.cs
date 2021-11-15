@@ -35,6 +35,7 @@ using System.Reflection;
 using IctBaden.Stonehenge4.Core;
 using IctBaden.Stonehenge4.Resources;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
 // ReSharper disable MemberCanBeProtected.Global
@@ -59,7 +60,8 @@ namespace IctBaden.Stonehenge4.ViewModel
             {
             }
 
-            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target,
+                DynamicMetaObject errorSuggestion)
             {
                 return null;
             }
@@ -72,7 +74,7 @@ namespace IctBaden.Stonehenge4.ViewModel
             }
 
             public override DynamicMetaObject FallbackSetMember(DynamicMetaObject target, DynamicMetaObject value,
-              DynamicMetaObject errorSuggestion)
+                DynamicMetaObject errorSuggestion)
             {
                 return null;
             }
@@ -85,7 +87,7 @@ namespace IctBaden.Stonehenge4.ViewModel
             private readonly bool _readOnly;
 
             internal PropertyDescriptorEx(string name, PropertyInfo info, bool readOnly)
-              : base(name, null)
+                : base(name, null)
             {
                 _propertyName = name;
                 _originalDescriptor = FindOrigPropertyDescriptor(info);
@@ -100,8 +102,8 @@ namespace IctBaden.Stonehenge4.ViewModel
                     return _originalDescriptor?.GetValue(component);
 
                 return dynComponent.TryGetMember(new GetMemberBinderEx(_propertyName), out var result)
-                  ? result
-                  : _originalDescriptor?.GetValue(component);
+                    ? result
+                    : _originalDescriptor?.GetValue(component);
             }
 
             public override void SetValue(object component, object value)
@@ -111,13 +113,14 @@ namespace IctBaden.Stonehenge4.ViewModel
                     if (dynComponent.TrySetMember(new SetMemberBinderEx(_propertyName), value))
                         return;
                 }
+
                 _originalDescriptor?.SetValue(component, value);
             }
 
-            public override bool IsReadOnly => _readOnly || (_originalDescriptor is {IsReadOnly: true});
+            public override bool IsReadOnly => _readOnly || (_originalDescriptor is { IsReadOnly: true });
 
             public override Type PropertyType
-              => _originalDescriptor == null ? typeof(object) : _originalDescriptor.PropertyType;
+                => _originalDescriptor == null ? typeof(object) : _originalDescriptor.PropertyType;
 
             public override bool CanResetValue(object component)
             {
@@ -125,7 +128,7 @@ namespace IctBaden.Stonehenge4.ViewModel
             }
 
             public override Type ComponentType
-              => _originalDescriptor == null ? typeof(object) : _originalDescriptor.ComponentType;
+                => _originalDescriptor == null ? typeof(object) : _originalDescriptor.ComponentType;
 
             public override void ResetValue(object component)
             {
@@ -139,11 +142,11 @@ namespace IctBaden.Stonehenge4.ViewModel
 
             private static PropertyDescriptor FindOrigPropertyDescriptor(PropertyInfo propertyInfo)
             {
-                return propertyInfo == null
-                  ? null
-                  : TypeDescriptor.GetProperties(propertyInfo.DeclaringType)
-                    .Cast<PropertyDescriptor>()
-                    .FirstOrDefault(propertyDescriptor => propertyDescriptor.Name.Equals(propertyInfo.Name));
+                return propertyInfo == null || propertyInfo.DeclaringType == null
+                    ? null
+                    : TypeDescriptor.GetProperties(propertyInfo.DeclaringType)
+                        .Cast<PropertyDescriptor>()
+                        .FirstOrDefault(propertyDescriptor => propertyDescriptor.Name.Equals(propertyInfo.Name));
             }
         }
 
@@ -168,35 +171,23 @@ namespace IctBaden.Stonehenge4.ViewModel
         private readonly Dictionary<string, List<string>> _dependencies = new Dictionary<string, List<string>>();
         private readonly Dictionary<string, object> _dictionary = new Dictionary<string, object>();
 
-        internal readonly List<ActiveModel> ActiveModels = new List<ActiveModel>();
-
-        [Browsable(false)]
-        internal int Count => GetProperties().Count;
-
-        [Browsable(false)]
-        internal IEnumerable<string> Models => from model in ActiveModels select model.GetType().Name;
+        [Browsable(false)] internal int Count => GetProperties().Count;
 
         [Browsable(false)] public AppSession Session;
         [Browsable(false)] public bool SupportsEvents;
 
         // ReSharper disable InconsistentNaming
-        [Bindable(false)]
-        public string _stonehenge_CommandSenderName_ { get; set; }
+        [Bindable(false)] public string _stonehenge_CommandSenderName_ { get; set; }
 
         public string GetCommandSenderName()
         {
             return _stonehenge_CommandSenderName_;
         }
 
-        protected bool ModelTypeExists(string prefix, object model)
-        {
-            return ActiveModels.FirstOrDefault(m => (m.TypeName == model.GetType().Name) && (m.Prefix == prefix)) != null;
-        }
-
         #endregion
 
         public ActiveViewModel()
-          : this(null)
+            : this(null)
         {
         }
 
@@ -214,7 +205,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                     if (property != null) continue;
                     var ctor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
                         .First(c => c.GetParameters().Length == 2);
-                    property = ctor.Invoke(new object[]{ this, prop.Name });
+                    property = ctor.Invoke(new object[] { this, prop.Name });
                     prop.SetValue(this, property);
                 }
             }
@@ -229,7 +220,7 @@ namespace IctBaden.Stonehenge4.ViewModel
         public virtual void OnLoad()
         {
         }
-        
+
         protected void SetParent(ActiveViewModel parent)
         {
             PropertyChanged += (_, args) => parent.NotifyPropertyChanged(args.PropertyName);
@@ -253,70 +244,11 @@ namespace IctBaden.Stonehenge4.ViewModel
             set => TrySetMember(name, value);
         }
 
-        [Obsolete("Will be remove in future release. Use class property instead.")]
-        public void SetModel(object model, bool readOnly = false)
-        {
-            if (model == null)
-                return;
-            SetModel(null, model, readOnly);
-        }
-
-        [Obsolete("Will be remove in future release. Use class property instead.")]
-        public void SetModel(string prefix, object model, bool readOnly = false)
-        {
-            if (model == null)
-                return;
-            if (ModelTypeExists(prefix, model))
-            {
-                UpdateModel(prefix, model);
-                return;
-            }
-
-            ActiveModels.Add(new ActiveModel(prefix, model, readOnly));
-
-            properties = null;
-            propertiesAttribute = null;
-            GetProperties();
-        }
-
-        [Obsolete("Will be remove in future release. Use class property instead.")]
-        public void UpdateModel(object model)
-        {
-            UpdateModel(null, model);
-        }
-
-        [Obsolete("Will be remove in future release. Use class property instead.")]
-        public void UpdateModel(string prefix, object model)
-        {
-            if (!ModelTypeExists(prefix, model))
-            {
-                //throw new ArgumentException(string.Format("No model of type '{0}' is added", model.GetType().Name));
-                SetModel(prefix, model);
-                return;
-            }
-
-            var activeModel = ActiveModels.First(m => (m.TypeName == model.GetType().Name) && (m.Prefix == prefix));
-            activeModel.Model = model;
-            foreach (var prop in model.GetType().GetProperties())
-            {
-                if (string.IsNullOrEmpty(prefix))
-                {
-                    NotifyPropertyChanged(prop.Name);
-                }
-                else
-                {
-                    NotifyPropertyChanged(prefix + prop.Name);
-                }
-            }
-        }
-
         #region DynamicObject
 
         public override IEnumerable<string> GetDynamicMemberNames()
         {
             var names = new List<string>();
-            foreach (var model in ActiveModels)
-                names.AddRange(from prop in model.GetType().GetProperties() select prop.Name);
             names.AddRange(from elem in _dictionary select elem.Key);
             return names;
         }
@@ -329,25 +261,7 @@ namespace IctBaden.Stonehenge4.ViewModel
         private PropertyInfoEx GetPropertyInfoEx(string name)
         {
             var pi = GetType().GetProperty(name);
-            if (pi != null)
-            {
-                return new PropertyInfoEx(pi, this, false);
-            }
-            foreach (var model in ActiveModels)
-            {
-                if (!string.IsNullOrEmpty(model.Prefix))
-                {
-                    if (!name.StartsWith(model.Prefix))
-                        continue;
-                    name = name.Substring(model.Prefix.Length);
-                }
-                pi = model.Model.GetType().GetProperty(name);
-                if (pi == null)
-                    continue;
-
-                return new PropertyInfoEx(pi, model.Model, model.ReadOnly);
-            }
-            return null;
+            return pi != null ? new PropertyInfoEx(pi, this, false) : null;
         }
 
         public PropertyInfo GetPropertyInfo(string name)
@@ -371,6 +285,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                 result = val;
                 return true;
             }
+
             return _dictionary.TryGetValue(binder.Name, out result);
         }
 
@@ -383,6 +298,7 @@ namespace IctBaden.Stonehenge4.ViewModel
                 NotifyPropertyChanged(binder.Name);
                 return true;
             }
+
             _dictionary[binder.Name] = value;
             NotifyPropertyChanged(binder.Name);
             return true;
@@ -444,29 +360,14 @@ namespace IctBaden.Stonehenge4.ViewModel
             if (properties != null)
                 return properties;
 
-            properties = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
+            properties = new PropertyDescriptorCollection(Array.Empty<PropertyDescriptor>());
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this, true))
             {
                 var pi = GetType().GetProperty(prop.Name);
                 var desc = new PropertyDescriptorEx(prop.Name, pi, false);
                 properties.Add(desc);
             }
-            foreach (var model in ActiveModels)
-            {
-                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(model.Model, true))
-                {
-                    var pi = model.Model.GetType().GetProperties().FirstOrDefault(p => p.Name == prop.Name);
-                    var name = prop.Name;
-                    if (!string.IsNullOrEmpty(model.Prefix))
-                        name = model.Prefix + name;
 
-                    if (properties.Cast<PropertyDescriptor>().Any(pd => pd.Name == name))
-                        throw new ArgumentException("Duplicate property", name);
-
-                    var desc = new PropertyDescriptorEx(name, pi, model.ReadOnly);
-                    properties.Add(desc);
-                }
-            }
             foreach (var elem in _dictionary)
             {
                 var desc = new PropertyDescriptorEx(elem.Key, null, false);
@@ -488,7 +389,8 @@ namespace IctBaden.Stonehenge4.ViewModel
             }
 
             var myMethods =
-              GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+                GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
+                                     BindingFlags.Instance);
             foreach (var method in myMethods)
             {
                 var dependsOnAttributes = method.GetCustomAttributes(typeof(DependsOnAttribute), true);
@@ -511,14 +413,9 @@ namespace IctBaden.Stonehenge4.ViewModel
             if (propertiesAttribute != null)
                 return propertiesAttribute;
 
-            propertiesAttribute = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
+            propertiesAttribute = new PropertyDescriptorCollection(Array.Empty<PropertyDescriptor>());
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this, true))
                 propertiesAttribute.Add(prop);
-            foreach (var model in ActiveModels)
-            {
-                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(model, attributes, true))
-                    propertiesAttribute.Add(prop);
-            }
             return propertiesAttribute;
         }
 
@@ -554,7 +451,7 @@ namespace IctBaden.Stonehenge4.ViewModel
         {
 #if DEBUG
             //TODO: AppService.PropertyNameId
-            Debug.Assert(name.StartsWith("_stonehenge_") 
+            Debug.Assert(name.StartsWith("_stonehenge_")
                          || (GetPropertyInfo(name) != null)
                          || _dictionary.ContainsKey(name)
                 , "NotifyPropertyChanged for unknown property " + name);
@@ -591,9 +488,10 @@ namespace IctBaden.Stonehenge4.ViewModel
             {
                 NotifyPropertyChanged(prop.Name);
             }
+
             Session.UpdatePropertiesImmediately();
         }
-        
+
         #endregion
 
         #region MessageBox
@@ -644,7 +542,7 @@ namespace IctBaden.Stonehenge4.ViewModel
             {
                 script += "; ";
             }
-            
+
             if (string.IsNullOrEmpty(ClientScript))
             {
                 ClientScript = script;
@@ -679,11 +577,11 @@ namespace IctBaden.Stonehenge4.ViewModel
         {
             return null;
         }
-        public virtual Resource PostDataResource(string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+
+        public virtual Resource PostDataResource(string resourceName, Dictionary<string, string> parameters,
+            Dictionary<string, string> formData)
         {
             return null;
         }
-        
-
     }
 }
