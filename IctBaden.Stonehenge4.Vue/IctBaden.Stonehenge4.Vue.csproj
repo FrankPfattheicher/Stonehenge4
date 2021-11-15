@@ -94,9 +94,6 @@
         <None Remove="app\src\fontawesome_all.min.css" />
         <None Remove="app\src\bootstrap.js" />
         <None Remove="app\src\fa_free_all.css" />
-        <EmbeddedResource Include="app\src\fa_free_all.css" />
-        <None Remove="app\src\fa_free_all.min.css" />
-        <EmbeddedResource Include="app\src\fa_free_all.min.css" />
         <None Remove="app\src\bootstrap.js.map" />
         <None Remove="app\src\bootstrap.min.js.map" />
         <None Remove="app\src\bootstrap.bundle.js.map" />
@@ -133,6 +130,8 @@
         <EmbeddedResource Include="app\src\bootstrap-vue.js" />
         <None Remove="app\src\bootstrap-ext.css" />
         <EmbeddedResource Include="app\src\bootstrap-ext.css" />
+        <None Remove="app\src\fa_free_all.min.css" />
+        <EmbeddedResource Include="app\src\fa_free_all.min.css" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
@@ -142,5 +141,8 @@
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="app\src\bootstrap-vue.min.css" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="app\src\fa_free_all.css" />
     </ItemGroup>
 </Project>
