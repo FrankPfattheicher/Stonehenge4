@@ -5,15 +5,15 @@ namespace IctBaden.Stonehenge4.Test.Hosting
 {
     public class RedirectableWebClient : IDisposable
     {
-        private HttpClient client;
+        private readonly HttpClient _client;
         public RedirectableWebClient()
         {
-            client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
+            _client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
         }
         
         public void Dispose()
         {
-            client?.Dispose();
+            _client?.Dispose();
         }
         
         
@@ -21,12 +21,12 @@ namespace IctBaden.Stonehenge4.Test.Hosting
         {
             for (var redirect = 0; redirect < 10; redirect++)
             {
-                var response = client.GetAsync(address).Result;
+                var response = _client.GetAsync(address).Result;
 
                 var redirectUrl = response.Headers.Location;
                 if (redirectUrl == null)
                 {
-                    //address = response.Headers .ResponseUri.ToString();
+                    // address = response.Headers.ResponseUri.ToString();
                 }
 
                 response.Dispose();
@@ -41,7 +41,7 @@ namespace IctBaden.Stonehenge4.Test.Hosting
                 address = newAddress;
             }
 
-            return client.GetStringAsync(address).Result;
+            return _client.GetStringAsync(address).Result;
         }
 
     }
