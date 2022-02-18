@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using IctBaden.Stonehenge4.Hosting;
 using IctBaden.Stonehenge4.Resources;
@@ -18,6 +19,8 @@ using Microsoft.Extensions.Logging;
 // ReSharper disable EventNeverSubscribedTo.Global
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+
+[assembly: InternalsVisibleTo("IctBaden.Stonehenge4.Test")]
 
 namespace IctBaden.Stonehenge4.Core
 {
@@ -42,6 +45,7 @@ namespace IctBaden.Stonehenge4.Core
 
         public DateTime ConnectedSince { get; private set; }
         public DateTime LastAccess { get; private set; }
+        public string CurrentRoute { get; private set; }
         public string Context { get; private set; }
 
         public string UserIdentity { get; private set; }
@@ -165,7 +169,7 @@ namespace IctBaden.Stonehenge4.Core
 
             var newViewModelType = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
-                .FirstOrDefault(type => type.FullName?.EndsWith(typeName) ?? false);
+                .FirstOrDefault(type => type.FullName?.EndsWith($".{typeName}") ?? false);
 
             if (newViewModelType == null)
             {
@@ -175,6 +179,13 @@ namespace IctBaden.Stonehenge4.Core
             }
 
             ViewModel = CreateType(newViewModelType);
+
+            var viewModelInfo = _resourceLoader.Providers
+                .SelectMany(p => p.GetViewModelInfos())
+                .FirstOrDefault(vmi => vmi.VmName == typeName);
+
+            CurrentRoute = viewModelInfo?.Route ?? "";
+            
             return ViewModel;
         }
 
@@ -328,9 +339,9 @@ namespace IctBaden.Stonehenge4.Core
                     .Distinct()
                     .ToList();
 
-                var logger = StonehengeLogger.DefaultLogger;
-                var loader = new ResourceLoader(logger, assemblies, Assembly.GetCallingAssembly());
-                resourceLoader = new StonehengeResourceLoader(logger, new List<IStonehengeResourceProvider>{ loader });
+                Logger = StonehengeLogger.DefaultLogger;
+                var loader = new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly());
+                resourceLoader = new StonehengeResourceLoader(Logger, new List<IStonehengeResourceProvider>{ loader });
             }
             else
             {

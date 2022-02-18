@@ -54,6 +54,8 @@ namespace IctBaden.Stonehenge4.Resources
         {
         }
 
+        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+
         public static string GetShortResourceName(Assembly appAssembly, string baseName, string resourceName)
         {
             resourceName = resourceName.Replace(appAssembly.GetName().Name ?? "_", "_");

@@ -36,8 +36,8 @@ namespace IctBaden.Stonehenge4.Resources
             }
         }
 
+        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
 
-        
         public void Dispose()
         {
             Providers.ForEach(l => l.Dispose());

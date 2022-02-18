@@ -31,6 +31,8 @@ namespace IctBaden.Stonehenge4.ViewModel
         {
         }
 
+        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+
         public void Dispose()
         {
         }
@@ -46,11 +48,18 @@ namespace IctBaden.Stonehenge4.ViewModel
                     .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IStonehengeAppCommands)));
                 if (appCommandsType != null)
                 {
-                    var appCommands = Activator.CreateInstance(appCommandsType);
+                    var appCommands = session.CreateType(appCommandsType);
+                    
                     var commandHandler = appCommands?.GetType().GetMethod(commandName);
                     if (commandHandler != null)
                     {
-                        commandHandler.Invoke(appCommands, new object[] {session});
+                        var cmdParameters = commandHandler.GetParameters()
+                            .Select(parameter => parameter.ParameterType == typeof(AppSession)
+                                ? session
+                                : Convert.ChangeType(parameters.FirstOrDefault(kv => kv.Key == parameter.Name).Value, parameter.ParameterType));
+                        
+                        commandHandler.Invoke(appCommands, cmdParameters.ToArray());
+                        
                         return new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
                             Resource.Cache.None);
                     }
