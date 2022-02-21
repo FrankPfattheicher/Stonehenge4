@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.App", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.TreeView", "IctBaden.Stonehenge4.TreeView\IctBaden.Stonehenge4.TreeView.csproj", "{151398EB-410E-4CEB-9ED8-87D25554EE2B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.ChartsC3", "IctBaden.Stonehenge4.ChartsC3\IctBaden.Stonehenge4.ChartsC3.csproj", "{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{151398EB-410E-4CEB-9ED8-87D25554EE2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{151398EB-410E-4CEB-9ED8-87D25554EE2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{151398EB-410E-4CEB-9ED8-87D25554EE2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

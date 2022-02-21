@@ -11,20 +11,6 @@ using System.Linq;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
-    public class C3ChartAxis
-    {
-        public bool show { get; set; }
-        public int min { get; set; }
-        public int max { get; set; }
-
-        public C3ChartAxis()
-        {
-            show = true;
-            min = 0;
-            max = 100;
-        }
-    }
-
     public class C3ChartData
     {
         public object[][] columns { get; private set; }
@@ -77,7 +63,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public C3ChartData Data { get; set; }
         
         /// <summary>
-        /// Use C3ChartAxis objects.
+        /// Use ChartAxis objects.
         /// </summary>
         public Dictionary<string, object> Axis { get; private set; }
 

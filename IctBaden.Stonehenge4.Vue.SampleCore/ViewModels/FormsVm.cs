@@ -1,6 +1,7 @@
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -31,7 +32,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
             ChartData.Data.SetData(0, new object [] {10, 12, 15, 14, 13, 20, 22, 25, Range});
 
-            ChartData.Axis["y"] = new C3ChartAxis { min = 0, max = 40 };
+            ChartData.Axis["y"] = new ChartAxis { Label = "Value", Min = 0, Max = 40 };
         }
 
         [ActionMethod]
