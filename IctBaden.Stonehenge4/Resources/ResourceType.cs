@@ -3,7 +3,7 @@ using System.Linq;
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
     public class ResourceType
     {

@@ -6,9 +6,9 @@ using System.Net;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +21,7 @@ using AuthenticationSchemes = Microsoft.AspNetCore.Server.HttpSys.Authentication
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace IctBaden.Stonehenge4.Kestrel
+namespace IctBaden.Stonehenge.Kestrel
 {
     public class KestrelHost : IStonehengeHost
     {

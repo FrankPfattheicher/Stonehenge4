@@ -32,8 +32,8 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Resources;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -48,7 +48,7 @@ using Microsoft.Extensions.Logging;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace IctBaden.Stonehenge4.ViewModel
+namespace IctBaden.Stonehenge.ViewModel
 {
     public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged
     {

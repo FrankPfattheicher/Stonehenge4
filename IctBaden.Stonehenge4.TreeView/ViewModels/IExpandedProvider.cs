@@ -1,4 +1,4 @@
-namespace IctBaden.Stonehenge4.TreeView.ViewModels
+namespace IctBaden.Stonehenge.TreeView.ViewModels
 {
     public interface IExpandedProvider
     {

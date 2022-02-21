@@ -1,7 +1,7 @@
-using IctBaden.Stonehenge4.Core;
+using IctBaden.Stonehenge.Core;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Test.Session;
+namespace IctBaden.Stonehenge.Test.Session;
 
 public class CreateTypeTests
 {

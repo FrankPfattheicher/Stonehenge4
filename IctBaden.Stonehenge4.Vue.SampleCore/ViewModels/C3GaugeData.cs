@@ -1,5 +1,5 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     public class C3GaugeData
     {

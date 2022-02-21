@@ -1,11 +1,11 @@
 ﻿using System;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel;
-using IctBaden.Stonehenge4.Test.Tools;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel;
+using IctBaden.Stonehenge.Test.Tools;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Test.Hosting
+namespace IctBaden.Stonehenge.Test.Hosting
 {
     // ReSharper disable InconsistentNaming
     public class HostingTests

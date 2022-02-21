@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
     public class ViewModelInfo
     {

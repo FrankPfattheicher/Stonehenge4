@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Vue.Test.Client
+namespace IctBaden.Stonehenge.Vue.Test.Client
 {
     public class DiComponentVm : ActiveViewModel
     {

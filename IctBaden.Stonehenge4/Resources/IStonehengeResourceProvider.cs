@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
     public interface IStonehengeResourceProvider : IDisposable
     {

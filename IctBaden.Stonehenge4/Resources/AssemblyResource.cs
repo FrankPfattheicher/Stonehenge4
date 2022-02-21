@@ -1,10 +1,11 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 using System.Reflection;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
     internal class AssemblyResource
     {

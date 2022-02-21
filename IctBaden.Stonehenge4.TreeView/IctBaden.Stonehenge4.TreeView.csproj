@@ -5,6 +5,8 @@
         <LangVersion>10</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>IctBaden.Stonehenge.TreeView</AssemblyName>
+        <RootNamespace>IctBaden.Stonehenge.TreeView</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

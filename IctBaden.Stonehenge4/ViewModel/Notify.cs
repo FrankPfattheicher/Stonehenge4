@@ -1,4 +1,4 @@
-namespace IctBaden.Stonehenge4.ViewModel
+namespace IctBaden.Stonehenge.ViewModel
 {
     /// <summary>
     /// Add view model property support

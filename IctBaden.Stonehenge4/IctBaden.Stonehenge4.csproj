@@ -9,6 +9,8 @@
     <LangVersion>10</LangVersion>
     <PackageIcon>icon64.png</PackageIcon>
     <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>IctBaden.Stonehenge</AssemblyName>
+    <RootNamespace>IctBaden.Stonehenge</RootNamespace>
   </PropertyGroup>
   
   <ItemGroup>

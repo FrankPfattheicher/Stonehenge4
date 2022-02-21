@@ -7,10 +7,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -20,9 +21,9 @@ using Microsoft.Extensions.Logging;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-[assembly: InternalsVisibleTo("IctBaden.Stonehenge4.Test")]
+[assembly: InternalsVisibleTo("IctBaden.Stonehenge.Test")]
 
-namespace IctBaden.Stonehenge4.Core
+namespace IctBaden.Stonehenge.Core
 {
     public class AppSession : INotifyPropertyChanged
     {

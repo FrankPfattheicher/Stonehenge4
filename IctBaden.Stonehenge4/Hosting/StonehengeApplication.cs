@@ -2,9 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+
 // ReSharper disable StringLiteralTypo
 
-namespace IctBaden.Stonehenge4.Hosting
+namespace IctBaden.Stonehenge.Hosting
 {
     public static class StonehengeApplication
     {

@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore
+namespace IctBaden.Stonehenge.Vue.SampleCore
 {
     // ReSharper disable once UnusedMember.Global
     [SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]

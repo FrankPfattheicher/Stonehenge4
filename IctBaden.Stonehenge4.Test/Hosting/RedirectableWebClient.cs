@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace IctBaden.Stonehenge4.Test.Hosting
+namespace IctBaden.Stonehenge.Test.Hosting
 {
     public class RedirectableWebClient : IDisposable
     {

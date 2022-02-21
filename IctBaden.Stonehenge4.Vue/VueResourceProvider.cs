@@ -4,17 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.Types;
-using IctBaden.Stonehenge4.Vue.Client;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Types;
+using IctBaden.Stonehenge.Vue.Client;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.Vue
+namespace IctBaden.Stonehenge.Vue
 {
     public class VueResourceProvider : IStonehengeResourceProvider
     {

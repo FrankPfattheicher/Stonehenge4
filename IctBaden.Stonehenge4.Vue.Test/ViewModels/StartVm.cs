@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
 
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Vue.Test.ViewModels
+namespace IctBaden.Stonehenge.Vue.Test.ViewModels
 {
     // ReSharper disable once UnusedType.Global
     public class StartVm : ActiveViewModel

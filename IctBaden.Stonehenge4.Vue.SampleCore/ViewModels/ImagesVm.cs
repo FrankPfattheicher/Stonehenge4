@@ -1,8 +1,9 @@
-﻿using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+﻿using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     public class ImagesVm : ActiveViewModel
     {

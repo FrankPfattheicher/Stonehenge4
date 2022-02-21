@@ -1,5 +1,6 @@
-namespace IctBaden.Stonehenge4.Test.Session;
+namespace IctBaden.Stonehenge.Test.Session;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class TestVm
 {
     

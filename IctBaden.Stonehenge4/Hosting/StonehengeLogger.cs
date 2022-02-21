@@ -6,7 +6,7 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace IctBaden.Stonehenge4.Hosting
+namespace IctBaden.Stonehenge.Hosting
 {
     public static class StonehengeLogger
     {

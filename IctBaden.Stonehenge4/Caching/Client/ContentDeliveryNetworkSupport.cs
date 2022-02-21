@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Caching.Client
+namespace IctBaden.Stonehenge.Caching.Client
 {
     // ReSharper disable once UnusedType.Global
     public static class ContentDeliveryNetworkSupport

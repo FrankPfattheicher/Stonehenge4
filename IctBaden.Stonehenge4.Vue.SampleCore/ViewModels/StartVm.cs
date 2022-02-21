@@ -4,16 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable StringLiteralTypo
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once UnusedType.Global

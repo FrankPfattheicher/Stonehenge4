@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel;
+using IctBaden.Stonehenge.Resources;
 using Microsoft.Extensions.Logging;
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore
+namespace IctBaden.Stonehenge.Vue.SampleCore
 {
     internal static class Program
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -10,7 +10,7 @@ using IctBaden.Stonehenge4.ViewModel;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
     public class GraphVm : ActiveViewModel

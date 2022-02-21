@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace IctBaden.Stonehenge4.Hosting
+namespace IctBaden.Stonehenge.Hosting
 {
     public static class Network
     {

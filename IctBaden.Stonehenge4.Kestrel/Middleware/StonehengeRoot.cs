@@ -2,7 +2,7 @@
 using System.Web;
 using Microsoft.AspNetCore.Http;
 
-namespace IctBaden.Stonehenge4.Kestrel.Middleware
+namespace IctBaden.Stonehenge.Kestrel.Middleware
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class StonehengeRoot

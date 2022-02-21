@@ -6,6 +6,8 @@
         <Product>Web Application Framework</Product>
         <LangVersion>10</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>IctBaden.Stonehenge.Vue</AssemblyName>
+        <RootNamespace>IctBaden.Stonehenge.Vue</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <None Remove="app\favicon.ico" />

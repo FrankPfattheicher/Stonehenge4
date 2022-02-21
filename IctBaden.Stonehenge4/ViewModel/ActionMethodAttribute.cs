@@ -1,8 +1,9 @@
 using System;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge4.ViewModel
+namespace IctBaden.Stonehenge.ViewModel
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class ActionMethodAttribute : Attribute

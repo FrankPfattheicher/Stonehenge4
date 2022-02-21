@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Reflection;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel;
+using IctBaden.Stonehenge.Resources;
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace IctBaden.Stonehenge4.Vue.Test
+namespace IctBaden.Stonehenge.Vue.Test
 {
     public class VueTestApp : IDisposable
     {

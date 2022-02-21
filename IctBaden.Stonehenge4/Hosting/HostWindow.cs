@@ -8,7 +8,7 @@ using System.Web;
 // ReSharper disable CommentTypo
 // ReSharper disable StringLiteralTypo
 
-namespace IctBaden.Stonehenge4.Hosting
+namespace IctBaden.Stonehenge.Hosting
 {
     public class HostWindow : IDisposable
     {

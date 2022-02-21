@@ -1,9 +1,10 @@
 ﻿using System;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
 // ReSharper disable NotAccessedField.Global
 
-namespace IctBaden.Stonehenge4.Test.Serializer
+namespace IctBaden.Stonehenge.Test.Serializer
 {
     public class SimpleClass
     {

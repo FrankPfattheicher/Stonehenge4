@@ -5,7 +5,7 @@ using System.Web;
 
 // ReSharper disable ConvertToUsingDeclaration
 
-namespace IctBaden.Stonehenge4.Vue.Test
+namespace IctBaden.Stonehenge.Vue.Test
 {
     public class RedirectableHttpClient : HttpClient
     {
@@ -22,7 +22,7 @@ namespace IctBaden.Stonehenge4.Vue.Test
             var url = new UriBuilder(address);
             var query = HttpUtility.ParseQueryString(url.Query);
             query["stonehenge-id"] = SessionId;
-            url.Query = query.ToString();
+            url.Query = query.ToString() ?? string.Empty;
             return DownloadString(url.ToString());
         }
 
@@ -31,19 +31,20 @@ namespace IctBaden.Stonehenge4.Vue.Test
             for (var redirect = 0; redirect < 10; redirect++)
             {
                 var response = GetAsync(address).Result;
-                if (response == null) return null;
 
                 var redirectUrl = response.Headers.Location;
                 if (redirectUrl == null)
                 {
-                    address = response.RequestMessage.RequestUri.ToString();
+                    address = response.RequestMessage?.RequestUri?.ToString();
                 }
-
-                var match = new Regex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)
-                    .Match(address);
-                if (match.Success)
+                if (address != null)
                 {
-                    SessionId = match.Groups[1].Value;
+                    var match = new Regex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)
+                        .Match(address);
+                    if (match.Success)
+                    {
+                        SessionId = match.Groups[1].Value;
+                    }
                 }
 
                 var body = response.Content.ReadAsStringAsync().Result;
@@ -54,7 +55,7 @@ namespace IctBaden.Stonehenge4.Vue.Test
                     return body;
                 }
 
-                var newAddress = new Uri(response.RequestMessage.RequestUri, redirectUrl).AbsoluteUri;
+                var newAddress = new Uri(response.RequestMessage!.RequestUri!, redirectUrl).AbsoluteUri;
                 if (newAddress == address)
                     break;
 

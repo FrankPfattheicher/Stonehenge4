@@ -1,6 +1,7 @@
 using System.Linq;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -8,7 +9,7 @@ using IctBaden.Stonehenge4.ViewModel;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
     public class FormsVm : ActiveViewModel
