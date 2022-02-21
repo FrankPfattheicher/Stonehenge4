@@ -19,7 +19,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 100;
 
-        public Chart LineChart;
+        public Chart LineChart { get; private set; }
 
         private int _speed;
         private Timer _timer;
@@ -36,15 +36,12 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             {
                 Title = "Test"
             };
-            LineChart.Draw();
             
             _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
         }
 
         private void UpdateGraph()
         {
-            if (LineChart == null) return;
-            
             var data = new double [50];
             for (var ix = 0; ix < 50; ix++)
             {
@@ -59,8 +56,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                     Data = data
                 }
             };
-            LineChart.Draw();
-            NotifyAllPropertiesChanged();
+            NotifyPropertyChanged(nameof(LineChart));
         }
 
 

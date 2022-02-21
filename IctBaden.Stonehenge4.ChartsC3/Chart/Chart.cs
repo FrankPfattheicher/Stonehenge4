@@ -28,18 +28,20 @@ public class Chart
         CategoryAxis = new ChartAxis();
         ValueAxes = Array.Empty<ChartAxis>();
         Series = Array.Empty<ChartSeries>();
-        
-        //vm.PropertyChanged += VmOnPropertyChanged;
+
+        vm.PropertyChanged += OnVmPropertyChanged;
     }
 
-    private void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        Draw();
+        if (e.PropertyName == null) return;
         
-    }
+        var property = sender?.GetType().GetProperty(e.PropertyName);
+        if (property?.PropertyType != GetType()) return;
 
-    public void Draw()
-    {
+        var instance = property.GetValue(sender) as Chart;
+        if (instance?._elementId != _elementId) return;
+
         var script = new StringBuilder();
 
         script.AppendLine($@"if(typeof(this.{_elementProperty}) == 'undefined') {{ this.{_elementProperty} = c3.generate({{");
