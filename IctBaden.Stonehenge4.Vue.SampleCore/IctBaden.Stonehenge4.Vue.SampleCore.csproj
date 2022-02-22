@@ -56,9 +56,7 @@
     <None Remove="app\c3chart.html" />
     <None Remove="app\c3chart.js" />
     <None Remove="app\c3gauge.html" />
-    <EmbeddedResource Include="app\c3gauge.html" />
     <None Remove="app\c3gauge.js" />
-    <EmbeddedResource Include="app\c3gauge.js" />
     <None Remove="app\info.html" />
     <EmbeddedResource Include="app\info.html" />
     <None Remove="app\switch_on.wav" />
@@ -78,6 +76,8 @@
     <None Remove="app\styles\c3.min.css" />
     <None Remove="app\scripts\c3.min.js" />
     <None Remove="app\scripts\d3.min.js" />
+    <None Remove="app\styles\sample.css" />
+    <EmbeddedResource Include="app\styles\sample.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.ChartsC3\IctBaden.Stonehenge4.ChartsC3.csproj" />
@@ -102,6 +102,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="app\scripts" />
-    <Folder Include="app\styles" />
   </ItemGroup>
 </Project>

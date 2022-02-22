@@ -7,16 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Gauge" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="app\st-chart.html" />
       <EmbeddedResource Include="app\st-chart.js" />
+      <EmbeddedResource Include="app\st-gauge.html" />
+      <EmbeddedResource Include="app\st-gauge.js" />
     </ItemGroup>
 
 </Project>

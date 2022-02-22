@@ -19,7 +19,7 @@ public class Chart
             foreach (var serie in Series)
             {
                 var colData = new List<object> { serie.Label };
-                colData.AddRange(serie.Data.Select(d => (object)d));
+                colData.AddRange(serie.Data);
                 columns.Add(colData.ToArray());
             }
             return columns.ToArray();
@@ -53,7 +53,6 @@ public class Chart
             {
                 axes[name] = "y";
             }
-
             return axes;
         }
     }
@@ -68,7 +67,7 @@ public class Chart
     public Chart()
     {
         CategoryAxis = new ChartAxis("x");
-        ValueAxes = new ChartAxis[]
+        ValueAxes = new[]
         {
             new ChartAxis("y")
         };
