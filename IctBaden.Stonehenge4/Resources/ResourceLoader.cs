@@ -7,13 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using IctBaden.Stonehenge4.Client;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Client;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
     public class ResourceLoader : IStonehengeResourceProvider
     {
@@ -53,6 +54,8 @@ namespace IctBaden.Stonehenge4.Resources
         public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
         {
         }
+
+        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
 
         public static string GetShortResourceName(Assembly appAssembly, string baseName, string resourceName)
         {

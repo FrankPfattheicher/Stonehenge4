@@ -1,9 +1,11 @@
 ﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 using System;
+using System.Diagnostics;
 
-namespace IctBaden.Stonehenge4.Resources
+namespace IctBaden.Stonehenge.Resources
 {
+    [DebuggerDisplay("{Name}")]
     public class Resource
     {
         public string ContentType { get; private set; }

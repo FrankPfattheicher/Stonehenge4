@@ -4,9 +4,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge4.Kestrel.Middleware
+namespace IctBaden.Stonehenge.Kestrel.Middleware
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class ServerExceptionLogger

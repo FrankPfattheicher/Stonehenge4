@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>Copyright ©2013-2021 ICT Baden GmbH</Copyright>
+    <Copyright>Copyright ©2013-2022 ICT Baden GmbH</Copyright>
     <Company>ICT Baden GmbH</Company>
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
     <LangVersion>10</LangVersion>
     <OutputType>Library</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>IctBaden.Stonehenge.Kestrel</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,11 +21,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.14.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
   </ItemGroup>
 
   <ItemGroup>

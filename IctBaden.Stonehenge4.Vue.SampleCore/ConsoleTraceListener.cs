@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore
+namespace IctBaden.Stonehenge.Vue.SampleCore
 {
     /// <inheritdoc />
     /// <summary>

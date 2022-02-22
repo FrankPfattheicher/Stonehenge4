@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Copyright>Copyright ©2013-2021 ICT Baden GmbH</Copyright>
+        <Copyright>Copyright ©2013-2022 ICT Baden GmbH</Copyright>
         <Company>ICT Baden GmbH</Company>
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
         <LangVersion>10</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>IctBaden.Stonehenge.Vue</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <None Remove="app\favicon.ico" />
@@ -25,45 +26,25 @@
         <EmbeddedResource Include="Client\stonehengeElement.js" />
         <None Remove="app\src\all.css" />
         <None Remove="app\webfonts\fa-brands-400.eot" />
-        <EmbeddedResource Include="app\webfonts\fa-brands-400.eot" />
         <None Remove="app\webfonts\fa-brands-400.svg" />
-        <EmbeddedResource Include="app\webfonts\fa-brands-400.svg" />
         <None Remove="app\webfonts\fa-brands-400.ttf" />
-        <EmbeddedResource Include="app\webfonts\fa-brands-400.ttf" />
         <None Remove="app\webfonts\fa-brands-400.woff" />
-        <EmbeddedResource Include="app\webfonts\fa-brands-400.woff" />
         <None Remove="app\webfonts\fa-brands-400.woff2" />
-        <EmbeddedResource Include="app\webfonts\fa-brands-400.woff2" />
         <None Remove="app\webfonts\fa-light-300.eot" />
-        <EmbeddedResource Include="app\webfonts\fa-light-300.eot" />
         <None Remove="app\webfonts\fa-light-300.svg" />
-        <EmbeddedResource Include="app\webfonts\fa-light-300.svg" />
         <None Remove="app\webfonts\fa-light-300.ttf" />
-        <EmbeddedResource Include="app\webfonts\fa-light-300.ttf" />
         <None Remove="app\webfonts\fa-light-300.woff" />
-        <EmbeddedResource Include="app\webfonts\fa-light-300.woff" />
         <None Remove="app\webfonts\fa-light-300.woff2" />
-        <EmbeddedResource Include="app\webfonts\fa-light-300.woff2" />
         <None Remove="app\webfonts\fa-regular-400.eot" />
-        <EmbeddedResource Include="app\webfonts\fa-regular-400.eot" />
         <None Remove="app\webfonts\fa-regular-400.svg" />
-        <EmbeddedResource Include="app\webfonts\fa-regular-400.svg" />
         <None Remove="app\webfonts\fa-regular-400.ttf" />
-        <EmbeddedResource Include="app\webfonts\fa-regular-400.ttf" />
         <None Remove="app\webfonts\fa-regular-400.woff" />
-        <EmbeddedResource Include="app\webfonts\fa-regular-400.woff" />
         <None Remove="app\webfonts\fa-regular-400.woff2" />
-        <EmbeddedResource Include="app\webfonts\fa-regular-400.woff2" />
         <None Remove="app\webfonts\fa-solid-900.eot" />
-        <EmbeddedResource Include="app\webfonts\fa-solid-900.eot" />
         <None Remove="app\webfonts\fa-solid-900.svg" />
-        <EmbeddedResource Include="app\webfonts\fa-solid-900.svg" />
         <None Remove="app\webfonts\fa-solid-900.ttf" />
-        <EmbeddedResource Include="app\webfonts\fa-solid-900.ttf" />
         <None Remove="app\webfonts\fa-solid-900.woff" />
-        <EmbeddedResource Include="app\webfonts\fa-solid-900.woff" />
         <None Remove="app\webfonts\fa-solid-900.woff2" />
-        <EmbeddedResource Include="app\webfonts\fa-solid-900.woff2" />
         <None Remove="app\src\bootstrap-grid.min.css" />
         <None Remove="app\src\bootstrap-reboot.min.css" />
         <None Remove="app\src\bootstrap.min.js" />
@@ -132,6 +113,10 @@
         <EmbeddedResource Include="app\src\bootstrap-ext.css" />
         <None Remove="app\src\fa_free_all.min.css" />
         <EmbeddedResource Include="app\src\fa_free_all.min.css" />
+        <None Remove="app\webfonts\fa-v4compatibility.ttf" />
+        <EmbeddedResource Include="app\webfonts\fa-v4compatibility.ttf" />
+        <None Remove="app\webfonts\fa-v4compatibility.woff2" />
+        <EmbeddedResource Include="app\webfonts\fa-v4compatibility.woff2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
@@ -144,5 +129,13 @@
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="app\src\fa_free_all.css" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="app\webfonts\fa-brands-400.ttf" />
+      <EmbeddedResource Include="app\webfonts\fa-brands-400.woff2" />
+      <EmbeddedResource Include="app\webfonts\fa-regular-400.ttf" />
+      <EmbeddedResource Include="app\webfonts\fa-regular-400.woff2" />
+      <EmbeddedResource Include="app\webfonts\fa-solid-900.ttf" />
+      <EmbeddedResource Include="app\webfonts\fa-solid-900.woff2" />
     </ItemGroup>
 </Project>

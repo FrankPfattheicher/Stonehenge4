@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
 // ReSharper disable LocalFunctionCanBeMadeStatic
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge4.Test.Serializer
+namespace IctBaden.Stonehenge.Test.Serializer
 {
     public class ViewModelSerializerTests
     {

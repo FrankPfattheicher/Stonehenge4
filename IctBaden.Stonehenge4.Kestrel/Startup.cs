@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel.Middleware;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel.Middleware;
+using IctBaden.Stonehenge.Resources;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace IctBaden.Stonehenge4.Kestrel
+namespace IctBaden.Stonehenge.Kestrel
 {
     public class Startup : IStartup
     {

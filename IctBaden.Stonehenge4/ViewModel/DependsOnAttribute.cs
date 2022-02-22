@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IctBaden.Stonehenge4.ViewModel
+namespace IctBaden.Stonehenge.ViewModel
 {
     /// <summary>
     /// Replacement for System.Windows.Markup.DependsOnAttribute

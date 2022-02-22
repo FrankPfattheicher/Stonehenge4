@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
@@ -8,7 +9,7 @@ using System.Linq;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.TreeView.ViewModels
+namespace IctBaden.Stonehenge.TreeView.ViewModels
 {
     public class TreeNodeVm
     {

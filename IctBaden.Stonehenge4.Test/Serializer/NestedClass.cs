@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Test.Serializer
+namespace IctBaden.Stonehenge.Test.Serializer
 {
     public class NestedClass
     {

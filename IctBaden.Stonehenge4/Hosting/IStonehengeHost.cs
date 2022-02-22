@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace IctBaden.Stonehenge4.Hosting
+namespace IctBaden.Stonehenge.Hosting
 {
     public interface IStonehengeHost
     {

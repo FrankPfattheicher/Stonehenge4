@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable MemberCanBeProtected.Global
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge4.TreeView.ViewModels
+namespace IctBaden.Stonehenge.TreeView.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once UnusedType.Global

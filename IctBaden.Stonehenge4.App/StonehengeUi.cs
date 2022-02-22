@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using System.Reflection;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.Vue;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Vue;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.App
+namespace IctBaden.Stonehenge.App
 {
     public class StonehengeUi : IDisposable
     {

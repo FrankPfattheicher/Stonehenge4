@@ -1,11 +1,12 @@
 using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
 using Xunit;
+
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
 
-namespace IctBaden.Stonehenge4.Vue.Test.Client
+namespace IctBaden.Stonehenge.Vue.Test.Client
 {
     public class ControllerCreationTests
     {

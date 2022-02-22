@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Kestrel;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge4.ChartsC3;
 using Microsoft.Extensions.Logging;
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore
+namespace IctBaden.Stonehenge.Vue.SampleCore
 {
     internal static class Program
     {
@@ -37,7 +38,8 @@ namespace IctBaden.Stonehenge4.Vue.SampleCore
 
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
-                SessionIdMode = SessionIdModes.Automatic
+                SessionIdMode = SessionIdModes.Automatic,
+                HandleWindowResized = true
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"
             };
@@ -46,7 +48,9 @@ namespace IctBaden.Stonehenge4.Vue.SampleCore
             Console.WriteLine(@"Using client framework vue");
             var vue = new VueResourceProvider(logger);
             var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
-
+            loader.AddResourceAssembly(typeof(Chart).Assembly);
+            loader.Services.AddService(typeof(ILogger), logger);
+            
             // Select hosting technology
             Console.WriteLine(@"Using Kestrel hosting");
             _server = new KestrelHost(loader, options);
@@ -62,7 +66,7 @@ namespace IctBaden.Stonehenge4.Vue.SampleCore
 
                 if (Environment.CommandLine.Contains("/window"))
                 {
-                    var wnd = new HostWindow(_server.BaseUrl, options.Title);
+                    using var wnd = new HostWindow(_server.BaseUrl, options.Title);
                     if (!wnd.Open())
                     {
                         logger.LogError("Failed to open main window");

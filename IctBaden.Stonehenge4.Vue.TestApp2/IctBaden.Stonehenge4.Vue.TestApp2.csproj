@@ -3,6 +3,8 @@
     <PropertyGroup>
         <LangVersion>10</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
+        <AssemblyName>IctBaden.Stonehenge.Vue.TestApp2</AssemblyName>
+        <RootNamespace>IctBaden.Stonehenge.Vue.TestApp2</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

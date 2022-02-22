@@ -4,17 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.Types;
-using IctBaden.Stonehenge4.Vue.Client;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Types;
+using IctBaden.Stonehenge.Vue.Client;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.Vue
+namespace IctBaden.Stonehenge.Vue
 {
     public class VueResourceProvider : IStonehengeResourceProvider
     {
@@ -22,15 +23,18 @@ namespace IctBaden.Stonehenge4.Vue
         private Dictionary<string, Resource> _vueContent;
         private List<Assembly> _assemblies;
         private Assembly _appAssembly;
+        private readonly List<ViewModelInfo> _viewModels;
 
         public VueResourceProvider(ILogger logger)
         {
             _logger = logger;
-            _assemblies = new List<Assembly>
-            {
-                Assembly.GetEntryAssembly(), 
-                Assembly.GetAssembly(GetType())
-            };
+            // _assemblies = new List<Assembly>
+            // {
+            //     Assembly.GetEntryAssembly(), 
+            //     Assembly.GetAssembly(GetType())
+            // };
+            _assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            _viewModels = new List<ViewModelInfo>();
         }
         
         public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
@@ -52,6 +56,8 @@ namespace IctBaden.Stonehenge4.Vue
             appCreator.CreateComponents(loader);
         }
 
+        public List<ViewModelInfo> GetViewModelInfos() => _viewModels;
+
         public void Dispose()
         {
             _vueContent.Clear();
@@ -61,12 +67,12 @@ namespace IctBaden.Stonehenge4.Vue
         private static readonly Regex ExtractElement = new Regex("<!--CustomElement(:([\\w, ]+))?-->");
         private static readonly Regex ExtractTitle = new Regex("<!--Title:([^:]*)(:(-?\\d*))?-->");
 
-        private static ViewModelInfo GetViewModelInfo(string route, string pageText)
+        private ViewModelInfo GetViewModelInfo(string route, string pageText)
         {
             route = string.IsNullOrEmpty(route)
                 ? ""
                 : route.Substring(0, 1).ToUpper() + route.Substring(1);
-            var info = new ViewModelInfo(route + "Vm");
+            var info = new ViewModelInfo(route.ToLower(), route + "Vm");
 
             var match = ExtractElement.Match(pageText);
             if (match.Success)
@@ -104,6 +110,11 @@ namespace IctBaden.Stonehenge4.Vue
             }
             info.Visible = info.SortIndex > 0;
             info.SortIndex = Math.Abs(info.SortIndex);
+
+            if (!string.IsNullOrEmpty(info.VmName))
+            {
+                _viewModels.Add(info);
+            }
             return info;
         }
 

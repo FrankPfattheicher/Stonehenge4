@@ -6,15 +6,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge4.Vue.Client
+namespace IctBaden.Stonehenge.Vue.Client
 {
     internal class VueAppCreator
     {
@@ -38,8 +39,8 @@ namespace IctBaden.Stonehenge4.Vue.Client
             _vueContent = vueContent;
             _vueAssembly = Assembly.GetAssembly(typeof(VueAppCreator));
             
-            _controllerTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge4.Vue.Client.stonehengeComponent.js");
-            _elementTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge4.Vue.Client.stonehengeElement.js");
+            _controllerTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeComponent.js");
+            _elementTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeElement.js");
         }
 
         private string LoadResourceText(string resourceName)
@@ -62,7 +63,7 @@ namespace IctBaden.Stonehenge4.Vue.Client
 
         public void CreateApplication()
         {
-            var applicationJs = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge4.Vue.Client.stonehengeApp.js");
+            var applicationJs = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeApp.js");
             applicationJs = InsertRoutes(applicationJs);
             applicationJs = InsertElements(applicationJs);
 
@@ -75,6 +76,7 @@ namespace IctBaden.Stonehenge4.Vue.Client
             const string routesInsertPoint = "//stonehengeAppRoutes";
             const string stonehengeAppTitleInsertPoint = "stonehengeAppTitle";
             const string stonehengeRootPageInsertPoint = "stonehengeRootPage";
+            const string stonehengeAppHandleWindowResized = "stonehengeAppHandleWindowResized";
             const string pageTemplate = "{{ path: '{0}', name: '{1}', title: '{2}', component: () => Promise.resolve(stonehengeLoadComponent('{3}')), visible: {4} }}";
 
             var contentPages = _vueContent
@@ -121,7 +123,8 @@ namespace IctBaden.Stonehenge4.Vue.Client
             pageText = pageText
                 .Replace(routesInsertPoint, routes)
                 .Replace(stonehengeAppTitleInsertPoint, _options.Title)
-                .Replace(stonehengeRootPageInsertPoint, startPageName);
+                .Replace(stonehengeRootPageInsertPoint, startPageName)
+                .Replace(stonehengeAppHandleWindowResized, _options.HandleWindowResized.ToString().ToLower());
 
             return pageText;
         }

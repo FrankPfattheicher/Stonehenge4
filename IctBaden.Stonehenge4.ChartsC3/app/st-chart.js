@@ -6,6 +6,7 @@ updated: function () {
 
         this.chart = c3.generate({
             bindto: this.$el,
+            title: this.$props.chartdata.Title,
             data: this.$props.chartdata.Data,
             axis: this.$props.chartdata.Axis
         });

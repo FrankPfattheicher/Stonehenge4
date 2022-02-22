@@ -1,9 +1,9 @@
 using System;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Vue.Test.ViewModelTests
+namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests
 {
     public class NotifyTests : IDisposable
     {

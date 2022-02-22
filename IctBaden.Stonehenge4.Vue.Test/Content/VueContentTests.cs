@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Vue.Test.Content
+namespace IctBaden.Stonehenge.Vue.Test.Content
 {
     /// <summary>
     /// Content that should be available as embedded resource

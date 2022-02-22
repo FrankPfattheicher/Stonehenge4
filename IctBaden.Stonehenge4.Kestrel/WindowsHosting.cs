@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 
-namespace IctBaden.Stonehenge4.Kestrel
+namespace IctBaden.Stonehenge.Kestrel
 {
     public static class WindowsHosting
     {

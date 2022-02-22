@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Resources;
 
-namespace IctBaden.Stonehenge4.Client
+namespace IctBaden.Stonehenge.Client
 {
     public static class UserContentLinks
     {

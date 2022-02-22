@@ -2,7 +2,10 @@
 
 using System.Reflection;
 
-namespace IctBaden.Stonehenge4.Resources
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+namespace IctBaden.Stonehenge.Resources
 {
     internal class AssemblyResource
     {

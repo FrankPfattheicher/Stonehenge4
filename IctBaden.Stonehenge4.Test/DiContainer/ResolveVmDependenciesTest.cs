@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Test.DiContainer
+namespace IctBaden.Stonehenge.Test.DiContainer
 {
     public class ResolveVmDependenciesTest : IDisposable
     {

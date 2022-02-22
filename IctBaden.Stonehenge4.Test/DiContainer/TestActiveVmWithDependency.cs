@@ -1,8 +1,9 @@
-﻿using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+﻿using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
 
-namespace IctBaden.Stonehenge4.Test.DiContainer
+namespace IctBaden.Stonehenge.Test.DiContainer
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class TestActiveVmWithDependency : ActiveViewModel
     {
         public readonly ResolveVmDependenciesTest Test;

@@ -11,9 +11,9 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Web;
 using HttpMultipartParser;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Resources;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -23,7 +23,7 @@ using Microsoft.Net.Http.Headers;
 
 // ReSharper disable ConvertToUsingDeclaration
 
-namespace IctBaden.Stonehenge4.Kestrel.Middleware
+namespace IctBaden.Stonehenge.Kestrel.Middleware
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class StonehengeContent

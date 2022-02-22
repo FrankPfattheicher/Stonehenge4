@@ -3,9 +3,10 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>VueSampleCore</AssemblyName>
     <LangVersion>10</LangVersion>
-    <AssemblyVersion>3.17</AssemblyVersion>
-    <FileVersion>3.17</FileVersion>
+    <AssemblyVersion>4.0.4</AssemblyVersion>
+    <FileVersion>4.0.4</FileVersion>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>IctBaden.Stonehenge.Vue.SampleCore</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="app\cookie.html" />
@@ -27,12 +28,16 @@
     <EmbeddedResource Include="app\forms.html" />
     <EmbeddedResource Include="app\graph.html" />
     <EmbeddedResource Include="app\invisible.html" />
-    <EmbeddedResource Include="app\scripts\c3.js" />
-    <EmbeddedResource Include="app\scripts\d3.js" />
-    <EmbeddedResource Include="app\scripts\d3.v5.js" />
+    <EmbeddedResource Include="app\src\c3.css" />
+    <EmbeddedResource Include="app\src\c3.js" />
+    <EmbeddedResource Include="app\src\c3.min.css" />
+    <EmbeddedResource Include="app\src\c3.min.js" />
+    <EmbeddedResource Include="app\src\d3.js" />
+    <EmbeddedResource Include="app\src\d3.min.js" />
+    <EmbeddedResource Include="app\src\d3.v5.js" />
+    <EmbeddedResource Include="app\src\d3.v5.min.js" />
     <EmbeddedResource Include="app\start.html" />
     <EmbeddedResource Include="app\start_user.js" />
-    <EmbeddedResource Include="app\styles\c3.css" />
     <EmbeddedResource Include="app\tree-node.html" />
     <EmbeddedResource Include="app\tree-node.js" />
     <EmbeddedResource Include="app\tree-view.html" />
@@ -49,13 +54,9 @@
     <None Remove="app\chart.js" />
     <None Remove="app\chart.html" />
     <None Remove="app\c3chart.html" />
-    <EmbeddedResource Include="app\c3chart.html" />
     <None Remove="app\c3chart.js" />
-    <EmbeddedResource Include="app\c3chart.js" />
     <None Remove="app\c3gauge.html" />
-    <EmbeddedResource Include="app\c3gauge.html" />
     <None Remove="app\c3gauge.js" />
-    <EmbeddedResource Include="app\c3gauge.js" />
     <None Remove="app\info.html" />
     <EmbeddedResource Include="app\info.html" />
     <None Remove="app\switch_on.wav" />
@@ -72,8 +73,14 @@
     <EmbeddedResource Include="app\images\switch_off.png" />
     <None Remove="app\images\switch_on.png" />
     <EmbeddedResource Include="app\images\switch_on.png" />
+    <None Remove="app\styles\c3.min.css" />
+    <None Remove="app\scripts\c3.min.js" />
+    <None Remove="app\scripts\d3.min.js" />
+    <None Remove="app\styles\sample.css" />
+    <EmbeddedResource Include="app\styles\sample.css" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IctBaden.Stonehenge4.ChartsC3\IctBaden.Stonehenge4.ChartsC3.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue\IctBaden.Stonehenge4.Vue.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
@@ -92,5 +99,8 @@
     <Content Update="web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\scripts" />
   </ItemGroup>
 </Project>

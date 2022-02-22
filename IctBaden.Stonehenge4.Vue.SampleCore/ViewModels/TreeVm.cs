@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using IctBaden.Stonehenge4.Core;
-using IctBaden.Stonehenge4.ViewModel;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.ViewModel;
+using IctBaden.Stonehenge4.ChartsC3;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once UnusedType.Global
@@ -20,8 +22,8 @@ namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
         public readonly int TotalCountries;
 
         public string SelectedContinent { get; private set; }
-        public C3GaugeData Area { get; private set; }
-        public C3GaugeData Countries { get; private set; }
+        public Gauge Area { get; private init; }
+        public Gauge Countries { get; private init; }
 
         // ReSharper disable once UnusedMember.Global
         public TreeVm(AppSession session) : base (session)
@@ -66,18 +68,18 @@ namespace IctBaden.Stonehenge4.Vue.SampleCore.ViewModels
                 _world.Children.Add(CreateTreeNode(_world, continent));
             }
 
-            Area = new C3GaugeData
+            Area = new Gauge
             {
-                Name = "Area",
+                Label = "Area",
                 Value = 0,
-                MaxValue = TotalArea,
+                Max = TotalArea,
                 Units = "[1000 km²]"
             };
-            Countries = new C3GaugeData
+            Countries = new Gauge
             {
-                Name = "Countries",
+                Label = "Countries",
                 Value = 0,
-                MaxValue = TotalCountries,
+                Max = TotalCountries,
                 Units = ""
             };
 

@@ -1,7 +1,7 @@
 using System.IO;
 using CryptSharp;
 
-namespace IctBaden.Stonehenge4.Core
+namespace IctBaden.Stonehenge.Core
 {
     public class Passwords
     {

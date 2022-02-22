@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge4.Test.Serializer
+namespace IctBaden.Stonehenge.Test.Serializer
 {
     public class HierarchicalClass
     {

@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+// ReSharper disable ClassNeverInstantiated.Global
 
-namespace IctBaden.Stonehenge4.Kestrel.Middleware
+namespace IctBaden.Stonehenge.Kestrel.Middleware
 {
     public class StonehengeAcme
     {

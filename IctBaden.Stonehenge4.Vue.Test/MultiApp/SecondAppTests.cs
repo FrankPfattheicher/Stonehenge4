@@ -1,10 +1,10 @@
 using System;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Vue.TestApp2.ViewModels;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Vue.Test.MultiApp
+namespace IctBaden.Stonehenge.Vue.Test.MultiApp
 {
     public class SecondAppTests : IDisposable
     {

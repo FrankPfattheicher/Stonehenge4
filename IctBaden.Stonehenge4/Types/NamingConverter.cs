@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Text;
+
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.Types
+namespace IctBaden.Stonehenge.Types
 {
     public static class NamingConverter
     {

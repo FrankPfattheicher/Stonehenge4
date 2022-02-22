@@ -1,10 +1,10 @@
 using System;
-using IctBaden.Stonehenge4.Hosting;
-using IctBaden.Stonehenge4.Vue.TestApp2.ViewModels;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Vue.Test.Content
+namespace IctBaden.Stonehenge.Vue.Test.Content
 {
     public class IndexTests : IDisposable
     {
@@ -44,8 +44,8 @@ namespace IctBaden.Stonehenge4.Vue.Test.Content
             }
 
             Assert.NotNull(response);
-            Assert.Contains("<!--IctBaden.Stonehenge4.Vue.index.html-->", response);
-            Assert.DoesNotContain("<!--IctBaden.Stonehenge4.Vue.TestApp2.index.html-->", response);
+            Assert.Contains("<!--IctBaden.Stonehenge.Vue.index.html-->", response);
+            Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response);
         }
 
         [Fact]
@@ -68,8 +68,8 @@ namespace IctBaden.Stonehenge4.Vue.Test.Content
             }
 
             Assert.NotNull(response);
-            Assert.Contains("<!--IctBaden.Stonehenge4.Vue.TestApp2.index.html-->", response);
-            Assert.DoesNotContain("<!--IctBaden.Stonehenge4.Vue.index.html-->", response);
+            Assert.Contains("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response);
+            Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.index.html-->", response);
         }
 
     }

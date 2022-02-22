@@ -1,9 +1,9 @@
 using System;
-using IctBaden.Stonehenge4.Hosting;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace IctBaden.Stonehenge4.Vue.Test.Content
+namespace IctBaden.Stonehenge.Vue.Test.Content
 {
     public class UserContentTests : IDisposable
     {

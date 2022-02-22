@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace IctBaden.Stonehenge4.Vue.Test
+namespace IctBaden.Stonehenge.Vue.Test
 {
     public class VueTestData
     {
@@ -10,6 +10,6 @@ namespace IctBaden.Stonehenge4.Vue.Test
         
         public event Func<string, string> DoAction;
 
-        public string ExecAction(string action) => DoAction?.Invoke(action) ?? null;
+        public string ExecAction(string action) => DoAction?.Invoke(action);
     }
 }

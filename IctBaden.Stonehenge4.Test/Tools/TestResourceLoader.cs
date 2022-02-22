@@ -1,13 +1,11 @@
-﻿using IctBaden.Stonehenge4.Hosting;
+﻿using System.Collections.Generic;
+using System.IO;
+using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Resources;
 
-namespace IctBaden.Stonehenge4.Test.Tools
+namespace IctBaden.Stonehenge.Test.Tools
 {
-    using System.Collections.Generic;
-    using System.IO;
-
-    using Core;
-    using Stonehenge4.Resources;
-
     public class TestResourceLoader : IStonehengeResourceProvider
     {
         private readonly string _content;
@@ -20,6 +18,8 @@ namespace IctBaden.Stonehenge4.Test.Tools
         public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
         {
         }
+
+        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
 
         public void Dispose()
         {
