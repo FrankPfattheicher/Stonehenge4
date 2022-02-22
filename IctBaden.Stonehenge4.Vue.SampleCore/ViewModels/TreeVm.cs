@@ -22,8 +22,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public readonly int TotalCountries;
 
         public string SelectedContinent { get; private set; }
-        public Gauge Area { get; private set; }
-        public Gauge Countries { get; private set; }
+        public Gauge Area { get; private init; }
+        public Gauge Countries { get; private init; }
 
         // ReSharper disable once UnusedMember.Global
         public TreeVm(AppSession session) : base (session)

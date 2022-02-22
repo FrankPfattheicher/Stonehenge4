@@ -3,7 +3,7 @@ namespace IctBaden.Stonehenge4.ChartsC3;
 
 public class Gauge
 {
-    public string Label { get; set; }
+    public string? Label { get; set; }
 
     public bool MinMaxLabels { get; set; } = true;
     
@@ -18,6 +18,6 @@ public class Gauge
     /// For adjusting arc thickness
     /// </summary>
     public int Thickness { get; set; } = 32;
-    public string Units { get; set; }
+    public string? Units { get; set; }
 
 }

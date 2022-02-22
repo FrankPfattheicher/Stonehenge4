@@ -4,8 +4,8 @@
     <IsPackable>false</IsPackable>
     <LangVersion>10</LangVersion>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>IctBaden.Stonehenge.Vue.Test</AssemblyName>
     <RootNamespace>IctBaden.Stonehenge.Vue.Test</RootNamespace>
+    <AssemblyName>IctBaden.Stonehenge.Vue.Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
