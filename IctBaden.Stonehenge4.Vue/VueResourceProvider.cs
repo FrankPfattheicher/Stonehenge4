@@ -28,11 +28,12 @@ namespace IctBaden.Stonehenge.Vue
         public VueResourceProvider(ILogger logger)
         {
             _logger = logger;
-            _assemblies = new List<Assembly>
-            {
-                Assembly.GetEntryAssembly(), 
-                Assembly.GetAssembly(GetType())
-            };
+            // _assemblies = new List<Assembly>
+            // {
+            //     Assembly.GetEntryAssembly(), 
+            //     Assembly.GetAssembly(GetType())
+            // };
+            _assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
             _viewModels = new List<ViewModelInfo>();
         }
         

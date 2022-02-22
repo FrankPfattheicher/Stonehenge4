@@ -19,30 +19,31 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 40;
 
-        public C3Chart ChartData { get; }
+        public Chart TrendChart { get; }
 
         public bool ShowCookies { get; private set; }
-        
+
         public FormsVm(AppSession session) : base(session)
         {
             Range = 20;
 
-            const string column1 = "Temperature";
-            ChartData = new C3Chart(new []{column1});
+            TrendChart = new Chart()
+            {
+                ValueAxes = new ChartAxis[] { new ChartAxis("y") { Label = "°C", Min = 0, Max = 40 } },
+                Series = new[] { new ChartSeries("Temperature") }
+            };
 
-            ChartData.Data.SetData(0, new object [] {10, 12, 15, 14, 13, 20, 22, 25, Range});
-
-            ChartData.Axis["y"] = new ChartAxis { Label = "Value", Min = 0, Max = 40 };
+            TrendChart.SetSeriesData("Temperature", new object[] { 10, 12, 15, 14, 13, 20, 22, 25, Range });
         }
 
         [ActionMethod]
         public void RangeChanged()
         {
-            var newData = ChartData.Data.GetData(0);
+            var newData = TrendChart.Series.First().Data;
             newData = newData.Take(newData.Length - 1)
                 .Concat(new object[] { Range })
                 .ToArray();
-            ChartData.Data.SetData(0, newData);
+            TrendChart.SetSeriesData("Temperature", newData);
         }
 
         [ActionMethod]
@@ -51,6 +52,5 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             ShowCookies = !ShowCookies;
             EnableRoute("cookie", ShowCookies);
         }
-        
     }
 }

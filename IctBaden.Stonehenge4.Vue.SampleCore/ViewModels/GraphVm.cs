@@ -24,7 +24,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         private int _speed;
         private Timer _timer;
         private int _start;
-        
+
         public GraphVm(AppSession session) : base(session)
         {
             _speed = 500;
@@ -32,30 +32,31 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         public override void OnLoad()
         {
-            LineChart = new Chart(this, "line-chart")
+            LineChart = new Chart()
             {
-                Title = "Test"
+                Title = new ChartTitle("Test"),
+                Series = new[] { new ChartSeries("Sinus") }
             };
+            UpdateData();
             
             _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
         }
 
-        private void UpdateGraph()
+        private void UpdateData()
         {
-            var data = new double [50];
+            var data = new object[50];
             for (var ix = 0; ix < 50; ix++)
             {
                 data[ix] = (int)(Math.Sin((ix * 2 + _start) * Math.PI / 36) * 40) + 50;
             }
             _start++;
 
-            LineChart.Series = new[]
-            {
-                new ChartSeries("Sinus")
-                {
-                    Data = data
-                }
-            };
+            LineChart.SetSeriesData("Sinus", data);
+        }
+        
+        private void UpdateGraph()
+        {
+            UpdateData();
             NotifyPropertyChanged(nameof(LineChart));
         }
 
@@ -67,6 +68,5 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             _speed = 600 - _speed;
             _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
         }
-        
     }
 }

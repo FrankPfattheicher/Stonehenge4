@@ -1,65 +1,84 @@
-using System.ComponentModel;
-using System.Globalization;
-using System.Text;
-using IctBaden.Stonehenge.ViewModel;
+using System.Text.Json.Serialization;
 
 namespace IctBaden.Stonehenge4.ChartsC3;
 
 public class Chart
 {
-    public string Title;
-    public ChartAxis CategoryAxis;
+    public ChartTitle? Title;
+    private ChartAxis CategoryAxis;
     public ChartAxis[] ValueAxes;
     public ChartSeries[] Series;
 
-    private string Columns =>
-        string.Join(", ", Series.Select(s => $"[ '{s.Label}', {string.Join(", ", s.Data.Select(d => d.ToString(CultureInfo.InvariantCulture)))} ]"));
 
-    private readonly ActiveViewModel _vm;
-    private readonly string _elementId;
-    private readonly string _elementProperty;
-
-    public Chart(ActiveViewModel vm, string elementId)
+    [JsonPropertyName("columns")]
+    private object[] Columns
     {
-        _vm = vm;
-        _elementId = elementId;
-        _elementProperty = "chart_" + elementId.Replace("-", "_"); 
-        
-        CategoryAxis = new ChartAxis();
-        ValueAxes = Array.Empty<ChartAxis>();
-        Series = Array.Empty<ChartSeries>();
-
-        vm.PropertyChanged += OnVmPropertyChanged;
-    }
-
-    private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == null) return;
-        
-        var property = sender?.GetType().GetProperty(e.PropertyName);
-        if (property?.PropertyType != GetType()) return;
-
-        var instance = property.GetValue(sender) as Chart;
-        if (instance?._elementId != _elementId) return;
-
-        var script = new StringBuilder();
-
-        script.AppendLine($@"if(typeof(this.{_elementProperty}) == 'undefined') {{ this.{_elementProperty} = c3.generate({{");
-        script.AppendLine($@"bindto: document.getElementById('{_elementId}'),");
-
-        if (!string.IsNullOrEmpty(Title))
+        get
         {
-            script.AppendLine($@"title: {{ text: '{Title}' }},");
+            var columns = new List<object>();
+            foreach (var serie in Series)
+            {
+                var colData = new List<object> { serie.Label };
+                colData.AddRange(serie.Data.Select(d => (object)d));
+                columns.Add(colData.ToArray());
+            }
+            return columns.ToArray();
         }
-
-        script.AppendLine($@"data: {{ columns: [ {Columns} ] }},");
-        
-        script.AppendLine($@"}}); }} else {{");
-        script.AppendLine($@"this.{_elementProperty}.load({{ columns: [ {Columns} ] }});");
-        script.AppendLine($@"}}");
-
-        _vm.ExecuteClientScript(script.ToString());
     }
 
- 
+    public Dictionary<string, object> Axis
+    {
+        get
+        {
+            var axis = new Dictionary<string, object>();
+            foreach (var ax in ValueAxes)
+            {
+                axis[ax.Id] = ax;
+            }
+
+            return axis;
+        }
+    }
+
+    /// <summary>
+    /// Use column name as key, axis id as object.
+    /// By default all columns are mapped to axis 'y'
+    /// </summary>
+    public Dictionary<string, object> Axes
+    {
+        get
+        {
+            var axes = new Dictionary<string, object>();
+            foreach (var name in Series.Select(s => s.Label))
+            {
+                axes[name] = "y";
+            }
+
+            return axes;
+        }
+    }
+
+    public Dictionary<string, object?> Data => new Dictionary<string, object?>
+    {
+        ["axes"] = Axes,
+        ["columns"] = Columns
+    };
+
+
+    public Chart()
+    {
+        CategoryAxis = new ChartAxis("x");
+        ValueAxes = new ChartAxis[]
+        {
+            new ChartAxis("y")
+        };
+        Series = Array.Empty<ChartSeries>();
+    }
+
+    public void SetSeriesData(string series, object[] data)
+    {
+        var serie = Series.FirstOrDefault(s => s.Label == series);
+        if (serie != null) serie.Data = data;
+    }
+    
 }

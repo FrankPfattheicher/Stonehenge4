@@ -7,6 +7,10 @@ namespace IctBaden.Stonehenge4.ChartsC3;
 
 public class ChartAxis
 {
+    [JsonIgnore]
+    public string Id { get; set; }
+
+    
     [JsonPropertyName("label")]
     public string Label { get; set; }
     
@@ -14,13 +18,14 @@ public class ChartAxis
     public bool Show { get; set; }
     
     [JsonPropertyName("min")]
-    public int Min { get; set; }
+    public int? Min { get; set; }
     
     [JsonPropertyName("max")]
-    public int Max { get; set; }
+    public int? Max { get; set; }
 
-    public ChartAxis()
+    public ChartAxis(string id)
     {
+        Id = id;
         Label = "";
         Show = true;
         Min = 0;

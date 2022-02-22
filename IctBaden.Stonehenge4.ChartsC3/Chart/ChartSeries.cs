@@ -6,11 +6,11 @@ public class ChartSeries
     
     public int ValueAxis { get; set; }
     
-    public double[] Data { get; set; }
+    public object[] Data { get; set; }
 
     public ChartSeries(string label)
     {
         Label = label;
-        Data = new double[] { 0 };
+        Data = new object[] { 0 };
     }
 }
