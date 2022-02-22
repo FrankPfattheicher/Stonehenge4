@@ -1,4 +1,5 @@
 
+* 4.0.7 - IStonehengeExtension
 * 4.0.6 - ChartsC3 DLL
 * 4.0.5 - Removed version "4" from namespace
 * 4.0.4 - FontAwesome 6.0.0, Bootstrap 5.1.3

@@ -7,13 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IctBaden.Stonehenge4", "Ict
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IctBaden.Stonehenge4.Kestrel", "IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj", "{AE823FE8-F7F0-4FC2-849C-D7C8DEB7FD58}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FACB63A1-3EDF-4A5F-8C4B-94192FA4D9EF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "globals", "globals", "{FACB63A1-3EDF-4A5F-8C4B-94192FA4D9EF}"
 	ProjectSection(SolutionItems) = preProject
-		icon64.png = icon64.png
-		README.md = README.md
 		ReleaseNotes3.md = ReleaseNotes4.md
 		Stonehenge4-AssemblyInfo.cs = Stonehenge4-AssemblyInfo.cs
-		Stonehenge4.nuspec = Stonehenge4.nuspec
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IctBaden.Stonehenge4.Test", "IctBaden.Stonehenge4.Test\IctBaden.Stonehenge4.Test.csproj", "{A0260901-3014-4135-ADC2-5CD56774C9EF}"
@@ -31,6 +28,8 @@ ProjectSection(SolutionItems) = preProject
 	docs\Sample2.png = docs\Sample2.png
 	docs\IIS reverse.md = docs\IIS reverse.md
 	docs\IIS hosted.md = docs\IIS hosted.md
+	README.md = README.md
+	ReleaseNotes4.md = ReleaseNotes4.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.Vue.TestApp2", "IctBaden.Stonehenge4.Vue.TestApp2\IctBaden.Stonehenge4.Vue.TestApp2.csproj", "{EC4663D2-6DF5-40AA-9FF9-191307D6D918}"
@@ -40,6 +39,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.TreeView", "IctBaden.Stonehenge4.TreeView\IctBaden.Stonehenge4.TreeView.csproj", "{151398EB-410E-4CEB-9ED8-87D25554EE2B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.ChartsC3", "IctBaden.Stonehenge4.ChartsC3\IctBaden.Stonehenge4.ChartsC3.csproj", "{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{62ACB6F4-1DBF-429D-8363-8B7111B31BD3}"
+	ProjectSection(SolutionItems) = preProject
+		icon64.png = icon64.png
+		Stonehenge4.nuspec = Stonehenge4.nuspec
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +100,5 @@ Global
 		SolutionGuid = {B9539958-55F6-4A19-87BE-4F17022BBFC2}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E6072E69-0314-435C-9CEB-506063750C42} = {FACB63A1-3EDF-4A5F-8C4B-94192FA4D9EF}
 	EndGlobalSection
 EndGlobal

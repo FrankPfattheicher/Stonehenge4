@@ -48,7 +48,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             Console.WriteLine(@"Using client framework vue");
             var vue = new VueResourceProvider(logger);
             var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
-            loader.AddResourceAssembly(typeof(Chart).Assembly);
+            loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
             loader.Services.AddService(typeof(ILogger), logger);
             
             // Select hosting technology
