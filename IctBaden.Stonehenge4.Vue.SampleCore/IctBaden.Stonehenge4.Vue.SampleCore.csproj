@@ -92,7 +92,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\scripts" />
-  </ItemGroup>
 </Project>

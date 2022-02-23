@@ -46,7 +46,7 @@ namespace IctBaden.Stonehenge.Core
 
         public DateTime ConnectedSince { get; private set; }
         public DateTime LastAccess { get; private set; }
-        public string CurrentRoute { get; private set; }
+        public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
         public string UserIdentity { get; private set; }
@@ -62,10 +62,22 @@ namespace IctBaden.Stonehenge.Core
         public string VerifiedBasicAuth;
         
         private readonly int _eventTimeoutMs;
-        private readonly List<string> _events = new List<string>();
+        private readonly List<string> _events = new();
         private readonly AutoResetEvent _eventRelease = new AutoResetEvent(false);
         private bool _forceUpdate;
+        private readonly List<string> _history = new();
 
+        public string GetBackRoute()
+        {
+            var route = "";
+            if (_history.Count > 1)
+            {
+                route = _history.Skip(1).First();
+                _history.RemoveAt(0);
+            }
+            return route;
+        }
+        
         public bool IsWaitingForEvents { get; private set; }
 
         public bool SecureCookies { get; private set; }
@@ -185,7 +197,7 @@ namespace IctBaden.Stonehenge.Core
                 .SelectMany(p => p.GetViewModelInfos())
                 .FirstOrDefault(vmi => vmi.VmName == typeName);
 
-            CurrentRoute = viewModelInfo?.Route ?? "";
+            _history.Insert(0, viewModelInfo?.Route ?? "");
             
             return ViewModel;
         }

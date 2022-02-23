@@ -37,6 +37,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModels
         {
             _data.StartVmParameters = Session.Parameters;
             _data.StartVmOnLoadCalled++;
+            _data.CurrentRoute = Session.CurrentRoute;
         }
     }
 }
