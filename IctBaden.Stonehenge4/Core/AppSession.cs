@@ -46,7 +46,7 @@ namespace IctBaden.Stonehenge.Core
 
         public DateTime ConnectedSince { get; private set; }
         public DateTime LastAccess { get; private set; }
-        public string CurrentRoute { get; private set; }
+        public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
         public string UserIdentity { get; private set; }
@@ -62,10 +62,22 @@ namespace IctBaden.Stonehenge.Core
         public string VerifiedBasicAuth;
         
         private readonly int _eventTimeoutMs;
-        private readonly List<string> _events = new List<string>();
+        private readonly List<string> _events = new();
         private readonly AutoResetEvent _eventRelease = new AutoResetEvent(false);
         private bool _forceUpdate;
+        private readonly List<string> _history = new();
 
+        public string GetBackRoute()
+        {
+            var route = "";
+            if (_history.Count > 1)
+            {
+                route = _history.Skip(1).First();
+                _history.RemoveAt(0);
+            }
+            return route;
+        }
+        
         public bool IsWaitingForEvents { get; private set; }
 
         public bool SecureCookies { get; private set; }
@@ -179,18 +191,18 @@ namespace IctBaden.Stonehenge.Core
                 return null;
             }
 
-            ViewModel = CreateType(newViewModelType);
+            ViewModel = CreateType($"ViewModel({typeName})", newViewModelType);
 
             var viewModelInfo = _resourceLoader.Providers
                 .SelectMany(p => p.GetViewModelInfos())
                 .FirstOrDefault(vmi => vmi.VmName == typeName);
 
-            CurrentRoute = viewModelInfo?.Route ?? "";
+            _history.Insert(0, viewModelInfo?.Route ?? "");
             
             return ViewModel;
         }
 
-        public object CreateType(Type type)
+        public object CreateType(string context, Type type)
         {
             object instance = null;
             foreach (var constructor in type.GetConstructors())
@@ -214,7 +226,7 @@ namespace IctBaden.Stonehenge.Core
                     else
                     {
                         paramValues[ix] = _resourceLoader.Services.GetService(parameterInfo.ParameterType)
-                                          ?? CreateType(parameterInfo.ParameterType);
+                                          ?? CreateType($"CreateType({type.Name})", parameterInfo.ParameterType);
                     }
                 }
 
@@ -225,7 +237,7 @@ namespace IctBaden.Stonehenge.Core
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError($"AppSession.CreateType({type.Name}): " + ex.Message);
+                    Logger.LogError($"AppSession.CreateType({context}, {type.Name}): " + ex.Message);
                 }
             }
 

@@ -48,7 +48,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IStonehengeAppCommands)));
                 if (appCommandsType != null)
                 {
-                    var appCommands = session.CreateType(appCommandsType);
+                    var appCommands = session.CreateType("AppCommands", appCommandsType);
                     
                     var commandHandler = appCommands?.GetType().GetMethod(commandName);
                     if (commandHandler != null)

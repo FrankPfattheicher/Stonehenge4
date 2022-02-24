@@ -528,6 +528,17 @@ namespace IctBaden.Stonehenge.ViewModel
             Session.Logger.LogInformation("ActiveViewModel.NavigateTo: " + route);
             NavigateToRoute = route.Replace("-", "_");
         }
+        public void NavigateBack()
+        {
+            var route = Session.GetBackRoute();
+            if (string.IsNullOrEmpty(route))
+            {
+                Session.Logger.LogWarning("ActiveViewModel.NavigateBack: No back route");
+                return;
+            }
+            Session.Logger.LogInformation("ActiveViewModel.NavigateBack: " + route);
+            NavigateToRoute = route.Replace("-", "_");
+        }
 
         #endregion
 

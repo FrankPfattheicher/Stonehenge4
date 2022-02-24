@@ -21,5 +21,11 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         {
         }
 
+        [ActionMethod]
+        public new void NavigateBack()
+        {
+            base.NavigateBack();
+        }
+        
     }
 }
