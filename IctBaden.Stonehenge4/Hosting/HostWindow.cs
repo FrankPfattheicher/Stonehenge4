@@ -44,8 +44,13 @@ namespace IctBaden.Stonehenge.Hosting
             }
         }
 
+        public HostWindow()
+            : this("http://localhost", "", DefaultWindowSize)
+        {
+        }
+        
         public HostWindow(string startUrl)
-            : this(startUrl, null, DefaultWindowSize)
+            : this(startUrl, "", DefaultWindowSize)
         {
         }
 

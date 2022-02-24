@@ -19,7 +19,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
         private static void Main()
         {
             Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
