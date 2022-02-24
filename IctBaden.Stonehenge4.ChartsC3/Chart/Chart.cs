@@ -4,11 +4,12 @@ namespace IctBaden.Stonehenge4.ChartsC3;
 
 public class Chart
 {
-    public ChartTitle? Title;
+    public bool ShowPoints = true;
     private ChartAxis CategoryAxis;
     public ChartAxis[] ValueAxes;
     public ChartSeries[] Series;
 
+    public ChartTitle? Title { get; set; }
 
     [JsonPropertyName("columns")]
     private object[] Columns
@@ -25,6 +26,11 @@ public class Chart
             return columns.ToArray();
         }
     }
+
+    public Dictionary<string, object> Point => new()
+    {
+        { "show", ShowPoints }
+    };
 
     public Dictionary<string, object> Axis
     {

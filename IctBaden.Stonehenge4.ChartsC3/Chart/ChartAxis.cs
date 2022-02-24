@@ -21,7 +21,7 @@ public class ChartAxis
     public int? Min { get; set; }
     
     [JsonPropertyName("max")]
-    public int? Max { get; set; }
+    public double Max { get; set; }
 
     public ChartAxis(string id)
     {

@@ -4,6 +4,8 @@ public class ChartSeries
 {
     public string Label { get; set; }
     
+    public ChartDataType Type { get; set; }
+    
     public int ValueAxis { get; set; }
     
     public object[] Data { get; set; }
@@ -11,6 +13,7 @@ public class ChartSeries
     public ChartSeries(string label)
     {
         Label = label;
+        Type = ChartDataType.Line;
         Data = new object[] { 0 };
     }
 }
