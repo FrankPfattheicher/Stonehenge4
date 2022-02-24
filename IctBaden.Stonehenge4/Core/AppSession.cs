@@ -226,7 +226,7 @@ namespace IctBaden.Stonehenge.Core
                     else
                     {
                         paramValues[ix] = _resourceLoader.Services.GetService(parameterInfo.ParameterType)
-                                          ?? CreateType($"CreateType({type.Name})", parameterInfo.ParameterType);
+                                          ?? CreateType($"{context}, CreateType({type.Name})", parameterInfo.ParameterType);
                     }
                 }
 

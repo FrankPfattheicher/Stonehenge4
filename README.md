@@ -6,6 +6,8 @@ See a (very) short [getting started introduction here](docs/GettingStarted.md).
 ## Version 4
 This version is based on .NET 6. 
 
+**Attention:** Microsoft.NET.Sdk.Web is required!
+
 With this version the SimpleHost is removed. Only Kestrel self and IIS hosting is supported.
 Also Newtonsoft.JSON is removed, using NET's own JSON serializer.
 
