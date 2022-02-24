@@ -260,7 +260,7 @@ namespace IctBaden.Stonehenge.Vue.Client
             try
             {
                 var session = new AppSession(resourceLoader, _options);
-                var viewModel = session.CreateType(vmType);
+                var viewModel = session.CreateType("CreateViewModel", vmType);
                 return viewModel;
             }
             catch (Exception ex)

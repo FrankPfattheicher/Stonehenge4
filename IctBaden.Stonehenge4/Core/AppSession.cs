@@ -191,7 +191,7 @@ namespace IctBaden.Stonehenge.Core
                 return null;
             }
 
-            ViewModel = CreateType(newViewModelType);
+            ViewModel = CreateType($"ViewModel({typeName})", newViewModelType);
 
             var viewModelInfo = _resourceLoader.Providers
                 .SelectMany(p => p.GetViewModelInfos())
@@ -202,7 +202,7 @@ namespace IctBaden.Stonehenge.Core
             return ViewModel;
         }
 
-        public object CreateType(Type type)
+        public object CreateType(string context, Type type)
         {
             object instance = null;
             foreach (var constructor in type.GetConstructors())
@@ -226,7 +226,7 @@ namespace IctBaden.Stonehenge.Core
                     else
                     {
                         paramValues[ix] = _resourceLoader.Services.GetService(parameterInfo.ParameterType)
-                                          ?? CreateType(parameterInfo.ParameterType);
+                                          ?? CreateType($"CreateType({type.Name})", parameterInfo.ParameterType);
                     }
                 }
 
@@ -237,7 +237,7 @@ namespace IctBaden.Stonehenge.Core
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError($"AppSession.CreateType({type.Name}): " + ex.Message);
+                    Logger.LogError($"AppSession.CreateType({context}, {type.Name}): " + ex.Message);
                 }
             }
 
