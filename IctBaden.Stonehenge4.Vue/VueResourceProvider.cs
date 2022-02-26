@@ -28,15 +28,17 @@ namespace IctBaden.Stonehenge.Vue
         public VueResourceProvider(ILogger logger)
         {
             _logger = logger;
-            // _assemblies = new List<Assembly>
-            // {
-            //     Assembly.GetEntryAssembly(), 
-            //     Assembly.GetAssembly(GetType())
-            // };
-            _assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            _assemblies = new List<Assembly>
+                {
+                    Assembly.GetEntryAssembly(),
+                    Assembly.GetAssembly(GetType())
+                }
+                .Concat(AppDomain.CurrentDomain.GetAssemblies())
+                .Distinct()
+                .ToList();
             _viewModels = new List<ViewModelInfo>();
         }
-        
+
         public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
         {
             _vueContent = new Dictionary<string, Resource>();
@@ -47,7 +49,7 @@ namespace IctBaden.Stonehenge.Vue
                 _assemblies = resourceLoader.ResourceAssemblies;
                 _appAssembly = resourceLoader.AppAssembly;
             }
-            
+
             var appCreator = new VueAppCreator(_logger, loader, options, _appAssembly, _vueContent);
 
             AddFileSystemContent(options.AppFilesPath);
@@ -85,6 +87,7 @@ namespace IctBaden.Stonehenge.Vue
                         .Select(b => b.Trim())
                         .ToList();
                 }
+
                 info.VmName = null;
                 info.SortIndex = 0;
             }
@@ -95,6 +98,7 @@ namespace IctBaden.Stonehenge.Vue
                 {
                     info.VmName = match.Groups[1].Value;
                 }
+
                 match = ExtractTitle.Match(pageText);
                 if (match.Success)
                 {
@@ -108,6 +112,7 @@ namespace IctBaden.Stonehenge.Vue
                     info.Title = route;
                 }
             }
+
             info.Visible = info.SortIndex > 0;
             info.SortIndex = Math.Abs(info.SortIndex);
 
@@ -115,6 +120,7 @@ namespace IctBaden.Stonehenge.Vue
             {
                 _viewModels.Add(info);
             }
+
             return info;
         }
 
@@ -136,7 +142,8 @@ namespace IctBaden.Stonehenge.Vue
                     var route = resourceId.Replace(".html", string.Empty);
                     var pageText = File.ReadAllText(appFile);
 
-                    var resource = new Resource(route, appFile, ResourceType.Html, pageText, Resource.Cache.OneDay) { ViewModel = GetViewModelInfo(route, pageText) };
+                    var resource = new Resource(route, appFile, ResourceType.Html, pageText, Resource.Cache.OneDay)
+                        { ViewModel = GetViewModelInfo(route, pageText) };
                     _vueContent.Add(resourceId, resource);
                 }
             }
@@ -147,8 +154,10 @@ namespace IctBaden.Stonehenge.Vue
             foreach (var assembly in _assemblies)
             {
                 foreach (var resourceName in assembly.GetManifestResourceNames()
-                  .Where(name => (name.EndsWith(".html")) && !name.Contains("index.html") && !name.Contains("src.app.html"))
-                  .OrderBy(name => name))
+                             .Where(name =>
+                                 (name.EndsWith(".html")) && !name.Contains("index.html") &&
+                                 !name.Contains("src.app.html"))
+                             .OrderBy(name => name))
                 {
                     var resourceId = ResourceLoader.GetShortResourceName(_appAssembly, ".app.", resourceName)
                         .Replace("@", "_")
@@ -165,7 +174,8 @@ namespace IctBaden.Stonehenge.Vue
                         .Replace("._9", ".9");
                     if (_vueContent.ContainsKey(resourceId))
                     {
-                        _logger.LogWarning($"VueResourceProvider.AddResourceContent: Resource with id {resourceId} already exits");
+                        _logger.LogWarning(
+                            $"VueResourceProvider.AddResourceContent: Resource with id {resourceId} already exits");
                         continue;
                     }
 
@@ -183,7 +193,8 @@ namespace IctBaden.Stonehenge.Vue
                         }
                     }
 
-                    var resource = new Resource(route, "res://" + resourceName, ResourceType.Html, pageText, Resource.Cache.Revalidate)
+                    var resource = new Resource(route, "res://" + resourceName, ResourceType.Html, pageText,
+                        Resource.Cache.Revalidate)
                     {
                         ViewModel = GetViewModelInfo(route, pageText)
                     };
@@ -197,13 +208,12 @@ namespace IctBaden.Stonehenge.Vue
         }
 
 
-
-
-
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters,
+            Dictionary<string, string> formData)
         {
             return null;
         }
+
         public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
@@ -211,6 +221,7 @@ namespace IctBaden.Stonehenge.Vue
             {
                 return _vueContent[resourceName];
             }
+
             return null;
         }
     }

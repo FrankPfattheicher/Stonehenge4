@@ -106,9 +106,7 @@
         <EmbeddedResource Include="app\src\bootstrap-reboot.min.css" />
         <EmbeddedResource Include="app\src\bootstrap.css" />
         <None Remove="app\src\bootstrap-vue.css" />
-        <EmbeddedResource Include="app\src\bootstrap-vue.css" />
         <None Remove="app\src\bootstrap-vue.js" />
-        <EmbeddedResource Include="app\src\bootstrap-vue.js" />
         <None Remove="app\src\bootstrap-ext.css" />
         <EmbeddedResource Include="app\src\bootstrap-ext.css" />
         <None Remove="app\src\fa_free_all.min.css" />
@@ -117,6 +115,13 @@
         <EmbeddedResource Include="app\webfonts\fa-v4compatibility.ttf" />
         <None Remove="app\webfonts\fa-v4compatibility.woff2" />
         <EmbeddedResource Include="app\webfonts\fa-v4compatibility.woff2" />
+        <EmbeddedResource Include="app\src\fa_free_all.css" />
+        <EmbeddedResource Include="app\webfonts\fa-brands-400.ttf" />
+        <EmbeddedResource Include="app\webfonts\fa-brands-400.woff2" />
+        <EmbeddedResource Include="app\webfonts\fa-regular-400.ttf" />
+        <EmbeddedResource Include="app\webfonts\fa-regular-400.woff2" />
+        <EmbeddedResource Include="app\webfonts\fa-solid-900.ttf" />
+        <EmbeddedResource Include="app\webfonts\fa-solid-900.woff2" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
@@ -125,17 +130,11 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="app\src\bootstrap-vue.css" />
+      <EmbeddedResource Include="app\src\bootstrap-vue.js" />
       <EmbeddedResource Include="app\src\bootstrap-vue.min.css" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="app\src\fa_free_all.css" />
-    </ItemGroup>
-    <ItemGroup>
-      <EmbeddedResource Include="app\webfonts\fa-brands-400.ttf" />
-      <EmbeddedResource Include="app\webfonts\fa-brands-400.woff2" />
-      <EmbeddedResource Include="app\webfonts\fa-regular-400.ttf" />
-      <EmbeddedResource Include="app\webfonts\fa-regular-400.woff2" />
-      <EmbeddedResource Include="app\webfonts\fa-solid-900.ttf" />
-      <EmbeddedResource Include="app\webfonts\fa-solid-900.woff2" />
+      <EmbeddedResource Include="app\src\bootstrap-vue.min.js" />
     </ItemGroup>
 </Project>
