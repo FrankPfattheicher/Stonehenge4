@@ -8,7 +8,8 @@ updated: function () {
             bindto: this.$el,
             title: this.$props.chartdata.Title,
             data: this.$props.chartdata.Data,
-            axis: this.$props.chartdata.Axis
+            axis: this.$props.chartdata.Axis,
+            point: this.$props.chartdata.Point
         });
     }
 
