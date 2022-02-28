@@ -57,7 +57,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         private void UpdateGraph()
         {
             UpdateData();
-            NotifyPropertyChanged(nameof(LineChart));
+            Session.UpdatePropertyImmediately(nameof(LineChart));
         }
 
 
