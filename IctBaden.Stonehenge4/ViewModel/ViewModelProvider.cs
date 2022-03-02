@@ -223,13 +223,6 @@ namespace IctBaden.Stonehenge.ViewModel
 
             var data = new List<string> {"\"StonehengeContinuePolling\":true"};
             var events = session.CollectEvents();
-            
-            if (vmTypeName != vmType.Name)
-            {
-                // view model changed !
-                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
-            }
-
             if (session.ViewModel is ActiveViewModel activeVm)
             {
                 try
