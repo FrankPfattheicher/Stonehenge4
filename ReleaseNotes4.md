@@ -1,4 +1,5 @@
 
+* 4.0.10 - Added --no-first-run to chrome command line
 * 4.0.9 - Added missing bootstrap-vue.min.js
 * 4.0.8 - NavigateBack
 * 4.0.7 - IStonehengeExtension
