@@ -48,7 +48,7 @@ namespace IctBaden.Stonehenge.Hosting
             : this("http://localhost", "", DefaultWindowSize)
         {
         }
-        
+
         public HostWindow(string startUrl)
             : this(startUrl, "", DefaultWindowSize)
         {
@@ -81,7 +81,7 @@ namespace IctBaden.Stonehenge.Hosting
                 // ignore
             }
         }
-        
+
         /// <summary>
         /// Open a UI window using an installed browser 
         /// in kino mode - if possible.
@@ -124,9 +124,9 @@ namespace IctBaden.Stonehenge.Hosting
             {
                 var pi = new ProcessStartInfo
                 {
-                    FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "google-Xchrome" : "chrome",
+                    FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "google-chrome" : "chrome",
                     CreateNoWindow = true,
-                    Arguments = "--disable-translate --new-window --no-default-browser-check "
+                    Arguments = "--disable-translate --new-window --no-default-browser-check --no-first-run "
                                 + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"",
                     UseShellExecute = Environment.OSVersion.Platform != PlatformID.Unix
                 };
@@ -158,12 +158,13 @@ namespace IctBaden.Stonehenge.Hosting
             try
             {
                 var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "chromium-browser" : "chrome.exe";
-                var parameter =
-                    $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --disable-translate --user-data-dir=\"{path}\"";
+                var parameter = "--disable-translate --new-window --no-default-browser-check --no-first-run "
+                                + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"";
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
                     parameter += " --disable-gpu";
                 }
+
                 _ui = Process.Start(cmd, parameter);
                 if ((_ui == null) || _ui.HasExited)
                 {

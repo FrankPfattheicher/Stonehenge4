@@ -5,10 +5,12 @@ namespace IctBaden.Stonehenge4.ChartsC3;
 public class Chart
 {
     public bool ShowPoints = true;
-    private ChartAxis CategoryAxis;
-    public ChartAxis[] ValueAxes;
+    public ChartCategoryTimeseriesAxis? CategoryAxis = null;
+
+    public ChartValueAxis[] ValueAxes;
     public ChartSeries[] Series;
 
+    // ReSharper disable once UnusedMember.Global
     public ChartTitle? Title { get; set; }
 
     [JsonPropertyName("columns")]
@@ -17,6 +19,12 @@ public class Chart
         get
         {
             var columns = new List<object>();
+            if (CategoryAxis != null)
+            {
+                var colData = new List<object> { CategoryAxis.Id };
+                colData.AddRange(CategoryAxis.Values);
+                columns.Add(colData.ToArray());
+            }
             foreach (var serie in Series)
             {
                 var colData = new List<object> { serie.Label };
@@ -37,11 +45,14 @@ public class Chart
         get
         {
             var axis = new Dictionary<string, object>();
+            if (CategoryAxis != null)
+            {
+                axis[CategoryAxis.Id] = CategoryAxis;
+            }
             foreach (var ax in ValueAxes)
             {
                 axis[ax.Id] = ax;
             }
-
             return axis;
         }
     }
@@ -55,28 +66,38 @@ public class Chart
         get
         {
             var axes = new Dictionary<string, object>();
-            foreach (var name in Series.Select(s => s.Label))
+            foreach (var serie in Series)
             {
-                axes[name] = "y";
+                axes[serie.Label] = serie.ValueAxis;
             }
+
             return axes;
         }
     }
 
-    public Dictionary<string, object?> Data => new Dictionary<string, object?>
+    public Dictionary<string, object> Data
     {
-        ["axes"] = Axes,
-        ["columns"] = Columns
-    };
+        get
+        {
+            var data = new Dictionary<string, object>();
+            if (CategoryAxis != null)
+            {
+                data[CategoryAxis.Id] = CategoryAxis.Id;
+                if (!string.IsNullOrEmpty(CategoryAxis.Format))
+                {
+                    data["xFormat"] = CategoryAxis.Format;
+                }
+            }
+            data["axes"] = Axes;
+            data["columns"] = Columns;
+            return data;
+        }
+    }
 
 
     public Chart()
     {
-        CategoryAxis = new ChartAxis("x");
-        ValueAxes = new[]
-        {
-            new ChartAxis("y")
-        };
+        ValueAxes = new[] { new ChartValueAxis("y") };
         Series = Array.Empty<ChartSeries>();
     }
 
@@ -85,5 +106,4 @@ public class Chart
         var serie = Series.FirstOrDefault(s => s.Label == series);
         if (serie != null) serie.Data = data;
     }
-    
 }
