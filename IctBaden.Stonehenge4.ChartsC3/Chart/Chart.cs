@@ -22,7 +22,7 @@ public class Chart
             if (CategoryAxis != null)
             {
                 var colData = new List<object> { CategoryAxis.Id };
-                colData.AddRange(CategoryAxis.Values);
+                colData.AddRange(CategoryAxis.Values.Cast<object>());
                 columns.Add(colData.ToArray());
             }
             foreach (var serie in Series)
@@ -83,10 +83,6 @@ public class Chart
             if (CategoryAxis != null)
             {
                 data[CategoryAxis.Id] = CategoryAxis.Id;
-                if (!string.IsNullOrEmpty(CategoryAxis.Format))
-                {
-                    data["xFormat"] = CategoryAxis.Format;
-                }
             }
             data["axes"] = Axes;
             data["columns"] = Columns;
