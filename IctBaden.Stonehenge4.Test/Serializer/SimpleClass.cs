@@ -14,11 +14,14 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public string Text { get; set; }
         public DateTime Timestamp { get; set; }
 
+        public TestEnum Wieviel { get; set; }
+        
         public string PrivateText;
 
         public SimpleClass()
         {
             Timestamp = DateTime.Now;
+            Wieviel = TestEnum.Fumpf;
         }
     }
 }

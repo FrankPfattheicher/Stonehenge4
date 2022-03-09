@@ -368,10 +368,9 @@ namespace IctBaden.Stonehenge.ViewModel
                         (pi.PropertyType.Namespace != "System")) // struct
                     {
                         object structObj = activeVm.TryGetMember(propName);
-                        if (structObj != null)
+                        if (structObj != null && !string.IsNullOrEmpty(newValue) && newValue.Trim().StartsWith("{"))
                         {
-                            if (JsonSerializer.Deserialize(newValue, typeof(Dictionary<string, string>)) is
-                                Dictionary<string, string> members)
+                            if (JsonSerializer.Deserialize<Dictionary<string, string>>(newValue) is { } members)
                             {
                                 foreach (var member in members)
                                 {

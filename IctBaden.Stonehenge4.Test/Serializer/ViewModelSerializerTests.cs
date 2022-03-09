@@ -23,11 +23,12 @@ namespace IctBaden.Stonehenge.Test.Serializer
         {
             var model = new SimpleClass
             {
-                Integer = 5,
+                Integer = 7,
                 FloatingPoint = 1.23,
                 Text = "test",
                 PrivateText = "invisible",
-                Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc)
+                Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc),
+                Wieviel = TestEnum.Fumpf
             };
 
             var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(model));
@@ -37,7 +38,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
 
             // public properties - not NULL
             Assert.Contains("Integer", json);
-            Assert.Contains("5", json);
+            Assert.Contains("7", json);
 
             Assert.Contains("Boolean", json);
             Assert.Contains("false", json);
@@ -50,6 +51,9 @@ namespace IctBaden.Stonehenge.Test.Serializer
 
             Assert.Contains("Timestamp", json);
             Assert.Contains("2016-11-11T12:13:14Z", json);
+
+            Assert.Contains("Wieviel", json);
+            Assert.Contains("5", json);
 
             // private fields
             Assert.DoesNotContain("PrivateText", json);
@@ -89,11 +93,12 @@ namespace IctBaden.Stonehenge.Test.Serializer
         {
             var simple = new SimpleClass
             {
-                Integer = 5,
+                Integer = 7,
                 FloatingPoint = 1.23,
                 Text = "test",
                 PrivateText = "invisible",
-                Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc)
+                Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc),
+                Wieviel = TestEnum.Fumpf
             };
 
             var model = new NestedClass
@@ -157,10 +162,11 @@ namespace IctBaden.Stonehenge.Test.Serializer
             var dt = new DateTime(2020, 02, 12, 17, 37, 44, DateTimeKind.Utc);
             var dict = new Dictionary<string, object>
             {
-                { "Integer", 5 },
+                { "Integer", 7 },
                 { "FloatingPoint", 1.23 },
                 { "Text", "test" },
-                { "Timestamp", dt }
+                { "Timestamp", dt },
+                { "Wieviel", 5 }
             };
             
             var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(dict));
@@ -168,10 +174,37 @@ namespace IctBaden.Stonehenge.Test.Serializer
             var obj = JsonSerializer.Deserialize<JsonObject>(json);
             Assert.NotNull(obj);
 
-            Assert.Equal(5, obj["Integer"]?.GetValue<int>());
+            Assert.Equal(7, obj["Integer"]?.GetValue<int>());
             Assert.Equal(1.23, obj["FloatingPoint"]?.GetValue<double>());
             Assert.Equal("test", obj["Text"]?.GetValue<string>());
             Assert.Equal(dt, obj["Timestamp"]?.GetValue<DateTime>());
+            Assert.Equal((int)TestEnum.Fumpf, obj["Wieviel"]?.GetValue<int>());
+        }
+
+        [Fact]
+        public void SimpleSerializationShouldDeserializeAlso()
+        {
+            var dt = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc);
+            var simple = new SimpleClass
+            {
+                Integer = 7,
+                FloatingPoint = 1.23,
+                Text = "test",
+                PrivateText = "invisible",
+                Timestamp = dt,
+                Wieviel = TestEnum.Fumpf
+            };
+           
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(simple));
+ 
+            var obj = JsonSerializer.Deserialize<SimpleClass>(json);
+            Assert.NotNull(obj);
+
+            Assert.Equal(7, obj.Integer);
+            Assert.Equal(1.23, obj.FloatingPoint);
+            Assert.Equal("test", obj.Text);
+            Assert.Equal(dt, obj.Timestamp);
+            Assert.Equal(TestEnum.Fumpf, obj.Wieviel);
         }
 
         
