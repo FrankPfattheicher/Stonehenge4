@@ -146,6 +146,8 @@ namespace IctBaden.Stonehenge.ViewModel
                 _logger.LogError("ViewModelProvider: " + ex.Message);
                 _logger.LogError("ViewModelProvider: " + ex.StackTrace);
 
+                Debugger.Break();
+                
                 var exResource = new Dictionary<string, string>
                 {
                     {"Message", ex.Message},
@@ -346,6 +348,7 @@ namespace IctBaden.Stonehenge.ViewModel
             catch (Exception ex)
             {
                 logger.LogError("DeserializePropertyValue: " + ex.Message);
+                Debugger.Break();
             }
 
             return null;
@@ -412,6 +415,7 @@ namespace IctBaden.Stonehenge.ViewModel
             catch (Exception ex)
             {
                 logger.LogError($"SetPropertyValue({propName}): " + ex.Message);
+                Debugger.Break();
             }
         }
 
@@ -454,6 +458,8 @@ namespace IctBaden.Stonehenge.ViewModel
                 _logger.LogError($"Exception serializing ViewModel({ty.Name}) : {context}");
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
+                
+                Debugger.Break();
 
                 var exResource = new Dictionary<string, string>
                 {

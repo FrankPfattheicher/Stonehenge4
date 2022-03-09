@@ -37,7 +37,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
 
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
-                SessionIdMode = SessionIdModes.Automatic,   // TODO UrlParameterOnly does not work
                 HandleWindowResized = true
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"

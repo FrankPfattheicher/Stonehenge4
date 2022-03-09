@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -71,6 +72,7 @@ namespace IctBaden.Stonehenge.Resources
                 {
                     Logger.LogError($"StonehengeResourceLoader.{loader.GetType().Name}({resourceName}) exception: {ex.Message}" + 
                                      Environment.NewLine + ex.StackTrace);
+                    Debugger.Break();
                 }
                 if (loadedResource != null) break;
             }

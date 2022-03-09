@@ -40,7 +40,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             }
             catch (Exception ex)
             {
-                logger.LogError("Error handling default headers: " + ex.Message);
+                logger?.LogError("Error handling default headers: " + ex.Message);
             }
             await _next.Invoke(context);
         }

@@ -25,8 +25,7 @@ namespace IctBaden.Stonehenge.App
                 {
                     Title = title,
                     ServerPushMode = ServerPushModes.LongPolling,
-                    PollIntervalSec = 5,
-                    SessionIdMode = SessionIdModes.Automatic
+                    PollIntervalSec = 5
                 },
                 Assembly.GetEntryAssembly())
         {

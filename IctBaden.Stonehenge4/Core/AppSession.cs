@@ -27,7 +27,7 @@ namespace IctBaden.Stonehenge.Core
 {
     public class AppSession : INotifyPropertyChanged
     {
-        public string AppInstanceId { get; private set; }
+        public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
 
         public StonehengeHostOptions HostOptions { get; private set; }
         public string HostDomain { get; private set; }
@@ -238,6 +238,7 @@ namespace IctBaden.Stonehenge.Core
                 catch (Exception ex)
                 {
                     Logger.LogError($"AppSession.CreateType({context}, {type.Name}): " + ex.Message);
+                    Debugger.Break();
                 }
             }
 
@@ -364,7 +365,6 @@ namespace IctBaden.Stonehenge.Core
             _resourceLoader = resourceLoader;
             _userData = new Dictionary<string, object>();
             _id = Guid.NewGuid();
-            AppInstanceId = Guid.NewGuid().ToString("N");
             SessionTimeout = TimeSpan.FromMinutes(15);
             Cookies = new Dictionary<string, string>();
             Parameters = new Dictionary<string, string>();
@@ -389,7 +389,7 @@ namespace IctBaden.Stonehenge.Core
             try
             {
                 if (Assembly.GetEntryAssembly() == null) return;
-                var cfg = Path.Combine(StonehengeApplication.BaseDirectory, "Stonehenge4.cfg");
+                var cfg = Path.Combine(StonehengeApplication.BaseDirectory, "Stonehenge.cfg"); // TODO: doc
                 if (!File.Exists(cfg)) return;
 
                 var settings = File.ReadAllLines(cfg);
@@ -517,10 +517,7 @@ namespace IctBaden.Stonehenge.Core
             }
         }
 
-        public string GetResourceETag(string path)
-        {
-            return AppInstanceId + path.GetHashCode().ToString("x8");
-        }
+        public static string GetResourceETag(string path) => AppInstanceId + path.GetHashCode().ToString("x8");
 
         public override string ToString()
         {
