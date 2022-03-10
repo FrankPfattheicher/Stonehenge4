@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -11,6 +12,7 @@ using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
@@ -57,7 +59,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
         // ReSharper disable once UnusedMember.Global
         public async Task Invoke(HttpContext context)
         {
-            var logger = context.Items["stonehenge.Logger"] as ILogger;
+            var logger = (ILogger)context.Items["stonehenge.Logger"];
             
             var timer = new Stopwatch();
             timer.Start();
@@ -75,20 +77,38 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             var appSessions = context.Items["stonehenge.AppSessions"] as List<AppSession>;
             Debug.Assert(appSessions != null);
 
-            // URL id has priority
-            var stonehengeId = context.Request.Query["stonehenge-id"];
+            // Header id has first priority
+            var stonehengeId = context.Request.Headers["X-Stonehenge-Id"].FirstOrDefault();
+            if (string.IsNullOrEmpty(stonehengeId))
+            {
+                // URL id has second priority
+                stonehengeId = context.Request.Query["stonehenge-id"];
+            }
+            if (string.IsNullOrEmpty(stonehengeId))
+            {
+                // see referer
+                var referer = context.Request.Headers["Referer"].FirstOrDefault() ?? "";
+                stonehengeId = new Regex("stonehenge-id=([a-f0-9A-F]+)")
+                    .Matches(referer)
+                    .Select(m => m.Groups[1].Value)
+                    .FirstOrDefault();
+            }
             if (string.IsNullOrEmpty(stonehengeId))
             {
                 var cookie = context.Request.Headers.FirstOrDefault(h => h.Key == "Cookie");
                 if (!string.IsNullOrEmpty(cookie.Value.ToString()))
                 {
                     // workaround for double stonehenge-id values in cookie - take the last one
-                    var ids = new Regex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)
+                    var ids = new Regex("stonehenge-id=([a-f0-9A-F]+)")
                         .Matches(cookie.Value.ToString())
                         .Select(m => m.Groups[1].Value).ToArray();
+                    if (ids.Length > 1)
+                    {
+                        logger.LogError("Multiple Stonehenge Ids in cookie: " + string.Join(", ", ids));
+                    }
                     if (ids.Length > 0)
                     {
-                        stonehengeId = ids.FirstOrDefault(id => appSessions.Any(s => s.Id == id));
+                        stonehengeId = ids.LastOrDefault(id => appSessions.Any(s => s.Id == id));
                     }
                 }
             }
@@ -99,36 +119,37 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             var session = appSessions.FirstOrDefault(s => s.Id == stonehengeId);
             if (session == null)
             {
-                // session not found - redirect to new session
+                // session not found
                 var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
-                session = NewSession(logger, appSessions, context, resourceLoader);
-
-                if (session.HostOptions.AllowCookies)
+                var directoryName = Path.GetDirectoryName(path) ?? "/";
+                var resource = resourceLoader?.Get(null, path.Substring(1).Replace("/", "."), new Dictionary<string, string>());
+                if (directoryName.Length > 1 && resource == null && stonehengeId != null)
                 {
-                    context.Response.Headers.Add("Set-Cookie",
-                        session.SecureCookies
-                            ? new[] {"stonehenge-id=" + session.Id, "Secure"}
-                            : new[] {"stonehenge-id=" + session.Id});
+                    logger.LogTrace($"Kestrel[{stonehengeId}] Abort {context.Request.Method} {path}{context.Request.QueryString}");
+                    return;
                 }
-
-                var redirectUrl = "/index.html";
-                if (session.HostOptions.AddUrlSessionParameter)
+                if (directoryName.Length <= 1 || resource == null)
                 {
+                    // redirect to new session
+                    session = NewSession(logger, appSessions, context, resourceLoader);
+                    context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
+
+                    var redirectUrl = "/index.html";
                     var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
                     query["stonehenge-id"] = session.Id;
                     redirectUrl += $"?{query}";
+
+                    context.Response.Redirect(redirectUrl);
+
+                    var remoteIp = context.Connection.RemoteIpAddress;
+                    var remotePort = context.Connection.RemotePort;
+                    logger.LogTrace($"Kestrel[{stonehengeId}] From IP {remoteIp}:{remotePort} - redirect to {session.Id}");
+                    return;
                 }
-
-                context.Response.Redirect(redirectUrl);
-
-                var remoteIp = context.Connection.RemoteIpAddress;
-                var remotePort = context.Connection.RemotePort;
-                logger.LogTrace($"Kestrel[{stonehengeId}] From IP {remoteIp}:{remotePort} - redirect to {session.Id}");
-                return;
             }
 
             var etag = context.Request.Headers["If-None-Match"];
-            if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) && etag == session.GetResourceETag(path))
+            if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) && etag == AppSession.GetResourceETag(path))
             {
                 logger.LogTrace("ETag match");
                 context.Response.StatusCode = (int) HttpStatusCode.NotModified;

@@ -27,14 +27,10 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files\dotnet\sdk\NuGetFallbackFolder\netstandard.library\2.0.1\build\netstandard2.0\ref\netstandard.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=124ef8ed_002Dfcca_002D472a_002Db7af_002D02b12b4d6e9f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=124ef8ed_002Dfcca_002D472a_002Db7af_002D02b12b4d6e9f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3b36f237_002D58df_002D4fec_002D809e_002D6d91358a033a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="InitialRouteShouldBeStart" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::5077AA01-D943-4879-83A3-14EF6E377EB4::net6.0::IctBaden.Stonehenge.Vue.Test.SessionTests.InitialRouteTests.InitialRouteShouldBeStart&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	

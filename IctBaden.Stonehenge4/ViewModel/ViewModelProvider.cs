@@ -146,6 +146,8 @@ namespace IctBaden.Stonehenge.ViewModel
                 _logger.LogError("ViewModelProvider: " + ex.Message);
                 _logger.LogError("ViewModelProvider: " + ex.StackTrace);
 
+                Debugger.Break();
+                
                 var exResource = new Dictionary<string, string>
                 {
                     {"Message", ex.Message},
@@ -223,13 +225,6 @@ namespace IctBaden.Stonehenge.ViewModel
 
             var data = new List<string> {"\"StonehengeContinuePolling\":true"};
             var events = session.CollectEvents();
-            
-            if (vmTypeName != vmType.Name)
-            {
-                // view model changed !
-                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
-            }
-
             if (session.ViewModel is ActiveViewModel activeVm)
             {
                 try
@@ -353,6 +348,7 @@ namespace IctBaden.Stonehenge.ViewModel
             catch (Exception ex)
             {
                 logger.LogError("DeserializePropertyValue: " + ex.Message);
+                Debugger.Break();
             }
 
             return null;
@@ -372,10 +368,9 @@ namespace IctBaden.Stonehenge.ViewModel
                         (pi.PropertyType.Namespace != "System")) // struct
                     {
                         object structObj = activeVm.TryGetMember(propName);
-                        if (structObj != null)
+                        if (structObj != null && !string.IsNullOrEmpty(newValue) && newValue.Trim().StartsWith("{"))
                         {
-                            if (JsonSerializer.Deserialize(newValue, typeof(Dictionary<string, string>)) is
-                                Dictionary<string, string> members)
+                            if (JsonSerializer.Deserialize<Dictionary<string, string>>(newValue) is { } members)
                             {
                                 foreach (var member in members)
                                 {
@@ -419,6 +414,7 @@ namespace IctBaden.Stonehenge.ViewModel
             catch (Exception ex)
             {
                 logger.LogError($"SetPropertyValue({propName}): " + ex.Message);
+                Debugger.Break();
             }
         }
 
@@ -461,6 +457,8 @@ namespace IctBaden.Stonehenge.ViewModel
                 _logger.LogError($"Exception serializing ViewModel({ty.Name}) : {context}");
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
+                
+                Debugger.Break();
 
                 var exResource = new Dictionary<string, string>
                 {

@@ -29,11 +29,6 @@ namespace IctBaden.Stonehenge.Hosting
         public string AppFilesPath { get; set; }
 
         /// <summary>
-        /// Specifies how session id is transported.
-        /// </summary>
-        public SessionIdModes SessionIdMode { get; set; } = SessionIdModes.Automatic;
-
-        /// <summary>
         /// Method to use for server initiated data transfer to the client.
         /// </summary>
         public ServerPushModes ServerPushMode { get; set; } = ServerPushModes.Automatic;
@@ -49,7 +44,7 @@ namespace IctBaden.Stonehenge.Hosting
         /// Forth NTLM authentication using HttpSys.
         /// (Windows host only)
         /// </summary>
-        public bool UseNtlmAuthentication { get; set; } = false;
+        public bool UseNtlmAuthentication { get; set; }
         
         /// <summary>
         /// Internally check basic Authentication.
@@ -57,7 +52,7 @@ namespace IctBaden.Stonehenge.Hosting
         /// Encoding apache specific salted MD5 (insecure but common).
         /// htpasswd -nbm myName myPassword
         /// </summary>
-        public bool UseBasicAuth { get; set; } = false;
+        public bool UseBasicAuth { get; set; }
 
         /// <summary>
         /// Path of the pfx certificate to be used with Kestrel.
@@ -78,12 +73,12 @@ namespace IctBaden.Stonehenge.Hosting
         ///     Pragma: no-cache
         ///     Expires: 0 
         /// </summary>
-        public bool DisableClientCache { get; set; } = false;
+        public bool DisableClientCache { get; set; }
         
         /// <summary>
         /// Enable firing WindowResized AppCommand  
         /// </summary>
-        public bool HandleWindowResized { get; set; } = false;
+        public bool HandleWindowResized { get; set; }
         
         public StonehengeHostOptions()
         {
@@ -98,15 +93,12 @@ namespace IctBaden.Stonehenge.Hosting
         /// <returns></returns>
         public int GetPollDelayMs()
         {
-            if (ServerPushMode == ServerPushModes.LongPolling)
+            return ServerPushMode switch
             {
-                return 100;
-            }
-            if (ServerPushMode == ServerPushModes.ShortPolling)
-            {
-                if(PollIntervalSec > 1) return (PollIntervalSec * 1000) + 100;
-            }
-            return 5000;
+                ServerPushModes.LongPolling => 100,
+                ServerPushModes.ShortPolling when PollIntervalSec > 1 => (PollIntervalSec * 1000) + 100,
+                _ => 5000
+            };
         }
         /// <summary>
         /// Timeout the server max waits to respond to event query
@@ -122,9 +114,6 @@ namespace IctBaden.Stonehenge.Hosting
             }
             return 100;
         }
-        
-        public bool AllowCookies => SessionIdMode != SessionIdModes.UrlParameterOnly;
-        public bool AddUrlSessionParameter => SessionIdMode != SessionIdModes.CookiesOnly;
 
     }
 }

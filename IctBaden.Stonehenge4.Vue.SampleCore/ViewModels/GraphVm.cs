@@ -14,7 +14,7 @@ using IctBaden.Stonehenge4.ChartsC3;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
-    public class GraphVm : ActiveViewModel
+    public class GraphVm : ActiveViewModel, IDisposable
     {
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 100;
@@ -40,6 +40,11 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             UpdateData();
             
             _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
 
         private void UpdateData()
@@ -68,5 +73,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             _speed = 600 - _speed;
             _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
         }
+
     }
 }

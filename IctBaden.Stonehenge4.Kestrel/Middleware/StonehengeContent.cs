@@ -222,7 +222,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                         case Resource.Cache.Revalidate:
                             context.Response.Headers.Add("Cache-Control",
                                 new[] {"max-age=3600", "must-revalidate", "proxy-revalidate"});
-                            var etag = appSession?.GetResourceETag(path);
+                            var etag = AppSession.GetResourceETag(path);
                             context.Response.Headers.Add(HeaderNames.ETag, new StringValues(etag));
                             break;
                         case Resource.Cache.OneDay:
@@ -231,14 +231,19 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     }
                 }
 
-                if (appSession is {StonehengeCookieSet: false} && appSession.HostOptions.AllowCookies)
-                {
-                    context.Response.Headers.Add("Set-Cookie",
-                        appSession.SecureCookies
-                            ? new[] {"stonehenge-id=" + appSession.Id, "Secure"}
-                            : new[] {"stonehenge-id=" + appSession.Id});
-                }
+                // if (appSession is {StonehengeCookieSet: false} && appSession.HostOptions.AllowCookies)
+                // {
+                //     context.Response.Headers.Add("Set-Cookie",
+                //         appSession.SecureCookies
+                //             ? new[] {"stonehenge-id=" + appSession.Id, "Secure"}
+                //             : new[] {"stonehenge-id=" + appSession.Id});
+                // }
 
+                if (appSession != null)
+                {
+                    context.Response.Headers.Add("X-Stonehenge-Id", new[] { appSession.Id });
+                }
+                
                 if (content.IsNoContent)
                 {
                     context.Response.StatusCode = (int) HttpStatusCode.NoContent;
