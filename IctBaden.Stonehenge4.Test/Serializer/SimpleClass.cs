@@ -13,6 +13,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public double FloatingPoint { get; set; }
         public string Text { get; set; }
         public DateTime Timestamp { get; set; }
+        public DateTimeOffset Timeoffset { get; set; }
 
         public TestEnum Wieviel { get; set; }
         
@@ -21,6 +22,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public SimpleClass()
         {
             Timestamp = DateTime.Now;
+            Timeoffset = DateTimeOffset.Now;
             Wieviel = TestEnum.Fumpf;
         }
     }
