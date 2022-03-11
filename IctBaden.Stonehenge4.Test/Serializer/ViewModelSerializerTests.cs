@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
@@ -98,6 +99,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
                 Text = "test",
                 PrivateText = "invisible",
                 Timestamp = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc),
+                Timeoffset = new DateTimeOffset(2016, 11, 11, 12, 13, 14, TimeSpan.Zero),
                 Wieviel = TestEnum.Fumpf
             };
 
@@ -116,12 +118,21 @@ namespace IctBaden.Stonehenge.Test.Serializer
 
             var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(model));
 
-            var obj = JsonSerializer.Deserialize<object>(json);
+            var obj = JsonSerializer.Deserialize<SimpleClass>(json);
             Assert.NotNull(obj);
 
             Assert.StartsWith("{", json);
             Assert.EndsWith("}", json);
         }
+
+        [Fact]
+        public void EnumPropertySerializedAsStringDeserializationShouldWork()
+        {
+            var json = "{ \"Wieviel\": \"5\" }";
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass));
+            Assert.NotNull(obj);
+        }
+        
 
         [Fact]
         public void HierarchicalClassesSerializationShouldWork()
@@ -160,12 +171,15 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public void DictionaryStringObjectSerializationShouldBeDoneAsObjects()
         {
             var dt = new DateTime(2020, 02, 12, 17, 37, 44, DateTimeKind.Utc);
+            var dto = new DateTimeOffset(2016, 11, 11, 12, 13, 14, TimeSpan.Zero);
+
             var dict = new Dictionary<string, object>
             {
                 { "Integer", 7 },
                 { "FloatingPoint", 1.23 },
                 { "Text", "test" },
                 { "Timestamp", dt },
+                { "Timeoffset", dto },
                 { "Wieviel", 5 }
             };
             
@@ -178,6 +192,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
             Assert.Equal(1.23, obj["FloatingPoint"]?.GetValue<double>());
             Assert.Equal("test", obj["Text"]?.GetValue<string>());
             Assert.Equal(dt, obj["Timestamp"]?.GetValue<DateTime>());
+            Assert.Equal(dto, obj["Timeoffset"]?.GetValue<DateTimeOffset>());
             Assert.Equal((int)TestEnum.Fumpf, obj["Wieviel"]?.GetValue<int>());
         }
 
@@ -185,6 +200,8 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public void SimpleSerializationShouldDeserializeAlso()
         {
             var dt = new DateTime(2016, 11, 11, 12, 13, 14, DateTimeKind.Utc);
+            var dto = new DateTimeOffset(2016, 11, 11, 12, 13, 14, TimeSpan.Zero);
+
             var simple = new SimpleClass
             {
                 Integer = 7,
@@ -192,6 +209,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
                 Text = "test",
                 PrivateText = "invisible",
                 Timestamp = dt,
+                Timeoffset = dto,
                 Wieviel = TestEnum.Fumpf
             };
            
@@ -204,6 +222,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
             Assert.Equal(1.23, obj.FloatingPoint);
             Assert.Equal("test", obj.Text);
             Assert.Equal(dt, obj.Timestamp);
+            Assert.Equal(dto, obj.Timeoffset);
             Assert.Equal(TestEnum.Fumpf, obj.Wieviel);
         }
 

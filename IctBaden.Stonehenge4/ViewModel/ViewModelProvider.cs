@@ -324,8 +324,25 @@ namespace IctBaden.Stonehenge.ViewModel
             return data;
         }
 
-
-        private static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
+        public static object DeserializeStructValue(ILogger logger, string structValue, Type structType)
+        {
+            var structObj = Activator.CreateInstance(structType);
+            if (JsonSerializer.Deserialize<Dictionary<string, string>>(structValue) is { } members)
+            {
+                foreach (var member in members)
+                {
+                    var mProp = structType.GetProperty(member.Key);
+                    if (mProp != null)
+                    {
+                        var val = DeserializePropertyValue(logger, member.Value, mProp.PropertyType);
+                        mProp.SetValue(structObj, val, null);
+                    }
+                }
+            }
+            return structObj;
+        }
+        
+        public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
         {
             try
             {
@@ -339,6 +356,10 @@ namespace IctBaden.Stonehenge.ViewModel
                         return dt;
                     if (DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                         return dt;
+                }
+                if (propType.IsClass)
+                {
+                    return DeserializeStructValue(logger, propValue, propType);
                 }
                 if (propValue != null)
                 {

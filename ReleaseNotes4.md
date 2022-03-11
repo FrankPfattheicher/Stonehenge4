@@ -1,4 +1,5 @@
 
+* 4.0.12 - ViewModelProvider added DeserializeStructValue
 * 4.0.11 - Cookies replaced by X-Stonehenge-Id header, option removed
 * 4.0.10 - Added --no-first-run to chrome command line
 * 4.0.9 - Added missing bootstrap-vue.min.js
