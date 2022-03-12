@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge.Core;
@@ -324,22 +325,28 @@ namespace IctBaden.Stonehenge.ViewModel
             return data;
         }
 
-        public static object DeserializeStructValue(ILogger logger, string structValue, Type structType)
+        public static void DeserializeStructValue(ILogger logger, ref object structObj, string structValue, Type structType)
         {
-            var structObj = Activator.CreateInstance(structType);
-            if (JsonSerializer.Deserialize<Dictionary<string, string>>(structValue) is { } members)
+            try
             {
-                foreach (var member in members)
+                if (JsonSerializer.Deserialize<JsonObject>(structValue) is { } members)
                 {
-                    var mProp = structType.GetProperty(member.Key);
-                    if (mProp != null)
+                    foreach (var member in members)
                     {
-                        var val = DeserializePropertyValue(logger, member.Value, mProp.PropertyType);
-                        mProp.SetValue(structObj, val, null);
+                        var mProp = structType.GetProperty(member.Key);
+                        if (mProp != null && member.Value != null)
+                        {
+                            var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
+                            mProp.SetValue(structObj, val, null);
+                        }
                     }
                 }
             }
-            return structObj;
+            catch (Exception ex)
+            {
+                logger.LogError("DeserializeStructValue: " + ex.Message);
+                Debugger.Break();
+            }
         }
         
         public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
@@ -359,7 +366,12 @@ namespace IctBaden.Stonehenge.ViewModel
                 }
                 if (propType.IsClass)
                 {
-                    return DeserializeStructValue(logger, propValue, propType);
+                    var structObj = Activator.CreateInstance(propType);
+                    if (structObj != null)
+                    {
+                        DeserializeStructValue(logger, ref structObj, propValue, propType);
+                    }
+                    return structObj;
                 }
                 if (propValue != null)
                 {
@@ -388,22 +400,10 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (pi.PropertyType.IsValueType && !pi.PropertyType.IsPrimitive &&
                         (pi.PropertyType.Namespace != "System")) // struct
                     {
-                        object structObj = activeVm.TryGetMember(propName);
+                        var structObj = activeVm.TryGetMember(propName);
                         if (structObj != null && !string.IsNullOrEmpty(newValue) && newValue.Trim().StartsWith("{"))
                         {
-                            if (JsonSerializer.Deserialize<Dictionary<string, string>>(newValue) is { } members)
-                            {
-                                foreach (var member in members)
-                                {
-                                    var mProp = pi.PropertyType.GetProperty(member.Key);
-                                    if (mProp != null)
-                                    {
-                                        var val = DeserializePropertyValue(logger, member.Value, mProp.PropertyType);
-                                        mProp.SetValue(structObj, val, null);
-                                    }
-                                }
-                            }
-
+                            DeserializeStructValue(logger, ref structObj, newValue, pi.PropertyType);
                             activeVm.TrySetMember(propName, structObj);
                         }
                     }
