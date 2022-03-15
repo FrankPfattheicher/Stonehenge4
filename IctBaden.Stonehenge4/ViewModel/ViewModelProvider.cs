@@ -364,7 +364,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                         return dt;
                 }
-                if (propType.IsClass)
+                if (propType.IsClass && !propType.IsArray)
                 {
                     var structObj = Activator.CreateInstance(propType);
                     if (structObj != null)
