@@ -1,4 +1,5 @@
 
+* 4.0.15 - Handle empty struct and DateTimeOffset deserialization
 * 4.0.14 - Fix array property deserialization
 * 4.0.13 - Generalize DeserializeStructValue using JsonObject
 * 4.0.12 - ViewModelProvider added DeserializeStructValue
