@@ -325,10 +325,17 @@ namespace IctBaden.Stonehenge.ViewModel
             return data;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public static void DeserializeStructValue(ILogger logger, ref object structObj, string structValue, Type structType)
         {
             try
             {
+                if (string.IsNullOrEmpty(structValue))
+                {
+                    structObj = null;
+                    return;
+                }
+                
                 if (JsonSerializer.Deserialize<JsonObject>(structValue) is { } members)
                 {
                     foreach (var member in members)
@@ -349,6 +356,7 @@ namespace IctBaden.Stonehenge.ViewModel
             }
         }
         
+        // ReSharper disable once MemberCanBePrivate.Global
         public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
         {
             try
@@ -362,6 +370,13 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (DateTime.TryParse(propValue, out var dt))
                         return dt;
                     if (DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                        return dt;
+                }
+                if (propType == typeof(DateTimeOffset))
+                {
+                    if (DateTimeOffset.TryParse(propValue, out var dt))
+                        return dt;
+                    if (DateTimeOffset.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                         return dt;
                 }
                 if (propType.IsClass && !propType.IsArray)
