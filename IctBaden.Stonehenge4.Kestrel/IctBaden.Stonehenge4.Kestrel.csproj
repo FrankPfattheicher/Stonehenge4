@@ -37,10 +37,4 @@
     <None Remove="stonehenge.pfx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
-      <HintPath>..\..\..\..\..\snap\dotnet-sdk\147\shared\Microsoft.AspNetCore.App\6.0.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
