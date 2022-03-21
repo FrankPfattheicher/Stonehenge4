@@ -8,7 +8,7 @@ using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace IctBaden.Stonehenge.TreeView.ViewModels
+namespace IctBaden.Stonehenge.Extension.TreeViewModels
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once UnusedType.Global

@@ -4,6 +4,13 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>IctBaden.Stonehenge.Extension</RootNamespace>
+        <PackageVersion>1.0.1</PackageVersion>
+        <Authors>Frank Pfattheicher</Authors>
+        <Copyright>©2022 ICT Baden GmbH</Copyright>
+        <AssemblyVersion>1.0.1</AssemblyVersion>
+        <FileVersion>1.0.1</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,9 +20,12 @@
     <ItemGroup>
       <EmbeddedResource Include="app\app-dialog.html" />
       <None Remove="app\stypes\app-dialog.css" />
+      <EmbeddedResource Include="app\app-message-box.js" />
       <EmbeddedResource Include="app\src\app-dialog.css" />
       <None Remove="app\app-message-box.html" />
       <EmbeddedResource Include="app\app-message-box.html" />
+      <None Remove="app\app-dialog.js" />
+      <EmbeddedResource Include="app\app-dialog.js" />
     </ItemGroup>
 
 </Project>

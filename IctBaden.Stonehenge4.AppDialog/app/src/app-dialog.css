@@ -19,6 +19,8 @@
     padding-left: 1.5em;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
+    pointer-events: all;
+    cursor: move;
 }
 
 .app-dlg-close {

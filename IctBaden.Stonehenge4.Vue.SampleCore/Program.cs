@@ -4,8 +4,7 @@ using System.Threading;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
-using IctBaden.Stonehenge4.AppDialog;
-using IctBaden.Stonehenge4.ChartsC3;
+using IctBaden.Stonehenge.Extension;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore

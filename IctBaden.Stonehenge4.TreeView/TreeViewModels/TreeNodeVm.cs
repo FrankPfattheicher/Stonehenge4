@@ -9,7 +9,7 @@ using System.Linq;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge.TreeView.ViewModels
+namespace IctBaden.Stonehenge.Extension.TreeViewModels
 {
     public class TreeNodeVm
     {
