@@ -46,6 +46,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{62ACB6F4
 		Stonehenge4.nuspec = Stonehenge4.nuspec
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.AppDialog", "IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj", "{226CD4EF-21A7-4760-A750-CB4C3B01BB28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DF8625E-D17E-4CBA-9429-8E22A3CA60C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226CD4EF-21A7-4760-A750-CB4C3B01BB28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226CD4EF-21A7-4760-A750-CB4C3B01BB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226CD4EF-21A7-4760-A750-CB4C3B01BB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226CD4EF-21A7-4760-A750-CB4C3B01BB28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

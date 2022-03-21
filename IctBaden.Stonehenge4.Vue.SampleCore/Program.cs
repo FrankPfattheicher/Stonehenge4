@@ -4,6 +4,7 @@ using System.Threading;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge4.AppDialog;
 using IctBaden.Stonehenge4.ChartsC3;
 using Microsoft.Extensions.Logging;
 
@@ -47,6 +48,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             var vue = new VueResourceProvider(logger);
             var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
             loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
+            loader.AddResourceAssembly(typeof(AppDialog).Assembly);
             loader.Services.AddService(typeof(ILogger), logger);
             
             // Select hosting technology
