@@ -1,6 +1,7 @@
 
 .app-dialog {
     position: absolute;
+    z-index: 1000;
     top: 4em;
     left: 5em;
     min-width: 60%;
@@ -8,7 +9,8 @@
     border: 1px solid darkslategray;
     max-height: 90vh;
     overflow: auto;
-    box-shadow: 0 4px 20px 5px darkslategray;
+    box-shadow: 0 4px 20px 5px black;
+    padding: 0;
 }
 .app-dlg-caption {
     color: white;
