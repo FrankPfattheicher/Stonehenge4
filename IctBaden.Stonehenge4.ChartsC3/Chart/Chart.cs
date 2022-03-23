@@ -1,16 +1,44 @@
 using System.Text.Json.Serialization;
+using IctBaden.Stonehenge4.ChartsC3;
+// ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge4.ChartsC3;
+// ReSharper disable MemberCanBePrivate.Global
+
+namespace IctBaden.Stonehenge.Extension;
 
 public class Chart
 {
+    /// <summary>
+    /// Chart width in pixel
+    /// </summary>
+    public int? Width = null;
+    /// <summary>
+    /// Chart height in pixel
+    /// </summary>
+    public int? Height = null;
+    /// <summary>
+    /// Show series points
+    /// </summary>
     public bool ShowPoints = true;
+    /// <summary>
+    /// Define the chart's category axis
+    /// </summary>
     public ChartCategoryTimeseriesAxis? CategoryAxis = null;
-
+    /// <summary>
+    /// Define the chart's values axes (maximum two)
+    /// </summary>
     public ChartValueAxis[] ValueAxes;
+    /// <summary>
+    /// The chart's data series
+    /// </summary>
     public ChartSeries[] Series;
-
-    // ReSharper disable once UnusedMember.Global
+    /// <summary>
+    /// Define chart's additionally grid lines
+    /// </summary>
+    public ChartGridLine[] GridLines;
+    /// <summary>
+    /// Define chart's title
+    /// </summary>
     public ChartTitle? Title { get; set; }
 
     [JsonPropertyName("columns")]
@@ -39,6 +67,17 @@ public class Chart
     {
         { "show", ShowPoints }
     };
+    
+    public Dictionary<string, object> Size
+    {
+        get
+        {
+            var size = new Dictionary<string, object>();
+            if (Width != null) size["width"] = Width;
+            if (Height != null) size["height"] = Height;
+            return size; 
+        }
+    }
 
     public Dictionary<string, object> Axis
     {
@@ -54,6 +93,23 @@ public class Chart
                 axis[ax.Id] = ax;
             }
             return axis;
+        }
+    }
+
+    public Dictionary<string, Dictionary<string, object>> Grid
+    {
+        get
+        {
+            var gridLines = new Dictionary<string, Dictionary<string, object>>();
+            foreach (var chartGridLines in GridLines.GroupBy(g => g.Axis))
+            {
+                var lines = new Dictionary<string, object>
+                {
+                    { "lines", chartGridLines.ToArray() }
+                };
+                gridLines.Add(chartGridLines.Key, lines);
+            }
+            return gridLines;
         }
     }
 
@@ -95,6 +151,7 @@ public class Chart
     {
         ValueAxes = new[] { new ChartValueAxis("y") };
         Series = Array.Empty<ChartSeries>();
+        GridLines = Array.Empty<ChartGridLine>();
     }
 
     public void SetSeriesData(string series, object[] data)

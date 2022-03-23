@@ -9,7 +9,9 @@ updated: function () {
             title: this.$props.chartdata.Title,
             data: this.$props.chartdata.Data,
             axis: this.$props.chartdata.Axis,
-            point: this.$props.chartdata.Point
+            grid: this.$props.chartdata.Grid,
+            point: this.$props.chartdata.Point,
+            size: this.$props.chartdata.Size
         });
     }
 
