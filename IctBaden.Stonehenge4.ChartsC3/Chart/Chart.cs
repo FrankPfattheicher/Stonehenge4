@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using System.Drawing;
 using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable UnusedMember.Global
@@ -74,6 +74,20 @@ public class Chart
             }
 
             return columns.ToArray();
+        }
+    }
+
+    private object Colors
+    {
+        get
+        {
+            var colors = new Dictionary<string, object>();
+            foreach (var series in Series.Where(s => s.Color != KnownColor.Transparent))
+            {
+                var c = Color.FromKnownColor(series.Color);
+                colors.Add(series.Label, $"#{c.R:X2}{c.G:X2}{c.B:X2}");
+            }
+            return colors;
         }
     }
 
@@ -184,6 +198,7 @@ public class Chart
 
             data["axes"] = Axes;
             data["columns"] = Columns;
+            data["colors"] = Colors;
             data["regions"] = Regions;
             return data;
         }
