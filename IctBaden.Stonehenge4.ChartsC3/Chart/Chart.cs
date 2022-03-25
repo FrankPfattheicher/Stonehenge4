@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using IctBaden.Stonehenge4.ChartsC3;
+
 // ReSharper disable UnusedMember.Global
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -12,36 +13,47 @@ public class Chart
     /// Chart width in pixel
     /// </summary>
     public int? Width = null;
+
     /// <summary>
     /// Chart height in pixel
     /// </summary>
     public int? Height = null;
+
     /// <summary>
     /// Show series points
     /// </summary>
     public bool ShowPoints = true;
+
     /// <summary>
     /// Define the chart's category axis
     /// </summary>
     public ChartCategoryTimeseriesAxis? CategoryAxis = null;
+
     /// <summary>
     /// Define the chart's values axes (maximum two)
     /// </summary>
     public ChartValueAxis[] ValueAxes;
+
     /// <summary>
     /// The chart's data series
     /// </summary>
     public ChartSeries[] Series;
+
     /// <summary>
     /// Define chart's additionally grid lines
     /// </summary>
     public ChartGridLine[] GridLines;
+
+    /// <summary>
+    /// Define chart's additionally axes and series regions
+    /// </summary>
+    public ChartDataRegion[] DataRegions;
+
     /// <summary>
     /// Define chart's title
     /// </summary>
     public ChartTitle? Title { get; set; }
 
-    [JsonPropertyName("columns")]
     private object[] Columns
     {
         get
@@ -53,13 +65,39 @@ public class Chart
                 colData.AddRange(CategoryAxis.Values.Cast<object>());
                 columns.Add(colData.ToArray());
             }
+
             foreach (var serie in Series)
             {
                 var colData = new List<object> { serie.Label };
                 colData.AddRange(serie.Data);
                 columns.Add(colData.ToArray());
             }
+
             return columns.ToArray();
+        }
+    }
+
+    private Dictionary<string, object> Regions
+    {
+        get
+        {
+            var regions = new Dictionary<string, object>();
+            foreach (var region in DataRegions.GroupBy(r => r.Series))
+            {
+                if (string.IsNullOrEmpty(region.Key)) continue;
+
+                var regionSpec = new List<object>();
+                foreach (var dataRegion in region)
+                {
+                    var dataSpec = new Dictionary<string, object>();
+                    if (dataRegion.StartValue != null) dataSpec.Add("start", dataRegion.StartValue);
+                    if (dataRegion.EndValue != null) dataSpec.Add("end", dataRegion.EndValue);
+                    if (dataRegion.Style != null) dataSpec.Add("style", dataRegion.Style);
+                    regionSpec.Add(dataSpec);
+                }
+                regions.Add(region.Key, regionSpec.ToArray());
+            }
+            return regions;
         }
     }
 
@@ -67,7 +105,7 @@ public class Chart
     {
         { "show", ShowPoints }
     };
-    
+
     public Dictionary<string, object> Size
     {
         get
@@ -75,7 +113,7 @@ public class Chart
             var size = new Dictionary<string, object>();
             if (Width != null) size["width"] = Width;
             if (Height != null) size["height"] = Height;
-            return size; 
+            return size;
         }
     }
 
@@ -88,10 +126,12 @@ public class Chart
             {
                 axis[CategoryAxis.Id] = CategoryAxis;
             }
+
             foreach (var ax in ValueAxes)
             {
                 axis[ax.Id] = ax;
             }
+
             return axis;
         }
     }
@@ -109,6 +149,7 @@ public class Chart
                 };
                 gridLines.Add(chartGridLines.Key, lines);
             }
+
             return gridLines;
         }
     }
@@ -140,8 +181,10 @@ public class Chart
             {
                 data[CategoryAxis.Id] = CategoryAxis.Id;
             }
+
             data["axes"] = Axes;
             data["columns"] = Columns;
+            data["regions"] = Regions;
             return data;
         }
     }
@@ -152,6 +195,7 @@ public class Chart
         ValueAxes = new[] { new ChartValueAxis("y") };
         Series = Array.Empty<ChartSeries>();
         GridLines = Array.Empty<ChartGridLine>();
+        DataRegions = Array.Empty<ChartDataRegion>();
     }
 
     public void SetSeriesData(string series, object[] data)

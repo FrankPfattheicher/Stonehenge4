@@ -16,7 +16,7 @@ updated: function () {
     }
 
     this.chart.load({
-        columns: this.$props.chartdata.Data.columns
+        columns: this.$props.chartdata.Data.Columns
     });
 
 }

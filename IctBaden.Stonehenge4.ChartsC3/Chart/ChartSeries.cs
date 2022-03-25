@@ -1,4 +1,6 @@
-namespace IctBaden.Stonehenge4.ChartsC3;
+using IctBaden.Stonehenge4.ChartsC3;
+
+namespace IctBaden.Stonehenge.Extension;
 
 public class ChartSeries
 {
