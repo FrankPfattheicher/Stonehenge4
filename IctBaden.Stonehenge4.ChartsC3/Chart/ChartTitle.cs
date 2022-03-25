@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace IctBaden.Stonehenge4.ChartsC3;
+namespace IctBaden.Stonehenge.Extension;
 
 public class ChartTitle
 {

@@ -9,6 +9,8 @@ namespace IctBaden.Stonehenge.Extension;
 
 public class Chart
 {
+    public string Id { get; } = Guid.NewGuid().ToString("N");
+    
     /// <summary>
     /// Chart width in pixel
     /// </summary>
@@ -23,6 +25,11 @@ public class Chart
     /// Show series points
     /// </summary>
     public bool ShowPoints = true;
+    
+    /// <summary>
+    /// Enable zooming of chart
+    /// </summary>
+    public bool EnableZoom = false;
 
     /// <summary>
     /// Define the chart's category axis
@@ -118,6 +125,11 @@ public class Chart
     public Dictionary<string, object> Point => new()
     {
         { "show", ShowPoints }
+    };
+
+    public Dictionary<string, object> Zoom => new()
+    {
+        { "enabled", EnableZoom }
     };
 
     public Dictionary<string, object> Size

@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.ViewModel;
-using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
