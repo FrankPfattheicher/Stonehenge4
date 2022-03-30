@@ -1,16 +1,18 @@
 ﻿
 mounted: function() {
-    this.chart = c3.generate({
-        bindto: this.$el,
-        id: this.$props.chartdata.Id,
-        title: this.$props.chartdata.Title,
-        data: this.$props.chartdata.Data,
-        axis: this.$props.chartdata.Axis,
-        grid: this.$props.chartdata.Grid,
-        point: this.$props.chartdata.Point,
-        zoom: this.$props.chartdata.Zoom,
-        size: this.$props.chartdata.Size
-    });
+    if(typeof(this.$props.chartdata.Id) != "undefined") {
+        this.chart = c3.generate({
+            bindto: this.$el,
+            id: this.$props.chartdata.Id,
+            title: this.$props.chartdata.Title,
+            data: this.$props.chartdata.Data,
+            axis: this.$props.chartdata.Axis,
+            grid: this.$props.chartdata.Grid,
+            point: this.$props.chartdata.Point,
+            zoom: this.$props.chartdata.Zoom,
+            size: this.$props.chartdata.Size
+        });
+    }
     this.chartId = this.$props.chartdata.Id;
 },
 updated: function () {
@@ -30,7 +32,7 @@ updated: function () {
     }
 
     this.chart.load({
-        columns: this.$props.chartdata.Data.Columns
+        columns: this.$props.chartdata.Data.columns
     });
 
 }
