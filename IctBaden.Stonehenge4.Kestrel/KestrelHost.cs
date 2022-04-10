@@ -43,6 +43,11 @@ namespace IctBaden.Stonehenge.Kestrel
         public KestrelHost(IStonehengeResourceProvider provider, StonehengeHostOptions options)
             : this(provider, options, StonehengeLogger.DefaultLogger)
         {
+            var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
+            if (!ctx.Contains("Microsoft.AspNetCore.App"))
+            {
+                throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">");
+            }
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
