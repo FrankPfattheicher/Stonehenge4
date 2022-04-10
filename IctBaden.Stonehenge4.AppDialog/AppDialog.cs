@@ -1,8 +1,8 @@
-using IctBaden.Stonehenge.Extensions;
+﻿using IctBaden.Stonehenge.Extensions;
 
 namespace IctBaden.Stonehenge.Extension;
 
 // ReSharper disable once UnusedType.Global
-public class TreeView : IStonehengeExtension
+public class AppDialog : IStonehengeExtension
 {
 }

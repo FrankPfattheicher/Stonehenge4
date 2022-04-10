@@ -21,8 +21,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
     public class StartVm : ActiveViewModel, IDisposable
     {
         // ReSharper disable once MemberCanBeMadeStatic.Global
-        [DependsOn(nameof(AutoNotify))]
-        public string TimeStamp => DateTime.Now.ToLongTimeString();
+        [DependsOn(nameof(AutoNotify))] public string TimeStamp => DateTime.Now.ToLongTimeString();
         public Notify<string> AutoNotify { get; set; }
         public double Numeric { get; set; }
         public string Test { get; set; }
@@ -30,26 +29,34 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public bool IsLocal => Session?.IsLocal ?? true;
         public string ClientAddress => Session.ClientAddress ?? "(unknown)";
         public string UserIdentity => Session.UserIdentity ?? "(unknown)";
+
+
+        public bool AppBoxVisible { get; private set; }
+        public string AppBoxCaption { get; private set; }
+        public string AppBoxText { get; private set; }
         
-        public string Parameters => 
+        public bool AppDialogVisible { get; private set; }
+        public string AppDialogCaption { get; private set; }
+        
+
+
+        public string Parameters =>
             string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
 
         public string NotInitialized { get; set; }
 
         private IDisposable _updater;
-        private string _text = "This ist the content of user file ;-) Press Alt+Left to return.";        
+        private string _text = "This ist the content of user file ;-) Press Alt+Left to return.";
+
         // ReSharper disable once UnusedMember.Global
-        public StartVm(AppSession session) : base (session)
+        public StartVm(AppSession session) : base(session)
         {
             Numeric = 123.456;
             Test = "abcd";
 
             _updater = Observable
                 .Interval(TimeSpan.FromSeconds(2))
-                .Subscribe(_ =>
-                {
-                    AutoNotify?.Update(TimeStamp);
-                });
+                .Subscribe(_ => { AutoNotify?.Update(TimeStamp); });
         }
 
         public void Dispose()
@@ -68,9 +75,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         [ActionMethod]
         public void CopyTest()
         {
-            CopyToClipboard(Test);            
+            CopyToClipboard(Test);
         }
-        
+
         [ActionMethod]
         public void Save(int number, string text)
         {
@@ -80,7 +87,31 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         [ActionMethod]
         public void ShowMessageBox()
         {
-            MessageBox("Stonehenge 3", $"Server side message box request. {Test}");
+            MessageBox("Stonehenge", $"Server side browser message box request. {Test}");
+        }
+
+        [ActionMethod]
+        public void ShowAppBox()
+        {
+            CloseAppBox();
+            AppBoxVisible = true;
+            AppBoxCaption = "Stonehenge";
+            AppBoxText = $"Server side application box request. {Test}";
+        }
+
+        [ActionMethod]
+        public void ShowAppDialog()
+        {
+            CloseAppBox();
+            AppDialogVisible = true;
+            AppDialogCaption = "Stonehenge";
+        }
+
+        [ActionMethod]
+        public void CloseAppBox()
+        {
+            AppBoxVisible = false;
+            AppDialogVisible = false;
         }
 
         [ActionMethod]
@@ -101,7 +132,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             {
                 return new Resource(resourceName, "Sample", ResourceType.Text, _text, Resource.Cache.None);
             }
-            
+
             const string cal = @"BEGIN:VCALENDAR
 PRODID:-//ICT Baden GmbH//Framework Library 2016//DE
 VERSION:2.0
@@ -124,7 +155,8 @@ END:VCALENDAR
             return new Resource(resourceName, "Sample", ResourceType.Calendar, cal, Resource.Cache.None);
         }
 
-        public override Resource PostDataResource(string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public override Resource PostDataResource(string resourceName, Dictionary<string, string> parameters,
+            Dictionary<string, string> formData)
         {
             var tempFileName = formData["uploadFile"];
             _text = File.ReadAllText(tempFileName);

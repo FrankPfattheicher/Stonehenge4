@@ -66,7 +66,7 @@ namespace IctBaden.Stonehenge.Hosting
             _title = title ?? Assembly.GetEntryAssembly()?.GetName().Name ?? "";
             _windowSize = windowSize;
 
-            AppDomain.CurrentDomain.ProcessExit += (_, __) => { Dispose(); };
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => { Dispose(); };
         }
 
         public void Dispose()
@@ -301,7 +301,7 @@ namespace IctBaden.Stonehenge.Hosting
             {
                 var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "firefox" : "firefox.exe";
                 var parameter =
-                    $"{_startUrl}/?title={HttpUtility.UrlEncode(_title)} -width {_windowSize.X} -height {_windowSize.Y}";
+                    $"-new-instance -url {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
                 _ui = Process.Start(cmd, parameter);
                 if ((_ui == null) || _ui.HasExited)
                 {
