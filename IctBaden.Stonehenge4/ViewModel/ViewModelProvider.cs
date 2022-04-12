@@ -335,18 +335,49 @@ namespace IctBaden.Stonehenge.ViewModel
                     structObj = null;
                     return;
                 }
+
+                if (structValue.StartsWith("["))
+                {
+                    var arrayObjects = JsonSerializer.Deserialize<JsonObject[]>(structValue);
+                    if(arrayObjects == null) 
+                    {
+                        structObj = null;
+                        return;
+                    }
+
+                    var elementType = structType.GenericTypeArguments.FirstOrDefault();
+                    if(elementType == null) 
+                    {
+                        structObj = null;
+                        return;
+                    }
+
+                    var addMethod = structObj.GetType().GetMethod("Add");
+                    if(addMethod == null) 
+                    {
+                        structObj = null;
+                        return;
+                    }
+                    
+                    foreach (var member in arrayObjects)
+                    {
+                        var element = Activator.CreateInstance(elementType);
+                        if(element == null) continue;
+                        
+                        if (member is { } objMembers)
+                        {
+                            SetMembers(logger, ref element, structType, objMembers);
+                        }
+
+                        addMethod.Invoke(structObj, new[] { element });
+                    }
+
+                    return;
+                }
                 
                 if (JsonSerializer.Deserialize<JsonObject>(structValue) is { } members)
                 {
-                    foreach (var member in members)
-                    {
-                        var mProp = structType.GetProperty(member.Key);
-                        if (mProp != null && member.Value != null)
-                        {
-                            var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
-                            mProp.SetValue(structObj, val, null);
-                        }
-                    }
+                    SetMembers(logger, ref structObj, structType, members);
                 }
             }
             catch (Exception ex)
@@ -355,6 +386,19 @@ namespace IctBaden.Stonehenge.ViewModel
                 Debugger.Break();
             }
         }
+
+        public static void SetMembers(ILogger logger, ref object structObj, Type structType, JsonObject members)
+        {
+            foreach (var member in members)
+            {
+                var mProp = structType.GetProperty(member.Key);
+                if (mProp != null && member.Value != null)
+                {
+                    var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
+                    mProp.SetValue(structObj, val, null);
+                }
+            }
+        }        
         
         // ReSharper disable once MemberCanBePrivate.Global
         public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)

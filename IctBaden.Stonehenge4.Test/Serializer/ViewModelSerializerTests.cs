@@ -230,10 +230,27 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public void DeserializationShouldDeserializeClass()
         {
             var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
-            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(object));
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass));
             Assert.NotNull(obj);
         }
 
+        [Fact]
+        public void DeserializationShouldDeserializeArrayOfClassToList()
+        {
+            var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
+            json = $"[ {json}, {json} ]";
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(List<SimpleClass>));
+            Assert.NotNull(obj);
+        }
+
+        [Fact]
+        public void DeserializationShouldDeserializeArrayOfClassToArray()
+        {
+            var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
+            json = $"[ {json}, {json} ]";
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass[]));
+            Assert.NotNull(obj);
+        }
         
     }
 }
