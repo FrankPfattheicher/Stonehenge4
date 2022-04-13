@@ -1,4 +1,5 @@
 
+* 4.0.19 - Fixed element type in deserialization
 * 4.0.18 - ViewModelProvider deserialize arrays of structs
 * 4.0.17 - Added StonehengeUiWindow and SDK check in Kestrel host
 * 4.0.16 - Fixed nuget packet references

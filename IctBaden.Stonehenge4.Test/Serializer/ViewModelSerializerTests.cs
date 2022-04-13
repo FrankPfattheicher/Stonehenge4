@@ -230,26 +230,74 @@ namespace IctBaden.Stonehenge.Test.Serializer
         public void DeserializationShouldDeserializeClass()
         {
             var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
-            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass));
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(object));
             Assert.NotNull(obj);
         }
 
         [Fact]
         public void DeserializationShouldDeserializeArrayOfClassToList()
         {
-            var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
+            var dt = new DateTime(2022, 04, 13, 12, 11, 10, DateTimeKind.Utc);
+            var dto = new DateTimeOffset(2022, 04, 13, 12, 11, 10, TimeSpan.Zero);
+            var simple = new SimpleClass
+            {
+                Integer = 7,
+                FloatingPoint = 1.23,
+                Text = "test",
+                PrivateText = "invisible",
+                Timestamp = dt,
+                Timeoffset = dto,
+                Wieviel = TestEnum.Fumpf
+            };
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(simple));
             json = $"[ {json}, {json} ]";
-            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(List<SimpleClass>));
-            Assert.NotNull(obj);
+            var listSimpleClass = ViewModelProvider
+                .DeserializePropertyValue(_logger, json, typeof(List<SimpleClass>))
+                as List<SimpleClass>;
+            Assert.NotNull(listSimpleClass);
+            
+            foreach (var obj in listSimpleClass)
+            {
+                Assert.Equal(7, obj.Integer);
+                Assert.Equal(1.23, obj.FloatingPoint);
+                Assert.Equal("test", obj.Text);
+                Assert.Equal(dt, obj.Timestamp.ToUniversalTime());
+                Assert.Equal(dto, obj.Timeoffset);
+                Assert.Equal(TestEnum.Fumpf, obj.Wieviel);
+            }
         }
 
         [Fact]
         public void DeserializationShouldDeserializeArrayOfClassToArray()
         {
-            var json = "{\n  \"Id\": \"52950eb67afd464cb3e3cf6b8ad09ebf\",\n  \"RequestTimestamp\": \"0001-01-01T00:00:00\",\n  \"Name\": \"tuzu\",\n  \"Gender\": 0,\n  \"Birthdate\": \"2021-05-16T09:23:00.2718243\\u002B02:00\",\n  \"Assignment\": 1,\n  \"Enrollment\": \"2022-09-01T00:00:00\"\n}";
+            var dt = new DateTime(2022, 04, 13, 12, 11, 10, DateTimeKind.Utc);
+            var dto = new DateTimeOffset(2022, 04, 13, 12, 11, 10, TimeSpan.Zero);
+            var simple = new SimpleClass
+            {
+                Integer = 7,
+                FloatingPoint = 1.23,
+                Text = "test",
+                PrivateText = "invisible",
+                Timestamp = dt,
+                Timeoffset = dto,
+                Wieviel = TestEnum.Fumpf
+            };
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(simple));
             json = $"[ {json}, {json} ]";
-            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass[]));
-            Assert.NotNull(obj);
+            var arraySimpleClass = ViewModelProvider
+                .DeserializePropertyValue(_logger, json, typeof(SimpleClass[]))
+                as SimpleClass[];
+            Assert.NotNull(arraySimpleClass);
+            
+            foreach (var obj in arraySimpleClass)
+            {
+                Assert.Equal(7, obj.Integer);
+                Assert.Equal(1.23, obj.FloatingPoint);
+                Assert.Equal("test", obj.Text);
+                Assert.Equal(dt, obj.Timestamp.ToUniversalTime());
+                Assert.Equal(dto, obj.Timeoffset);
+                Assert.Equal(TestEnum.Fumpf, obj.Wieviel);
+            }
         }
         
     }
