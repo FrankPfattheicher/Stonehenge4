@@ -366,7 +366,7 @@ namespace IctBaden.Stonehenge.ViewModel
                         
                         if (member is { } objMembers)
                         {
-                            SetMembers(logger, ref element, structType, objMembers);
+                            SetMembers(logger, ref element, elementType, objMembers);
                         }
 
                         addMethod.Invoke(structObj, new[] { element });
