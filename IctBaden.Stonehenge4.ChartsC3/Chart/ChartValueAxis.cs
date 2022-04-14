@@ -1,9 +1,11 @@
 ﻿using System.Text.Json.Serialization;
+using IctBaden.Stonehenge4.ChartsC3;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
-namespace IctBaden.Stonehenge4.ChartsC3;
+namespace IctBaden.Stonehenge.Extension;
 
 public class ChartValueAxis : ChartAxis
 {
@@ -19,8 +21,8 @@ public class ChartValueAxis : ChartAxis
     [JsonPropertyName("max")]
     public double Max { get; set; }
 
-    public ChartValueAxis(string id)
-        : base(id)
+    public ChartValueAxis(ValueAxisId id)
+        : base(id.ToString())
     {
         Label = "";
         Show = true;
