@@ -191,7 +191,7 @@ public class Chart
             var axes = new Dictionary<string, object>();
             foreach (var serie in Series)
             {
-                axes[serie.Label] = serie.ValueAxis;
+                axes[serie.Label] = serie.ValueAxis.ToString();
             }
 
             return axes;
@@ -219,7 +219,7 @@ public class Chart
 
     public Chart()
     {
-        ValueAxes = new[] { new ChartValueAxis("y") };
+        ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) };
         Series = Array.Empty<ChartSeries>();
         GridLines = Array.Empty<ChartGridLine>();
         DataRegions = Array.Empty<ChartDataRegion>();

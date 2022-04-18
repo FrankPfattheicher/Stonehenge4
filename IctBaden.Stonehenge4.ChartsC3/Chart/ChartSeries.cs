@@ -9,7 +9,7 @@ public class ChartSeries
     
     public ChartDataType Type { get; set; }
     
-    public string ValueAxis { get; set; }
+    public ValueAxisId ValueAxis { get; set; }
 
     public KnownColor Color { get; set; }
     
@@ -19,7 +19,7 @@ public class ChartSeries
     {
         Label = label;
         Type = ChartDataType.Line;
-        ValueAxis = "y";
+        ValueAxis = ValueAxisId.y;
         Color = KnownColor.Transparent;
         Data = new object[] { 0 };
     }

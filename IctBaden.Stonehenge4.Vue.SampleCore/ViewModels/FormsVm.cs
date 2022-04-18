@@ -2,7 +2,6 @@ using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.ViewModel;
-using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -30,7 +29,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
             TrendChart = new Chart()
             {
-                ValueAxes = new[] { new ChartValueAxis("y") { Label = "°C", Min = 0, Max = 40 } },
+                ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
                 Series = new[] { new ChartSeries("Temperature") }
             };
 

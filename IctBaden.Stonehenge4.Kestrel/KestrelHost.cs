@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using AuthenticationSchemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes;
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 // ReSharper disable StringLiteralTypo
@@ -43,11 +45,6 @@ namespace IctBaden.Stonehenge.Kestrel
         public KestrelHost(IStonehengeResourceProvider provider, StonehengeHostOptions options)
             : this(provider, options, StonehengeLogger.DefaultLogger)
         {
-            var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
-            if (!ctx.Contains("Microsoft.AspNetCore.App"))
-            {
-                throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">");
-            }
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -56,6 +53,12 @@ namespace IctBaden.Stonehenge.Kestrel
             _resourceProvider = provider;
             _options = options;
             _logger = logger;
+
+            var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
+            if (!ctx.IsNullOrEmpty() && !ctx.Contains("Microsoft.AspNetCore.App"))
+            {
+                throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">");
+            }
 
             provider.InitProvider(provider as StonehengeResourceLoader, options);
         }

@@ -1,6 +1,8 @@
 ﻿using System.Text.Json.Serialization;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 
-namespace IctBaden.Stonehenge4.ChartsC3;
+namespace IctBaden.Stonehenge.Extension;
 
 public class ChartCategoryTimeseriesAxis : ChartAxis
 {
