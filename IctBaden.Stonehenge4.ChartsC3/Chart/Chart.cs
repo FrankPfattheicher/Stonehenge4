@@ -1,5 +1,4 @@
 using System.Drawing;
-using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable UnusedMember.Global
 

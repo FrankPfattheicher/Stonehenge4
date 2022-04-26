@@ -11,6 +11,7 @@
         <Copyright>©2022 ICT Baden GmbH</Copyright>
         <AssemblyVersion>1.0.1</AssemblyVersion>
         <FileVersion>1.0.1</FileVersion>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
