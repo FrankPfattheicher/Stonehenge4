@@ -1,4 +1,5 @@
 
+* 4.0.21 - Fixed kestrel initialization
 * 4.0.20 - Fixed kestrel initialization
 * 4.0.19 - Fixed element type in deserialization
 * 4.0.18 - ViewModelProvider deserialize arrays of structs
