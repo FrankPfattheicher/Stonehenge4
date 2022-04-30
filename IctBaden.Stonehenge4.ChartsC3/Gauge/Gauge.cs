@@ -1,5 +1,5 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-namespace IctBaden.Stonehenge4.ChartsC3;
+namespace IctBaden.Stonehenge.Extension;
 
 public class Gauge
 {

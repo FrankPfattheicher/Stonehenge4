@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global

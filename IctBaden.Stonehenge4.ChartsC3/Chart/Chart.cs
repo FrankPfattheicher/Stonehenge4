@@ -1,5 +1,4 @@
 using System.Drawing;
-using IctBaden.Stonehenge4.ChartsC3;
 
 // ReSharper disable UnusedMember.Global
 
@@ -167,14 +166,17 @@ public class Chart
         get
         {
             var gridLines = new Dictionary<string, Dictionary<string, object>>();
-            foreach (var chartGridLines in GridLines.GroupBy(g => g.Axis))
+            var options = new Dictionary<string, object>
             {
-                var lines = new Dictionary<string, object>
-                {
-                    { "lines", chartGridLines.ToArray() }
-                };
-                gridLines.Add(chartGridLines.Key, lines);
-            }
+                { "front", false }
+            };
+            gridLines.Add("lines", options);
+
+            var lines = new Dictionary<string, object>
+            {
+                { "lines", GridLines.ToArray() }
+            };
+            gridLines.Add(ValueAxisId.y.ToString(), lines);
 
             return gridLines;
         }
@@ -208,10 +210,10 @@ public class Chart
                 data[CategoryAxis.Id] = CategoryAxis.Id;
             }
 
+            data["regions"] = Regions;
             data["axes"] = Axes;
             data["columns"] = Columns;
             data["colors"] = Colors;
-            data["regions"] = Regions;
             return data;
         }
     }

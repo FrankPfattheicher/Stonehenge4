@@ -5,9 +5,9 @@ mounted: function() {
             bindto: this.$el,
             id: this.$props.chartdata.Id,
             title: this.$props.chartdata.Title,
+            grid: this.$props.chartdata.Grid,
             data: this.$props.chartdata.Data,
             axis: this.$props.chartdata.Axis,
-            grid: this.$props.chartdata.Grid,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
             size: this.$props.chartdata.Size
@@ -21,9 +21,9 @@ updated: function () {
         this.chart = c3.generate({
             bindto: this.$el,
             title: this.$props.chartdata.Title,
+            grid: this.$props.chartdata.Grid,
             data: this.$props.chartdata.Data,
             axis: this.$props.chartdata.Axis,
-            grid: this.$props.chartdata.Grid,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
             size: this.$props.chartdata.Size
