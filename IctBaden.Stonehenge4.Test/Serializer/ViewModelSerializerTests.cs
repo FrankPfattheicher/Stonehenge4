@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -126,19 +127,21 @@ namespace IctBaden.Stonehenge.Test.Serializer
         }
 
         [Fact]
-        public void DeserializationOfDoubleShouldWorkWithGermanAndInternationalFormat()
+        public void DeserializationOfDoubleShouldWorkWithCurrentAndInternationalFormat()
         {
             var json = "{ \"FloatingPoint\": \"5\" }";
             var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
             Assert.NotNull(obj);
             Assert.Equal(5.0, obj.FloatingPoint);
-            
-            json = "{ \"FloatingPoint\": \"5.3\" }";
+
+            var value = 5.3.ToString(CultureInfo.InvariantCulture);
+            json = $"{{ \"FloatingPoint\": \"{value}\" }}";
             obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
             Assert.NotNull(obj);
             Assert.Equal(5.3, obj.FloatingPoint);
             
-            json = "{ \"FloatingPoint\": \"5,75\" }";
+            value = 5.75.ToString(CultureInfo.CurrentCulture);
+            json = $"{{ \"FloatingPoint\": \"{value}\" }}";
             obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
             Assert.NotNull(obj);
             Assert.Equal(5.75, obj.FloatingPoint);
