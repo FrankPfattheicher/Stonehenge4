@@ -126,6 +126,26 @@ namespace IctBaden.Stonehenge.Test.Serializer
         }
 
         [Fact]
+        public void DeserializationOfDoubleShouldWorkWithGermanAndInternationalFormat()
+        {
+            var json = "{ \"FloatingPoint\": \"5\" }";
+            var obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
+            Assert.NotNull(obj);
+            Assert.Equal(5.0, obj.FloatingPoint);
+            
+            json = "{ \"FloatingPoint\": \"5.3\" }";
+            obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
+            Assert.NotNull(obj);
+            Assert.Equal(5.3, obj.FloatingPoint);
+            
+            json = "{ \"FloatingPoint\": \"5,75\" }";
+            obj = ViewModelProvider.DeserializePropertyValue(_logger, json, typeof(SimpleClass)) as SimpleClass;
+            Assert.NotNull(obj);
+            Assert.Equal(5.75, obj.FloatingPoint);
+        }
+        
+
+        [Fact]
         public void EnumPropertySerializedAsStringDeserializationShouldWork()
         {
             var json = "{ \"Wieviel\": \"5\" }";

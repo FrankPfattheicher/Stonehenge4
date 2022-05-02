@@ -406,6 +406,20 @@ namespace IctBaden.Stonehenge.ViewModel
                     return propValue;
                 if (propType == typeof(bool))
                     return bool.Parse(propValue);
+                if (propType == typeof(float))
+                {
+                    if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var fVal))
+                        return fVal;
+                    if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out fVal))
+                        return fVal;
+                }
+                if (propType == typeof(double))
+                {
+                    if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var dVal))
+                        return dVal;
+                    if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out dVal))
+                        return dVal;
+                }
                 if (propType == typeof(DateTime))
                 {
                     if (DateTime.TryParse(propValue, out var dt))
