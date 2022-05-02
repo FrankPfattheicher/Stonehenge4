@@ -1,4 +1,5 @@
 
+* 4.0.25 - Deserialization test with current and international culture
 * 4.0.24 - Deserialization of floating point values works with current and international format
 * 4.0.23 - Use InvariantCulture in converting action method parameters
 * 4.0.22 - Fixed Nuget package references
@@ -20,7 +21,7 @@
 * 4.0.6 - ChartsC3 DLL
 * 4.0.5 - Removed version "4" from namespace
 * 4.0.4 - FontAwesome 6.0.0, Bootstrap 5.1.3
-* 4.0.3 - Manually merged stoneheng3 v3.24.01 changes
+* 4.0.3 - Manually merged stonehenge3 v3.24.01 changes
 * 4.0.2 - FontAwesome 6.0.0-beta2, Bootstrap 5.1.3 
 * 4.0.1 - Removed Newtonsoft.Json, removed SetModel support
 * 4.0.0 - Start porting to NET 6
