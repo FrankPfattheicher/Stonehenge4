@@ -1,4 +1,5 @@
 
+* 4.0.23 - Use InvariantCulture in converting action method parameters
 * 4.0.22 - Fixed Nuget package references
 * 4.0.21 - Namespace fixed
 * 4.0.20 - Fixed kestrel initialization
