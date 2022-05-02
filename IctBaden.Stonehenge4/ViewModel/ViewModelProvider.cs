@@ -57,7 +57,7 @@ namespace IctBaden.Stonehenge.ViewModel
                         var cmdParameters = commandHandler.GetParameters()
                             .Select(parameter => parameter.ParameterType == typeof(AppSession)
                                 ? session
-                                : Convert.ChangeType(parameters.FirstOrDefault(kv => kv.Key == parameter.Name).Value, parameter.ParameterType));
+                                : Convert.ChangeType(parameters.FirstOrDefault(kv => kv.Key == parameter.Name).Value, parameter.ParameterType, CultureInfo.InvariantCulture));
                         
                         commandHandler.Invoke(appCommands, cmdParameters.ToArray());
                         
@@ -126,17 +126,14 @@ namespace IctBaden.Stonehenge.ViewModel
                             parameters.Values,
                             (parameterInfo, postParam) =>
                                 new KeyValuePair<Type, object>(parameterInfo.ParameterType, postParam))
-                        .Select(parameterPair => Convert.ChangeType(parameterPair.Value, parameterPair.Key))
+                        .Select(parameterPair => Convert.ChangeType(parameterPair.Value, parameterPair.Key, CultureInfo.InvariantCulture))
                         .ToArray();
                 if (executeAsync)
                 {
                     Task.Run(() => method.Invoke(session.ViewModel, methodParams));
                     return GetEvents(session, resourceName);
                 }
-                else
-                {
-                    method.Invoke(session.ViewModel, methodParams);
-                }
+                method.Invoke(session.ViewModel, methodParams);
             }
             catch (Exception ex)
             {
