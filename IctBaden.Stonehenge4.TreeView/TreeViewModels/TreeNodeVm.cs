@@ -16,6 +16,7 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
         public string Id { get; }
         public string Icon { get; private set; } // fa fa-folder, fa fa-folder-open
         public string Name { get; set; }
+        public string Tooltip { get; set; }
 
         public List<TreeNodeVm> Children { get; set; }
 
