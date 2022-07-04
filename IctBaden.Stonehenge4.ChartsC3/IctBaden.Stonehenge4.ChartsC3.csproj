@@ -33,4 +33,8 @@
       <EmbeddedResource Include="app\st-gauge.js" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Sankey" />
+    </ItemGroup>
+
 </Project>
