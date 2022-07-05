@@ -58,6 +58,6 @@ public class ChartCategoryTimeseriesAxis : ChartAxis
             ["format"] = format,
             ["count"] = count
         };
-        Values = values.Select(t => new DateTimeOffset(t).ToUnixTimeMilliseconds()).ToArray();
+        Values = values.Select(t => new DateTimeOffset(DateTime.SpecifyKind(t, DateTimeKind.Utc)).ToUnixTimeMilliseconds()).ToArray();
     }
 }
