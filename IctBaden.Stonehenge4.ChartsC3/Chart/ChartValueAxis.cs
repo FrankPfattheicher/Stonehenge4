@@ -16,6 +16,8 @@ public class ChartValueAxis : ChartAxis
     
     [JsonPropertyName("min")]
     public double Min { get; set; }
+    [JsonPropertyName("center")]
+    public double? Center { get; set; }
     
     [JsonPropertyName("max")]
     public double Max { get; set; }
