@@ -137,4 +137,13 @@
     <ItemGroup>
       <EmbeddedResource Include="app\src\bootstrap-vue.min.js" />
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="app\src\bootstrap-grid.css" />
+      <Content Include="app\src\bootstrap-grid.css.map" />
+      <Content Include="app\src\bootstrap-grid.min.css.map" />
+      <Content Include="app\src\bootstrap-reboot.css.map" />
+      <Content Include="app\src\bootstrap-reboot.min.css.map" />
+      <Content Include="app\src\bootstrap.css.map" />
+      <Content Include="app\src\bootstrap.min.css.map" />
+    </ItemGroup>
 </Project>
