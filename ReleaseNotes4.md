@@ -1,4 +1,5 @@
 
+* 4.0.26 - Updated nuget references, added extensions
 * 4.0.25 - Deserialization test with current and international culture
 * 4.0.24 - Deserialization of floating point values works with current and international format
 * 4.0.23 - Use InvariantCulture in converting action method parameters

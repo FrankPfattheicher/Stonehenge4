@@ -97,6 +97,19 @@ public class Chart
         }
     }
 
+    private object Types
+    {
+        get
+        {
+            var types = new Dictionary<string, object>();
+            foreach (var series in Series.Where(s => s.Type != ChartDataType.Line))
+            {
+                types.Add(series.Label, series.Type.ToString().ToLower());
+            }
+            return types;
+        }
+    }
+
     private Dictionary<string, object> Regions
     {
         get
@@ -214,6 +227,7 @@ public class Chart
             data["axes"] = Axes;
             data["columns"] = Columns;
             data["colors"] = Colors;
+            data["types"] = Types;
             return data;
         }
     }

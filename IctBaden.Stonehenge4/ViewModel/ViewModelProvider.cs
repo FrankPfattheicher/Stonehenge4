@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge.Core;
@@ -23,11 +24,16 @@ namespace IctBaden.Stonehenge.ViewModel
     {
         private readonly ILogger _logger;
 
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+
         public ViewModelProvider(ILogger logger)
         {
             _logger = logger;
         }
-        
+
         public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
         {
         }
@@ -38,7 +44,7 @@ namespace IctBaden.Stonehenge.ViewModel
         {
         }
 
-        public Resource Post(AppSession session, string resourceName, 
+        public Resource Post(AppSession session, string resourceName,
             Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             if (resourceName.StartsWith("Command/"))
@@ -50,17 +56,18 @@ namespace IctBaden.Stonehenge.ViewModel
                 if (appCommandsType != null)
                 {
                     var appCommands = session.CreateType("AppCommands", appCommandsType);
-                    
+
                     var commandHandler = appCommands?.GetType().GetMethod(commandName);
                     if (commandHandler != null)
                     {
                         var cmdParameters = commandHandler.GetParameters()
                             .Select(parameter => parameter.ParameterType == typeof(AppSession)
                                 ? session
-                                : Convert.ChangeType(parameters.FirstOrDefault(kv => kv.Key == parameter.Name).Value, parameter.ParameterType, CultureInfo.InvariantCulture));
-                        
+                                : Convert.ChangeType(parameters.FirstOrDefault(kv => kv.Key == parameter.Name).Value,
+                                    parameter.ParameterType, CultureInfo.InvariantCulture));
+
                         commandHandler.Invoke(appCommands, cmdParameters.ToArray());
-                        
+
                         return new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
                             Resource.Cache.None);
                     }
@@ -105,7 +112,8 @@ namespace IctBaden.Stonehenge.ViewModel
             if (vmType.Name != vmTypeName)
             {
                 _logger.LogWarning($"ViewModelProvider: Request for VM={vmTypeName}, current VM={vmType.Name}");
-                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None);
+                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+                    "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None);
             }
 
             var method = vmType.GetMethod(methodName);
@@ -122,34 +130,37 @@ namespace IctBaden.Stonehenge.ViewModel
                     .FirstOrDefault() as ActionMethodAttribute;
                 var executeAsync = attribute?.ExecuteAsync ?? false;
                 var methodParams = method.GetParameters()
-                        .Zip(
-                            parameters.Values,
-                            (parameterInfo, postParam) =>
-                                new KeyValuePair<Type, object>(parameterInfo.ParameterType, postParam))
-                        .Select(parameterPair => Convert.ChangeType(parameterPair.Value, parameterPair.Key, CultureInfo.InvariantCulture))
-                        .ToArray();
+                    .Zip(
+                        parameters.Values,
+                        (parameterInfo, postParam) =>
+                            new KeyValuePair<Type, object>(parameterInfo.ParameterType, postParam))
+                    .Select(parameterPair =>
+                        Convert.ChangeType(parameterPair.Value, parameterPair.Key, CultureInfo.InvariantCulture))
+                    .ToArray();
                 if (executeAsync)
                 {
                     Task.Run(() => method.Invoke(session.ViewModel, methodParams));
                     return GetEvents(session, resourceName);
                 }
+
                 method.Invoke(session.ViewModel, methodParams);
             }
             catch (Exception ex)
             {
                 if (ex.InnerException != null) ex = ex.InnerException;
-                
-                _logger.LogError($"ViewModelProvider: ActionMethod {methodName} has {method.GetParameters().Length} params.");
+
+                _logger.LogError(
+                    $"ViewModelProvider: ActionMethod {methodName} has {method.GetParameters().Length} params.");
                 _logger.LogError($"ViewModelProvider: Called with {parameters.Count} params.");
                 _logger.LogError("ViewModelProvider: " + ex.Message);
                 _logger.LogError("ViewModelProvider: " + ex.StackTrace);
 
                 Debugger.Break();
-                
+
                 var exResource = new Dictionary<string, string>
                 {
-                    {"Message", ex.Message},
-                    {"StackTrace", ex.StackTrace}
+                    { "Message", ex.Message },
+                    { "StackTrace", ex.StackTrace }
                 };
                 return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
                     Resource.Cache.None);
@@ -181,6 +192,7 @@ namespace IctBaden.Stonehenge.ViewModel
             {
                 return GetDataResource(session, resourceName.Substring(5), parameters);
             }
+
             return null;
         }
 
@@ -221,7 +233,7 @@ namespace IctBaden.Stonehenge.ViewModel
                 return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
             }
 
-            var data = new List<string> {"\"StonehengeContinuePolling\":true"};
+            var data = new List<string> { "\"StonehengeContinuePolling\":true" };
             var events = session.CollectEvents();
             if (session.ViewModel is ActiveViewModel activeVm)
             {
@@ -231,7 +243,8 @@ namespace IctBaden.Stonehenge.ViewModel
                     foreach (var property in events)
                     {
                         var value = activeVm.TryGetMember(property);
-                        data.Add($"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value))}");
+                        data.Add(
+                            $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                     }
 
                     AddStonehengeInternalProperties(data, activeVm);
@@ -252,8 +265,9 @@ namespace IctBaden.Stonehenge.ViewModel
             {
                 var title = activeVm.MessageBoxTitle ?? "";
                 var text = activeVm.MessageBoxText ?? "";
-                var script = $"alert('{HttpUtility.JavaScriptStringEncode(title)}\\r\\n{HttpUtility.JavaScriptStringEncode(text)}');";
-                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script))}");
+                var script =
+                    $"alert('{HttpUtility.JavaScriptStringEncode(title)}\\r\\n{HttpUtility.JavaScriptStringEncode(text)}');";
+                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
                 activeVm.MessageBoxTitle = null;
                 activeVm.MessageBoxText = null;
             }
@@ -261,13 +275,14 @@ namespace IctBaden.Stonehenge.ViewModel
             if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
             {
                 var route = activeVm.NavigateToRoute;
-                data.Add($"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route))}");
+                data.Add(
+                    $"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
                 activeVm.NavigateToRoute = null;
             }
             else if (!string.IsNullOrEmpty(activeVm.ClientScript))
             {
                 var script = activeVm.ClientScript;
-                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script))}");
+                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
                 activeVm.ClientScript = null;
             }
         }
@@ -285,11 +300,11 @@ namespace IctBaden.Stonehenge.ViewModel
             Resource data;
             if (method.GetParameters().Length == 2)
             {
-                data = (Resource) method.Invoke(vm, new object[] {resourceName, parameters});
+                data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters });
             }
             else
             {
-                data = (Resource) method.Invoke(vm, new object[] {resourceName});
+                data = (Resource)method.Invoke(vm, new object[] { resourceName });
             }
 
             return data;
@@ -308,22 +323,23 @@ namespace IctBaden.Stonehenge.ViewModel
             Resource data;
             if (method.GetParameters().Length == 3)
             {
-                data = (Resource) method.Invoke(vm, new object[] {resourceName, parameters, formData});
+                data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters, formData });
             }
             else if (method.GetParameters().Length == 2)
             {
-                data = (Resource) method.Invoke(vm, new object[] {resourceName, parameters});
+                data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters });
             }
             else
             {
-                data = (Resource) method.Invoke(vm, new object[] {resourceName});
+                data = (Resource)method.Invoke(vm, new object[] { resourceName });
             }
 
             return data;
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public static void DeserializeStructValue(ILogger logger, ref object structObj, string structValue, Type structType)
+        public static void DeserializeStructValue(ILogger logger, ref object structObj, string structValue,
+            Type structType)
         {
             try
             {
@@ -336,31 +352,31 @@ namespace IctBaden.Stonehenge.ViewModel
                 if (structValue.StartsWith("["))
                 {
                     var arrayObjects = JsonSerializer.Deserialize<JsonObject[]>(structValue);
-                    if(arrayObjects == null) 
+                    if (arrayObjects == null)
                     {
                         structObj = null;
                         return;
                     }
 
                     var elementType = structType.GenericTypeArguments.FirstOrDefault();
-                    if(elementType == null) 
+                    if (elementType == null)
                     {
                         structObj = null;
                         return;
                     }
 
                     var addMethod = structObj.GetType().GetMethod("Add");
-                    if(addMethod == null) 
+                    if (addMethod == null)
                     {
                         structObj = null;
                         return;
                     }
-                    
+
                     foreach (var member in arrayObjects)
                     {
                         var element = Activator.CreateInstance(elementType);
-                        if(element == null) continue;
-                        
+                        if (element == null) continue;
+
                         if (member is { } objMembers)
                         {
                             SetMembers(logger, ref element, elementType, objMembers);
@@ -371,7 +387,7 @@ namespace IctBaden.Stonehenge.ViewModel
 
                     return;
                 }
-                
+
                 if (JsonSerializer.Deserialize<JsonObject>(structValue) is { } members)
                 {
                     SetMembers(logger, ref structObj, structType, members);
@@ -395,8 +411,8 @@ namespace IctBaden.Stonehenge.ViewModel
                     mProp.SetValue(structObj, val, null);
                 }
             }
-        }        
-        
+        }
+
         // ReSharper disable once MemberCanBePrivate.Global
         public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
         {
@@ -413,6 +429,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out fVal))
                         return fVal;
                 }
+
                 if (propType == typeof(double))
                 {
                     if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var dVal))
@@ -420,6 +437,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out dVal))
                         return dVal;
                 }
+
                 if (propType == typeof(DateTime))
                 {
                     if (DateTime.TryParse(propValue, out var dt))
@@ -427,6 +445,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                         return dt;
                 }
+
                 if (propType == typeof(DateTimeOffset))
                 {
                     if (DateTimeOffset.TryParse(propValue, out var dt))
@@ -434,6 +453,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if (DateTimeOffset.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                         return dt;
                 }
+
                 if (propType.IsClass && !propType.IsArray)
                 {
                     var structObj = Activator.CreateInstance(propType);
@@ -441,8 +461,10 @@ namespace IctBaden.Stonehenge.ViewModel
                     {
                         DeserializeStructValue(logger, ref structObj, propValue, propType);
                     }
+
                     return structObj;
                 }
+
                 if (propValue != null)
                 {
                     return JsonSerializer.Deserialize(propValue, propType);
@@ -513,7 +535,7 @@ namespace IctBaden.Stonehenge.ViewModel
         {
             var watch = new Stopwatch();
             watch.Start();
-            
+
             var ty = viewModel.GetType();
             _logger.LogDebug("ViewModelProvider: ViewModel=" + ty.Name);
 
@@ -532,12 +554,12 @@ namespace IctBaden.Stonehenge.ViewModel
                     {
                         // ReSharper disable once UseStringInterpolation
                         data.Add(string.Format("\"{0}\":{1}", name,
-                            JsonSerializer.SerializeToElement(activeVm.TryGetMember(name))));
+                            JsonSerializer.SerializeToElement(activeVm.TryGetMember(name), JsonOptions)));
                     }
                 }
 
                 context = "view model";
-                var vm = JsonSerializer.SerializeToDocument(viewModel);
+                var vm = JsonSerializer.SerializeToDocument(viewModel, JsonOptions);
                 foreach (var jsonElement in vm.RootElement.EnumerateObject())
                 {
                     data.Add(jsonElement.ToString());
@@ -548,19 +570,19 @@ namespace IctBaden.Stonehenge.ViewModel
                 _logger.LogError($"Exception serializing ViewModel({ty.Name}) : {context}");
                 _logger.LogError(ex.Message);
                 _logger.LogError(ex.StackTrace);
-                
+
                 Debugger.Break();
 
                 var exResource = new Dictionary<string, string>
                 {
-                    {"Message", ex.Message},
-                    {"StackTrace", ex.StackTrace }
+                    { "Message", ex.Message },
+                    { "StackTrace", ex.StackTrace }
                 };
-                return JsonSerializer.SerializeToElement(exResource).ToString();
+                return JsonSerializer.SerializeToElement(exResource, JsonOptions).ToString();
             }
 
             var json = "{" + string.Join(",", data) + "}";
-            
+
             watch.Stop();
             _logger.LogTrace($"GetViewModelJson: {watch.ElapsedMilliseconds}ms");
             return json;
