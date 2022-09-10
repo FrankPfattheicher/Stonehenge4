@@ -24,7 +24,7 @@ namespace IctBaden.Stonehenge.Test.Resources
                 .Distinct()
                 .ToList();
             var loader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, typeof(UserContentLinksTests).Assembly);
-            _index = loader.Get(_session, "index.html", new Dictionary<string, string>());
+            _index = loader.Get(_session, "index.html", new Dictionary<string, string>()).Result;
         }
 
         [Fact]

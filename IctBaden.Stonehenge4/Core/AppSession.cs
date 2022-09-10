@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
@@ -63,7 +64,7 @@ namespace IctBaden.Stonehenge.Core
         
         private readonly int _eventTimeoutMs;
         private readonly List<string> _events = new();
-        private readonly AutoResetEvent _eventRelease = new AutoResetEvent(false);
+        private readonly AutoResetEvent _eventRelease = new(false);
         private bool _forceUpdate;
         private readonly List<string> _history = new();
 
@@ -85,14 +86,14 @@ namespace IctBaden.Stonehenge.Core
         public readonly ILogger Logger;
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-        public string[] CollectEvents()
+        public Task<string[]> CollectEvents()
         {
             IsWaitingForEvents = true;
             var eventVm = ViewModel;
             
             // wait _eventTimeoutMs for events - if there is one - continue
             var max = _eventTimeoutMs / 100;
-            while (!_forceUpdate && !_eventRelease.WaitOne(100) && (max > 0))
+            while (!_forceUpdate && !_eventRelease.WaitOne(100, true) && (max > 0))
             {
                 max--;
             }
@@ -101,7 +102,7 @@ namespace IctBaden.Stonehenge.Core
             {
                 // wait for maximum 500ms for more events - if there is none within - continue
                 max = 50;
-                while (!_forceUpdate && _eventRelease.WaitOne(10) && (max > 0))
+                while (!_forceUpdate && _eventRelease.WaitOne(10, true) && (max > 0))
                 {
                     max--;
                 }
@@ -119,7 +120,7 @@ namespace IctBaden.Stonehenge.Core
             {
                 var events = _events.ToArray();
                 _events.Clear();
-                return events;
+                return Task.FromResult(events);
             }
         }
 

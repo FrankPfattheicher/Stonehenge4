@@ -71,11 +71,11 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_file_icon_png()
+        public async void Load_file_icon_png()
         {
             var name = $"icon_{Guid.NewGuid():N}.png";
             CreateBinaryFile(name);
-            var resource = _loader.Get(_session, name, new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
@@ -83,10 +83,10 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_file_index_html()
+        public async void Load_file_index_html()
         {
             CreateTextFile("index.html");
-            var resource = _loader.Get(_session, "index.html", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "index.html", new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("text/html", resource.ContentType);
             Assert.False(resource.IsBinary);
@@ -94,11 +94,11 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_file_image_png()
+        public async void Load_file_image_png()
         {
             var name = $"image_{Guid.NewGuid():N}.jpg";
             CreateBinaryFile(name);
-            var resource = _loader.Get(_session, name, new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("image/jpeg", resource.ContentType);
             Assert.True(resource.IsBinary);
@@ -106,10 +106,10 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_file_test_html()
+        public async void Load_file_test_html()
         {
             CreateTextFile("test.htm");
-            var resource = _loader.Get(_session, "test.htm", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "test.htm", new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("text/html", resource.ContentType);
             Assert.False(resource.IsBinary);
