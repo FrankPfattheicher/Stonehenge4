@@ -61,10 +61,12 @@ namespace IctBaden.Stonehenge.Core
         public readonly bool UseBasicAuth;
         public readonly Passwords Passwords;
         public string VerifiedBasicAuth;
-        
+
         private readonly int _eventTimeoutMs;
+
         private readonly List<string> _events = new();
-        private readonly AutoResetEvent _eventRelease = new(false);
+
+        private CancellationTokenSource _eventRelease;
         private bool _forceUpdate;
         private readonly List<string> _history = new();
 
@@ -76,9 +78,10 @@ namespace IctBaden.Stonehenge.Core
                 route = _history.Skip(1).First();
                 _history.RemoveAt(0);
             }
+
             return route;
         }
-        
+
         public bool IsWaitingForEvents { get; private set; }
 
         public bool SecureCookies { get; private set; }
@@ -86,15 +89,17 @@ namespace IctBaden.Stonehenge.Core
         public readonly ILogger Logger;
 
         // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-        public Task<string[]> CollectEvents()
+        public async Task<string[]> CollectEvents()
         {
             IsWaitingForEvents = true;
             var eventVm = ViewModel;
-            
+
             // wait _eventTimeoutMs for events - if there is one - continue
             var max = _eventTimeoutMs / 100;
-            while (!_forceUpdate && !_eventRelease.WaitOne(100, true) && (max > 0))
+            _eventRelease = new CancellationTokenSource();
+            while (!_forceUpdate && (max > 0))
             {
+                await Task.Delay(100, _eventRelease.Token).ContinueWith(_ => { _forceUpdate = true; });
                 max--;
             }
 
@@ -102,8 +107,9 @@ namespace IctBaden.Stonehenge.Core
             {
                 // wait for maximum 500ms for more events - if there is none within - continue
                 max = 50;
-                while (!_forceUpdate && _eventRelease.WaitOne(10, true) && (max > 0))
+                while (!_forceUpdate && (max > 0))
                 {
+                    await Task.Delay(10, _eventRelease.Token).ContinueWith(_ => { _forceUpdate = true; });
                     max--;
                 }
             }
@@ -112,19 +118,20 @@ namespace IctBaden.Stonehenge.Core
                 // VM has changed
                 EventsClear(false);
             }
-            
+
             _forceUpdate = false;
             IsWaitingForEvents = false;
-            
+
             lock (_events)
             {
                 var events = _events.ToArray();
                 _events.Clear();
-                return Task.FromResult(events);
+                return events;
             }
         }
 
         private object _viewModel;
+
         public object ViewModel
         {
             get => _viewModel;
@@ -141,6 +148,7 @@ namespace IctBaden.Stonehenge.Core
                         {
                             return;
                         }
+
                         lock (avm.Session._events)
                         {
                             avm.Session.UpdateProperty(args.PropertyName);
@@ -173,8 +181,9 @@ namespace IctBaden.Stonehenge.Core
                 disposable?.Dispose();
             }
 
-            var resourceLoader = _resourceLoader.Providers.First(ld => ld.GetType() == typeof(ResourceLoader)) as ResourceLoader;
-            if(resourceLoader == null)
+            var resourceLoader =
+                _resourceLoader.Providers.First(ld => ld.GetType() == typeof(ResourceLoader)) as ResourceLoader;
+            if (resourceLoader == null)
             {
                 ViewModel = null;
                 Logger.LogError("Could not create ViewModel - No resourceLoader specified:" + typeName);
@@ -199,7 +208,7 @@ namespace IctBaden.Stonehenge.Core
                 .FirstOrDefault(vmi => vmi.VmName == typeName);
 
             _history.Insert(0, viewModelInfo?.Route ?? "");
-            
+
             return ViewModel;
         }
 
@@ -227,7 +236,8 @@ namespace IctBaden.Stonehenge.Core
                     else
                     {
                         paramValues[ix] = _resourceLoader.Services.GetService(parameterInfo.ParameterType)
-                                          ?? CreateType($"{context}, CreateType({type.Name})", parameterInfo.ParameterType);
+                                          ?? CreateType($"{context}, CreateType({type.Name})",
+                                              parameterInfo.ParameterType);
                     }
                 }
 
@@ -263,6 +273,7 @@ namespace IctBaden.Stonehenge.Core
         }
 
         private readonly Dictionary<string, object> _userData;
+
         public object this[string key]
         {
             get => _userData.ContainsKey(key) ? _userData[key] : null;
@@ -279,6 +290,7 @@ namespace IctBaden.Stonehenge.Core
         {
             _userData[key] = value;
         }
+
         public T Get<T>(string key)
         {
             if (!_userData.ContainsKey(key))
@@ -286,6 +298,7 @@ namespace IctBaden.Stonehenge.Core
 
             return (T)_userData[key];
         }
+
         public void Remove(string key)
         {
             _userData.Remove(key);
@@ -310,7 +323,8 @@ namespace IctBaden.Stonehenge.Core
             SessionTimeout = timeout;
             if (Math.Abs(timeout.TotalMilliseconds) > 0.1)
             {
-                _pollSessionTimeout = new Timer(CheckSessionTimeout, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+                _pollSessionTimeout = new Timer(CheckSessionTimeout, null, TimeSpan.FromSeconds(30),
+                    TimeSpan.FromSeconds(30));
             }
         }
 
@@ -322,6 +336,7 @@ namespace IctBaden.Stonehenge.Core
                 _terminator.Dispose();
                 TimedOut?.Invoke();
             }
+
             NotifyPropertyChanged(nameof(ConnectedDuration));
             NotifyPropertyChanged(nameof(LastAccessDuration));
         }
@@ -341,6 +356,7 @@ namespace IctBaden.Stonehenge.Core
             : this(null, new StonehengeHostOptions())
         {
         }
+
         public AppSession(StonehengeResourceLoader resourceLoader, StonehengeHostOptions options)
         {
             if (resourceLoader == null)
@@ -356,7 +372,7 @@ namespace IctBaden.Stonehenge.Core
 
                 Logger = StonehengeLogger.DefaultLogger;
                 var loader = new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly());
-                resourceLoader = new StonehengeResourceLoader(Logger, new List<IStonehengeResourceProvider>{ loader });
+                resourceLoader = new StonehengeResourceLoader(Logger, new List<IStonehengeResourceProvider> { loader });
             }
             else
             {
@@ -370,7 +386,7 @@ namespace IctBaden.Stonehenge.Core
             Cookies = new Dictionary<string, string>();
             Parameters = new Dictionary<string, string>();
             LastAccess = DateTime.Now;
-            
+
             UseBasicAuth = options.UseBasicAuth;
             if (UseBasicAuth)
             {
@@ -384,7 +400,7 @@ namespace IctBaden.Stonehenge.Core
                     Logger.LogError("Option UseBasicAuth requires .htpasswd file " + htpasswd);
                 }
             }
-            
+
             _eventTimeoutMs = options.GetEventTimeoutMs();
 
             try
@@ -410,13 +426,13 @@ namespace IctBaden.Stonehenge.Core
         // ReSharper disable once UnusedMember.Global
         public bool IsInitialized => UserAgent != null;
 
-        
+
         private bool IsAssemblyDebugBuild(Assembly assembly)
         {
             return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
         }
-        
-        public void Initialize(StonehengeHostOptions hostOptions, string hostDomain, 
+
+        public void Initialize(StonehengeHostOptions hostOptions, string hostDomain,
             bool isLocal, string clientAddress, int clientPort, string userAgent)
         {
             HostOptions = hostOptions;
@@ -463,6 +479,7 @@ namespace IctBaden.Stonehenge.Core
             {
                 PermanentSessionId = cookies["ss-pid"];
             }
+
             LastAccess = DateTime.Now;
             NotifyPropertyChanged(nameof(LastAccess));
             if (userAction)
@@ -470,6 +487,7 @@ namespace IctBaden.Stonehenge.Core
                 LastUserAction = DateTime.Now;
                 NotifyPropertyChanged(nameof(LastUserAction));
             }
+
             StonehengeCookieSet = cookies.ContainsKey("stonehenge-id");
             NotifyPropertyChanged(nameof(StonehengeCookieSet));
         }
@@ -489,8 +507,7 @@ namespace IctBaden.Stonehenge.Core
                 //Events.AddRange(privateEvents);
                 if (forceEnd)
                 {
-                    _eventRelease.Set();
-                    _eventRelease.Set();
+                    _eventRelease?.Cancel();
                 }
             }
         }
@@ -514,7 +531,8 @@ namespace IctBaden.Stonehenge.Core
                 {
                     _events.Add(name);
                 }
-                _eventRelease.Set();
+
+                _eventRelease?.Cancel();
             }
         }
 
@@ -523,7 +541,8 @@ namespace IctBaden.Stonehenge.Core
         public override string ToString()
         {
             // ReSharper disable once UseStringInterpolation
-            return string.Format("[{0}] {1} {2}", Id, ConnectedSince.ToShortDateString() + " " + ConnectedSince.ToShortTimeString(), SubDomain);
+            return string.Format("[{0}] {1} {2}", Id,
+                ConnectedSince.ToShortDateString() + " " + ConnectedSince.ToShortTimeString(), SubDomain);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

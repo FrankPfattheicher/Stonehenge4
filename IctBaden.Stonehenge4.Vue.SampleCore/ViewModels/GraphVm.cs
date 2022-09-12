@@ -21,13 +21,13 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         public Chart LineChart { get; private set; }
 
-        private int _speed;
+        public int Speed { get; private set; }
         private Timer _timer;
         private int _start;
 
         public GraphVm(AppSession session) : base(session)
         {
-            _speed = 500;
+            Speed = 500;
         }
 
         public override void OnLoad()
@@ -39,7 +39,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             };
             UpdateData();
             
-            _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
+            _timer = new Timer(_ => UpdateGraph(), this, Speed, Speed);
         }
 
         public void Dispose()
@@ -70,8 +70,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public void ToggleSpeed()
         {
             _timer.Dispose();
-            _speed = 600 - _speed;
-            _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
+            Speed = 600 - Speed;
+            _timer = new Timer(_ => UpdateGraph(), this, Speed, Speed);
         }
 
     }
