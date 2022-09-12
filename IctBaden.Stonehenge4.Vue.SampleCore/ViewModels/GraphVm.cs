@@ -1,8 +1,8 @@
 using System;
-using System.Threading;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable ReplaceAutoPropertyWithComputedProperty
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -14,7 +14,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
-    public class GraphVm : ActiveViewModel, IDisposable
+    public class GraphVm : ActiveViewModel
     {
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 100;
@@ -22,7 +22,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public Chart LineChart { get; private set; }
 
         public int Speed { get; private set; }
-        private Timer _timer;
         private int _start;
 
         public GraphVm(AppSession session) : base(session)
@@ -38,13 +37,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 Series = new[] { new ChartSeries("Sinus") }
             };
             UpdateData();
-            
-            _timer = new Timer(_ => UpdateGraph(), this, Speed, Speed);
-        }
 
-        public void Dispose()
-        {
-            _timer?.Dispose();
+            SetUpdateTimer(Speed);
         }
 
         private void UpdateData()
@@ -58,8 +52,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
             LineChart.SetSeriesData("Sinus", data);
         }
-        
-        private void UpdateGraph()
+
+        public override void OnUpdateTimer()
         {
             UpdateData();
             Session.UpdatePropertyImmediately(nameof(LineChart));
@@ -69,9 +63,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         [ActionMethod]
         public void ToggleSpeed()
         {
-            _timer.Dispose();
             Speed = 600 - Speed;
-            _timer = new Timer(_ => UpdateGraph(), this, Speed, Speed);
+            
+            SetUpdateTimer(Speed);
         }
 
     }

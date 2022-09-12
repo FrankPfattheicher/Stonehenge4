@@ -3,7 +3,7 @@
 // Author:
 //  Frank Pfattheicher <fpf@ict-baden.de>
 //
-// Copyright (C)2011-2019 ICT Baden GmbH
+// Copyright (C)2011-2022 ICT Baden GmbH
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Resources;
 using Microsoft.Extensions.Logging;
@@ -50,7 +51,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.ViewModel
 {
-    public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged
+    public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged, IDisposable
     {
         #region helper classes
 
@@ -178,6 +179,8 @@ namespace IctBaden.Stonehenge.ViewModel
 
         // ReSharper disable InconsistentNaming
         [Bindable(false)] public string _stonehenge_CommandSenderName_ { get; set; }
+
+        private Timer _updateTimer;
 
         public string GetCommandSenderName()
         {
@@ -594,5 +597,41 @@ namespace IctBaden.Stonehenge.ViewModel
         {
             return null;
         }
+
+        protected void SetUpdateTimer(int updateMs) => SetUpdateTimer(TimeSpan.FromMilliseconds(updateMs));
+
+        protected void SetUpdateTimer(TimeSpan update)
+        {
+            if (_updateTimer == null)
+            {
+                _updateTimer = new Timer(update.TotalMilliseconds);
+                _updateTimer.Elapsed += UpdateTimerOnElapsed;
+                _updateTimer.Enabled = true;
+            }
+            else
+            {
+                _updateTimer.Interval = update.TotalMilliseconds;
+            }
+        }
+
+        private void UpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            OnUpdateTimer();
+        }
+        
+        public virtual void OnUpdateTimer()
+        {
+        }
+
+        public void Dispose()
+        {
+            _updateTimer?.Dispose();
+            OnDispose();
+        }
+        
+        public virtual void OnDispose()
+        {
+        }
+
     }
 }
