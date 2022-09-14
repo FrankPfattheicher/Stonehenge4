@@ -94,12 +94,27 @@ namespace IctBaden.Stonehenge.Core
             IsWaitingForEvents = true;
             var eventVm = ViewModel;
 
+            _eventRelease = new CancellationTokenSource();
+
             // wait _eventTimeoutMs for events - if there is one - continue
             var max = _eventTimeoutMs / 100;
-            _eventRelease = new CancellationTokenSource();
-            while (!_forceUpdate && (max > 0))
+
+            async Task Wait(CancellationTokenSource cts, int milliseconds)
             {
-                await Task.Delay(100, _eventRelease.Token).ContinueWith(_ => { _forceUpdate = true; });
+                await Task.Delay(milliseconds, cts.Token)
+                    .ContinueWith(_ =>
+                    {
+                        if (cts is { IsCancellationRequested: true })
+                        {
+                            _forceUpdate = true;
+                        }
+                    }, TaskContinuationOptions.None)
+                    .ConfigureAwait(false);
+            }
+
+            while (!_forceUpdate && max > 0)
+            {
+                await Wait( _eventRelease, 100);
                 max--;
             }
 
@@ -107,9 +122,9 @@ namespace IctBaden.Stonehenge.Core
             {
                 // wait for maximum 500ms for more events - if there is none within - continue
                 max = 50;
-                while (!_forceUpdate && (max > 0))
+                while (!_forceUpdate && max > 0)
                 {
-                    await Task.Delay(10, _eventRelease.Token).ContinueWith(_ => { _forceUpdate = true; });
+                    await Wait(_eventRelease, 10);
                     max--;
                 }
             }
