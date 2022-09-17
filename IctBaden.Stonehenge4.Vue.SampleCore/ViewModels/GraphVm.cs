@@ -1,7 +1,9 @@
 using System;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
+using IctBaden.Stonehenge.Extension.Sankey;
 using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable ReplaceAutoPropertyWithComputedProperty
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
@@ -20,6 +22,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMax { get; } = 100;
 
         public Chart LineChart { get; private set; }
+        public Sankey SankeyChart { get; private set; }
 
         public int Speed { get; private set; }
         private int _start;
@@ -36,6 +39,22 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 Title = new ChartTitle("Test"),
                 Series = new[] { new ChartSeries("Sinus") }
             };
+            SankeyChart = new Sankey()
+            {
+                Nodes = new SankeyNode[]
+                {
+                    new SankeyNode { Id = "Alice" },
+                    new SankeyNode { Id = "Bert" },
+                    new SankeyNode { Id = "Bob" },
+                    new SankeyNode { Id = "Carol" }
+                },
+                Links = new[]
+                {
+                    new SankeyLink { Source = "Alice", Target = "Bob", Value = 10 },
+                    new SankeyLink { Source = "Bert", Target = "Bob", Value = 5 },
+                    new SankeyLink { Source = "Bob", Target = "Carol", Value = 20 }
+                }
+            };
             UpdateData();
 
             SetUpdateTimer(Speed);
@@ -48,6 +67,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             {
                 data[ix] = (int)(Math.Sin((ix * 2 + _start) * Math.PI / 36) * 40) + 50;
             }
+
             _start++;
 
             LineChart.SetSeriesData("Sinus", data);
@@ -64,9 +84,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public void ToggleSpeed()
         {
             Speed = 600 - Speed;
-            
+
             SetUpdateTimer(Speed);
         }
-
     }
 }

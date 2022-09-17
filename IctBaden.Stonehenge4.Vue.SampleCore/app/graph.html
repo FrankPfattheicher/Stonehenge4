@@ -8,12 +8,13 @@
 		<br/>
 	</p>
 
-	<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">
-		<st-chart :chartdata="LineChart" style="width: 500px; height: 300px;"></st-chart>
-	</div>
 <!--	<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">-->
-<!--		<div id="line-chart" style="width: 500px; height: 300px;"></div>-->
+<!--		<st-chart :chartdata="LineChart" style="width: 500px; height: 300px;"></st-chart>-->
 <!--	</div>-->
+	
+	<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">
+		<st-sankey :chartdata="SankeyChart" style="width: 800px; height: 500px;"></st-sankey>
+	</div>
 
 	<p>
 		<button class="btn btn-sm btn-secondary" @click="ToggleSpeed()">Change Speed</button>

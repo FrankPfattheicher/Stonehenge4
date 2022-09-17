@@ -30,10 +30,12 @@
       <EmbeddedResource Include="app\st-chart.js" />
       <EmbeddedResource Include="app\st-gauge.html" />
       <EmbeddedResource Include="app\st-gauge.js" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Sankey" />
+      <EmbeddedResource Include="app\st-sankey.html" />
+      <EmbeddedResource Include="app\st-sankey.js" />
+      <None Remove="app\src\d3-sankey.js" />
+      <EmbeddedResource Include="app\src\d3-sankey.js" />
+      <None Remove="app\src\d3-sankey.min.js" />
+      <EmbeddedResource Include="app\src\d3-sankey.min.js" />
     </ItemGroup>
 
 </Project>
