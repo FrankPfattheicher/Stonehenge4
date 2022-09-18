@@ -1,25 +1,30 @@
 <!--Title:Graph:30-->
 <div>
 
-	<h3>Animated Graph</h3>
+    <h3>Animated Graph</h3>
 
-	<p>
-		<b>C3 Chart</b> see <a href="https://c3js.org/gettingstarted.html" target="_blank">https://c3js.org/gettingstarted.html</a>
-		<br/>
-	</p>
+    <p>
+        <b>C3 Chart</b> see <a href="https://c3js.org/gettingstarted.html" target="_blank">https://c3js.org/gettingstarted.html</a>
+        <br/>
+    </p>
 
-<!--	<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">-->
-<!--		<st-chart :chartdata="LineChart" style="width: 500px; height: 300px;"></st-chart>-->
-<!--	</div>-->
-	
-	<div style="border: 1px solid gray; padding: 0.5em; display: inline-block;">
-		<st-sankey :chartdata="SankeyChart" style="width: 800px; height: 500px;"></st-sankey>
-	</div>
+    <div>
+        
+        <div style="border: 1px solid gray; padding: 0.5em; margin: 1em; display: inline-table;">
+            <st-chart :chartdata="LineChart" style="width: 500px; height: 300px;"></st-chart>
+        </div>
 
-	<p>
-		<button class="btn btn-sm btn-secondary" @click="ToggleSpeed()">Change Speed</button>
-		&nbsp;
-		{{Speed}}ms
-	</p>
-	
+        <div style="border: 1px solid gray; padding: 0.5em; margin: 1em; display: inline-table;">
+            <st-sankey :chartdata="SankeyChart" style="width: 500px; height: 300px;"></st-sankey>
+        </div>
+        
+    </div>
+
+    <p>
+        &nbsp;<br>
+        <button class="btn btn-sm btn-secondary" @click="ToggleSpeed()">Change Speed</button>
+        &nbsp;<br>
+        {{Speed}}ms
+    </p>
+
 </div>

@@ -52,7 +52,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 {
                     new SankeyLink { Source = "Alice", Target = "Bob", Value = 10 },
                     new SankeyLink { Source = "Bert", Target = "Bob", Value = 5 },
-                    new SankeyLink { Source = "Bob", Target = "Carol", Value = 20 }
+                    new SankeyLink { Source = "Bob", Target = "Carol", Value = 100 }
                 }
             };
             UpdateData();
@@ -68,6 +68,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 data[ix] = (int)(Math.Sin((ix * 2 + _start) * Math.PI / 36) * 40) + 50;
             }
 
+            SankeyChart.Links[0].Value = (int)(Math.Sin((50 * 2 + _start) * Math.PI / 36) * 40) + 50;
+            SankeyChart.Links[1].Value = 100 - SankeyChart.Links[0].Value;
+
             _start++;
 
             LineChart.SetSeriesData("Sinus", data);
@@ -76,7 +79,13 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public override void OnUpdateTimer()
         {
             UpdateData();
-            Session.UpdatePropertyImmediately(nameof(LineChart));
+            
+            NotifyPropertiesChanged(new []
+            {
+                nameof(LineChart),
+                nameof(SankeyChart)
+            });
+            Session.UpdatePropertiesImmediately();
         }
 
 
