@@ -15,6 +15,7 @@ public class SankeyNode
         set => _name = value;
     }
 
+    [JsonIgnore]    
     public KnownColor Color { get; set; } = KnownColor.LightSkyBlue;
     public string ColorRgb
     {
@@ -25,7 +26,6 @@ public class SankeyNode
         }
     }
 
-
-    public string NodeStroke { get; set; } = "";
+    public string? NodeStroke { get; set; }
 
 }
