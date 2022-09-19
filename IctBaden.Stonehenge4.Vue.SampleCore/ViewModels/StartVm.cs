@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Reflection;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Resources;
@@ -18,11 +17,10 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once UnusedType.Global
-    public class StartVm : ActiveViewModel, IDisposable
+    public class StartVm : ActiveViewModel
     {
         // ReSharper disable once MemberCanBeMadeStatic.Global
-        [DependsOn(nameof(AutoNotify))] public string TimeStamp => DateTime.Now.ToLongTimeString();
-        public Notify<string> AutoNotify { get; set; }
+        public string TimeStamp => DateTime.Now.ToLongTimeString();
         public double Numeric { get; set; }
         public string Test { get; set; }
         public string Version => Assembly.GetAssembly(typeof(Program))!.GetName().Version!.ToString(2);
@@ -45,7 +43,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         public string NotInitialized { get; set; }
 
-        private IDisposable _updater;
         private string _text = "This ist the content of user file ;-) Press Alt+Left to return.";
 
         // ReSharper disable once UnusedMember.Global
@@ -54,15 +51,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             Numeric = 123.456;
             Test = "abcd";
 
-            _updater = Observable
-                .Interval(TimeSpan.FromSeconds(2))
-                .Subscribe(_ => { AutoNotify?.Update(TimeStamp); });
-        }
-
-        public void Dispose()
-        {
-            _updater?.Dispose();
-            _updater = null;
+            SetUpdateTimer(TimeSpan.FromSeconds(2));
         }
 
         public override void OnLoad()
@@ -70,6 +59,11 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             Test = Session.Parameters.ContainsKey("test")
                 ? Session.Parameters["test"]
                 : "0-0";
+        }
+
+        public override void OnUpdateTimer()
+        {
+            NotifyPropertyChanged(nameof(TimeStamp));
         }
 
         [ActionMethod]

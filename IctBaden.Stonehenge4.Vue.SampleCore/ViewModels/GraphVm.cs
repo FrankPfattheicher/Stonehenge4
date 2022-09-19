@@ -1,8 +1,12 @@
 using System;
-using System.Threading;
+using System.Drawing;
+using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
+using IctBaden.Stonehenge.Extension.Sankey;
 using IctBaden.Stonehenge.ViewModel;
+
+// ReSharper disable ReplaceAutoPropertyWithComputedProperty
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -14,20 +18,20 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
-    public class GraphVm : ActiveViewModel, IDisposable
+    public class GraphVm : ActiveViewModel
     {
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 100;
 
         public Chart LineChart { get; private set; }
+        public Sankey SankeyChart { get; private set; }
 
-        private int _speed;
-        private Timer _timer;
+        public int Speed { get; private set; }
         private int _start;
 
         public GraphVm(AppSession session) : base(session)
         {
-            _speed = 500;
+            Speed = 500;
         }
 
         public override void OnLoad()
@@ -37,14 +41,30 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 Title = new ChartTitle("Test"),
                 Series = new[] { new ChartSeries("Sinus") }
             };
-            UpdateData();
+            SankeyChart = new Sankey()
+            {
+                Nodes = new SankeyNode[]
+                {
+                    new SankeyNode { Id = "Alice" },
+                    new SankeyNode { Id = "Bert" },
+                    new SankeyNode { Id = "Bob", Color = KnownColor.Coral },
+                    new SankeyNode { Id = "Carol" }
+                },
+                Links = new[]
+                {
+                    new SankeyLink("Alice", "Bob") { Value = 10 },
+                    new SankeyLink("Bert", "Bob") { Value = 5 },
+                    new SankeyLink("Bob", "Carol") { Value = 100 }
+                }
+            };
+            foreach (var link in SankeyChart.Links)
+            {
+                link.Tooltip = $"{link.Source} -> {link.Target}\n{link.Value} units";
+            }
             
-            _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
-        }
+            UpdateData();
 
-        public void Dispose()
-        {
-            _timer?.Dispose();
+            SetUpdateTimer(Speed);
         }
 
         private void UpdateData()
@@ -54,25 +74,34 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             {
                 data[ix] = (int)(Math.Sin((ix * 2 + _start) * Math.PI / 36) * 40) + 50;
             }
+
+            SankeyChart.Links[0].Value = (int)(Math.Sin((50 * 2 + _start) * Math.PI / 36) * 40) + 50;
+            SankeyChart.Links[1].Value = 100 - SankeyChart.Links[0].Value;
+
             _start++;
 
             LineChart.SetSeriesData("Sinus", data);
         }
-        
-        private void UpdateGraph()
+
+        public override void OnUpdateTimer()
         {
             UpdateData();
-            Session.UpdatePropertyImmediately(nameof(LineChart));
+            
+            NotifyPropertiesChanged(new []
+            {
+                nameof(LineChart),
+                nameof(SankeyChart)
+            });
+            Session.UpdatePropertiesImmediately();
         }
 
 
         [ActionMethod]
         public void ToggleSpeed()
         {
-            _timer.Dispose();
-            _speed = 600 - _speed;
-            _timer = new Timer(_ => UpdateGraph(), this, _speed, _speed);
-        }
+            Speed = 600 - Speed;
 
+            SetUpdateTimer(Speed);
+        }
     }
 }

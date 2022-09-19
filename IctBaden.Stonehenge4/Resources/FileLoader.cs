@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,30 +32,30 @@ namespace IctBaden.Stonehenge.Resources
         {
         }
 
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             return null;
         }
-        public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+        public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             var fullFileName = Path.Combine(RootPath, resourceName);
-            if(!File.Exists(fullFileName)) return null;
+            if(!File.Exists(fullFileName)) return Task.FromResult<Resource>(null);
 
             var resourceExtension = Path.GetExtension(resourceName);
             var resourceType = ResourceType.GetByExtension(resourceExtension);
             if (resourceType == null)
             {
                 _logger.LogInformation($"FileLoader({resourceName}): not found");
-                return null;
+                return Task.FromResult<Resource>(null);
             }
 
             _logger.LogTrace($"FileLoader({resourceName}): {fullFileName}");
             if (resourceType.IsBinary)
             {
-                return new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay);
+                return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay));
             }
 
-            return new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay);
+            return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
         }
 
     }

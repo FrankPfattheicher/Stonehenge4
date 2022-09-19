@@ -198,7 +198,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             var httpContext = context.Request?.HttpContext;
             var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString();
             var clientPort = httpContext?.Connection.RemotePort ?? 0;
-            var hostDomain = context.Request.Host.Value;
+            var hostDomain = context.Request?.Host.Value;
             session.Initialize(options, hostDomain, isLocal, clientAddress, clientPort, userAgent);
             appSessions.Add(session);
             logger.LogInformation($"Kestrel New session {session.Id}. {appSessions.Count} sessions.");

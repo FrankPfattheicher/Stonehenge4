@@ -9,7 +9,7 @@ namespace IctBaden.Stonehenge.Resources
     public class Resource
     {
         public string ContentType { get; private set; }
-        public string Name { get; private set; }
+        public string Name { get; private init; }
         public string Source { get; private set; }
 
         public bool IsBinary => Data != null;
@@ -29,7 +29,7 @@ namespace IctBaden.Stonehenge.Resources
         public byte[] Data { get; }
         public string Text { get; set; }
 
-        public ViewModelInfo ViewModel { get; set; }
+        public ViewModelInfo ViewModel { get; init; }
 
         
         public static readonly Resource NoContent = new Resource("", "", ResourceType.Text, Cache.None);

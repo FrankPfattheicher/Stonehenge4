@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.ViewModel;
@@ -46,12 +47,12 @@ namespace IctBaden.Stonehenge.Resources
             Providers.Clear();
         }
 
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             return Providers.Select(loader => loader.Post(session, resourceName, parameters, formData))
                 .FirstOrDefault(resource => resource != null);
         }
-        public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+        public async Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             var disableCache = false;
 
@@ -66,7 +67,7 @@ namespace IctBaden.Stonehenge.Resources
             {
                 try
                 {
-                    loadedResource = loader.Get(session, resourceName, parameters);
+                    loadedResource = await loader.Get(session, resourceName, parameters);
                 }
                 catch (Exception ex)
                 {

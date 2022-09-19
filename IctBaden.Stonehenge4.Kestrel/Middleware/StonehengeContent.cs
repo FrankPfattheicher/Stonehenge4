@@ -103,7 +103,9 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 {
                     case "GET":
                         appSession?.Accessed(cookies, false);
-                        content = resourceLoader?.Get(appSession, resourceName, parameters);
+                        content = (resourceLoader != null)
+                            ? await resourceLoader.Get(appSession, resourceName, parameters)
+                            : null;
                         if (content == null && appSession != null &&
                             resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -120,7 +122,6 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                         {
                             HandleIndexContent(context, content);
                         }
-
                         break;
 
                     case "POST":
@@ -178,7 +179,10 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                                 }
                             }
 
-                            content = resourceLoader?.Post(appSession, resourceName, parameters, formData);
+                            if (resourceLoader != null)
+                            {
+                                content = await resourceLoader.Post(appSession, resourceName, parameters, formData);
+                            }
                         }
                         catch (Exception ex)
                         {

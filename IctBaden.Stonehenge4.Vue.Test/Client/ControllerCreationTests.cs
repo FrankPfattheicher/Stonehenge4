@@ -34,9 +34,9 @@ namespace IctBaden.Stonehenge.Vue.Test.Client
         }
         
         [Fact]
-        public void StartComponentShouldHaveExpectedMembers()
+        public async void StartComponentShouldHaveExpectedMembers()
         {
-            var resource = _loader.Get(_session, "start.js", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "start.js", new Dictionary<string, string>());
             Assert.Contains("VmPropInteger", resource.Text);
             Assert.Contains("VmPropText", resource.Text);
             Assert.Contains("VmPropList", resource.Text);
@@ -45,16 +45,16 @@ namespace IctBaden.Stonehenge.Vue.Test.Client
         }
 
         [Fact]
-        public void ProviderShouldGenerateDiComponent()
+        public async void ProviderShouldGenerateDiComponent()
         {
-            var resource = _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
             Assert.NotNull(resource);
         }
         
         [Fact]
-        public void DiComponentShouldHaveExpectedMembers()
+        public async void DiComponentShouldHaveExpectedMembers()
         {
-            var resource = _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
             Assert.Contains("VmPropInteger", resource.Text);
             Assert.Contains("VmPropText", resource.Text);
             Assert.Contains("VmPropList", resource.Text);

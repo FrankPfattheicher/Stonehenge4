@@ -47,11 +47,11 @@ namespace IctBaden.Stonehenge.Test.Resources
         // ReSharper disable InconsistentNaming
 
         [Fact]
-        public void Load_from_file_icon_png()
+        public async void Load_from_file_icon_png()
         {
             var name = $"icon_{Guid.NewGuid():N}.png";
             _fileTest.CreateBinaryFile(name);
-            var resource = _loader.Get(_session, name, new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
@@ -60,9 +60,9 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_from_resource_icon_png()
+        public async void Load_from_resource_icon_png()
         {
-            var resource = _loader.Get(_session, "image.jpg", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "image.jpg", new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("image/jpeg", resource.ContentType);
             Assert.True(resource.IsBinary);
@@ -71,11 +71,11 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_from_file_over_resource_icon_png()
+        public async void Load_from_file_over_resource_icon_png()
         {
             var name = $"index_{Guid.NewGuid():N}.html";
             _fileTest.CreateTextFile(name);
-            var resource = _loader.Get(_session, name, new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
             Assert.NotNull(resource);
             Assert.Equal("text/html", resource.ContentType);
             Assert.False(resource.IsBinary);
