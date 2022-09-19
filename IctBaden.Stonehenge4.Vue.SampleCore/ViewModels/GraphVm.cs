@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.Sankey;
@@ -45,18 +44,18 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             {
                 Nodes = new SankeyNode[]
                 {
-                    new SankeyNode { Id = "Alice" },
-                    new SankeyNode { Id = "Bert" },
-                    new SankeyNode { Id = "Bob", Color = KnownColor.Coral },
-                    new SankeyNode { Id = "Carol" },
-                    new SankeyNode { Id = "Doris" }
+                    new("Alice"),
+                    new("Bert"),
+                    new("Bob") { Color = KnownColor.Coral },
+                    new("Carol"),
+                    new("Doris")
                 },
-                Links = new[]
+                Links = new SankeyLink[]
                 {
-                    new SankeyLink("Alice", "Bob") { Value = 10 },
-                    new SankeyLink("Bert", "Bob") { Value = 5 },
-                    new SankeyLink("Bob", "Carol") { Value = 95 },
-                    new SankeyLink("Bob", "Doris") { Value = 5 }
+                    new("Alice", "Bob") { Value = 10 },
+                    new("Bert", "Bob") { Value = 5 },
+                    new("Bob", "Carol") { Value = 95 },
+                    new("Bob", "Doris") { Value = 5 }
                 }
             };
             foreach (var link in SankeyChart.Links)

@@ -35,4 +35,8 @@ public class SankeyLink
         Target = target;
     }
 
+    public override string ToString()
+    {
+        return $"{Source} -> {Target} ({Value})";
+    }
 }
