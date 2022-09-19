@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -208,21 +209,21 @@ namespace IctBaden.Stonehenge.Vue
         }
 
 
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters,
+        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters,
             Dictionary<string, string> formData)
         {
             return null;
         }
 
-        public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+        public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
             if (_vueContent.ContainsKey(resourceName))
             {
-                return _vueContent[resourceName];
+                return Task.FromResult(_vueContent[resourceName]);
             }
 
-            return null;
+            return Task.FromResult<Resource>(null);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace IctBaden.Stonehenge.ViewModel
         {
         }
 
-        public Resource Post(AppSession session, string resourceName,
+        public Task<Resource> Post(AppSession session, string resourceName,
             Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             if (resourceName.StartsWith("Command/"))
@@ -68,19 +68,19 @@ namespace IctBaden.Stonehenge.ViewModel
 
                         commandHandler.Invoke(appCommands, cmdParameters.ToArray());
 
-                        return new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
-                            Resource.Cache.None);
+                        return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
+                            Resource.Cache.None));
                     }
                     else
                     {
-                        return new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
-                            Resource.Cache.None);
+                        return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
+                            Resource.Cache.None));
                     }
                 }
                 else
                 {
-                    return new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
-                        Resource.Cache.None);
+                    return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
+                        Resource.Cache.None));
                 }
             }
             else if (resourceName.StartsWith("Data/"))
@@ -108,12 +108,12 @@ namespace IctBaden.Stonehenge.ViewModel
                 SetPropertyValue(_logger, session.ViewModel, key, value);
             }
 
-            var vmType = session.ViewModel.GetType();
-            if (vmType.Name != vmTypeName)
+            var vmType = session.ViewModel?.GetType();
+            if (vmType?.Name != vmTypeName)
             {
-                _logger.LogWarning($"ViewModelProvider: Request for VM={vmTypeName}, current VM={vmType.Name}");
-                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
-                    "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None);
+                _logger.LogWarning($"ViewModelProvider: Request for VM={vmTypeName}, current VM={vmType?.Name}");
+                return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+                    "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
             }
 
             var method = vmType.GetMethod(methodName);
@@ -162,15 +162,15 @@ namespace IctBaden.Stonehenge.ViewModel
                     { "Message", ex.Message },
                     { "StackTrace", ex.StackTrace }
                 };
-                return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
-                    Resource.Cache.None);
+                return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
+                    Resource.Cache.None));
             }
 
-            return new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
-                GetViewModelJson(session.ViewModel), Resource.Cache.None);
+            return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+                GetViewModelJson(session.ViewModel), Resource.Cache.None));
         }
 
-        public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+        public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             if (resourceName.StartsWith("ViewModel/"))
             {
@@ -193,11 +193,12 @@ namespace IctBaden.Stonehenge.ViewModel
                 return GetDataResource(session, resourceName.Substring(5), parameters);
             }
 
-            return null;
+            return Task.FromResult<Resource>(null);
         }
 
         private bool SetViewModel(AppSession session, string resourceName)
         {
+            if (session == null) return false;
             var vmTypeName = Path.GetFileNameWithoutExtension(resourceName);
             if ((session.ViewModel != null) && (session.ViewModel.GetType().Name == vmTypeName)) return true;
             if (session.SetViewModelType(vmTypeName) != null)
@@ -209,32 +210,38 @@ namespace IctBaden.Stonehenge.ViewModel
             return false;
         }
 
-        private Resource GetViewModel(AppSession session, string resourceName)
+        private Task<Resource> GetViewModel(AppSession session, string resourceName)
         {
             session.EventsClear(true);
 
-            return new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+            return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
                 GetViewModelJson(session.ViewModel),
-                Resource.Cache.None);
+                Resource.Cache.None));
         }
 
-        private static Resource GetEvents(AppSession session, string resourceName)
+        private static async Task<Resource> GetEvents(AppSession session, string resourceName)
         {
             var parts = resourceName.Split('/');
             if (parts.Length < 2) return null;
 
             var vmTypeName = parts[1];
-            var vmType = session.ViewModel?.GetType();
+            var vmType = session?.ViewModel?.GetType();
 
-            var json = "{ \"StonehengeContinuePolling\":false }";
+            string json;
             if (vmTypeName != vmType?.Name)
             {
                 // view model changed !
+                json = "{ \"StonehengeContinuePolling\":false";
+                if (session == null)
+                {
+                    json += ", \"StonehengeEval\":\"window.location.reload();\"";    
+                }
+                json += " }";
                 return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
             }
 
             var data = new List<string> { "\"StonehengeContinuePolling\":true" };
-            var events = session.CollectEvents();
+            var events = await session.CollectEvents();
             if (session.ViewModel is ActiveViewModel activeVm)
             {
                 try
@@ -287,7 +294,7 @@ namespace IctBaden.Stonehenge.ViewModel
             }
         }
 
-        private static Resource GetDataResource(AppSession session, string resourceName,
+        private static Task<Resource> GetDataResource(AppSession session, string resourceName,
             Dictionary<string, string> parameters)
         {
             var vm = session.ViewModel as ActiveViewModel;
@@ -295,7 +302,7 @@ namespace IctBaden.Stonehenge.ViewModel
                 .GetMethods()
                 .FirstOrDefault(m =>
                     string.Compare(m.Name, "GetDataResource", StringComparison.InvariantCultureIgnoreCase) == 0);
-            if (method == null || method.ReturnType != typeof(Resource)) return null;
+            if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource>(null);
 
             Resource data;
             if (method.GetParameters().Length == 2)
@@ -307,10 +314,10 @@ namespace IctBaden.Stonehenge.ViewModel
                 data = (Resource)method.Invoke(vm, new object[] { resourceName });
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
-        private static Resource PostDataResource(AppSession session, string resourceName,
+        private static Task<Resource> PostDataResource(AppSession session, string resourceName,
             Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             var vm = session.ViewModel as ActiveViewModel;
@@ -318,7 +325,7 @@ namespace IctBaden.Stonehenge.ViewModel
                 .GetMethods()
                 .FirstOrDefault(m =>
                     string.Compare(m.Name, "PostDataResource", StringComparison.InvariantCultureIgnoreCase) == 0);
-            if (method == null || method.ReturnType != typeof(Resource)) return null;
+            if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource>(null);
 
             Resource data;
             if (method.GetParameters().Length == 3)
@@ -334,7 +341,7 @@ namespace IctBaden.Stonehenge.ViewModel
                 data = (Resource)method.Invoke(vm, new object[] { resourceName });
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -400,7 +407,7 @@ namespace IctBaden.Stonehenge.ViewModel
             }
         }
 
-        public static void SetMembers(ILogger logger, ref object structObj, Type structType, JsonObject members)
+        private static void SetMembers(ILogger logger, ref object structObj, Type structType, JsonObject members)
         {
             foreach (var member in members)
             {

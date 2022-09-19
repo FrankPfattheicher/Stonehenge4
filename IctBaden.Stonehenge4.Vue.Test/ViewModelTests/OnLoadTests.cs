@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -21,7 +23,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests
         }
 
         [Fact]
-        public void OnLoadShouldBeCalledForStartVmAfterFirstCall()
+        public async void OnLoadShouldBeCalledForStartVmAfterFirstCall()
         {
             var response = string.Empty;
 
@@ -30,7 +32,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
+                    response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
                 }
             }
             catch (Exception ex)

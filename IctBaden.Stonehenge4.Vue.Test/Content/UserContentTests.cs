@@ -29,7 +29,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app.BaseUrl);
+                    response = client.DownloadStringWithSession(_app.BaseUrl).Result;
                 }
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadString(_app.BaseUrl);
+                    response = client.DownloadString(_app.BaseUrl).Result;
                 }
             }
             catch (Exception ex)
@@ -71,7 +71,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app.BaseUrl + "/start.js");
+                    response = client.DownloadStringWithSession(_app.BaseUrl + "/start.js").Result;
                 }
             }
             catch (Exception ex)

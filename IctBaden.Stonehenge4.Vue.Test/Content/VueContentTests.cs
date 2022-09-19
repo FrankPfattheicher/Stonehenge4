@@ -64,7 +64,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
         [InlineData("webfonts/fa-solid-900.ttf")]
         [InlineData("webfonts/fa-solid-900.woff")]
         [InlineData("webfonts/fa-solid-900.woff2")]
-        public void ShouldContainEmbeddedResourceContent(string content)
+        public async void ShouldContainEmbeddedResourceContent(string content)
         {
             var response = string.Empty;
             var message = string.Empty;
@@ -73,7 +73,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadString(_app.BaseUrl + "/" + content);
+                    response = await client.DownloadString(_app.BaseUrl + "/" + content);
                 }
             }
             catch (Exception ex)

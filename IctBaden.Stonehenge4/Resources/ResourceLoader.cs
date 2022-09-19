@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -117,7 +118,7 @@ namespace IctBaden.Stonehenge.Resources
             }
         }
 
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             return null;
         }
@@ -128,9 +129,9 @@ namespace IctBaden.Stonehenge.Resources
             .Replace("/", ".");
         
         
-        public Resource Get(AppSession session, string name, Dictionary<string, string> parameters)
+        public Task<Resource> Get(AppSession session, string name, Dictionary<string, string> parameters)
         {
-            if (name.StartsWith("Events/")) return null;
+            if (name.StartsWith("Events/")) return Task.FromResult<Resource>(null);
             
             var resourceName = GetAssemblyResourceName(name);
 
@@ -147,7 +148,7 @@ namespace IctBaden.Stonehenge.Resources
             if (asmResource.Key == null)
             {
                 _logger.LogInformation($"ResourceLoader({resourceName}): not found");
-                return null;
+                return Task.FromResult<Resource>(null);
             }
 
             var resourceExtension = Path.GetExtension(resourceName);
@@ -155,7 +156,7 @@ namespace IctBaden.Stonehenge.Resources
             if (resourceType == null)
             {
                 _logger.LogInformation($"ResourceLoader({resourceName}): not found");
-                return null;
+                return Task.FromResult<Resource>(null);
             }
 
             using (var stream = asmResource.Value.Assembly.GetManifestResourceStream(asmResource.Value.FullName))
@@ -169,7 +170,7 @@ namespace IctBaden.Stonehenge.Resources
                         {
                             var data = reader.ReadBytes((int)stream.Length);
                             _logger.LogDebug($"ResourceLoader({resourceName}): {asmResource.Value.FullName}");
-                            return new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, data, Resource.Cache.Revalidate);
+                            return Task.FromResult(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, data, Resource.Cache.Revalidate));
                         }
                     }
                     else
@@ -186,14 +187,14 @@ namespace IctBaden.Stonehenge.Resources
                                 text = UserContentLinks.InsertExtensionLinks(ResourceAssemblies, text);
                             }
                             text = text.Replace("{.min}", (session?.IsDebug ?? false) ? "" : ".min");
-                            return new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, text, Resource.Cache.Revalidate);
+                            return Task.FromResult(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, text, Resource.Cache.Revalidate));
                         }
                     }
                 }
             }
 
             _logger.LogInformation($"ResourceLoader({resourceName}): not found");
-            return null;
+            return Task.FromResult<Resource>(null);
         }
     }
 }

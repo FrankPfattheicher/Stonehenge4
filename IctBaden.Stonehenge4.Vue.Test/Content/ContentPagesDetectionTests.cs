@@ -22,7 +22,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    _response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
+                    _response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
                 }
             }
             catch (Exception ex)

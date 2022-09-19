@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -43,9 +44,9 @@ namespace IctBaden.Stonehenge.Vue.Client
             _elementTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeElement.js");
         }
 
-        private string LoadResourceText(string resourceName)
+        private async Task<string> LoadResourceText(string resourceName)
         {
-            var resource = _loader.Get(new AppSession(), resourceName, new Dictionary<string, string>());
+            var resource = await _loader.Get(new AppSession(), resourceName, new Dictionary<string, string>());
             return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
         }
 
@@ -330,12 +331,12 @@ namespace IctBaden.Stonehenge.Vue.Client
         private string InsertElements(string pageText)
         {
             const string elementsInsertPoint = "//stonehengeElements";
-            var elements = CreateElements();
+            var elements = CreateElements().Result;
 
             return pageText.Replace(elementsInsertPoint, string.Join(Environment.NewLine, elements));
         }
 
-        public List<string> CreateElements()
+        public async Task<List<string>> CreateElements()
         {
             var customElements = _vueContent
                .Where(res => res.Value.ViewModel?.ElementName != null)
@@ -354,11 +355,11 @@ namespace IctBaden.Stonehenge.Vue.Client
                 var bindings = element.ViewModel?.Bindings?.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
                 elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
 
-                var template = LoadResourceText($"{source}.html");
+                var template = await LoadResourceText($"{source}.html");
                 template = JsonSerializer.Serialize(template);
                 elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
 
-                var methods = LoadResourceText($"{source}.js");
+                var methods = await LoadResourceText($"{source}.js");
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
                 elementJs = elementJs.Replace("//stonehengeElementMethods", methods);
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -25,15 +26,15 @@ namespace IctBaden.Stonehenge.Test.Tools
         {
         }
 
-        public Resource Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
         {
             return null;
         }
 
-        public Resource Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+        public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             var resourceExtension = Path.GetExtension(resourceName);
-            return new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), _content, Resource.Cache.None);
+            return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), _content, Resource.Cache.None));
         }
     }
 }

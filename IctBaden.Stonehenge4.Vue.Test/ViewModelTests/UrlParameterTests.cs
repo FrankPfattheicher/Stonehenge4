@@ -21,7 +21,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests
         }
 
         [Fact]
-        public void RequestWithParametersShouldSetSessionParameters()
+        public async void RequestWithParametersShouldSetSessionParameters()
         {
             var response = string.Empty;
 
@@ -30,7 +30,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm?test=1234");
+                    response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm?test=1234");
                 }
             }
             catch (Exception ex)

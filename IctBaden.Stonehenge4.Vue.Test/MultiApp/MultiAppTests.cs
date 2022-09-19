@@ -35,7 +35,7 @@ namespace IctBaden.Stonehenge.Vue.Test.MultiApp
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app1.BaseUrl + "/app.js");
+                    response = client.DownloadStringWithSession(_app1.BaseUrl + "/app.js").Result;
                 }
             }
             catch (Exception ex)
@@ -53,7 +53,7 @@ namespace IctBaden.Stonehenge.Vue.Test.MultiApp
                 // ReSharper disable once ConvertToUsingDeclaration
                 using (var client = new RedirectableHttpClient())
                 {
-                    response = client.DownloadStringWithSession(_app2.BaseUrl + "/app.js");
+                    response = client.DownloadStringWithSession(_app2.BaseUrl + "/app.js").Result;
                 }
             }
             catch (Exception ex)

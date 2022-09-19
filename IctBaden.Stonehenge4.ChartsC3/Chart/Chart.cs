@@ -11,16 +11,6 @@ public class Chart
     public string Id { get; } = Guid.NewGuid().ToString("N");
     
     /// <summary>
-    /// Chart width in pixel
-    /// </summary>
-    public int? Width = null;
-
-    /// <summary>
-    /// Chart height in pixel
-    /// </summary>
-    public int? Height = null;
-
-    /// <summary>
     /// Show series points
     /// </summary>
     public bool ShowPoints = true;
@@ -143,17 +133,6 @@ public class Chart
     {
         { "enabled", EnableZoom }
     };
-
-    public Dictionary<string, object> Size
-    {
-        get
-        {
-            var size = new Dictionary<string, object>();
-            if (Width != null) size["width"] = Width;
-            if (Height != null) size["height"] = Height;
-            return size;
-        }
-    }
 
     public Dictionary<string, object> Axis
     {
