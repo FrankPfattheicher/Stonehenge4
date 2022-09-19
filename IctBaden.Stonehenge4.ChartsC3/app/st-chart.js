@@ -10,7 +10,10 @@ mounted: function() {
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
-            size: this.$props.chartdata.Size
+            size: {
+                width: this.$el.clientWidth,
+                height: this.$el.clientHeight,
+            }
         });
     }
     this.chartId = this.$props.chartdata.Id;
@@ -18,6 +21,7 @@ mounted: function() {
 updated: function () {
 
     if(typeof(this.chart) == "undefined" || this.chartId != this.$props.chartdata.Id) {
+                
         this.chart = c3.generate({
             bindto: this.$el,
             title: this.$props.chartdata.Title,
@@ -26,7 +30,10 @@ updated: function () {
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
-            size: this.$props.chartdata.Size
+            size: {
+                width: this.$el.clientWidth,
+                height: this.$el.clientHeight,
+            }
         });
         this.chartId = this.$props.chartdata.Id;
     }

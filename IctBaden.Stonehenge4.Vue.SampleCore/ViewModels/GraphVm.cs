@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.Sankey;
@@ -51,11 +52,16 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 },
                 Links = new[]
                 {
-                    new SankeyLink { Source = "Alice", Target = "Bob", Value = 10 },
-                    new SankeyLink { Source = "Bert", Target = "Bob", Value = 5 },
-                    new SankeyLink { Source = "Bob", Target = "Carol", Value = 100 }
+                    new SankeyLink("Alice", "Bob") { Value = 10 },
+                    new SankeyLink("Bert", "Bob") { Value = 5 },
+                    new SankeyLink("Bob", "Carol") { Value = 100 }
                 }
             };
+            foreach (var link in SankeyChart.Links)
+            {
+                link.Tooltip = $"{link.Source} -> {link.Target}\n{link.Value} units";
+            }
+            
             UpdateData();
 
             SetUpdateTimer(Speed);

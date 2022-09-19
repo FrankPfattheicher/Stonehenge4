@@ -5,14 +5,16 @@ namespace IctBaden.Stonehenge.Extension.Sankey;
 
 public class SankeyNode
 {
-    [JsonPropertyName("id")]
-    public string Id { get; set; }
+    [JsonPropertyName("id")] public string Id { get; set; } = "";
 
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    private string _name;
+    [JsonPropertyName("name")] public string Name
+    {
+        get => string.IsNullOrEmpty(_name) ? Id : _name;
+        set => _name = value;
+    }
 
     public KnownColor Color { get; set; } = KnownColor.LightSkyBlue;
-
     public string ColorRgb
     {
         get

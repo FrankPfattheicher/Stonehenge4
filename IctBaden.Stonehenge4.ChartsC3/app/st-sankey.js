@@ -57,11 +57,11 @@ updated: function () {
             .classed("link", true)
             .attr("d", d3.sankeyLinkHorizontal())
             .attr("fill", "none")
-            .attr("stroke", "silver")
+            .attr("stroke", d => d.ColorRgb)
             .attr("stroke-width", d => d.width)
             .attr("stoke-opacity", 0.5)
             .append("title")
-            .text(function(d) { return d.source.id + "->" + d.target.id +"\n" + d.value + "kW"; });
+            .text(d => d.Tooltip);
         
        
         let nodes = svg
@@ -89,7 +89,7 @@ updated: function () {
             .attr("dy", ".35em")
             .attr("text-anchor", "end")
             .attr("transform", null)
-            .attr("fill", "black")
+            //.attr("fill", "black")
             .text(function(d) { return d.id; })
             .filter(function(d) { return d.x0 <= 0; })
             .attr("x", 6 + sankey.nodeWidth())
