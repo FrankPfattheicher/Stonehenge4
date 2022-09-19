@@ -79,21 +79,19 @@ updated: function () {
             .attr("width", d => d.x1 - d.x0)
             .attr("height", d => d.y1 - d.y0)
             .style("fill",  d => d.ColorRgb)
-            .style("stroke", "")
+            .style("stroke", d => d.NodeStroke)
             .attr("opacity", 0.8);
         
         nodes
             .append("text")
             .attr("x",  function(d) { return d.x0 - 6; })
-            .attr("y", function(d) { return (d.y1 - d.y0) / 2; })
+            .attr("y", function(d) { return d.y0 + (d.y1 - d.y0) / 2; })
             .attr("dy", ".35em")
             .attr("text-anchor", "end")
             .attr("transform", null)
-            //.attr("fill", "black")
             .text(function(d) { return d.id; })
             .filter(function(d) { return d.x0 <= 0; })
             .attr("x", 6 + sankey.nodeWidth())
-            .attr("y", function(d) { return d.y0 + (d.y1 - d.y0) / 2; })
             .attr("text-anchor", "start");
 
         this.chart = sankey;

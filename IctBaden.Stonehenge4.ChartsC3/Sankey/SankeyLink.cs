@@ -16,7 +16,7 @@ public class SankeyLink
     [JsonPropertyName("value")]
     public long Value { get; set; }
 
-    
+    [JsonIgnore]    
     public KnownColor Color { get; set; } = KnownColor.Silver;
     public string ColorRgb
     {

@@ -48,13 +48,15 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                     new SankeyNode { Id = "Alice" },
                     new SankeyNode { Id = "Bert" },
                     new SankeyNode { Id = "Bob", Color = KnownColor.Coral },
-                    new SankeyNode { Id = "Carol" }
+                    new SankeyNode { Id = "Carol" },
+                    new SankeyNode { Id = "Doris" }
                 },
                 Links = new[]
                 {
                     new SankeyLink("Alice", "Bob") { Value = 10 },
                     new SankeyLink("Bert", "Bob") { Value = 5 },
-                    new SankeyLink("Bob", "Carol") { Value = 100 }
+                    new SankeyLink("Bob", "Carol") { Value = 95 },
+                    new SankeyLink("Bob", "Doris") { Value = 5 }
                 }
             };
             foreach (var link in SankeyChart.Links)
