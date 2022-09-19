@@ -19,10 +19,11 @@ updated: function () {
 
     //if(typeof(this.chart) == "undefined" || this.chartId != this.$props.chartdata.Id) 
     {
+        const chartdata = this.$props.chartdata;
 
         data = {
-                nodes: this.$props.chartdata.Nodes,
-                links: this.$props.chartdata.Links
+                nodes: chartdata.Nodes,
+                links: chartdata.Links
             };
 
         const margin = {top: 10, right: 10, bottom: 10, left: 10};
@@ -36,7 +37,7 @@ updated: function () {
             .sankey()
             .size([width, height])
             .nodeId(d => d.id)
-            .nodeWidth(40)
+            .nodeWidth(chartdata.NodeWidth)
             .nodePadding(10)
             .nodeAlign(d3.sankeyCenter);
         
@@ -49,7 +50,9 @@ updated: function () {
             .classed("links", true)
             .selectAll("path")
             .data(graph.links)
-            .enter()
+            .enter();
+
+        links
             .append("path")
             .classed("link", true)
             .attr("d", d3.sankeyLinkHorizontal())
@@ -75,8 +78,8 @@ updated: function () {
             .attr("y", d => d.y0)
             .attr("width", d => d.x1 - d.x0)
             .attr("height", d => d.y1 - d.y0)
-            .style("fill",  "lightskyblue")
-            .style("stroke", "black")
+            .style("fill",  d => d.ColorRgb)
+            .style("stroke", "")
             .attr("opacity", 0.8);
         
         nodes

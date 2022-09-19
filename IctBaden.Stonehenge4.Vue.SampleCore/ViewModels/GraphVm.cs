@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.Sankey;
@@ -45,7 +46,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 {
                     new SankeyNode { Id = "Alice" },
                     new SankeyNode { Id = "Bert" },
-                    new SankeyNode { Id = "Bob" },
+                    new SankeyNode { Id = "Bob", Color = KnownColor.Coral },
                     new SankeyNode { Id = "Carol" }
                 },
                 Links = new[]
