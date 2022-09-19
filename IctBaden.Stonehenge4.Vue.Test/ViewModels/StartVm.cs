@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable UnusedMember.Global
 

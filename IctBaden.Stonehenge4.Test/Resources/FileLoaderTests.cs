@@ -64,9 +64,9 @@ namespace IctBaden.Stonehenge.Test.Resources
         }
 
         [Fact]
-        public void Load_file_unknown_txt()
+        public async void Load_file_unknown_txt()
         {
-            var resource = _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
             Assert.Null(resource);
         }
 

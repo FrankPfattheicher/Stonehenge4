@@ -1,13 +1,14 @@
 using System.Drawing;
 using System.Text.Json.Serialization;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace IctBaden.Stonehenge.Extension.Sankey;
 
 public class SankeyNode
 {
-    [JsonPropertyName("id")] public string Id { get; set; } = "";
+    [JsonPropertyName("id")] public string Id { get; init; } = "";
 
-    private string _name;
+    private string _name = "";
     [JsonPropertyName("name")] public string Name
     {
         get => string.IsNullOrEmpty(_name) ? Id : _name;

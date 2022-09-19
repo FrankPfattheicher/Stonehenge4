@@ -122,7 +122,9 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 // session not found
                 var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
                 var directoryName = Path.GetDirectoryName(path) ?? "/";
-                var resource = resourceLoader?.Get(null, path.Substring(1).Replace("/", "."), new Dictionary<string, string>());
+                var resource = resourceLoader != null 
+                    ? await resourceLoader.Get(null, path.Substring(1).Replace("/", "."), new Dictionary<string, string>())
+                    : null;
                 if (directoryName.Length > 1 && resource == null && stonehengeId != null)
                 {
                     logger.LogTrace($"Kestrel[{stonehengeId}] Abort {context.Request.Method} {path}{context.Request.QueryString}");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -12,25 +13,25 @@ namespace IctBaden.Stonehenge.Vue.Test
         // ReSharper disable once MemberCanBePrivate.Global
         public string SessionId { get; set; }
 
-        public string DownloadStringWithSession(string address)
+        public async Task<string> DownloadStringWithSession(string address)
         {
             if (SessionId == null)
             {
-                DownloadString(address);
+                await DownloadString(address);
             }
 
             var url = new UriBuilder(address);
             var query = HttpUtility.ParseQueryString(url.Query);
             query["stonehenge-id"] = SessionId;
             url.Query = query.ToString() ?? string.Empty;
-            return DownloadString(url.ToString());
+            return await DownloadString(url.ToString());
         }
 
-        public string DownloadString(string address)
+        public async Task<string> DownloadString(string address)
         {
             for (var redirect = 0; redirect < 10; redirect++)
             {
-                var response = GetAsync(address).Result;
+                var response = await GetAsync(address);
 
                 var redirectUrl = response.Headers.Location;
                 if (redirectUrl == null)

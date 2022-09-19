@@ -34,9 +34,9 @@ namespace IctBaden.Stonehenge.Test.Resources
         // ReSharper disable InconsistentNaming
 
         [Fact]
-        public void Load_resource_unknown_txt()
+        public async void Load_resource_unknown_txt()
         {
-            var resource = _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
+            var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
             Assert.Null(resource);
         }
 
