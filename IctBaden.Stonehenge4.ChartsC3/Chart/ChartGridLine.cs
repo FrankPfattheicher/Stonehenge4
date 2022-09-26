@@ -1,10 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace IctBaden.Stonehenge.Extension;
 
-public abstract class ChartGridLine
+public class ChartGridLine
 {
     [JsonIgnore] public ValueAxisId Axis { get; init; } = ValueAxisId.y;
 
