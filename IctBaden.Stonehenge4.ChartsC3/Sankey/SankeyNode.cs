@@ -28,4 +28,13 @@ public class SankeyNode
 
     public string? NodeStroke { get; set; }
 
+    public SankeyNode(string id)
+    {
+        Id = id;
+    }
+    
+    public override string ToString()
+    {
+        return Name;
+    }
 }
