@@ -1,4 +1,5 @@
 
+* 4.2.0 - UseKeycloakAuthentication
 * 4.1.3 - Make ChartGridLine non-abstract
 * 4.1.2 - Added property position to ChartGridLine
 * 4.1.1 - Fix Sankey node text positioning

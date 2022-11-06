@@ -95,7 +95,9 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     return;
                 }
 
-                if (appSession != null && appSession.HostOptions.UseKeycloakAuthentication != null && string.IsNullOrEmpty(appSession.UserIdentity))
+                if (appSession?.HostOptions.UseKeycloakAuthentication != null 
+                    && appSession.RequestLogin
+                    && !context.Request.Path.Value.Contains("/Events"))
                 {
                     var o = appSession.HostOptions.UseKeycloakAuthentication;
                     var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
@@ -108,7 +110,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                         var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
                         
                         using var client = new HttpClient();
-                        var tokenUrl = $"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/token";
+                        var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
                         var result = client.PostAsync(tokenUrl, 
                                  new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
                              .Result;
@@ -131,7 +133,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     }
                     else if (string.IsNullOrEmpty(state))
                     {
-                        var redirect = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}{context.Request.QueryString}";
+                        var redirect = $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}";
                         appSession["authRedirect"] = redirect;
                         var query = new QueryBuilder
                         {
@@ -143,7 +145,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             { "state", appSession.Id }
                         };
                         context.Response
-                            .Redirect($"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/auth{query}");
+                            .Redirect($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
                         return;
                     }
 
@@ -152,7 +154,9 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     return;
                 }
 
-                if (appSession != null && string.IsNullOrEmpty(appSession.UserIdentity))
+                if (appSession != null 
+                    && appSession.HostOptions.UseKeycloakAuthentication == null
+                    && string.IsNullOrEmpty(appSession.UserIdentity))
                 {
                     SetUserNameFromContext(appSession, context);
                 }
@@ -176,7 +180,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             context.Response.Redirect($"/index.html?{query}");
                             return;
                         }
-                        else if (string.Compare(resourceName, "index.html",
+                        if (string.Compare(resourceName, "index.html",
                             StringComparison.InvariantCultureIgnoreCase) == 0)
                         {
                             HandleIndexContent(context, content);
@@ -389,7 +393,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             if (explorers.Length == 1)
             {
                 identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
-                return;
+                appSession.SetUser(identityName, "", "");
             }
             
             // RDP with more than one session: How to find app and session using request's client IP port

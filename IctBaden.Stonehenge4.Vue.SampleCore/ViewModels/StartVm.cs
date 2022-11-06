@@ -27,6 +27,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public bool IsLocal => Session?.IsLocal ?? true;
         public string ClientAddress => Session.ClientAddress ?? "(unknown)";
         public string UserIdentity => Session.UserIdentity ?? "(unknown)";
+        public string UserIdentityId => Session.UserIdentityId ?? "(unknown)";
+        public string UserIdentityEMail => Session.UserIdentityEMail ?? "(unknown)";
 
 
         public bool AppBoxVisible { get; private set; }
@@ -118,6 +120,17 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public void NavigateOnPage()
         {
             NavigateTo("#pagetop");
+        }
+
+        [ActionMethod]
+        public void UserLogin()
+        {
+            Session.UserLogin();
+        }
+        [ActionMethod]
+        public void UserLogout()
+        {
+            Session.UserLogout();
         }
 
         public override Resource GetDataResource(string resourceName)

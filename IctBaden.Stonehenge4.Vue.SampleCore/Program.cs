@@ -37,13 +37,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
 
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
-                HandleWindowResized = true,
-                UseKeycloakAuthentication = new KeycloakAuthenticationOptions
-                {
-                    ClientId = "frontend",
-                    Realm = "liva-production",
-                    AuthUrl = "https://portal.liva-aws.com/auth"
-                }
+                HandleWindowResized = true
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"
             };

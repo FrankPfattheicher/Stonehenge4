@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
@@ -50,13 +53,14 @@ namespace IctBaden.Stonehenge.Core
         public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
-        
+
+        public bool RequestLogin { get; private set; }
         /// Name of user identity 
-        public string UserIdentity { get; private set; }
+        public string UserIdentity { get; private set; } = "";
         /// Name of user identity 
-        public string UserIdentityId { get; private set; }
+        public string UserIdentityId { get; private set; } = "";
         /// Name of user identity 
-        public string UserIdentityEMail { get; private set; }
+        public string UserIdentityEMail { get; private set; } = "";
         public DateTime LastUserAction { get; private set; }
 
         private readonly Guid _id;
@@ -594,6 +598,40 @@ namespace IctBaden.Stonehenge.Core
             UserIdentity = identityName;
             UserIdentityId = identityId;
             UserIdentityEMail = identityEMail;
+            RequestLogin = false;
+        }
+
+        public void UserLogin()
+        {
+            SetUser("", "", "");
+            this["authRedirect"] = null;
+            RequestLogin = true;
+
+            var vm = ViewModel as ActiveViewModel;
+            vm?.ExecuteClientScript("window.location.reload();");
+        }
+        
+        public void UserLogout()
+        {
+            if (HostOptions.UseKeycloakAuthentication == null) return;
+            
+            var redirectUri = this["authRedirect"]?.ToString();
+            if (string.IsNullOrEmpty(redirectUri)) return;
+
+            var o = HostOptions.UseKeycloakAuthentication;
+            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout?state={Id}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+            
+            using var client = new HttpClient();
+            var result = client.GetAsync(logoutUrl).Result;
+            if (result.StatusCode == HttpStatusCode.Found)
+            {
+                SetUser("", "", "");
+                this["authRedirect"] = null;
+            }
+
+            var vm = ViewModel as ActiveViewModel;
+            vm?.NotifyAllPropertiesChanged();
+            UpdatePropertiesImmediately();
         }
     }
 }
