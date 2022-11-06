@@ -50,7 +50,13 @@ namespace IctBaden.Stonehenge.Core
         public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
+        
+        /// Name of user identity 
         public string UserIdentity { get; private set; }
+        /// Name of user identity 
+        public string UserIdentityId { get; private set; }
+        /// Name of user identity 
+        public string UserIdentityEMail { get; private set; }
         public DateTime LastUserAction { get; private set; }
 
         private readonly Guid _id;
@@ -583,9 +589,11 @@ namespace IctBaden.Stonehenge.Core
             }
         }
 
-        public void SetUser(string identityName)
+        public void SetUser(string identityName, string identityId, string identityEMail)
         {
             UserIdentity = identityName;
+            UserIdentityId = identityId;
+            UserIdentityEMail = identityEMail;
         }
     }
 }
