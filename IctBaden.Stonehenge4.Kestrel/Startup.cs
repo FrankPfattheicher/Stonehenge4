@@ -71,6 +71,15 @@ namespace IctBaden.Stonehenge.Kestrel
             app.UseMiddleware<StonehengeSession>();
             app.UseMiddleware<StonehengeHeaders>();
             app.UseMiddleware<StonehengeRoot>();
+            
+            if (_options.CustomMiddleware != null)
+            {
+                foreach (var cm in _options.CustomMiddleware)
+                {
+                    app.UseMiddleware(cm);    
+                }
+            }
+            
             app.UseMiddleware<StonehengeContent>();
         }
     }

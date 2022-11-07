@@ -1,5 +1,6 @@
 // ReSharper disable MemberCanBePrivate.Global
 
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -80,6 +81,12 @@ namespace IctBaden.Stonehenge.Hosting
         ///     Expires: 0 
         /// </summary>
         public bool DisableClientCache { get; set; }
+        
+        /// <summary>
+        /// Allow custom middleware to be inserted
+        /// before StonehengeContent is called
+        /// </summary>
+        public Type[] CustomMiddleware { get; set; }
         
         /// <summary>
         /// Enable firing WindowResized AppCommand  
