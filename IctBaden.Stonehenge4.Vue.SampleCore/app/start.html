@@ -17,6 +17,8 @@
         Session.IsLocal = <span v-if="IsLocal"><b>TRUE</b></span><span v-else>false</span><br/>
         Session.ClientAddress = {{ClientAddress}}<br/>
         Session.UserIdentity = {{UserIdentity}}<br/>
+        Session.UserIdentityId = {{UserIdentityId}}<br/>
+        Session.UserIdentityEMail = {{UserIdentityEMail}}<br/>
         Session.Parameters = {{Parameters}}<br/>
         NotInitialized = {{NotInitialized}}<br/>
     </p>
@@ -64,6 +66,11 @@
     </p>
     <p>
         <button class="btn btn-sm btn-secondary" @click="NavigateOnPage()">Navigate On Page (top of page)</button>
+    </p>
+    <p>
+        <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-sm btn-secondary" @click="UserLogout()">Logout</button>
     </p>
 
 
