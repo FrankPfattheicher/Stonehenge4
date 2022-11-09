@@ -106,8 +106,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     if (state.StartsWith(appSession.Id))
                     {
                         var code = requestQuery["code"];
-                        var redirectUri = appSession["authRedirect"].ToString();
-                        var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+                        var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
                         
                         using var client = new HttpClient();
                         var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
@@ -126,19 +125,19 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             var identityName = jwtToken?.Payload["name"]?.ToString();
                             var identityMail = jwtToken?.Payload["email"]?.ToString();
                             appSession.SetUser(identityName, identityId, identityMail);
-                            context.Response.Redirect(redirectUri);
+                            context.Response.Redirect(appSession.AuthorizeRedirectUrl);
                             return;
                         }
                         Console.WriteLine(result);
                     }
                     else if (string.IsNullOrEmpty(state))
                     {
-                        var redirect = $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}";
-                        appSession["authRedirect"] = redirect;
+                        appSession.AuthorizeRedirectUrl = 
+                            $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
                         var query = new QueryBuilder
                         {
                             { "client_id", o.ClientId },
-                            { "redirect_uri", redirect },
+                            { "redirect_uri", appSession.AuthorizeRedirectUrl },
                             { "response_type", "code" },
                             { "scope", "openid" },
                             { "nonce", appSession.Id },

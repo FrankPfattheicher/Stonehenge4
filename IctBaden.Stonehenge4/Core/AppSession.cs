@@ -53,8 +53,13 @@ namespace IctBaden.Stonehenge.Core
         public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
-
-        public bool RequestLogin { get; private set; }
+        
+        /// User login is requested on next request 
+        public bool RequestLogin;
+        /// Redirect URL used to complete authorization 
+        public string AuthorizeRedirectUrl;
+        
+        
         /// Name of user identity 
         public string UserIdentity { get; private set; } = "";
         /// Name of user identity 
@@ -604,7 +609,7 @@ namespace IctBaden.Stonehenge.Core
         public void UserLogin()
         {
             SetUser("", "", "");
-            this["authRedirect"] = null;
+            AuthorizeRedirectUrl = null;
             RequestLogin = true;
 
             var vm = ViewModel as ActiveViewModel;
@@ -615,18 +620,17 @@ namespace IctBaden.Stonehenge.Core
         {
             if (HostOptions.UseKeycloakAuthentication == null) return;
             
-            var redirectUri = this["authRedirect"]?.ToString();
-            if (string.IsNullOrEmpty(redirectUri)) return;
+            if (string.IsNullOrEmpty(AuthorizeRedirectUrl)) return;
 
             var o = HostOptions.UseKeycloakAuthentication;
-            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout?state={Id}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout?state={Id}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
             
             using var client = new HttpClient();
             var result = client.GetAsync(logoutUrl).Result;
             if (result.StatusCode == HttpStatusCode.Found)
             {
                 SetUser("", "", "");
-                this["authRedirect"] = null;
+                AuthorizeRedirectUrl = null;
             }
 
             var vm = ViewModel as ActiveViewModel;
