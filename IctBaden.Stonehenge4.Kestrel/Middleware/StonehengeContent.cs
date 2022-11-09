@@ -132,7 +132,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     }
                     else if (string.IsNullOrEmpty(state))
                     {
-                        appSession.AuthorizeRedirectUrl = $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}";
+                        appSession.AuthorizeRedirectUrl = 
+                            $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
                         var query = new QueryBuilder
                         {
                             { "client_id", o.ClientId },
