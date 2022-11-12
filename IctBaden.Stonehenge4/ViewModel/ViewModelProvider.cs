@@ -26,7 +26,8 @@ namespace IctBaden.Stonehenge.ViewModel
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = { new DoubleConverter() }
         };
 
         public ViewModelProvider(ILogger logger)
