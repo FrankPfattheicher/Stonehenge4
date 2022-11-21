@@ -613,7 +613,7 @@ namespace IctBaden.Stonehenge.Core
             RequestLogin = true;
 
             var vm = ViewModel as ActiveViewModel;
-            vm?.ExecuteClientScript("window.location.reload();");
+            vm?.ReloadPage();
         }
         
         public void UserLogout()
@@ -634,8 +634,7 @@ namespace IctBaden.Stonehenge.Core
             }
 
             var vm = ViewModel as ActiveViewModel;
-            vm?.NotifyAllPropertiesChanged();
-            UpdatePropertiesImmediately();
+            vm?.ReloadPage();
         }
     }
 }
