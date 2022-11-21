@@ -543,6 +543,8 @@ namespace IctBaden.Stonehenge.ViewModel
             NavigateToRoute = route.Replace("-", "_");
         }
 
+        public void ReloadPage() => ExecuteClientScript("window.location.reload();");
+
         #endregion
 
         #region Client site scripting
@@ -632,6 +634,6 @@ namespace IctBaden.Stonehenge.ViewModel
         public virtual void OnDispose()
         {
         }
-
+        
     }
 }
