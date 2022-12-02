@@ -83,10 +83,10 @@ namespace IctBaden.Stonehenge.Hosting
         public bool DisableClientCache { get; set; }
         
         /// <summary>
-        /// Allow custom middleware to be inserted
+        /// Allow custom middleware (by type name) to be inserted
         /// before StonehengeContent is called
         /// </summary>
-        public Type[] CustomMiddleware { get; set; }
+        public string[] CustomMiddleware { get; set; }
         
         /// <summary>
         /// Enable firing WindowResized AppCommand  

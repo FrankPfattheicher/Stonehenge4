@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -57,8 +58,6 @@ namespace IctBaden.Stonehenge.Kestrel
         {
             app.UseMiddleware<ServerExceptionLogger>();
             app.UseMiddleware<StonehengeAcme>();
-            app.UseResponseCompression();
-            app.UseCors("StonehengePolicy");
             app.Use((context, next) =>
             {
                 context.Items.Add("stonehenge.Logger", _logger);
@@ -68,17 +67,25 @@ namespace IctBaden.Stonehenge.Kestrel
                 context.Items.Add("stonehenge.AppSessions", AppSessions);
                 return next.Invoke();
             });
-            app.UseMiddleware<StonehengeSession>();
-            app.UseMiddleware<StonehengeHeaders>();
-            app.UseMiddleware<StonehengeRoot>();
-            
             if (_options.CustomMiddleware != null)
             {
                 foreach (var cm in _options.CustomMiddleware)
                 {
-                    app.UseMiddleware(cm);    
+                    var cmType = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(a => a.GetTypes())
+                        .FirstOrDefault(type => type.Name == cm);
+                    if (cmType != null)
+                    {
+                        app.UseMiddleware(cmType);
+                    }    
                 }
             }
+            app.UseResponseCompression();
+            app.UseCors("StonehengePolicy");
+            app.UseMiddleware<StonehengeSession>();
+            app.UseMiddleware<StonehengeHeaders>();
+            app.UseMiddleware<StonehengeRoot>();
+            
             
             app.UseMiddleware<StonehengeContent>();
         }
