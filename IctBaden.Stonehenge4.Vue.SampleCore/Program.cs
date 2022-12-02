@@ -37,7 +37,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
 
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
-                HandleWindowResized = true
+                HandleWindowResized = true,
+                CustomMiddleware = new []{ nameof(StonehengeRawContent) }
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"
             };
