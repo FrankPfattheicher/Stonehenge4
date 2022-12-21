@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -53,19 +54,27 @@ namespace IctBaden.Stonehenge.Core
         public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
-        
+
         /// User login is requested on next request 
         public bool RequestLogin;
+
         /// Redirect URL used to complete authorization 
         public string AuthorizeRedirectUrl;
-        
-        
+        /// Access token given from authorization 
+        public string AccessToken;
+        /// Refresh token given from authorization 
+        public string RefreshToken;
+
+
         /// Name of user identity 
         public string UserIdentity { get; private set; } = "";
+
         /// Name of user identity 
         public string UserIdentityId { get; private set; } = "";
+
         /// Name of user identity 
         public string UserIdentityEMail { get; private set; } = "";
+
         public DateTime LastUserAction { get; private set; }
 
         private readonly Guid _id;
@@ -129,7 +138,7 @@ namespace IctBaden.Stonehenge.Core
 
             while (!_forceUpdate && max > 0)
             {
-                await Wait( _eventRelease, 100);
+                await Wait(_eventRelease, 100);
                 max--;
             }
 
@@ -615,26 +624,32 @@ namespace IctBaden.Stonehenge.Core
             var vm = ViewModel as ActiveViewModel;
             vm?.ReloadPage();
         }
-        
-        public void UserLogout()
+
+        public bool UserLogout()
         {
-            if (HostOptions.UseKeycloakAuthentication == null) return;
-            
-            if (string.IsNullOrEmpty(AuthorizeRedirectUrl)) return;
+            if (HostOptions.UseKeycloakAuthentication == null) return false;
+
+            if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
 
             var o = HostOptions.UseKeycloakAuthentication;
-            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout?state={Id}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
-            
+
             using var client = new HttpClient();
-            var result = client.GetAsync(logoutUrl).Result;
-            if (result.StatusCode == HttpStatusCode.Found)
-            {
-                SetUser("", "", "");
-                AuthorizeRedirectUrl = null;
-            }
+            var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+            
+            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
+            var result = client.PostAsync(logoutUrl,
+                    new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+                .Result;
+
+            var text = result.Content.ReadAsStringAsync().Result;
+            
+            SetUser("", "", "");
+            AuthorizeRedirectUrl = null;
 
             var vm = ViewModel as ActiveViewModel;
             vm?.ReloadPage();
+
+            return result.StatusCode == HttpStatusCode.NoContent;
         }
     }
 }
