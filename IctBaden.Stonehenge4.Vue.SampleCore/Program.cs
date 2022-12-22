@@ -30,14 +30,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             Console.WriteLine(@"");
             logger.LogInformation("Vue.SampleCore started");
 
-            var             keycloak = new KeycloakAuthenticationOptions
-            {
-                ClientId = "frontend",
-                Realm = "liva-production",
-                AuthUrl = "https://portal.liva-aws.com/auth"
-            };
-
-            
             // select hosting options
             var options = new StonehengeHostOptions
             {
@@ -46,8 +38,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
                 HandleWindowResized = true,
-                CustomMiddleware = new []{ nameof(StonehengeRawContent) },
-                UseKeycloakAuthentication = keycloak
+                CustomMiddleware = new []{ nameof(StonehengeRawContent) }
+                //,UseKeycloakAuthentication = keycloak
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"
             };
