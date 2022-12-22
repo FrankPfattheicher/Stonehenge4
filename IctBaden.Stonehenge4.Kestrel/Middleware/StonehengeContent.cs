@@ -117,10 +117,13 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                         var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                         if (authResponse != null)
                         {
-                            var token = authResponse["id_token"]?.ToString();
-                            if (string.IsNullOrEmpty(token)) token = authResponse["access_token"]?.ToString();
+                            appSession.AccessToken = authResponse["id_token"]?.ToString();
+                            if (string.IsNullOrEmpty(appSession.AccessToken)) appSession.AccessToken = authResponse["access_token"]?.ToString();
+                            
+                            appSession.RefreshToken = authResponse["refresh_token"]?.ToString();
+                            
                             var handler = new JwtSecurityTokenHandler();
-                            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                            var jwtToken = handler.ReadToken(appSession.AccessToken) as JwtSecurityToken;
                             var identityId = jwtToken?.Subject;
                             var identityName = jwtToken?.Payload["name"]?.ToString();
                             var identityMail = jwtToken?.Payload["email"]?.ToString();

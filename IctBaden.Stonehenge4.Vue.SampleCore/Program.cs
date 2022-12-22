@@ -39,6 +39,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
                 PollIntervalSec = 10,
                 HandleWindowResized = true,
                 CustomMiddleware = new []{ nameof(StonehengeRawContent) }
+                //,UseKeycloakAuthentication = keycloak
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
                 // SslCertificatePassword = "test"
             };
