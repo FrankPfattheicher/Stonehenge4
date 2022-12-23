@@ -1,4 +1,5 @@
 
+* 4.2.6 - Serialize StonehengeNavigate after StonehengeEval 
 * 4.2.5 - Keycloak logout fixed
 * 4.2.4 - Fixed CustomMiddleware by type name
 * 4.2.3 - Added ActiveViewModel.ReloadPage
