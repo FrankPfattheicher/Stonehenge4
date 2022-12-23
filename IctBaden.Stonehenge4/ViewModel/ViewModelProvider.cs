@@ -280,18 +280,19 @@ namespace IctBaden.Stonehenge.ViewModel
                 activeVm.MessageBoxText = null;
             }
 
+            if (!string.IsNullOrEmpty(activeVm.ClientScript))
+            {
+                var script = activeVm.ClientScript;
+                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
+                activeVm.ClientScript = null;
+            }
+
             if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
             {
                 var route = activeVm.NavigateToRoute;
                 data.Add(
                     $"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
                 activeVm.NavigateToRoute = null;
-            }
-            else if (!string.IsNullOrEmpty(activeVm.ClientScript))
-            {
-                var script = activeVm.ClientScript;
-                data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
-                activeVm.ClientScript = null;
             }
         }
 
