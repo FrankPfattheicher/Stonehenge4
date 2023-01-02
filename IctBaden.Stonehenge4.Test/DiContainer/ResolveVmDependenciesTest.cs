@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -29,20 +30,20 @@ namespace IctBaden.Stonehenge.Test.DiContainer
         }
 
         [Fact]
-        public void SimpleVmShouldGetReferenceToThisTest()
+        public async Task SimpleVmShouldGetReferenceToThisTest()
         {
             Id = Guid.NewGuid();
-            _loader.Get(_session, "ViewModel/" + nameof(TestSimpleVmWithDependency), new Dictionary<string, string>());
+            await _loader.Get(_session, "ViewModel/" + nameof(TestSimpleVmWithDependency), new Dictionary<string, string>());
             var vm = _session.ViewModel as TestSimpleVmWithDependency;
             Assert.NotNull(vm);
             Assert.Equal(Id, vm.Test.Id);
         }
 
         [Fact]
-        public void ActiveVmShouldGetReferenceToThisTest()
+        public async Task ActiveVmShouldGetReferenceToThisTest()
         {
             Id = Guid.NewGuid();
-            _loader.Get(_session, "ViewModel/" + nameof(TestActiveVmWithDependency), new Dictionary<string, string>());
+            await _loader.Get(_session, "ViewModel/" + nameof(TestActiveVmWithDependency), new Dictionary<string, string>());
             var vm = _session.ViewModel as TestActiveVmWithDependency;
             Assert.NotNull(vm);
             Assert.Equal(_session, vm.Session);

@@ -528,6 +528,7 @@ namespace IctBaden.Stonehenge.ViewModel
 
         public void NavigateTo(string route)
         {
+            if (Session.CurrentRoute == route) return;
             Session.Logger.LogInformation("ActiveViewModel.NavigateTo: " + route);
             NavigateToRoute = route.Replace("-", "_");
         }
@@ -616,6 +617,15 @@ namespace IctBaden.Stonehenge.ViewModel
             }
         }
 
+        protected void StopUpdateTimer()
+        {
+            if (_updateTimer == null) return;
+            
+            _updateTimer.Stop();
+            _updateTimer.Dispose();
+            _updateTimer = null;
+        }
+
         private void UpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             OnUpdateTimer();
@@ -627,7 +637,7 @@ namespace IctBaden.Stonehenge.ViewModel
 
         public void Dispose()
         {
-            _updateTimer?.Dispose();
+            StopUpdateTimer();
             OnDispose();
         }
         
