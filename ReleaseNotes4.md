@@ -1,4 +1,5 @@
 
+* 4.2.8 - Remove AddStonehengeInternalProperties from events (caused lost navigation)
 * 4.2.7 - StopUpdateTimer, prevent navigate to current route
 * 4.2.6 - Serialize StonehengeNavigate after StonehengeEval 
 * 4.2.5 - Keycloak logout fixed

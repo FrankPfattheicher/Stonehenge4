@@ -255,7 +255,7 @@ namespace IctBaden.Stonehenge.ViewModel
                             $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                     }
 
-                    AddStonehengeInternalProperties(data, activeVm);
+                    //AddStonehengeInternalProperties(data, activeVm);
                 }
                 catch
                 {
