@@ -641,7 +641,7 @@ namespace IctBaden.Stonehenge.Core
                     new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
                 .Result;
 
-            var text = result.Content.ReadAsStringAsync().Result;
+            //var text = result.Content.ReadAsStringAsync().Result;
             
             SetUser("", "", "");
             AuthorizeRedirectUrl = null;

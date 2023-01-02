@@ -1,9 +1,7 @@
 using System.IO;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using IctBaden.Stonehenge.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -22,9 +20,6 @@ public class StonehengeRawContent
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
     {
-        var logger = context.Items["stonehenge.Logger"] as ILogger;
-        var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions;
-
         var path = context.Request.Path.Value;
 
         if (path.StartsWith("/metrics"))
