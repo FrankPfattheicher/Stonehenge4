@@ -44,6 +44,7 @@ namespace IctBaden.Stonehenge.Kestrel
             {
                 options.Providers.Add<GzipCompressionProvider>();
             });
+            services.AddCors();
             return services.BuildServiceProvider();
         }
 
