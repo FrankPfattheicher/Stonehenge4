@@ -46,7 +46,8 @@ namespace IctBaden.Stonehenge.Kestrel
             });
             services.AddCors(o => o.AddPolicy("StonehengePolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.WithOrigins("*")
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
