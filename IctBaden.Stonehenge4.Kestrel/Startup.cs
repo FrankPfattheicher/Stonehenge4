@@ -44,13 +44,6 @@ namespace IctBaden.Stonehenge.Kestrel
             {
                 options.Providers.Add<GzipCompressionProvider>();
             });
-            services.AddCors(o => o.AddPolicy("StonehengePolicy", builder =>
-            {
-                builder.WithOrigins("*")
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
             return services.BuildServiceProvider();
         }
 
@@ -82,7 +75,12 @@ namespace IctBaden.Stonehenge.Kestrel
                 }
             }
             app.UseResponseCompression();
-            app.UseCors("StonehengePolicy");
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
             app.UseMiddleware<StonehengeSession>();
             app.UseMiddleware<StonehengeHeaders>();
             app.UseMiddleware<StonehengeRoot>();
