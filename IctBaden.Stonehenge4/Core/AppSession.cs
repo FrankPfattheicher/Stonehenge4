@@ -15,6 +15,7 @@ using System.Web;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -36,6 +37,7 @@ namespace IctBaden.Stonehenge.Core
 
         public StonehengeHostOptions HostOptions { get; private set; }
         public string HostDomain { get; private set; }
+        public string HostUrl { get; private set; }
         public bool IsLocal { get; private set; }
         public bool IsDebug { get; private set; }
         public string ClientAddress { get; private set; }
@@ -471,10 +473,11 @@ namespace IctBaden.Stonehenge.Core
             return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
         }
 
-        public void Initialize(StonehengeHostOptions hostOptions, string hostDomain,
+        public void Initialize(StonehengeHostOptions hostOptions, string hostUrl, string hostDomain,
             bool isLocal, string clientAddress, int clientPort, string userAgent)
         {
             HostOptions = hostOptions;
+            HostUrl = hostUrl;
             HostDomain = hostDomain;
             IsLocal = isLocal;
             ClientAddress = clientAddress;
@@ -619,10 +622,22 @@ namespace IctBaden.Stonehenge.Core
         {
             SetUser("", "", "");
             AuthorizeRedirectUrl = null;
-            RequestLogin = true;
 
-            var vm = ViewModel as ActiveViewModel;
-            vm?.ReloadPage();
+            var o = HostOptions.UseKeycloakAuthentication;
+            if (o == null) return;
+            
+            RequestLogin = true;
+            AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+            var query = new QueryBuilder
+            {
+                { "client_id", o.ClientId },
+                { "redirect_uri", AuthorizeRedirectUrl },
+                { "response_type", "code" },
+                { "scope", "openid" },
+                { "nonce", Id },
+                { "state", Id }
+            };
+            (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
         }
 
         public bool UserLogout()
@@ -641,13 +656,11 @@ namespace IctBaden.Stonehenge.Core
                     new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
                 .Result;
 
-            //var text = result.Content.ReadAsStringAsync().Result;
+            var text = result.Content.ReadAsStringAsync().Result;
+            Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
             
             SetUser("", "", "");
             AuthorizeRedirectUrl = null;
-
-            var vm = ViewModel as ActiveViewModel;
-            vm?.ReloadPage();
 
             return result.StatusCode == HttpStatusCode.NoContent;
         }
