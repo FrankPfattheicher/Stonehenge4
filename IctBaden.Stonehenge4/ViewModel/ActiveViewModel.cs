@@ -530,7 +530,9 @@ namespace IctBaden.Stonehenge.ViewModel
         {
             if (Session.CurrentRoute == route) return;
             Session.Logger.LogInformation("ActiveViewModel.NavigateTo: " + route);
-            NavigateToRoute = route.Replace("-", "_");
+            NavigateToRoute = route.StartsWith("http")
+                ? route
+                : route.Replace("-", "_");
         }
         public void NavigateBack()
         {

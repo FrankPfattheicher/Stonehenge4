@@ -12,7 +12,9 @@ stonehengeViewModelName = function component() {
             for (let propertyName in vmData) {
                 if (propertyName === "StonehengeNavigate") {
                     let target = vmData[propertyName];
-                    if (target.startsWith('#')) {
+                    if (target.startsWith('http')) {
+                        window.location.href = target;
+                    } else if (target.startsWith('#')) {
                         try {
                             document.getElementById(target.substring(1))
                                 .scrollIntoView({block: 'end', behaviour: 'smooth'});

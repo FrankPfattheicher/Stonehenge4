@@ -15,8 +15,8 @@ using HttpMultipartParser;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -86,6 +86,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                 var parameters = queryString.AllKeys
                     .ToDictionary(key => key, key => queryString[key]);
+                Resource content = null;
 
                 appSession?.SetParameters(parameters);
                 if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
@@ -121,39 +122,26 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             if (string.IsNullOrEmpty(appSession.AccessToken)) appSession.AccessToken = authResponse["access_token"]?.ToString();
                             
                             appSession.RefreshToken = authResponse["refresh_token"]?.ToString();
-                            
-                            var handler = new JwtSecurityTokenHandler();
-                            var jwtToken = handler.ReadToken(appSession.AccessToken) as JwtSecurityToken;
-                            var identityId = jwtToken?.Subject;
-                            var identityName = jwtToken?.Payload["name"]?.ToString();
-                            var identityMail = jwtToken?.Payload["email"]?.ToString();
-                            appSession.SetUser(identityName, identityId, identityMail);
-                            context.Response.Redirect(appSession.AuthorizeRedirectUrl);
-                            return;
+
+                            if (appSession.AccessToken != null)
+                            {
+                                var handler = new JwtSecurityTokenHandler();
+                                var jwtToken = handler.ReadToken(appSession.AccessToken) as JwtSecurityToken;
+                                var identityId = jwtToken?.Subject;
+                                var identityName = jwtToken?.Payload["name"]?.ToString();
+                                var identityMail = jwtToken?.Payload["email"]?.ToString();
+                                appSession.SetUser(identityName, identityId, identityMail);
+                                (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
+                            }
                         }
                         Console.WriteLine(result);
                     }
-                    else if (string.IsNullOrEmpty(state))
+                    else
                     {
-                        appSession.AuthorizeRedirectUrl = 
-                            $"{context.Request.Scheme}://{context.Request.Host.Value}/index.html?stonehenge-id={appSession.Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
-                        var query = new QueryBuilder
-                        {
-                            { "client_id", o.ClientId },
-                            { "redirect_uri", appSession.AuthorizeRedirectUrl },
-                            { "response_type", "code" },
-                            { "scope", "openid" },
-                            { "nonce", appSession.Id },
-                            { "state", appSession.Id }
-                        };
-                        context.Response
-                            .Redirect($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
+                        var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+                        context.Response.Redirect(newSession);
                         return;
                     }
-
-                    var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge_id=new";
-                    context.Response.Redirect(newSession);
-                    return;
                 }
 
                 if (appSession != null 
@@ -163,7 +151,6 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     SetUserNameFromContext(appSession, context);
                 }
 
-                Resource content = null;
                 switch (requestVerb)
                 {
                     case "GET":
