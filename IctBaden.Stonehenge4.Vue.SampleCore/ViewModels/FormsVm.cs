@@ -1,6 +1,7 @@
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
+using IctBaden.Stonehenge.Extension.Pie;
 using IctBaden.Stonehenge.ViewModel;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
@@ -20,6 +21,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMax { get; } = 40;
 
         public Chart TrendChart { get; }
+        public Pie PieChart { get; }
 
         public bool ShowCookies { get; private set; }
 
@@ -27,10 +29,18 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         {
             Range = 20;
 
-            TrendChart = new Chart()
+            TrendChart = new Chart
             {
                 ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
                 Series = new[] { new ChartSeries("Temperature") }
+            };
+            PieChart = new Pie
+            {
+                Sectors = new PieSector[]
+                {
+                    new() { Label = "Wert", Value = 100 },
+                    new() { Label = "Sonst", Value = 100 }
+                }
             };
 
             TrendChart.SetSeriesData("Temperature", new object[] { 10, 12, 15, 14, 13, 20, 22, 25, Range });
@@ -44,6 +54,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 .Concat(new object[] { Range })
                 .ToArray();
             TrendChart.SetSeriesData("Temperature", newData);
+            PieChart.Sectors[0].Value = Range;
         }
 
         [ActionMethod]
