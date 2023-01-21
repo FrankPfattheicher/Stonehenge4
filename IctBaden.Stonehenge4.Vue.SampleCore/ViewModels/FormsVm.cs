@@ -21,7 +21,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMax { get; } = 40;
 
         public Chart TrendChart { get; }
-        public Pie PieChart { get; }
+        public PieChart PieChart { get; }
 
         public bool ShowCookies { get; private set; }
 
@@ -34,7 +34,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
                 Series = new[] { new ChartSeries("Temperature") }
             };
-            PieChart = new Pie
+            PieChart = new PieChart
             {
                 Sectors = new PieSector[]
                 {

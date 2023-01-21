@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace IctBaden.Stonehenge.Extension.Pie;
 
-public class Pie
+public class PieChart
 {
     public string Id { get; } = Guid.NewGuid().ToString("N");
 
@@ -12,7 +12,7 @@ public class Pie
             new Dictionary<string, object>
             {
                 ["columns"] = Sectors
-                    .Select(s => s.Date)
+                    .Select(s => new object[] { s.Label, s.Value })
                     .ToArray(),
                 ["type"] = "pie"
             };
