@@ -5,12 +5,12 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 
-public class OnLoadTests : IDisposable
+public class InvalidValuesTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app;
 
-    public OnLoadTests()
+    public InvalidValuesTests()
     {
         _app = new VueTestApp();
     }
@@ -21,26 +21,24 @@ public class OnLoadTests : IDisposable
     }
 
     [Fact]
-    public async void OnLoadShouldBeCalledForStartVmAfterFirstCall()
+    public async void SerializationOfInvalidViewModelShouldNotReturnError()
     {
         var response = string.Empty;
 
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
-            }
+            using var client = new RedirectableHttpClient();
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/InvalidVm");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(OnLoadShouldBeCalledForStartVmAfterFirstCall));
+            _logger.LogError(ex, nameof(SerializationOfInvalidViewModelShouldNotReturnError));
         }
 
         Assert.NotNull(response);
-        Assert.Equal(1, _app.Data.StartVmOnLoadCalled);
-        Assert.Single(_app.Data.StartVmParameters);
+        Assert.DoesNotContain("ValueNotSupported", response);
+        Assert.DoesNotContain("Exception", response);
     }
         
         

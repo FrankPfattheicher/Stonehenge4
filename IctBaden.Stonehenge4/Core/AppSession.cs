@@ -4,13 +4,18 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -32,6 +37,7 @@ namespace IctBaden.Stonehenge.Core
 
         public StonehengeHostOptions HostOptions { get; private set; }
         public string HostDomain { get; private set; }
+        public string HostUrl { get; private set; }
         public bool IsLocal { get; private set; }
         public bool IsDebug { get; private set; }
         public string ClientAddress { get; private set; }
@@ -50,7 +56,27 @@ namespace IctBaden.Stonehenge.Core
         public string CurrentRoute => _history.FirstOrDefault();
         public string Context { get; private set; }
 
-        public string UserIdentity { get; private set; }
+
+        /// User login is requested on next request 
+        public bool RequestLogin;
+
+        /// Redirect URL used to complete authorization 
+        public string AuthorizeRedirectUrl;
+        /// Access token given from authorization 
+        public string AccessToken;
+        /// Refresh token given from authorization 
+        public string RefreshToken;
+
+
+        /// Name of user identity 
+        public string UserIdentity { get; private set; } = "";
+
+        /// Name of user identity 
+        public string UserIdentityId { get; private set; } = "";
+
+        /// Name of user identity 
+        public string UserIdentityEMail { get; private set; } = "";
+
         public DateTime LastUserAction { get; private set; }
 
         private readonly Guid _id;
@@ -114,7 +140,7 @@ namespace IctBaden.Stonehenge.Core
 
             while (!_forceUpdate && max > 0)
             {
-                await Wait( _eventRelease, 100);
+                await Wait(_eventRelease, 100);
                 max--;
             }
 
@@ -447,10 +473,11 @@ namespace IctBaden.Stonehenge.Core
             return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
         }
 
-        public void Initialize(StonehengeHostOptions hostOptions, string hostDomain,
+        public void Initialize(StonehengeHostOptions hostOptions, string hostUrl, string hostDomain,
             bool isLocal, string clientAddress, int clientPort, string userAgent)
         {
             HostOptions = hostOptions;
+            HostUrl = hostUrl;
             HostDomain = hostDomain;
             IsLocal = isLocal;
             ClientAddress = clientAddress;
@@ -583,9 +610,59 @@ namespace IctBaden.Stonehenge.Core
             }
         }
 
-        public void SetUser(string identityName)
+        public void SetUser(string identityName, string identityId, string identityEMail)
         {
             UserIdentity = identityName;
+            UserIdentityId = identityId;
+            UserIdentityEMail = identityEMail;
+            RequestLogin = false;
+        }
+
+        public void UserLogin()
+        {
+            SetUser("", "", "");
+            AuthorizeRedirectUrl = null;
+
+            var o = HostOptions.UseKeycloakAuthentication;
+            if (o == null) return;
+            
+            RequestLogin = true;
+            AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+            var query = new QueryBuilder
+            {
+                { "client_id", o.ClientId },
+                { "redirect_uri", AuthorizeRedirectUrl },
+                { "response_type", "code" },
+                { "scope", "openid" },
+                { "nonce", Id },
+                { "state", Id }
+            };
+            (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
+        }
+
+        public bool UserLogout()
+        {
+            if (HostOptions.UseKeycloakAuthentication == null) return false;
+
+            if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
+
+            var o = HostOptions.UseKeycloakAuthentication;
+
+            using var client = new HttpClient();
+            var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+            
+            var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
+            var result = client.PostAsync(logoutUrl,
+                    new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+                .Result;
+
+            var text = result.Content.ReadAsStringAsync().Result;
+            Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
+            
+            SetUser("", "", "");
+            AuthorizeRedirectUrl = null;
+
+            return result.StatusCode == HttpStatusCode.NoContent;
         }
     }
 }

@@ -528,8 +528,11 @@ namespace IctBaden.Stonehenge.ViewModel
 
         public void NavigateTo(string route)
         {
+            if (Session.CurrentRoute == route) return;
             Session.Logger.LogInformation("ActiveViewModel.NavigateTo: " + route);
-            NavigateToRoute = route.Replace("-", "_");
+            NavigateToRoute = route.StartsWith("http")
+                ? route
+                : route.Replace("-", "_");
         }
         public void NavigateBack()
         {
@@ -542,6 +545,8 @@ namespace IctBaden.Stonehenge.ViewModel
             Session.Logger.LogInformation("ActiveViewModel.NavigateBack: " + route);
             NavigateToRoute = route.Replace("-", "_");
         }
+
+        public void ReloadPage() => ExecuteClientScript("window.location.reload();");
 
         #endregion
 
@@ -614,6 +619,15 @@ namespace IctBaden.Stonehenge.ViewModel
             }
         }
 
+        protected void StopUpdateTimer()
+        {
+            if (_updateTimer == null) return;
+            
+            _updateTimer.Stop();
+            _updateTimer.Dispose();
+            _updateTimer = null;
+        }
+
         private void UpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
             OnUpdateTimer();
@@ -625,13 +639,13 @@ namespace IctBaden.Stonehenge.ViewModel
 
         public void Dispose()
         {
-            _updateTimer?.Dispose();
+            StopUpdateTimer();
             OnDispose();
         }
         
         public virtual void OnDispose()
         {
         }
-
+        
     }
 }

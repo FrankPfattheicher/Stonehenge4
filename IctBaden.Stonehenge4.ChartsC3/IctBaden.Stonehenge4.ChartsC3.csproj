@@ -30,6 +30,8 @@
       <EmbeddedResource Include="app\st-chart.js" />
       <EmbeddedResource Include="app\st-gauge.html" />
       <EmbeddedResource Include="app\st-gauge.js" />
+      <EmbeddedResource Include="app\st-pie.html" />
+      <EmbeddedResource Include="app\st-pie.js" />
       <EmbeddedResource Include="app\st-sankey.html" />
       <EmbeddedResource Include="app\st-sankey.js" />
       <None Remove="app\src\d3-sankey.js" />

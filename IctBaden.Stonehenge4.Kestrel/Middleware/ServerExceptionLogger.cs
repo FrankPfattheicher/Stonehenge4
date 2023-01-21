@@ -43,7 +43,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             {
                 using var reader = new StreamReader(context.Response.Body);
                 var message = await reader.ReadToEndAsync();
-                logger.LogError($"ServerExceptionHandler: Message: {message}");
+                logger?.LogError($"ServerExceptionHandler: Message: {message}");
             }
         }
     }

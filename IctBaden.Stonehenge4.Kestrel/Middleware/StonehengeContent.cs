@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -14,6 +15,7 @@ using HttpMultipartParser;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -84,6 +86,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                 var parameters = queryString.AllKeys
                     .ToDictionary(key => key, key => queryString[key]);
+                Resource content = null;
 
                 appSession?.SetParameters(parameters);
                 if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
@@ -93,12 +96,61 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     return;
                 }
 
-                if (appSession != null && string.IsNullOrEmpty(appSession.UserIdentity))
+                if (appSession?.HostOptions.UseKeycloakAuthentication != null 
+                    && appSession.RequestLogin
+                    && !context.Request.Path.Value.Contains("/Events"))
                 {
-                    appSession.SetUser(GetUserNameFromContext(context));
+                    var o = appSession.HostOptions.UseKeycloakAuthentication;
+                    var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+
+                    var state = requestQuery["state"] ?? "";
+                    if (state.StartsWith(appSession.Id))
+                    {
+                        var code = requestQuery["code"];
+                        var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
+                        
+                        using var client = new HttpClient();
+                        var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
+                        var result = client.PostAsync(tokenUrl, 
+                                 new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+                             .Result;
+                        var json = result.Content.ReadAsStringAsync().Result;
+                        var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
+                        if (authResponse != null)
+                        {
+                            appSession.AccessToken = authResponse["id_token"]?.ToString();
+                            if (string.IsNullOrEmpty(appSession.AccessToken)) appSession.AccessToken = authResponse["access_token"]?.ToString();
+                            
+                            appSession.RefreshToken = authResponse["refresh_token"]?.ToString();
+
+                            if (appSession.AccessToken != null)
+                            {
+                                var handler = new JwtSecurityTokenHandler();
+                                var jwtToken = handler.ReadToken(appSession.AccessToken) as JwtSecurityToken;
+                                var identityId = jwtToken?.Subject;
+                                var identityName = jwtToken?.Payload["name"]?.ToString();
+                                var identityMail = jwtToken?.Payload["email"]?.ToString();
+                                appSession.SetUser(identityName, identityId, identityMail);
+                                (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
+                            }
+                        }
+                        Console.WriteLine(result);
+                    }
+                    else
+                    {
+                        var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+                        context.Response.Redirect(newSession);
+                        return;
+                    }
                 }
 
-                Resource content = null;
+                if (appSession != null 
+                    && appSession.HostOptions.UseKeycloakAuthentication == null
+                    && string.IsNullOrEmpty(appSession.UserIdentity))
+                {
+                    SetUserNameFromContext(appSession, context);
+                }
+
                 switch (requestVerb)
                 {
                     case "GET":
@@ -117,7 +169,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             context.Response.Redirect($"/index.html?{query}");
                             return;
                         }
-                        else if (string.Compare(resourceName, "index.html",
+                        if (string.Compare(resourceName, "index.html",
                             StringComparison.InvariantCultureIgnoreCase) == 0)
                         {
                             HandleIndexContent(context, content);
@@ -299,10 +351,10 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             return false;
         }
 
-        private string GetUserNameFromContext(HttpContext context)
+        private void SetUserNameFromContext(AppSession appSession, HttpContext context)
         {
             var identityName = context.User.Identity?.Name;
-            if (identityName != null) return identityName;
+            if (identityName != null) return;
 
             var auth = context.Request.Headers["Authorization"].FirstOrDefault();
             if (auth != null)
@@ -320,22 +372,20 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     identityName = jwtToken?.Subject;
                 }
 
-                return identityName;
+                appSession.SetUser(identityName, "", "");
             }
             
             var isLocal = context.IsLocal();
-            if (!isLocal) return null;
+            if (!isLocal) return;
 
             var explorers = Process.GetProcessesByName("explorer");
             if (explorers.Length == 1)
             {
                 identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
-                return identityName;
+                appSession.SetUser(identityName, "", "");
             }
             
             // RDP with more than one session: How to find app and session using request's client IP port
-
-            return null;
         }
 
         private void HandleIndexContent(HttpContext context, Resource content)

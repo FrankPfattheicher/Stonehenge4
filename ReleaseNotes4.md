@@ -1,4 +1,18 @@
 
+* 4.3.01 - C3 pie chart added
+* 4.2.12 - NavigateToRoute enable http URLs, Keycloak redirects from browser
+* 4.2.11 - CORS inline policy
+* 4.2.10 - CORS WithOrigins *
+* 4.2.9 - Clear NavigateToRoute only if navigation happens
+* 4.2.8 - Remove AddStonehengeInternalProperties from events (caused lost navigation)
+* 4.2.7 - StopUpdateTimer, prevent navigate to current route
+* 4.2.6 - Serialize StonehengeNavigate after StonehengeEval 
+* 4.2.5 - Keycloak logout fixed
+* 4.2.4 - Fixed CustomMiddleware by type name
+* 4.2.3 - Added ActiveViewModel.ReloadPage
+* 4.2.2 - Added DoubleConverter to avoid invalid double value serialization exceptions
+* 4.2.1 - AuthorizeRedirectUrl with timestamp
+* 4.2.0 - UseKeycloakAuthentication
 * 4.1.3 - Make ChartGridLine non-abstract
 * 4.1.2 - Added property position to ChartGridLine
 * 4.1.1 - Fix Sankey node text positioning

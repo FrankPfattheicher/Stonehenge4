@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -43,12 +44,7 @@ namespace IctBaden.Stonehenge.Kestrel
             {
                 options.Providers.Add<GzipCompressionProvider>();
             });
-            services.AddCors(o => o.AddPolicy("StonehengePolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
+            services.AddCors();
             return services.BuildServiceProvider();
         }
 
@@ -57,8 +53,6 @@ namespace IctBaden.Stonehenge.Kestrel
         {
             app.UseMiddleware<ServerExceptionLogger>();
             app.UseMiddleware<StonehengeAcme>();
-            app.UseResponseCompression();
-            app.UseCors("StonehengePolicy");
             app.Use((context, next) =>
             {
                 context.Items.Add("stonehenge.Logger", _logger);
@@ -68,9 +62,31 @@ namespace IctBaden.Stonehenge.Kestrel
                 context.Items.Add("stonehenge.AppSessions", AppSessions);
                 return next.Invoke();
             });
+            if (_options.CustomMiddleware != null)
+            {
+                foreach (var cm in _options.CustomMiddleware)
+                {
+                    var cmType = AppDomain.CurrentDomain.GetAssemblies()
+                        .SelectMany(a => a.GetTypes())
+                        .FirstOrDefault(type => type.Name == cm);
+                    if (cmType != null)
+                    {
+                        app.UseMiddleware(cmType);
+                    }    
+                }
+            }
+            app.UseResponseCompression();
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
             app.UseMiddleware<StonehengeSession>();
             app.UseMiddleware<StonehengeHeaders>();
             app.UseMiddleware<StonehengeRoot>();
+            
+            
             app.UseMiddleware<StonehengeContent>();
         }
     }

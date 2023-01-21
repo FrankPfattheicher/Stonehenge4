@@ -55,6 +55,12 @@ namespace IctBaden.Stonehenge.Hosting
         public bool UseBasicAuth { get; set; }
 
         /// <summary>
+        /// If not null, contains all options
+        /// to handle Keycloak user authentication
+        /// </summary>
+        public KeycloakAuthenticationOptions UseKeycloakAuthentication { get; set; }
+
+        /// <summary>
         /// Path of the pfx certificate to be used with Kestrel.
         /// (not used with HttpSys, you need to "netsh http add sslcert ..." for the the p12 certificate in that case)
         /// On Windows it is better to use IIS as reverse proxy.
@@ -74,6 +80,12 @@ namespace IctBaden.Stonehenge.Hosting
         ///     Expires: 0 
         /// </summary>
         public bool DisableClientCache { get; set; }
+        
+        /// <summary>
+        /// Allow custom middleware (by type name) to be inserted
+        /// before StonehengeContent is called
+        /// </summary>
+        public string[] CustomMiddleware { get; set; }
         
         /// <summary>
         /// Enable firing WindowResized AppCommand  

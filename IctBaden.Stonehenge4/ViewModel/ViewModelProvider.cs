@@ -26,7 +26,8 @@ namespace IctBaden.Stonehenge.ViewModel
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = { new DoubleConverter() }
         };
 
         public ViewModelProvider(ILogger logger)
@@ -200,7 +201,14 @@ namespace IctBaden.Stonehenge.ViewModel
         {
             if (session == null) return false;
             var vmTypeName = Path.GetFileNameWithoutExtension(resourceName);
-            if ((session.ViewModel != null) && (session.ViewModel.GetType().Name == vmTypeName)) return true;
+            if (session.ViewModel != null)
+            {
+                ClearStonehengeInternalProperties(session.ViewModel as ActiveViewModel);
+                if (session.ViewModel.GetType().Name == vmTypeName)
+                {
+                    return true;
+                }
+            }
             if (session.SetViewModelType(vmTypeName) != null)
             {
                 return true;
@@ -266,6 +274,14 @@ namespace IctBaden.Stonehenge.ViewModel
             return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
         }
 
+        private static void ClearStonehengeInternalProperties(ActiveViewModel activeVm)
+        {
+            if (activeVm == null) return;
+            
+            // clear only if navigation happens
+            activeVm.NavigateToRoute = null;
+        }
+        
         private static void AddStonehengeInternalProperties(ICollection<string> data, ActiveViewModel activeVm)
         {
             if (!string.IsNullOrEmpty(activeVm.MessageBoxTitle) || !string.IsNullOrEmpty(activeVm.MessageBoxText))
@@ -279,18 +295,17 @@ namespace IctBaden.Stonehenge.ViewModel
                 activeVm.MessageBoxText = null;
             }
 
-            if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
-            {
-                var route = activeVm.NavigateToRoute;
-                data.Add(
-                    $"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
-                activeVm.NavigateToRoute = null;
-            }
-            else if (!string.IsNullOrEmpty(activeVm.ClientScript))
+            if (!string.IsNullOrEmpty(activeVm.ClientScript))
             {
                 var script = activeVm.ClientScript;
                 data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
                 activeVm.ClientScript = null;
+            }
+
+            if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
+            {
+                var route = activeVm.NavigateToRoute;
+                data.Add($"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
             }
         }
 
@@ -496,7 +511,7 @@ namespace IctBaden.Stonehenge.ViewModel
                     if ((pi == null) || !pi.CanWrite)
                         return;
 
-                    if (pi.PropertyType.IsValueType && !pi.PropertyType.IsPrimitive &&
+                    if (pi.PropertyType is { IsValueType: true, IsPrimitive: false } &&
                         (pi.PropertyType.Namespace != "System")) // struct
                     {
                         var structObj = activeVm.TryGetMember(propName);
