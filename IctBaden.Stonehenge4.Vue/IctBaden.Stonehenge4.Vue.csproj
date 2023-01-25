@@ -20,6 +20,9 @@
         <EmbeddedResource Include="app\favicon.ico" />
         <EmbeddedResource Include="app\icon.png" />
         <EmbeddedResource Include="app\index.html" />
+        <EmbeddedResource Include="app\src\bootstrap.bundle.js" />
+        <EmbeddedResource Include="app\src\bootstrap.esm.js" />
+        <EmbeddedResource Include="app\src\bootstrap.js" />
         <EmbeddedResource Include="Client\stonehengeApp.js" />
         <None Remove="Client\stonehengeComponent.js" />
         <EmbeddedResource Include="Client\stonehengeComponent.js" />
@@ -47,7 +50,6 @@
         <None Remove="app\webfonts\fa-solid-900.woff2" />
         <None Remove="app\src\bootstrap-grid.min.css" />
         <None Remove="app\src\bootstrap-reboot.min.css" />
-        <None Remove="app\src\bootstrap.min.js" />
         <None Remove="app\src\bootstrap.min.css" />
         <EmbeddedResource Include="app\src\vue-router.js" />
         <EmbeddedResource Include="app\styles\styles.css" />
@@ -74,11 +76,6 @@
         <EmbeddedResource Include="app\src\vue-resource.min.js" />
         <None Remove="app\src\fontawesome_all.min.css" />
         <None Remove="app\src\bootstrap.js" />
-        <None Remove="app\src\bootstrap.js.map" />
-        <None Remove="app\src\bootstrap.min.js.map" />
-        <None Remove="app\src\bootstrap.bundle.js.map" />
-        <None Remove="app\src\bootstrap.bundle.min.js" />
-        <None Remove="app\src\bootstrap.bundle.min.js.map" />
         <None Remove="app\src\bootstrap-grid.rtl.min.css" />
         <EmbeddedResource Include="app\src\bootstrap-grid.rtl.min.css" />
         <None Remove="app\src\bootstrap-reboot.rtl.min.css" />
@@ -122,6 +119,12 @@
         <None Remove="app\src\fa_free_all.min.css" />
         <EmbeddedResource Include="app\src\fa_free_all.css" />
         <EmbeddedResource Include="app\src\fa_free_all.min.css" />
+        <None Remove="app\src\bootstrap.bundle.min.js" />
+        <EmbeddedResource Include="app\src\bootstrap.bundle.min.js" />
+        <None Remove="app\src\bootstrap.esm.min.js" />
+        <EmbeddedResource Include="app\src\bootstrap.esm.min.js" />
+        <None Remove="app\src\bootstrap.min.js" />
+        <EmbeddedResource Include="app\src\bootstrap.min.js" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />

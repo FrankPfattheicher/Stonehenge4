@@ -17,7 +17,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
-    public class GraphVm : ActiveViewModel
+    public class Charts2Vm : ActiveViewModel
     {
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 100;
@@ -28,7 +28,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int Speed { get; private set; }
         private int _start;
 
-        public GraphVm(AppSession session) : base(session)
+        public Charts2Vm(AppSession session) : base(session)
         {
             Speed = 500;
         }

@@ -1,4 +1,5 @@
 
+* 4.3.1 - C3 pie chart added, Bootstrap v5.2.3 incl. JS
 * 4.2.12 - NavigateToRoute enable http URLs, Keycloak redirects from browser
 * 4.2.11 - CORS inline policy
 * 4.2.10 - CORS WithOrigins *
