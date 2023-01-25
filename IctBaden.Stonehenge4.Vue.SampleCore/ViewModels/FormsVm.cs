@@ -1,67 +1,54 @@
-using System.Linq;
+using System;
 using IctBaden.Stonehenge.Core;
-using IctBaden.Stonehenge.Extension;
-using IctBaden.Stonehenge.Extension.Pie;
 using IctBaden.Stonehenge.ViewModel;
-
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 // ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// ReSharper disable UnusedMember.Global
 
-namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
+namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
+
+public class FormsVm : ActiveViewModel
 {
-    // ReSharper disable once UnusedType.Global
-    public class FormsVm : ActiveViewModel
+    public string TimeText => DateTime.Now.ToString("G");
+
+    public string RefreshText { get; private set; }
+    
+    public FormsVm(AppSession session)
+    : base(session)
     {
-        public int Range { get; set; }
-        public int RangeMin { get; } = 0;
-        public int RangeMax { get; } = 40;
+        SetRefresh(0);
+    }
 
-        public Chart TrendChart { get; }
-        public Pie PieChart { get; }
+    [ActionMethod]
+    public void Refresh()
+    {
+    }
 
-        public bool ShowCookies { get; private set; }
-
-        public FormsVm(AppSession session) : base(session)
+    [ActionMethod]
+    public void SetRefresh(int seconds)
+    {
+        switch (seconds)
         {
-            Range = 20;
-
-            TrendChart = new Chart
-            {
-                ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
-                Series = new[] { new ChartSeries("Temperature") }
-            };
-            PieChart = new Pie
-            {
-                Sectors = new PieSector[]
-                {
-                    new() { Label = "Wert", Value = 100 },
-                    new() { Label = "Sonst", Value = 100 }
-                }
-            };
-
-            TrendChart.SetSeriesData("Temperature", new object[] { 10, 12, 15, 14, 13, 20, 22, 25, Range });
+            case 0: RefreshText = "Aus";
+                break;
+            case 1: RefreshText = "1s";
+                break;
+            case 10: RefreshText = "10s";
+                break;
+            case 30: RefreshText = "30s";
+                break;
+            case 60: RefreshText = "1min";
+                break;
+            case 300: RefreshText = "5min";
+                break;
         }
+        
+        if(seconds == 0)
+            StopUpdateTimer();
+        else
+            SetUpdateTimer(TimeSpan.FromSeconds(seconds));
+    }
 
-        [ActionMethod]
-        public void RangeChanged()
-        {
-            var newData = TrendChart.Series.First().Data;
-            newData = newData.Take(newData.Length - 1)
-                .Concat(new object[] { Range })
-                .ToArray();
-            TrendChart.SetSeriesData("Temperature", newData);
-            PieChart.Sectors[0].Value = Range;
-        }
-
-        [ActionMethod]
-        public void ToggleShowCookies()
-        {
-            ShowCookies = !ShowCookies;
-            EnableRoute("cookie", ShowCookies);
-        }
+    public override void OnUpdateTimer()
+    {
+        NotifyPropertyChanged(nameof(TimeText));
     }
 }
