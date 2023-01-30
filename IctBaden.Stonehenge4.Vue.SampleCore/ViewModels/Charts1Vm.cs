@@ -32,7 +32,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             TrendChart = new Chart
             {
                 ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
-                Series = new[] { new ChartSeries("Temperature") }
+                Series = new[] { new ChartSeries("Temperature") },
+                EnableZoom = true
             };
             PieChart = new PieChart
             {
