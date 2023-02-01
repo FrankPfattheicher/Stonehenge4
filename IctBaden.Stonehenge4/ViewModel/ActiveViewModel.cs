@@ -32,10 +32,12 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Timers;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Resources;
 using Microsoft.Extensions.Logging;
+using Timer = System.Timers.Timer;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
@@ -630,6 +632,11 @@ namespace IctBaden.Stonehenge.ViewModel
 
         private void UpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
+            if(Session.SessionCulture != null)
+            {
+                Thread.CurrentThread.CurrentCulture = Session.SessionCulture;
+                Thread.CurrentThread.CurrentUICulture = Session.SessionCulture;
+            }
             OnUpdateTimer();
         }
         

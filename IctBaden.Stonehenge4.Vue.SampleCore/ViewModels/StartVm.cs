@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
@@ -30,7 +32,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public string UserIdentityId => Session.UserIdentityId ?? "(unknown)";
         public string UserIdentityEMail => Session.UserIdentityEMail ?? "(unknown)";
 
-
+        public string Culture { get; set; }
+        
         public bool AppBoxVisible { get; private set; }
         public string AppBoxCaption { get; private set; }
         public string AppBoxText { get; private set; }
@@ -61,10 +64,14 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             Test = Session.Parameters.ContainsKey("test")
                 ? Session.Parameters["test"]
                 : "0-0";
+            Culture = Session.SessionCulture?.ToString() ?? "";
         }
 
         public override void OnUpdateTimer()
         {
+            var c = Thread.CurrentThread.CurrentCulture;
+            var ui = Thread.CurrentThread.CurrentUICulture;
+            
             NotifyPropertyChanged(nameof(TimeStamp));
         }
 
@@ -180,5 +187,19 @@ END:VCALENDAR
             ExecuteClientScript("insert.appendChild(dateSpan)");
             ExecuteClientScript("insert.appendChild(document.createElement('br'));");
         }
+
+        [ActionMethod]
+        public void ChangeCulture()
+        {
+            if (string.IsNullOrEmpty(Culture))
+            {
+                Session.SetSessionCulture(null);
+                return;
+            }
+
+            var culture = new CultureInfo(Culture);
+            Session.SetSessionCulture(culture);
+        }
+
     }
 }

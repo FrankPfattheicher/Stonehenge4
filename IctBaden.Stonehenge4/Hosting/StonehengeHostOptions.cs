@@ -92,6 +92,12 @@ namespace IctBaden.Stonehenge.Hosting
         /// </summary>
         public bool HandleWindowResized { get; set; }
         
+        /// <summary>
+        /// Enable detecting client locale (Accept-Language header)
+        /// to set session locale
+        /// </summary>
+        public bool UseClientLocale { get; set; }
+        
         public StonehengeHostOptions()
         {
             Title = Assembly.GetEntryAssembly()?.GetName().Name;

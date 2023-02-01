@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -197,6 +198,11 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             var session = new AppSession(resourceLoader, options);
             var isLocal = context.IsLocal();
             var userAgent = context.Request.Headers["User-Agent"];
+            var userLanguages = context.Request.Headers["Accept-Language"];
+            if (options.UseClientLocale)
+            {
+                session.SetSessionCulture(GetCulture(userLanguages));    
+            }
             var httpContext = context.Request?.HttpContext;
             var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString();
             var clientPort = httpContext?.Connection.RemotePort ?? 0;
@@ -207,5 +213,21 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             logger.LogInformation($"Kestrel New session {session.Id}. {appSessions.Count} sessions.");
             return session;
         }
+        
+        private static CultureInfo GetCulture(string languages)
+        {
+            if (string.IsNullOrEmpty(languages)) return null;
+            
+            foreach (var language in languages.Split(';'))
+            {
+                var realLanguage = Regex.Replace(language, "[;q=(0-9).]", "");
+                var locale = realLanguage.Split(',').FirstOrDefault();
+                //first one should be the used language that is set for a browser (if user did not change it their self).
+                return new CultureInfo(locale);
+            }
+            return null;
+        }
+
+        
     }
 }

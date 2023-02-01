@@ -10,7 +10,8 @@
                 &nbsp;<i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
             </button>
 
-            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false"
                     title="Automatische Aktualisierung">
                 {{RefreshText}}
             </button>
@@ -30,10 +31,45 @@
 
     <p>&nbsp;</p>
 
-    <p>
+    <div>
 
+        <div class="dropdown show" style="display: inline-block;">
+    
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" 
+                    style="width: 8em; text-align: left;"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                {{RangeText}}
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" @click="SetRange(1)">Tag</a>
+                <a class="dropdown-item" @click="SetRange(7)">Woche</a>
+                <a class="dropdown-item" @click="SetRange(30)">Monat</a>
+                <a class="dropdown-item" @click="SetRange(365)">Jahr</a>
+            </div>
+    
+        </div>
 
-    </p>
+        <div style="display: inline-block; width: 12em;">
+            
+            <input v-if="RangeDays == 1" type="date" style="text-align: left;" @change="UpdateRange()"
+                   class="form-control btn btn-sm btn-secondary" v-model="RangeValue">
 
+            <input v-if="RangeDays == 7" type="week" style="text-align: left;"  @change="UpdateRange()"
+                   class="form-control btn btn-sm btn-secondary" v-model="RangeValue">
+
+            <input v-if="RangeDays == 30" type="month" style="text-align: left;"  @change="UpdateRange()"
+                   class="form-control btn btn-sm btn-secondary" v-model="RangeValue">
+            
+            <select v-if="RangeDays == 365" @change="UpdateRange()" style="text-align: left;"
+                    class="form-select btn btn-sm btn-secondary" v-model="RangeValue">
+                <option v-for="y in RangeYears" :value="y">{{y}}</option>
+            </select>
+        </div>
+
+        <div style="display: inline-block; margin-left: 2em;">
+            {{RangeStart}} .. {{RangeEnd}}
+        </div>
+    
+    </div>
 
 </div>
