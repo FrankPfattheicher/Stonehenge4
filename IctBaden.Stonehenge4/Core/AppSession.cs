@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -77,6 +78,10 @@ namespace IctBaden.Stonehenge.Core
         /// Name of user identity 
         public string UserIdentityEMail { get; private set; } = "";
 
+        
+        public CultureInfo SessionCulture { get; private set; }
+        
+        
         public DateTime LastUserAction { get; private set; }
 
         private readonly Guid _id;
@@ -618,6 +623,12 @@ namespace IctBaden.Stonehenge.Core
             RequestLogin = false;
         }
 
+        public void SetSessionCulture(CultureInfo culture)
+        {
+            SessionCulture = culture;
+        }
+        
+        
         public void UserLogin()
         {
             SetUser("", "", "");

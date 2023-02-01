@@ -40,6 +40,12 @@
         <a href="#" onclick="AppCommand('FileOpen')">AppCommand FileOpen</a>
     </p>
 
+    <h3>Culture</h3>
+    <p>
+        <input v-model="Culture" />
+        <button class="btn btn-sm btn-secondary" @click="ChangeCulture()">Set Culture</button>
+    </p>
+
     <h3>Form input</h3>
     <p>
         <input v-model="Test" v-select />

@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using HttpMultipartParser;
@@ -151,6 +152,12 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     SetUserNameFromContext(appSession, context);
                 }
 
+                if (appSession?.SessionCulture != null)
+                {
+                    Thread.CurrentThread.CurrentCulture = appSession.SessionCulture;
+                    Thread.CurrentThread.CurrentUICulture = appSession.SessionCulture;
+                }
+                
                 switch (requestVerb)
                 {
                     case "GET":
