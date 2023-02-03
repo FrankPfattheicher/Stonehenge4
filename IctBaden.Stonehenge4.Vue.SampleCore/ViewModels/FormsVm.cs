@@ -1,9 +1,9 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection.Metadata;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -33,6 +33,12 @@ public class FormsVm : ActiveViewModel
             .ToArray();
     }
 
+    public override void OnLoad()
+    {
+        base.OnLoad();
+        ExecuteClientScript("");
+    }
+
     // This presumes that weeks start with Monday.
     // Week 1 is the 1st week of the year with a Thursday in it.
     public static int GetIso8601WeekOfYear(DateTime time)
@@ -41,7 +47,7 @@ public class FormsVm : ActiveViewModel
         // be the same week# as whatever Thursday, Friday or Saturday are,
         // and we always get those right
         DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
-        if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+        if (day is >= DayOfWeek.Monday and <= DayOfWeek.Wednesday)
         {
             time = time.AddDays(3);
         }
@@ -51,7 +57,7 @@ public class FormsVm : ActiveViewModel
             .GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
     }
 
-    public static DateTime FirstDateOfWeekISO8601(int year, int weekOfYear)
+    public static DateTime FirstDateOfWeekIso8601(int year, int weekOfYear)
     {
         DateTime jan1 = new DateTime(year, 1, 1);
         int daysOffset = DayOfWeek.Thursday - jan1.DayOfWeek;
@@ -122,7 +128,7 @@ public class FormsVm : ActiveViewModel
             case 7:
                 year = int.Parse(RangeValue.Substring(0, 4));
                 var week = int.Parse(RangeValue.Substring(6, 2));
-                start = FirstDateOfWeekISO8601(year, week);
+                start = FirstDateOfWeekIso8601(year, week);
                 end = start + TimeSpan.FromDays(6);
                 RangeStart = start.ToString("d");
                 RangeEnd = end.ToString("d");

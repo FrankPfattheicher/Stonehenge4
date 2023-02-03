@@ -1,4 +1,5 @@
 
+* 4.3.3 - AppDialog close button using fontawesome icon
 * 4.3.2 - Initial culture support
 * 4.3.1 - C3 pie chart added, Bootstrap v5.2.3 incl. JS
 * 4.2.12 - NavigateToRoute enable http URLs, Keycloak redirects from browser

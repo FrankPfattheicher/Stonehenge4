@@ -30,7 +30,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             Console.WriteLine(@"");
             logger.LogInformation("Vue.SampleCore started");
 
-            KeycloakAuthenticationOptions? keycloak = null;
+            KeycloakAuthenticationOptions keycloak = null;
             keycloak = new KeycloakAuthenticationOptions
             {
                 ClientId = "frontend",
