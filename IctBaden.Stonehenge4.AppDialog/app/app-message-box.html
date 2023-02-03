@@ -2,8 +2,8 @@
 <div class="app-dialog">
     <div class="app-dlg-caption">
         {{caption}}
-        <div class="app-dlg-close" @click="$emit('ok')">
-            &nbsp;🗙&nbsp;
+        <div class="app-dlg-close" @click="$emit('ok')" title="Schließen">
+            &nbsp;<i class="fa-solid fa-square-xmark"></i>&nbsp;
         </div>
     </div>
     <div style="margin: 2em;">
