@@ -103,12 +103,54 @@
         </p>
 
     </div>
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+    <div class="col-md-4" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+
+        <h4>
+            Dropdown Checklist
+        </h4>
+        
+        <p>
+            Check Value: {{CheckValue}}
+        </p>
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                Checkbox dropdown
+            </button>
+            <ul class="dropdown-menu" style="padding-left: 1em; padding-right: 1em;">
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 1" @click="ToggleBit(0)"> Bit 0
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 2" @click="ToggleBit(1)"> Bit 1
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 4" @click="ToggleBit(2)"> Bit 2
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 8" @click="ToggleBit(3)"> Bit 3
+                </li>
+                <li>
+                    <hr class="dropdown-divider"/>
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 16" @click="ToggleBit(4)"> Bit 4
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 32" @click="ToggleBit(5)"> Bit 5
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 64" @click="ToggleBit(6)"> Bit 6
+                </li>
+                <li>
+                    <input class="form-check-input" type="checkbox" :checked="CheckValue & 128" @click="ToggleBit(7)"> Bit 7
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
 </div>

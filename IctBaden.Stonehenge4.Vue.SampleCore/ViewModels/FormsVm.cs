@@ -24,9 +24,9 @@ public class FormsVm : ActiveViewModel
     public string RangeStart { get; private set; }
     public string RangeEnd { get; private set; }
 
-    
     public string Test { get; set; }
 
+    public int CheckValue { get; set; }
     
     public FormsVm(AppSession session)
         : base(session)
@@ -39,7 +39,7 @@ public class FormsVm : ActiveViewModel
             .ToArray();
         
         Test = "abcd";
-
+        CheckValue = 5;
     }
 
     public override void OnLoad()
@@ -208,5 +208,10 @@ public class FormsVm : ActiveViewModel
         CopyToClipboard(Test);
     }
 
+    [ActionMethod]
+    public void ToggleBit(int bit)
+    {
+        CheckValue ^= 1 << bit;
+    }
 
 }
