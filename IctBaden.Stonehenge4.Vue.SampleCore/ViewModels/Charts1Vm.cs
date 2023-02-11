@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
@@ -23,16 +24,28 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public Chart TrendChart { get; }
         public PieChart PieChart { get; }
 
-        public bool ShowCookies { get; private set; }
-
         public Charts1Vm(AppSession session) : base(session)
         {
             Range = 20;
 
             TrendChart = new Chart
             {
-                ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) { Label = "°C", Min = 0, Max = 40 } },
-                Series = new[] { new ChartSeries("Temperature") },
+                ValueAxes = new[]
+                {
+                    new ChartValueAxis(ValueAxisId.y)
+                    {
+                        Label = "°C",
+                        Min = 0,
+                        Max = 40
+                    }
+                },
+                Series = new[]
+                {
+                    new ChartSeries("Temperature")
+                    {
+                        Type = ChartDataType.Bar
+                    }
+                },
                 EnableZoom = true
             };
             PieChart = new PieChart
@@ -56,13 +69,6 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 .ToArray();
             TrendChart.SetSeriesData("Temperature", newData);
             PieChart.Sectors[0].Value = Range;
-        }
-
-        [ActionMethod]
-        public void ToggleShowCookies()
-        {
-            ShowCookies = !ShowCookies;
-            EnableRoute("cookie", ShowCookies);
         }
     }
 }

@@ -182,7 +182,7 @@ namespace IctBaden.Stonehenge.Resources
                             _logger.LogDebug($"ResourceLoader({resourceName}): {asmResource.Value.FullName}");
                             if (resourceName?.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase) ?? false)
                             {
-                                text = UserContentLinks.InsertUserCssLinks(AppAssembly, "", text, session?.SubDomain ?? "");
+                                text = UserContentLinks.InsertUserCssLinks(AppAssembly, "", text,session?.SubDomain ?? "");
                                 text = UserContentLinks.InsertUserJsLinks(AppAssembly, "", text);
                                 text = UserContentLinks.InsertExtensionLinks(ResourceAssemblies, text);
                             }
