@@ -11,6 +11,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class FormsVm : ActiveViewModel
 {
+    public string TimeStamp => DateTime.Now.ToLongTimeString();
+
     public string TimeText => DateTime.Now.ToString("G");
 
     public string RefreshText { get; private set; }
@@ -22,6 +24,10 @@ public class FormsVm : ActiveViewModel
     public string RangeStart { get; private set; }
     public string RangeEnd { get; private set; }
 
+    public string Test { get; set; }
+
+    public int CheckValue { get; set; }
+    
     public FormsVm(AppSession session)
         : base(session)
     {
@@ -31,11 +37,19 @@ public class FormsVm : ActiveViewModel
         RangeYears = Enumerable.Range(1, 10)
             .Select(y => $"{year - y:D4}")
             .ToArray();
+        
+        Test = "abcd";
+        CheckValue = 5;
     }
 
     public override void OnLoad()
     {
         base.OnLoad();
+        
+        Test = Session.Parameters.ContainsKey("test")
+            ? Session.Parameters["test"]
+            : "0-0";
+
         ExecuteClientScript("");
     }
 
@@ -181,4 +195,23 @@ public class FormsVm : ActiveViewModel
     {
         NotifyPropertyChanged(nameof(TimeText));
     }
+    
+    [ActionMethod]
+    public void Save(int number, string text)
+    {
+        Test = number + Test + text;
+    }
+
+    [ActionMethod]
+    public void CopyTest()
+    {
+        CopyToClipboard(Test);
+    }
+
+    [ActionMethod]
+    public void ToggleBit(int bit)
+    {
+        CheckValue ^= 1 << bit;
+    }
+
 }

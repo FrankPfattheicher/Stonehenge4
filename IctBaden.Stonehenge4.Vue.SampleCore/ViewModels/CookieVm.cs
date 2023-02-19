@@ -1,30 +1,29 @@
 ﻿using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     public class CookieVm : ActiveViewModel
     {
-        public string Theme => Session.Cookies.ContainsKey("theme")
-            ? Session.Cookies["theme"]
-            : string.Empty;
-
-        public int ThemeIndex => Theme switch
-        {
-            "blue" => 2,
-            "dark" => 1,
-            _ => 0
-        };
+        public string Theme { get; set; }
 
         public CookieVm(AppSession session)
             : base(session)
         {
         }
 
-        [ActionMethod]
-        public new void NavigateBack()
+        public override void OnLoad()
         {
-            base.NavigateBack();
+            Theme = Session.Cookies.ContainsKey("theme")
+                ? Session.Cookies["theme"]
+                : string.Empty;
+        }
+
+        [ActionMethod]
+        public void GoBack()
+        {
+            NavigateBack();
         }
         
     }

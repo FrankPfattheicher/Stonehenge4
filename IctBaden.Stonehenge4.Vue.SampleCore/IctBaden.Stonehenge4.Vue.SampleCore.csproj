@@ -40,9 +40,7 @@
     <EmbeddedResource Include="app\theme\themeblue.css" />
     <None Remove="app\styles\themedark.css" />
     <EmbeddedResource Include="app\theme\themedark.css" />
-    <None Remove="app\index.html" />
     <None Remove="app\sample-index.html" />
-    <EmbeddedResource Include="app\index.html" />
     <None Remove="app\chart.js" />
     <None Remove="app\chart.html" />
     <None Remove="app\c3chart.html" />
@@ -72,6 +70,8 @@
     <EmbeddedResource Include="app\styles\sample.css" />
     <None Remove="app\forms.html" />
     <EmbeddedResource Include="app\forms.html" />
+    <None Remove="app\index.html" />
+    <EmbeddedResource Include="app\index.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />

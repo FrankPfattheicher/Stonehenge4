@@ -24,13 +24,14 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         // ReSharper disable once MemberCanBeMadeStatic.Global
         public string TimeStamp => DateTime.Now.ToLongTimeString();
         public double Numeric { get; set; }
-        public string Test { get; set; }
         public string Version => Assembly.GetAssembly(typeof(Program))!.GetName().Version!.ToString(2);
         public bool IsLocal => Session?.IsLocal ?? true;
         public string ClientAddress => Session.ClientAddress ?? "(unknown)";
         public string UserIdentity => Session.UserIdentity ?? "(unknown)";
         public string UserIdentityId => Session.UserIdentityId ?? "(unknown)";
         public string UserIdentityEMail => Session.UserIdentityEMail ?? "(unknown)";
+
+        public bool ShowCookies { get; private set; }
 
         public string Culture { get; set; }
         
@@ -54,16 +55,12 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public StartVm(AppSession session) : base(session)
         {
             Numeric = 123.456;
-            Test = "abcd";
 
             SetUpdateTimer(TimeSpan.FromSeconds(2));
         }
 
         public override void OnLoad()
         {
-            Test = Session.Parameters.ContainsKey("test")
-                ? Session.Parameters["test"]
-                : "0-0";
             Culture = Session.SessionCulture?.ToString() ?? "";
         }
 
@@ -75,22 +72,11 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             NotifyPropertyChanged(nameof(TimeStamp));
         }
 
-        [ActionMethod]
-        public void CopyTest()
-        {
-            CopyToClipboard(Test);
-        }
-
-        [ActionMethod]
-        public void Save(int number, string text)
-        {
-            Test = number + Test + text;
-        }
 
         [ActionMethod]
         public void ShowMessageBox()
         {
-            MessageBox("Stonehenge", $"Server side browser message box request. {Test}");
+            MessageBox("Stonehenge", $"Server side browser message box request.");
         }
 
         [ActionMethod]
@@ -99,7 +85,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             CloseAppBox();
             AppBoxVisible = true;
             AppBoxCaption = "Stonehenge";
-            AppBoxText = $"Server side application box request. {Test}";
+            AppBoxText = $"Server side application box request.";
         }
 
         [ActionMethod]
@@ -201,5 +187,11 @@ END:VCALENDAR
             Session.SetSessionCulture(culture);
         }
 
+        [ActionMethod]
+        public void ToggleShowCookies()
+        {
+            ShowCookies = !ShowCookies;
+            EnableRoute("cookie", ShowCookies);
+        }
     }
 }

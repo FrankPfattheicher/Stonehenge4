@@ -28,6 +28,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         // ReSharper disable once UnusedMember.Global
         public TreeVm(AppSession session) : base (session)
         {
+            //TODO: Refactor to use IctBaden.Stonehenge.Extension TreeView
+            
+            
             Continents = new List<Continent>
             {
                 new Continent { Name = "Asia", Area = 44579, Countries = 50, IsChild = true },

@@ -1,4 +1,4 @@
-<!--CustomElement:caption,messageText-->
+<!--CustomElement:caption,messageText,okText-->
 <div class="app-dialog">
     <div class="app-dlg-caption">
         {{caption}}
@@ -12,7 +12,7 @@
     </div>
     <div style="text-align: right;">
         <button class="btn btn-primary" @click="$emit('ok')" style="margin: 1em;">
-            &nbsp;&nbsp;OK&nbsp;&nbsp;
+            &nbsp;&nbsp;{{okText ? okText : 'OK'}}&nbsp;&nbsp;
         </button>
     </div>
 </div>

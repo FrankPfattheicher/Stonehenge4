@@ -1,6 +1,11 @@
-﻿body {
-    color: silver !important;
-    background: #202020 !important;
+﻿:root {
+    --fore-color: silver;
+    --back-color: #202020;
+}
+
+body {
+    color: var(--fore-color) !important;
+    background: var(--back-color) !important;
 }
 
 .page-host {
