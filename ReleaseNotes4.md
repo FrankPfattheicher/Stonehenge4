@@ -1,4 +1,5 @@
 
+* 4.3.5 - Retry get events on non ok status code
 * 4.3.4 - AppDialog/AppMessageBox options cancelText,okText
 * 4.3.3 - AppDialog close button using fontawesome icon
 * 4.3.2 - Initial culture support
