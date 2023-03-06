@@ -131,10 +131,17 @@ stonehengeViewModelName = function component() {
                         return;
                     }
                     try {
-                        let data = JSON.parse(response.bodyText);
-                        app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
-                        app.stonehengeViewModelName.model.StonehengeIsDisconnected = false;
-                        app.stonehengeViewModelName.StonehengeSetViewModelData(data);
+                        if(response.status >= 200 && response.status < 300) {
+                            let data = JSON.parse(response.bodyText);
+                            app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
+                            app.stonehengeViewModelName.model.StonehengeIsDisconnected = false;
+                            app.stonehengeViewModelName.StonehengeSetViewModelData(data);
+                        } else {
+                            //debugger;
+                            setTimeout(function () {
+                                app.stonehengeReloadOnError('Events/stonehengeViewModelName = ' + response.status);
+                            }, 100);
+                        }
                     } catch (error) {
                         setTimeout(function () {
                             app.stonehengeReloadOnError(error);
