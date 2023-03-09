@@ -131,7 +131,7 @@ stonehengeViewModelName = function component() {
                         return;
                     }
                     try {
-                        if(response.status >= 200 && response.status < 300) {
+                        if(response.status >= 200 && response.status < 400) {
                             let data = JSON.parse(response.bodyText);
                             app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
                             app.stonehengeViewModelName.model.StonehengeIsDisconnected = false;

@@ -25,7 +25,7 @@ function stonehengeMakeRequest(method, url) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, url);
         xhr.onload = function () {
-            if (this.status >= 200 && this.status < 300) {
+            if (this.status >= 200 && this.status < 400) {
                 resolve(xhr.responseText);
             } else {
                 reject({
