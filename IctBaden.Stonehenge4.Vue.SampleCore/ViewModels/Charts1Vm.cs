@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
@@ -36,15 +35,13 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                     {
                         Label = "°C",
                         Min = 0,
-                        Max = 40
+                        Max = 70
                     }
                 },
                 Series = new[]
                 {
-                    new ChartSeries("Temperature")
-                    {
-                        Type = ChartDataType.Bar
-                    }
+                    new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = "Temps" },
+                    new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = "Temps" }
                 },
                 EnableZoom = true
             };
@@ -57,17 +54,22 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 }
             };
 
-            TrendChart.SetSeriesData("Temperature", new object[] { 10, 12, 15, 14, 13, 20, 22, 25, Range });
+            RangeChanged();
         }
 
         [ActionMethod]
         public void RangeChanged()
         {
-            var newData = TrendChart.Series.First().Data;
-            newData = newData.Take(newData.Length - 1)
+            var newData = new object[] { 10, 12, 15, 14, 13, 20, 22, 25 }
                 .Concat(new object[] { Range })
                 .ToArray();
-            TrendChart.SetSeriesData("Temperature", newData);
+            TrendChart.SetSeriesData("Temperature1", newData);
+            
+            newData = new object[] { 13, 20, 22, 25, 10, 12, 15, 14 }
+                .Concat(new object[] { 60 - Range })
+                .ToArray();
+            TrendChart.SetSeriesData("Temperature2", newData);
+            
             PieChart.Sectors[0].Value = Range;
         }
     }
