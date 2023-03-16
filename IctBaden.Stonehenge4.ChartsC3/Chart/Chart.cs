@@ -73,6 +73,22 @@ public class Chart
             return columns.ToArray();
         }
     }
+    
+    private object[][] Groups
+    {
+        get
+        {
+            var groupNames = Series
+                .Select(s => s.Group)
+                .Where(n => !string.IsNullOrEmpty(n))
+                .Distinct();
+
+            var groups = groupNames
+                    .Select(n => Series.Where(s => s.Group == n).Select(s => s.Label).Cast<object>().ToArray());
+
+            return groups.ToArray();
+        }
+    }
 
     private object Colors
     {
@@ -206,6 +222,7 @@ public class Chart
             data["regions"] = Regions;
             data["axes"] = Axes;
             data["columns"] = Columns;
+            data["groups"] = Groups;
             data["colors"] = Colors;
             data["types"] = Types;
             return data;

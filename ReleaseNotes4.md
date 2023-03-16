@@ -1,4 +1,5 @@
 
+* 4.3.7 - Added bar chart group functionality
 * 4.3.6 - Not ok status code < 200 and >= 400
 * 4.3.5 - Retry get events on non ok status code
 * 4.3.4 - AppDialog/AppMessageBox options cancelText,okText
