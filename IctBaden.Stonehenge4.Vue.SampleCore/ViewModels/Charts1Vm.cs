@@ -16,17 +16,35 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
     // ReSharper disable once UnusedType.Global
     public class Charts1Vm : ActiveViewModel
     {
+        public bool ShowStacked { get; set; }
         public int Range { get; set; }
         public int RangeMin { get; } = 0;
         public int RangeMax { get; } = 40;
 
-        public Chart TrendChart { get; }
+        
+        public Chart TrendChart { get; private set; }
         public PieChart PieChart { get; }
 
         public Charts1Vm(AppSession session) : base(session)
         {
             Range = 20;
 
+            CreateTrendChart();
+            
+            PieChart = new PieChart
+            {
+                Sectors = new PieSector[]
+                {
+                    new() { Label = "Wert", Value = 100 },
+                    new() { Label = "Sonst", Value = 100 }
+                }
+            };
+
+            RangeChanged();
+        }
+
+        private void CreateTrendChart()
+        {
             TrendChart = new Chart
             {
                 ValueAxes = new[]
@@ -40,21 +58,11 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 },
                 Series = new[]
                 {
-                    new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = "Temps" },
-                    new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = "Temps" }
+                    new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" },
+                    new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" }
                 },
                 EnableZoom = true
             };
-            PieChart = new PieChart
-            {
-                Sectors = new PieSector[]
-                {
-                    new() { Label = "Wert", Value = 100 },
-                    new() { Label = "Sonst", Value = 100 }
-                }
-            };
-
-            RangeChanged();
         }
 
         [ActionMethod]
@@ -72,5 +80,20 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             
             PieChart.Sectors[0].Value = Range;
         }
+
+        [ActionMethod]
+        public void ChangeShowStacked()
+        {
+            CreateTrendChart();
+            RangeChanged();
+        }
+
+        [ActionMethod]
+        public void ClickData(int dataIndex)
+        {
+            
+        }
+        
+        
     }
 }

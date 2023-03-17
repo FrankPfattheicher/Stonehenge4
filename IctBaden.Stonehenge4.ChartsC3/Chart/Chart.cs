@@ -225,6 +225,7 @@ public class Chart
             data["groups"] = Groups;
             data["colors"] = Colors;
             data["types"] = Types;
+           
             return data;
         }
     }
