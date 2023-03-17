@@ -6,7 +6,17 @@ mounted: function() {
             id: this.$props.chartdata.Id,
             title: this.$props.chartdata.Title,
             grid: this.$props.chartdata.Grid,
-            data: this.$props.chartdata.Data,
+            data: {
+                onclick: function (d, element) {
+                    //debugger;
+                    let event = new CustomEvent("clickData", {
+                        bubbles: true,
+                        detail: d
+                    });
+                    element.dispatchEvent(event);
+                },
+                ...this.$props.chartdata.Data 
+            },
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
@@ -26,7 +36,17 @@ updated: function () {
             bindto: this.$el,
             title: this.$props.chartdata.Title,
             grid: this.$props.chartdata.Grid,
-            data: this.$props.chartdata.Data,
+            data: {
+                onclick: function (d, element) {
+                    //debugger;
+                    let event = new CustomEvent("clickData", {
+                        bubbles: true,
+                        detail: d
+                    });
+                    element.dispatchEvent(event);
+                },
+                ...this.$props.chartdata.Data 
+            },
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
             zoom: this.$props.chartdata.Zoom,
@@ -39,7 +59,8 @@ updated: function () {
     }
 
     this.chart.load({
-        columns: this.$props.chartdata.Data.columns
+        columns: this.$props.chartdata.Data.columns,
+        onclick: function (d, element) { emit('clickData', d, element); }
     });
 
 }
