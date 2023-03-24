@@ -14,6 +14,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 {
     // ReSharper disable once UnusedType.Global
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class Charts1Vm : ActiveViewModel
     {
         public bool ShowStacked { get; set; }

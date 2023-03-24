@@ -360,8 +360,11 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
         private void SetUserNameFromContext(AppSession appSession, HttpContext context)
         {
-            var identityName = context.User.Identity?.Name;
-            if (identityName != null) return;
+            var identityId = context.User.Identity?.Name;
+            if (identityId != null) return;
+
+            var identityName = "";
+            var identityMail = "";
 
             var auth = context.Request.Headers["Authorization"].FirstOrDefault();
             if (auth != null)
@@ -369,17 +372,19 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
-                    identityName = userPassword.Split(':').FirstOrDefault();
+                    identityId = userPassword.Split(':').FirstOrDefault();
                 }
                 else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var token = auth.Substring(7);
                     var handler = new JwtSecurityTokenHandler();
                     var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                    identityName = jwtToken?.Subject;
+                    identityId = jwtToken?.Subject;
+                    identityName = jwtToken?.Payload["name"]?.ToString();
+                    identityMail = jwtToken?.Payload["email"]?.ToString();
                 }
 
-                appSession.SetUser(identityName, "", "");
+                appSession.SetUser(identityName, identityId, identityMail);
             }
             
             var isLocal = context.IsLocal();
@@ -388,8 +393,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             var explorers = Process.GetProcessesByName("explorer");
             if (explorers.Length == 1)
             {
-                identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
-                appSession.SetUser(identityName, "", "");
+                identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
+                appSession.SetUser(identityId, "", "");
             }
             
             // RDP with more than one session: How to find app and session using request's client IP port

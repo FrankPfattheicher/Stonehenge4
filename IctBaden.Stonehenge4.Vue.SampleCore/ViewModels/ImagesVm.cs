@@ -14,8 +14,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
             : "images/switch_off.png";
 
         public string LampImg => IsOn 
-            ? "images/lightbulb_on.png" 
-            : "images/lightbulb.png";
+            ? "images/LightBulb_on.png" 
+            : "images/LightBulb.png";
 
         public ImagesVm(AppSession session)
             : base(session)

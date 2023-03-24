@@ -61,6 +61,7 @@ updated: function () {
     this.chart.load({
         columns: this.$props.chartdata.Data.columns,
         onclick: function (d, element) { emit('clickData', d, element); }
+        
     });
 
 }
