@@ -45,7 +45,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             return false;
         }
     }
-    
+
     // ReSharper disable once ClassNeverInstantiated.Global
     public class StonehengeSession
     {
@@ -61,7 +61,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
         public async Task Invoke(HttpContext context)
         {
             var logger = (ILogger)context.Items["stonehenge.Logger"];
-            
+
             var timer = new Stopwatch();
             timer.Start();
 
@@ -85,6 +85,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 // URL id has second priority
                 stonehengeId = context.Request.Query["stonehenge-id"];
             }
+
             if (string.IsNullOrEmpty(stonehengeId))
             {
                 // see referer
@@ -94,6 +95,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     .Select(m => m.Groups[1].Value)
                     .FirstOrDefault();
             }
+
             if (string.IsNullOrEmpty(stonehengeId))
             {
                 var cookie = context.Request.Headers.FirstOrDefault(h => h.Key == "Cookie");
@@ -107,6 +109,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     {
                         logger.LogError("Multiple Stonehenge Ids in cookie: " + string.Join(", ", ids));
                     }
+
                     if (ids.Length > 0)
                     {
                         stonehengeId = ids.LastOrDefault(id => appSessions.Any(s => s.Id == id));
@@ -114,7 +117,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 }
             }
 
-            logger.LogTrace($"Kestrel[{stonehengeId}] Begin {context.Request.Method} {path}{context.Request.QueryString}");
+            logger.LogTrace(
+                $"Kestrel[{stonehengeId}] Begin {context.Request.Method} {path}{context.Request.QueryString}");
 
             CleanupTimedOutSessions(logger, appSessions);
             var session = appSessions.FirstOrDefault(s => s.Id == stonehengeId);
@@ -123,14 +127,17 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 // session not found
                 var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
                 var directoryName = Path.GetDirectoryName(path) ?? "/";
-                var resource = resourceLoader != null 
-                    ? await resourceLoader.Get(null, path.Substring(1).Replace("/", "."), new Dictionary<string, string>())
+                var resource = resourceLoader != null
+                    ? await resourceLoader.Get(null, path.Substring(1).Replace("/", "."),
+                        new Dictionary<string, string>())
                     : null;
                 if (directoryName.Length > 1 && resource == null && stonehengeId != null)
                 {
-                    logger.LogTrace($"Kestrel[{stonehengeId}] Abort {context.Request.Method} {path}{context.Request.QueryString}");
+                    logger.LogTrace(
+                        $"Kestrel[{stonehengeId}] Abort {context.Request.Method} {path}{context.Request.QueryString}");
                     return;
                 }
+
                 if (directoryName.Length <= 1 || resource == null)
                 {
                     // redirect to new session
@@ -146,16 +153,18 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
                     var remoteIp = context.Connection.RemoteIpAddress;
                     var remotePort = context.Connection.RemotePort;
-                    logger.LogTrace($"Kestrel[{stonehengeId}] From IP {remoteIp}:{remotePort} - redirect to {session.Id}");
+                    logger.LogTrace(
+                        $"Kestrel[{stonehengeId}] From IP {remoteIp}:{remotePort} - redirect to {session.Id}");
                     return;
                 }
             }
 
             var etag = context.Request.Headers["If-None-Match"];
-            if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) && etag == AppSession.GetResourceETag(path))
+            if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) &&
+                etag == AppSession.GetResourceETag(path))
             {
                 logger.LogTrace("ETag match");
-                context.Response.StatusCode = (int) HttpStatusCode.NotModified;
+                context.Response.StatusCode = (int)HttpStatusCode.NotModified;
             }
             else
             {
@@ -167,11 +176,13 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
             if (context.RequestAborted.IsCancellationRequested)
             {
-                logger.LogTrace($"Kestrel[{stonehengeId}] Canceled {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
+                logger.LogTrace(
+                    $"Kestrel[{stonehengeId}] Canceled {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
                 throw new TaskCanceledException();
             }
 
-            logger.LogTrace($"Kestrel[{stonehengeId}] End {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
+            logger.LogTrace(
+                $"Kestrel[{stonehengeId}] End {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
         }
 
         private static void CleanupTimedOutSessions(ILogger logger, ICollection<AppSession> appSessions)
@@ -185,6 +196,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 appSessions.Remove(timedOut);
                 logger.LogInformation($"Kestrel Session timed out {timedOut.Id}.");
             }
+
             if (timedOutSessions.Any())
             {
                 logger.LogInformation($"Kestrel {appSessions.Count} sessions.");
@@ -194,15 +206,16 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
         private static AppSession NewSession(ILogger logger, ICollection<AppSession> appSessions, HttpContext context,
             StonehengeResourceLoader resourceLoader)
         {
-            var options = (StonehengeHostOptions) context.Items["stonehenge.HostOptions"];
+            var options = (StonehengeHostOptions)context.Items["stonehenge.HostOptions"];
             var session = new AppSession(resourceLoader, options);
             var isLocal = context.IsLocal();
             var userAgent = context.Request.Headers["User-Agent"];
             var userLanguages = context.Request.Headers["Accept-Language"];
             if (options.UseClientLocale)
             {
-                session.SetSessionCulture(GetCulture(userLanguages));    
+                session.SetSessionCulture(GetCulture(userLanguages));
             }
+
             var httpContext = context.Request?.HttpContext;
             var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString();
             var clientPort = httpContext?.Connection.RemotePort ?? 0;
@@ -213,21 +226,23 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             logger.LogInformation($"Kestrel New session {session.Id}. {appSessions.Count} sessions.");
             return session;
         }
-        
+
         private static CultureInfo GetCulture(string languages)
         {
             if (string.IsNullOrEmpty(languages)) return null;
-            
+
             foreach (var language in languages.Split(';'))
             {
                 var realLanguage = Regex.Replace(language, "[;q=(0-9).]", "");
                 var locale = realLanguage.Split(',').FirstOrDefault();
                 //first one should be the used language that is set for a browser (if user did not change it their self).
-                return new CultureInfo(locale);
+                if (locale != null)
+                {
+                    return new CultureInfo(locale);
+                }
             }
+
             return null;
         }
-
-        
     }
 }
