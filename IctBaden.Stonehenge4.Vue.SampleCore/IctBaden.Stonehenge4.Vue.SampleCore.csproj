@@ -56,9 +56,9 @@
     <None Remove="app\images.html" />
     <EmbeddedResource Include="app\images.html" />
     <None Remove="app\images\lightbulb.png" />
-    <EmbeddedResource Include="app\images\lightbulb.png" />
-    <None Remove="app\images\lightbulb_on.png" />
-    <EmbeddedResource Include="app\images\lightbulb_on.png" />
+    <EmbeddedResource Include="app\images\LightBulb.png" />
+    <None Remove="app\images\LightBulb_on.png" />
+    <EmbeddedResource Include="app\images\LightBulb_on.png" />
     <None Remove="app\images\switch_off.png" />
     <EmbeddedResource Include="app\images\switch_off.png" />
     <None Remove="app\images\switch_on.png" />

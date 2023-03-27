@@ -3,6 +3,7 @@ using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.ViewModel;
+using IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -34,6 +35,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             
             _logger.LogTrace($"AppCommands.WindowResized(URL): width={paramWidth}, height={paramHeight}");
             _logger.LogTrace($"AppCommands.WindowResized(binding): width={width}, height={height}");
+
+            var chartVm = session.ViewModel as Charts1Vm;
+            chartVm?.ChangeShowStacked();
         }
         
     }

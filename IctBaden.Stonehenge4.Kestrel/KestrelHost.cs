@@ -53,12 +53,24 @@ namespace IctBaden.Stonehenge.Kestrel
             _options = options;
             _logger = logger;
 
+            var isAspNetCoreApp = true;
             var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
             if (!ctx.IsNullOrEmpty() && !ctx.Contains("Microsoft.AspNetCore.App"))
             {
-                throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">");
+                isAspNetCoreApp = false;
+                if (File.Exists(ctx))
+                {
+                    var dependencies = File.ReadAllText(ctx);
+                    isAspNetCoreApp = dependencies.Contains("Microsoft.AspNetCore.App");
+                }
             }
 
+            if (!isAspNetCoreApp)
+            {
+                throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">" + 
+                                                Environment.NewLine + "AppContext=" + ctx);
+            }
+            
             provider.InitProvider(provider as StonehengeResourceLoader, options);
         }
 
