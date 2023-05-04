@@ -66,6 +66,12 @@ jobs:
         echo Version=$version
         dotnet build --configuration Release ./IctBaden.Stonehenge4.TreeView/IctBaden.Stonehenge4.TreeView.csproj -p:AssemblyVersion=$version -p:Version=4.0
         cp IctBaden.Stonehenge4.TreeView/bin/Release/net6.0/IctBaden.Stonehenge4.TreeView.dll artifacts/lib
+    - name: Build DropEdit
+      run: |
+        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
+        echo Version=$version
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.DropEdit/IctBaden.Stonehenge4.DropEdit.csproj -p:AssemblyVersion=$version -p:Version=4.0
+        cp IctBaden.Stonehenge4.DropEdit/bin/Release/net6.0/IctBaden.Stonehenge4.DropEdit.dll artifacts/lib
     - name: Test with dotnet
       env: 
         SkipPerformanceTests: true
