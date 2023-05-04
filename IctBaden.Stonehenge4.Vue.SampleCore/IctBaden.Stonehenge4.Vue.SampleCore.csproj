@@ -76,6 +76,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.ChartsC3\IctBaden.Stonehenge4.ChartsC3.csproj" />
+    <ProjectReference Include="..\IctBaden.Stonehenge4.DropEdit\IctBaden.Stonehenge4.DropEdit.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue\IctBaden.Stonehenge4.Vue.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />

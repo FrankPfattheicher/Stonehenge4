@@ -153,4 +153,19 @@
     </div>
 
 
+    <div class="col-md-4" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);" :dropList="false">
+
+        <h4>
+            Dropdown Edit
+        </h4>
+
+        <p>
+            Value: {{DropEditValue}}
+        </p>
+
+        <st-drop-edit :value="DropEditValue" :values="DropEditValues" @change="DropEditValue=$event">
+
+    </div>
+
+
 </div>
