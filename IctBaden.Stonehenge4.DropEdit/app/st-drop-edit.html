@@ -1,7 +1,7 @@
 <!--CustomElement:value,values,change,dropList-->
 <div class="st-drop-edit" style="display: inline-block;">
     <label>
-        <input type="text" v-model="value" style="width: 100%;" class="form-control">
+        <input type="text" v-model="value" style="width: 100%;" class="form-control" @change="$emit('change',value)">
     </label>
     <input type="checkbox" id="dropListItems" v-model="dropList">
     <label class="btn btn-secondary" for="dropListItems" 

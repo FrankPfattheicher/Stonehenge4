@@ -82,7 +82,7 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IctBaden.Units" Version="1.0.4" />
+    <PackageReference Include="IctBaden.Units" Version="2.0.1" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
