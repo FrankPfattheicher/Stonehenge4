@@ -27,7 +27,12 @@ public class FormsVm : ActiveViewModel
     public string Test { get; set; }
 
     public int CheckValue { get; set; }
+
     
+    public string DropEditValue1 { get; set; }
+    public string DropEditValue2 { get; set; }
+    public string[] DropEditValues { get; set; }
+
     public FormsVm(AppSession session)
         : base(session)
     {
@@ -40,6 +45,17 @@ public class FormsVm : ActiveViewModel
         
         Test = "abcd";
         CheckValue = 5;
+
+        DropEditValue1 = "test";
+        DropEditValue2 = "test-2";
+        DropEditValues = new[]
+        {
+            "unknown",
+            "test",
+            "test-2",
+            "test-3",
+            "last"
+        };
     }
 
     public override void OnLoad()
