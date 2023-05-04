@@ -1,4 +1,5 @@
 
+* 4.3.11 - DropEdit control size fixed
 * 4.3.10 - Added DropEdit control st-drop-edit
 * 4.3.9 - Fixed app context check on linux
 * 4.3.8 - Added chart clickData event
