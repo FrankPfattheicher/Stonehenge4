@@ -23,6 +23,7 @@
 }
 
 .st-drop-edit-item {
+    color: var(--bs-gray-900);
     cursor: pointer;
 }
 

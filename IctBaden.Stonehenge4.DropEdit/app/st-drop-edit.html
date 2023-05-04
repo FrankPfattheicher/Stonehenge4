@@ -1,7 +1,7 @@
 <!--CustomElement:id,value,values,change,dropList-->
-<div class="st-drop-edit" style="display: inline-block;">
-    <label>
-        <input type="text" v-model="value" style="width: 100%;" class="form-control" @change="$emit('change',value)">
+<div class="st-drop-edit" style="display: inline-table;">
+    <label style="width: calc(100% - 1.9rem);" >
+        <input type="text" v-model="value" class="form-control" @change="$emit('change',value)">
     </label>
     <label class="btn btn-secondary" :for="id" 
            style="margin-left: calc(0rem - var(--bs-border-radius)); margin-top: calc(0rem - var(--bs-border-radius) + 1px);">
