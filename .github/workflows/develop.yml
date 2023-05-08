@@ -12,10 +12,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core 6
+    - name: Setup .NET Core 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.x
+        dotnet-version: 7.x
     - name: Setup Nuget
       uses: NuGet/setup-nuget@v1
     - name: Prepare Artifacts
@@ -24,9 +24,14 @@ jobs:
         mkdir artifacts/lib
         mkdir artifacts/images
         cp IctBaden.Stonehenge4/icon64.png artifacts/images
-    - name: Build Core
+    - name: Get Version Info
       run: |
         version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
+        echo Version=$version
+        echo "Version=$version" >> $GITHUB_ENV
+    - name: Build Core
+      run: |
+        version=${{ env.Version }}
         echo Version=$version
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=$version -p:Version=4.0
         cp IctBaden.Stonehenge4/bin/Release/net6.0/IctBaden.Stonehenge4.dll artifacts/lib
