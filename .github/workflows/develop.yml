@@ -41,41 +41,42 @@ jobs:
     - name: Get Version Info
       run: |
         echo "LibMainVersion=4.0" >> $GITHUB_ENV
-        version=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
-        echo Version=$version
-        echo "AssemblyVersion=$version" >> $GITHUB_ENV
+        assemblyVersion=$(grep -oP -m 1 '\* \K[0-9]*\.[0-9]*\.[0-9]*' ReleaseNotes4.md)
+        echo "AssemblyVersion=$assemblyVersion" >> $GITHUB_ENV
+        echo LibMainVersion=$libMainVersion
+        echo AssemblyVersion=$assemblyVersion
         
     - name: Build Core
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4/bin/Release/net6.0/IctBaden.Stonehenge4.dll artifacts/lib
     - name: Build Kestrel
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.Kestrel/bin/Release/net6.0/IctBaden.Stonehenge4.Kestrel.dll artifacts/lib
     - name: Build Vue
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.Vue/IctBaden.Stonehenge4.Vue.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.Vue/IctBaden.Stonehenge4.Vue.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.Vue/bin/Release/net6.0/IctBaden.Stonehenge4.Vue.dll artifacts/lib
     - name: Build App
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.App/IctBaden.Stonehenge4.App.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.App/IctBaden.Stonehenge4.App.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.App/bin/Release/net6.0/IctBaden.Stonehenge4.App.dll artifacts/lib
     - name: Build AppDialog
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.AppDialog/IctBaden.Stonehenge4.AppDialog.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.AppDialog/IctBaden.Stonehenge4.AppDialog.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.AppDialog/bin/Release/net6.0/IctBaden.Stonehenge4.AppDialog.dll artifacts/lib
     - name: Build ChartsC3
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.ChartsC3/IctBaden.Stonehenge4.ChartsC3.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.ChartsC3/IctBaden.Stonehenge4.ChartsC3.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.ChartsC3/bin/Release/net6.0/IctBaden.Stonehenge4.ChartsC3.dll artifacts/lib
     - name: Build TreeView
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.TreeView/IctBaden.Stonehenge4.TreeView.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.TreeView/IctBaden.Stonehenge4.TreeView.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.TreeView/bin/Release/net6.0/IctBaden.Stonehenge4.TreeView.dll artifacts/lib
     - name: Build DropEdit
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.DropEdit/IctBaden.Stonehenge4.DropEdit.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=LibMainVersion
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.DropEdit/IctBaden.Stonehenge4.DropEdit.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.DropEdit/bin/Release/net6.0/IctBaden.Stonehenge4.DropEdit.dll artifacts/lib
         
     - name: Test with dotnet
@@ -85,9 +86,8 @@ jobs:
       
     - name: Pack Nuget
       run: |
-        version=${{ env.Version }}
         cd artifacts
-        nuget pack ../Stonehenge4.nuspec -BasePath . -Version $version
+        nuget pack ../Stonehenge4.nuspec -BasePath . -Version ${{ env.AssemblyVersion }}
         
     - uses: actions/upload-artifact@v2
       with:
