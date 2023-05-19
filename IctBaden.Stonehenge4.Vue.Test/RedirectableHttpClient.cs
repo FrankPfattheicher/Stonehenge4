@@ -11,7 +11,7 @@ namespace IctBaden.Stonehenge.Vue.Test
     public class RedirectableHttpClient : HttpClient
     {
         // ReSharper disable once MemberCanBePrivate.Global
-        public string SessionId { get; set; }
+        public string? SessionId { get; set; }
 
         public async Task<string> DownloadStringWithSession(string address)
         {
@@ -34,14 +34,15 @@ namespace IctBaden.Stonehenge.Vue.Test
                 var response = await GetAsync(address);
 
                 var redirectUrl = response.Headers.Location;
+                string? redirectAddr = null;
                 if (redirectUrl == null)
                 {
-                    address = response.RequestMessage?.RequestUri?.ToString();
+                    redirectAddr = response.RequestMessage?.RequestUri?.ToString();
                 }
-                if (address != null)
+                if (redirectAddr != null)
                 {
                     var match = new Regex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)
-                        .Match(address);
+                        .Match(redirectAddr);
                     if (match.Success)
                     {
                         SessionId = match.Groups[1].Value;
@@ -63,7 +64,7 @@ namespace IctBaden.Stonehenge.Vue.Test
                 address = newAddress;
             }
 
-            return null;
+            return string.Empty;
         }
     }
 }

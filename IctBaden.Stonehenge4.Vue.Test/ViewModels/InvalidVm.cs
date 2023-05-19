@@ -13,9 +13,9 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModels
     public class InvalidVm : ActiveViewModel
     {
         public int VmPropInteger { get; set; }
-        public string VmPropText { get; set; }
-        public List<string> VmPropList { get; set; }
-        public Notify<string> VmPropNotify { get; set; }
+        public string VmPropText { get; set; } = string.Empty;
+        public List<string> VmPropList { get; set; } = new();
+        public Notify<string>? VmPropNotify { get; set; }
 
         private readonly VueTestData _data;
         
@@ -39,7 +39,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModels
         {
             if (action == "Notify")
             {
-                VmPropNotify.Update(Guid.NewGuid().ToString());
+                VmPropNotify?.Update(Guid.NewGuid().ToString());
             }
             return "";
         }
