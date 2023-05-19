@@ -261,7 +261,12 @@ namespace IctBaden.Stonehenge.Core
         public object CreateType(string context, Type type)
         {
             object instance = null;
-            foreach (var constructor in type.GetConstructors())
+            var typeConstructors = type.GetConstructors();
+            if (!typeConstructors.Any())
+            {
+                Logger.LogError($"AppSession.CreateType({context}, {type.Name}): No public constructors");
+            }
+            foreach (var constructor in typeConstructors)
             {
                 var parameters = constructor.GetParameters();
                 if (parameters.Length == 0)

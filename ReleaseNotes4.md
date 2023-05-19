@@ -1,4 +1,5 @@
 
+* 4.3.13 - C# 11, Tests nullable, Session.CreateType log error "No public constructors"
 * 4.3.12 - DropEdit border-spacing fixed
 * 4.3.11 - DropEdit control size fixed
 * 4.3.10 - Added DropEdit control st-drop-edit

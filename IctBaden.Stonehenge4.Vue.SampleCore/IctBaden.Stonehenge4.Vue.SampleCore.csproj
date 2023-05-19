@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>VueSampleCore</AssemblyName>
-    <LangVersion>10</LangVersion>
+    <LangVersion>11</LangVersion>
     <AssemblyVersion>4.0.4</AssemblyVersion>
     <FileVersion>4.0.4</FileVersion>
     <TargetFramework>net6.0</TargetFramework>

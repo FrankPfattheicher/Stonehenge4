@@ -11,13 +11,13 @@ namespace IctBaden.Stonehenge.Vue.Test
 {
     public class VueTestApp : IDisposable
     {
-        public string BaseUrl => _server?.BaseUrl;
+        public string BaseUrl => _server.BaseUrl;
 
         private readonly IStonehengeHost _server;
 
         public readonly VueTestData Data = new VueTestData();
 
-        public VueTestApp(Assembly appAssembly = null)
+        public VueTestApp(Assembly? appAssembly = null)
         {
             var vue = new VueResourceProvider(StonehengeLogger.DefaultLogger);
             var loader = appAssembly != null
