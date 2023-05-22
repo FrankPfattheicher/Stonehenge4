@@ -61,10 +61,7 @@ namespace IctBaden.Stonehenge.Client
                     styleSheets += Environment.NewLine + string.Format(CssLinkTemplate, css);
                 }
 
-                if (!StyleSheets.ContainsKey(theme))
-                {
-                    StyleSheets.Add(theme, styleSheets);
-                }
+                StyleSheets.TryAdd(theme, styleSheets);
             }
             return text.Replace(CssInsertPoint, StyleSheets[theme]);
         }

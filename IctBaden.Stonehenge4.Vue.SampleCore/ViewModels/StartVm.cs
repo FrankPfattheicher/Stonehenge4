@@ -66,8 +66,10 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         public override void OnUpdateTimer()
         {
+            // ReSharper disable UnusedVariable
             var c = Thread.CurrentThread.CurrentCulture;
             var ui = Thread.CurrentThread.CurrentUICulture;
+            // ReSharper restore UnusedVariable
             
             NotifyPropertyChanged(nameof(TimeStamp));
         }

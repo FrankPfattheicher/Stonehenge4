@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace IctBaden.Stonehenge.Extension.Pie;
 
 public class PieChart

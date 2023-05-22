@@ -9,14 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="app\tree-node.html" />
-      <EmbeddedResource Include="app\tree-node.html" />
-      <None Remove="app\tree-view.html" />
-      <EmbeddedResource Include="app\tree-view.html" />
+      <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
+      <None Remove="app\st-tree-node.html" />
+      <EmbeddedResource Include="app\st-tree-node.html" />
+      <None Remove="app\st-tree-view.html" />
+      <EmbeddedResource Include="app\st-tree-view.html" />
     </ItemGroup>
 
 </Project>

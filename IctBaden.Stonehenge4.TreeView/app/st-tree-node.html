@@ -10,8 +10,8 @@
         </span>
     </div>
     <ul style="list-style-type: none;">
-        <tree-node v-for="child of node.Children" :node="child" :key="child.Id"
+        <st-tree-node v-for="child of node.Children" :node="child" :key="child.Id"
                    @select="$emit('select', $event)" @toggle="$emit('toggle', $event)">
-        </tree-node>
+        </st-tree-node>
     </ul>
 </li>

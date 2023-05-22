@@ -17,7 +17,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
 
         public void Dispose()
         {
-            _app?.Dispose();
+            _app.Dispose();
         }
 
         [Theory]

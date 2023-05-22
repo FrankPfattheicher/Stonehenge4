@@ -15,8 +15,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         public override void OnLoad()
         {
-            Theme = Session.Cookies.ContainsKey("theme")
-                ? Session.Cookies["theme"]
+            Theme = Session.Cookies.TryGetValue("theme", out var theme)
+                ? theme
                 : string.Empty;
         }
 

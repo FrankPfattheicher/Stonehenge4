@@ -30,7 +30,7 @@ namespace IctBaden.Stonehenge.Vue.Test
 
         public void Dispose()
         {
-            _server?.Terminate();
+            _server.Terminate();
         }
         
     }

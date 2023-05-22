@@ -17,7 +17,7 @@ public class InvalidValuesTests : IDisposable
 
     public void Dispose()
     {
-        _app?.Dispose();
+        _app.Dispose();
     }
 
     [Fact]
