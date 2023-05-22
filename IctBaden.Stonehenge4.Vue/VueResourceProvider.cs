@@ -200,10 +200,7 @@ namespace IctBaden.Stonehenge.Vue
                         ViewModel = GetViewModelInfo(route, pageText)
                     };
                     var key = "src." + resourceId;
-                    if (!_vueContent.ContainsKey(key))
-                    {
-                        _vueContent.Add(key, resource);
-                    }
+                    _vueContent.TryAdd(key, resource);
                 }
             }
         }
@@ -218,12 +215,9 @@ namespace IctBaden.Stonehenge.Vue
         public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
         {
             resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
-            if (_vueContent.ContainsKey(resourceName))
-            {
-                return Task.FromResult(_vueContent[resourceName]);
-            }
-
-            return Task.FromResult<Resource>(null);
+            return _vueContent.TryGetValue(resourceName, out var value) 
+                ? Task.FromResult(value) 
+                : Task.FromResult<Resource>(null);
         }
     }
 }

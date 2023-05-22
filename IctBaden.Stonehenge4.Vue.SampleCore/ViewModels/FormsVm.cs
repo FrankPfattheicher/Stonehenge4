@@ -62,8 +62,8 @@ public class FormsVm : ActiveViewModel
     {
         base.OnLoad();
         
-        Test = Session.Parameters.ContainsKey("test")
-            ? Session.Parameters["test"]
+        Test = Session.Parameters.TryGetValue("test", out var test)
+            ? test
             : "0-0";
 
         ExecuteClientScript("");

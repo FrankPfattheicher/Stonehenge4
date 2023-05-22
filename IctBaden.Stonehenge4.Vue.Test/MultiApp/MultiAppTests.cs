@@ -20,8 +20,8 @@ namespace IctBaden.Stonehenge.Vue.Test.MultiApp
 
         public void Dispose()
         {
-            _app1?.Dispose();
-            _app2?.Dispose();
+            _app1.Dispose();
+            _app2.Dispose();
         }
 
         [Fact]

@@ -11,14 +11,15 @@ using System.Linq;
 
 namespace IctBaden.Stonehenge.Extension.TreeViewModels
 {
-    public class TreeNodeVm
+    public class TreeNode
     {
         public string Id { get; }
-        public string Icon { get; private set; } // fa fa-folder, fa fa-folder-open
+        /// for example fa fa-folder, fa fa-folder-open
+        public string Icon { get; private set; } 
         public string Name { get; set; }
         public string Tooltip { get; set; }
 
-        public List<TreeNodeVm> Children { get; set; }
+        public List<TreeNode> Children { get; set; }
 
         // ReSharper disable once UnusedMember.Global
         public bool IsVisible => Parent?.IsExpanded ?? true;
@@ -38,19 +39,19 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
 
         
         private readonly IExpandedProvider _expanded;
-        public readonly TreeNodeVm Parent;
+        public readonly TreeNode Parent;
         public readonly object Item;
         
-        public TreeNodeVm(TreeNodeVm parentNodeVm, object item, IExpandedProvider expanded = null)
+        public TreeNode(TreeNode parentNode, object item, IExpandedProvider expanded = null)
         {
             Item = item;
             Id = (GetItemProperty("Id") as string) ?? Guid.NewGuid().ToString("N");
             _expanded = expanded;
-            Parent = parentNodeVm;
-            Children = new List<TreeNodeVm>();
+            Parent = parentNode;
+            Children = new List<TreeNode>();
             
             IsExpanded = _expanded?.GetExpanded(Id) ?? false;
-            IsDraggable = parentNodeVm != null;
+            IsDraggable = parentNode != null;
 
             Name = GetItemProperty("Name") as string;
             Icon = GetItemProperty("Icon") as string;
@@ -73,13 +74,13 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
             
             foreach (var child in children)
             {
-                var childNode = new TreeNodeVm(this, child, _expanded);
+                var childNode = new TreeNode(this, child, _expanded);
                 childNode.CreateChildCfgNodes();
                 Children.Add(childNode);
             }
         }
         
-        public IEnumerable<TreeNodeVm> AllNodes()
+        public IEnumerable<TreeNode> AllNodes()
         {
             yield return this;
             foreach (var node in Children.SelectMany(child => child.AllNodes()))
@@ -88,9 +89,5 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
             }
         }
 
-        public TreeNodeVm FindNodeById(string id)
-        {
-            return AllNodes().FirstOrDefault(node => node.Id == id);
-        }
     }
 }

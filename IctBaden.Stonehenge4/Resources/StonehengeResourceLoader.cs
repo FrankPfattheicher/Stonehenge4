@@ -111,9 +111,9 @@ namespace IctBaden.Stonehenge.Resources
                 var end = field.IndexOf('}');
                 field = field.Substring(0, end);
 
-                if (session.Cookies.ContainsKey(field))
+                if (session.Cookies.TryGetValue(field, out var fieldCookie))
                 {
-                    replaced += session.Cookies[field];
+                    replaced += fieldCookie;
                 }
 
                 resourceName = resourceName.Substring(end + closing);

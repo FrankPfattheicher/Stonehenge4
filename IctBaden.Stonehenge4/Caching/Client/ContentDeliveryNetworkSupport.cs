@@ -48,6 +48,7 @@ namespace IctBaden.Stonehenge.Caching.Client
             var protocol = isSecureConnection ? "https://" : "http://";
             var script = new Regex("(?<a><script.*src=\"(?<b>(?<c>.*\\.js))\".*)|(?<a><link.*href=\"(?<b>(?<c>.*\\.css))\".*)", RegexOptions.Compiled);
 
+            // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
             var resultLines = from line in page.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                               let isScriptSource = script.Match(line)
                               let source = isScriptSource.Groups["c"].Value.Split('/').Last()
@@ -65,6 +66,7 @@ namespace IctBaden.Stonehenge.Caching.Client
             var protocol = isSecureConnection ? "https://" : "http://";
             var script = new Regex("(?<map>'(?<id>.+)' *: *'(?<path>.*)'.*)", RegexOptions.Compiled);
 
+            // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
             var resultLines = from line in page.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                               let isMapPath = script.Match(line)
                               let source = isMapPath.Groups["path"].Value.Split('/').Last() + ".js"

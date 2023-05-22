@@ -516,20 +516,13 @@ namespace IctBaden.Stonehenge.Core
         {
             foreach (var cookie in cookies)
             {
-                if (Cookies.ContainsKey(cookie.Key))
-                {
-                    Cookies[cookie.Key] = cookie.Value;
-                }
-                else
-                {
-                    Cookies.Add(cookie.Key, cookie.Value);
-                }
+                Cookies[cookie.Key] = cookie.Value;
             }
 
 
-            if ((PermanentSessionId == null) && cookies.ContainsKey("ss-pid"))
+            if ((PermanentSessionId == null) && cookies.TryGetValue("ss-pid", out var ssPid))
             {
-                PermanentSessionId = cookies["ss-pid"];
+                PermanentSessionId = ssPid;
             }
 
             LastAccess = DateTime.Now;
@@ -609,14 +602,7 @@ namespace IctBaden.Stonehenge.Core
         {
             foreach (var parameter in parameters)
             {
-                if (Parameters.ContainsKey(parameter.Key))
-                {
-                    Parameters[parameter.Key] = parameter.Value;
-                }
-                else
-                {
-                    Parameters.Add(parameter.Key, parameter.Value);
-                }
+                Parameters[parameter.Key] = parameter.Value;
             }
         }
 
