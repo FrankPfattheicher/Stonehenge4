@@ -1,4 +1,5 @@
 
+* 4.3.15 - TreeView refactored, nullable enabled
 * 4.3.14 - TreeView extension ready to use
 * 4.3.13 - C# 11, Tests nullable, Session.CreateType log error "No public constructors"
 * 4.3.12 - DropEdit border-spacing fixed
