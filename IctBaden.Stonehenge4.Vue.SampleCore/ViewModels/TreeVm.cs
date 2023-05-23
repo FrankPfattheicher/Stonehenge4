@@ -2,7 +2,6 @@
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
-using IctBaden.Stonehenge.Extension.TreeViewModels;
 using IctBaden.Stonehenge.ViewModel;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local

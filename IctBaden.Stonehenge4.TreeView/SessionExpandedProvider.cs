@@ -1,7 +1,7 @@
 using System;
 using IctBaden.Stonehenge.Core;
 
-namespace IctBaden.Stonehenge.Extension.TreeViewModels;
+namespace IctBaden.Stonehenge.Extension;
 
 public class SessionExpandedProvider : IExpandedProvider
 {
