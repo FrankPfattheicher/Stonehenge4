@@ -59,7 +59,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             Console.WriteLine(@"Using client framework vue");
             var vue = new VueResourceProvider(logger);
             var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
-            loader.AddResourceAssembly(typeof(TreeView).Assembly);
+            loader.AddResourceAssembly(typeof(TreeViewExtension).Assembly);
             loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
             loader.AddResourceAssembly(typeof(AppDialog).Assembly);
             loader.AddResourceAssembly(typeof(DropEdit).Assembly);

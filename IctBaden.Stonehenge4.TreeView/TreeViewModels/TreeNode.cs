@@ -16,8 +16,8 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
         public string Id { get; }
         /// for example fa fa-folder, fa fa-folder-open
         public string Icon { get; private set; } 
-        public string Name { get; set; }
-        public string Tooltip { get; set; }
+        public string Name { get; init; }
+        public string Tooltip { get; set; } = string.Empty;
 
         public List<TreeNode> Children { get; set; }
 
@@ -38,11 +38,11 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
             : "fa";
 
         
-        private readonly IExpandedProvider _expanded;
-        public readonly TreeNode Parent;
-        public readonly object Item;
+        private readonly IExpandedProvider? _expanded;
+        public readonly TreeNode? Parent;
+        public readonly object? Item;
         
-        public TreeNode(TreeNode parentNode, object item, IExpandedProvider expanded = null)
+        public TreeNode(TreeNode? parentNode, object? item, IExpandedProvider? expanded = null)
         {
             Item = item;
             Id = (GetItemProperty("Id") as string) ?? Guid.NewGuid().ToString("N");
@@ -53,13 +53,13 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
             IsExpanded = _expanded?.GetExpanded(Id) ?? false;
             IsDraggable = parentNode != null;
 
-            Name = GetItemProperty("Name") as string;
-            Icon = GetItemProperty("Icon") as string;
+            Name = GetItemProperty("Name") as string ?? string.Empty;
+            Icon = GetItemProperty("Icon") as string ?? string.Empty;
             
             CreateChildCfgNodes();
         }
 
-        private object GetItemProperty(string propertyName)
+        private object? GetItemProperty(string propertyName)
         {
             if (Item == null) return null;
             var prop = Item.GetType().GetProperty(propertyName);

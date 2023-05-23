@@ -6,6 +6,7 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.Extension</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

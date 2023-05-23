@@ -17,7 +17,9 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
     public class TreeView
     {
         public List<TreeNode> RootNodes { get; set; }
-        public TreeNode SelectedNode { get; private set; }
+        public TreeNode? SelectedNode { get; private set; }
+
+        public event Action<TreeNode>? SelectionChanged;
 
         // ReSharper disable once UnusedMember.Global
         public TreeView()
@@ -40,10 +42,8 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
         public IEnumerable<TreeNode> AllNodes() => 
             new TreeNode(null, null ) { Children = RootNodes }.AllNodes();
         
-        public TreeNode FindNodeById(string id)
-        {
-            return AllNodes().FirstOrDefault(node => node.Id == id);
-        }
+        public TreeNode? FindNodeById(string id) => AllNodes()
+            .FirstOrDefault(node => node.Id == id);
 
         public void TreeToggle(string nodeId)
         {
@@ -67,6 +67,5 @@ namespace IctBaden.Stonehenge.Extension.TreeViewModels
             SelectionChanged?.Invoke(SelectedNode);
         }
 
-        public event Action<TreeNode> SelectionChanged;
     }
 }

@@ -4,7 +4,6 @@ using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.TreeViewModels;
 using IctBaden.Stonehenge.ViewModel;
-using TreeView = IctBaden.Stonehenge.Extension.TreeViewModels.TreeView;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable MemberCanBePrivate.Global
