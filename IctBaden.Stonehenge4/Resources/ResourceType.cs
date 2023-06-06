@@ -27,6 +27,8 @@ namespace IctBaden.Stonehenge.Resources
         public static readonly ResourceType Js = new("js", "text/javascript", false);
         public static readonly ResourceType Calendar = new("ics", "text/calendar", false);
         public static readonly ResourceType Csv = new("csv", "text/csv", false);
+        public static readonly ResourceType Xml = new("xml", "text/xml", false);
+        
         public static readonly ResourceType Pdf = new("pdf", "application/pdf", true);
         public static readonly ResourceType Json = new("json", "application/json; charset=utf-8", false);
 
