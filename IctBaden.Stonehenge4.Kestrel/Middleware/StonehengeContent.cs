@@ -85,7 +85,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 }
 
                 var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
-                var parameters = queryString.AllKeys
+                var parameters = queryString.AllKeys.Where(k => !string.IsNullOrEmpty(k))
                     .ToDictionary(key => key, key => queryString[key]);
                 Resource content = null;
 

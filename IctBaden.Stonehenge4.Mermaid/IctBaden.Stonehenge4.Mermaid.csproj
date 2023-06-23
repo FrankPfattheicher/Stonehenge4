@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>IctBaden.Stonehenge.Extension</RootNamespace>
+        <LangVersion>11</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="app\src\mermaid.js" />
+      <EmbeddedResource Include="app\src\mermaid.js" />
+      <None Remove="app\src\mermaid.min.js" />
+      <EmbeddedResource Include="app\src\mermaid.min.js" />
+      <None Remove="app\st-mermaid.html" />
+      <EmbeddedResource Include="app\st-mermaid.html" />
+      <None Remove="app\st-mermaid.js" />
+      <EmbeddedResource Include="app\st-mermaid.js" />
+    </ItemGroup>
+
+</Project>

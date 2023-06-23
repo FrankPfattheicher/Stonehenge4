@@ -63,6 +63,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
             loader.AddResourceAssembly(typeof(AppDialog).Assembly);
             loader.AddResourceAssembly(typeof(DropEdit).Assembly);
+            loader.AddResourceAssembly(typeof(Mermaid).Assembly);
             loader.Services.AddService(typeof(ILogger), logger);
             
             // Select hosting technology

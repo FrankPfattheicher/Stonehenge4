@@ -27,6 +27,8 @@ namespace IctBaden.Stonehenge.Resources
         public static readonly ResourceType Js = new("js", "text/javascript", false);
         public static readonly ResourceType Calendar = new("ics", "text/calendar", false);
         public static readonly ResourceType Csv = new("csv", "text/csv", false);
+        public static readonly ResourceType Xml = new("xml", "text/xml", false);
+        
         public static readonly ResourceType Pdf = new("pdf", "application/pdf", true);
         public static readonly ResourceType Json = new("json", "application/json; charset=utf-8", false);
 
@@ -38,6 +40,7 @@ namespace IctBaden.Stonehenge.Resources
         public static readonly ResourceType Ico = new("ico", "image/x-icon", true);
         public static readonly ResourceType Svg = new("svg", "image/svg+xml", false);
 
+        public static readonly ResourceType Eot = new("eot", "font/eot", true);
         public static readonly ResourceType Ttf = new("ttf", "font/truetype", true);
         public static readonly ResourceType Woff = new("woff", "font/woff", true);
         public static readonly ResourceType Woff2 = new("woff2", "font/woff2", true);
@@ -56,7 +59,7 @@ namespace IctBaden.Stonehenge.Resources
             Wav,
             Ico,
             Svg,
-            Ttf, Woff, Woff2
+            Eot, Ttf, Woff, Woff2
         };
 
         public static ResourceType GetByExtension(string extension)
