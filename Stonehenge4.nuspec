@@ -41,6 +41,7 @@
                 <reference file="IctBaden.Stonehenge4.AppDialog.dll"/>
                 <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
                 <reference file="IctBaden.Stonehenge4.DropEdit.dll"/>
+                <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
             </group>
         </references>
     </metadata>
