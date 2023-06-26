@@ -1,4 +1,5 @@
 
+* 4.4.0 - Added Mermaid extension, Serialize view model first, then Stonehenge internal properties
 * 4.3.16 - Resource type EOT, fix query keys contains empty key exception
 * 4.3.15 - TreeView refactored, nullable enabled
 * 4.3.14 - TreeView extension ready to use

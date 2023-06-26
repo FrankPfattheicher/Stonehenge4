@@ -565,6 +565,14 @@ namespace IctBaden.Stonehenge.ViewModel
             var context = "";
             try
             {
+                // ensure view model data available before executing client scripts
+                context = "view model";
+                var vm = JsonSerializer.SerializeToDocument(viewModel, JsonOptions);
+                foreach (var jsonElement in vm.RootElement.EnumerateObject())
+                {
+                    data.Add(jsonElement.ToString());
+                }
+
                 if (viewModel is ActiveViewModel activeVm)
                 {
                     context = "internal properties";
@@ -578,13 +586,6 @@ namespace IctBaden.Stonehenge.ViewModel
                         data.Add(string.Format("\"{0}\":{1}", name,
                             JsonSerializer.SerializeToElement(activeVm.TryGetMember(name), JsonOptions)));
                     }
-                }
-
-                context = "view model";
-                var vm = JsonSerializer.SerializeToDocument(viewModel, JsonOptions);
-                foreach (var jsonElement in vm.RootElement.EnumerateObject())
-                {
-                    data.Add(jsonElement.ToString());
                 }
             }
             catch (Exception ex)
