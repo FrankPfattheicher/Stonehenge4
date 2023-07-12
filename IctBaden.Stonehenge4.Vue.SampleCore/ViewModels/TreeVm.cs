@@ -20,6 +20,7 @@ public class TreeVm : ActiveViewModel
 
     public TreeView WorldTree { get; } = new();
     public string SelectedContinent { get; private set; }
+    public string CheckedContinents { get; private set; } = string.Empty;
     public Gauge Area { get; private init; }
     public Gauge Countries { get; private init; }
 
@@ -29,7 +30,7 @@ public class TreeVm : ActiveViewModel
         Continents = new List<Continent>
         {
             new() { Icon = "fa fa-flag", Name = "Asia", Area = 44579, Countries = 50, IsChild = true },
-            new() { Icon = "fa fa-flag", Name = "Africa", Area = 30370, Countries = 54 },
+            new() { Icon = "fa fa-flag", Name = "Africa <i class=\"fa-solid fa-square-full\" style=\"color: blue;\"></i>", Area = 30370, Countries = 54 },
             new() { Icon = "fa fa-flag", Name = "North America", Area = 24709, Countries = 23, IsChild = true },
             new() { Icon = "fa fa-flag", Name = "South America", Area = 17840, Countries = 12, IsChild = true },
             new() { Icon = "fa fa-flag", Name = "Antarctica", Area = 14000, Countries = 0 },
@@ -91,11 +92,17 @@ public class TreeVm : ActiveViewModel
         };
 
         TreeSelect(worldNode.Id);
+        TreeChange(string.Empty);
     }
 
     private TreeNode CreateTreeNode(TreeNode parent, Continent continent)
     {
-        var node = new TreeNode(parent, continent) { Name = continent.Name };
+        var node = new TreeNode(parent, continent)
+        {
+            Name = continent.Name,
+            Checkbox = true, 
+            IsChecked = continent.Name == "Eurasia"
+        };
         node.Children = continent.Children
             .Select(c => new TreeNode(node, c) {Name = c.Name})
             .ToList();
@@ -105,10 +112,16 @@ public class TreeVm : ActiveViewModel
     [ActionMethod]
     // ReSharper disable once UnusedMember.Global
     public void TreeToggle(string nodeId) => WorldTree.TreeToggle(nodeId);
-
     [ActionMethod]
     // ReSharper disable once UnusedMember.Global
     public void TreeSelect(string nodeId) => WorldTree.TreeSelect(nodeId);
+    [ActionMethod]
+    public void TreeChange(string nodeId)
+    {
+        WorldTree.TreeChange(nodeId);
+        CheckedContinents = string.Join(", ", 
+            WorldTree.AllNodes().Where(n => n.IsChecked).Select(n => n.Name));
+    }
 
     private void WorldTreeOnSelectionChanged(TreeNode node)
     {

@@ -92,36 +92,39 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 appSession?.SetParameters(parameters);
                 if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
                 {
-                    context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     context.Response.Headers.Add("WWW-Authenticate", "Basic");
                     return;
                 }
 
-                if (appSession?.HostOptions.UseKeycloakAuthentication != null 
+                if (appSession?.HostOptions.UseKeycloakAuthentication != null
                     && appSession.RequestLogin
                     && !context.Request.Path.Value.Contains("/Events"))
                 {
                     var o = appSession.HostOptions.UseKeycloakAuthentication;
-                    var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+                    var requestQuery =
+                        HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
 
                     var state = requestQuery["state"] ?? "";
                     if (state.StartsWith(appSession.Id))
                     {
                         var code = requestQuery["code"];
-                        var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
-                        
+                        var data =
+                            $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
+
                         using var client = new HttpClient();
                         var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
-                        var result = client.PostAsync(tokenUrl, 
-                                 new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
-                             .Result;
+                        var result = client.PostAsync(tokenUrl,
+                                new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+                            .Result;
                         var json = result.Content.ReadAsStringAsync().Result;
                         var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                         if (authResponse != null)
                         {
                             appSession.AccessToken = authResponse["id_token"]?.ToString();
-                            if (string.IsNullOrEmpty(appSession.AccessToken)) appSession.AccessToken = authResponse["access_token"]?.ToString();
-                            
+                            if (string.IsNullOrEmpty(appSession.AccessToken))
+                                appSession.AccessToken = authResponse["access_token"]?.ToString();
+
                             appSession.RefreshToken = authResponse["refresh_token"]?.ToString();
 
                             if (appSession.AccessToken != null)
@@ -135,17 +138,19 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                                 (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
                             }
                         }
+
                         Console.WriteLine(result);
                     }
                     else
                     {
-                        var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+                        var newSession =
+                            $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
                         context.Response.Redirect(newSession);
                         return;
                     }
                 }
 
-                if (appSession != null 
+                if (appSession != null
                     && appSession.HostOptions.UseKeycloakAuthentication == null
                     && string.IsNullOrEmpty(appSession.UserIdentity))
                 {
@@ -157,7 +162,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                     Thread.CurrentThread.CurrentCulture = appSession.SessionCulture;
                     Thread.CurrentThread.CurrentUICulture = appSession.SessionCulture;
                 }
-                
+
                 switch (requestVerb)
                 {
                     case "GET":
@@ -171,16 +176,19 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             logger?.LogError(
                                 $"Invalid path in index resource {resourceName} - redirecting to root index");
 
-                            var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+                            var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ??
+                                                                     string.Empty);
                             query["stonehenge-id"] = appSession.Id;
                             context.Response.Redirect($"/index.html?{query}");
                             return;
                         }
+
                         if (string.Compare(resourceName, "index.html",
-                            StringComparison.InvariantCultureIgnoreCase) == 0)
+                                StringComparison.InvariantCultureIgnoreCase) == 0)
                         {
                             HandleIndexContent(context, content);
                         }
+
                         break;
 
                     case "POST":
@@ -188,54 +196,30 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
                         try
                         {
-                            var body = new StreamReader(context.Request.Body).ReadToEndAsync().Result;
                             var formData = new Dictionary<string, string>();
-                            if (!string.IsNullOrEmpty(body))
+                            try
                             {
-                                if (body.StartsWith("{"))
+                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body);
+                                foreach (var p in parser.Parameters)
                                 {
-                                    try
-                                    {
-                                        var jsonObject = JsonSerializer.Deserialize<JsonObject>(body);
-                                        if (jsonObject != null)
-                                        {
-                                            foreach (var kv in jsonObject.AsObject())
-                                            {
-                                                formData.Add(kv.Key, kv.Value?.ToString());
-                                            }
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        logger?.LogWarning("Failed to parse post data as json");
-                                    }
+                                    formData.Add(p.Name, p.Data);
                                 }
-                                else
-                                {
-                                    try
-                                    {
-                                        await using var bodyStream = new MemoryStream(Encoding.UTF8.GetBytes(body));
-                                        var parser = await MultipartFormDataParser.ParseAsync(bodyStream);
-                                        foreach (var p in parser.Parameters)
-                                        {
-                                            formData.Add(p.Name, p.Data);
-                                        }
 
-                                        foreach (var f in parser.Files)
-                                        {
-                                            // Save temp file
-                                            var fileName = Path.GetTempFileName();
-                                            await using var file = File.OpenWrite(fileName);
-                                            await f.Data.CopyToAsync(file);
-                                            file.Close();
-                                            formData.Add(f.Name, fileName);
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        logger?.LogWarning("Failed to parse post data as multipart form data");
-                                    }
+                                foreach (var f in parser.Files)
+                                {
+                                    // Save temp file
+                                    var fileName = Path.GetTempFileName();
+                                    await using var file = File.OpenWrite(fileName);
+                                    await f.Data.CopyToAsync(file);
+                                    file.Close();
+                                    formData.Add(f.Name, fileName);
+                                    formData.Add(f.Name + ".SourceName", f.FileName);
+                                    formData.Add(f.Name + ".ContentType", f.ContentType);
                                 }
+                            }
+                            catch (Exception)
+                            {
+                                logger?.LogWarning("Failed to parse post data as multipart form data");
                             }
 
                             if (resourceLoader != null)
@@ -249,10 +233,10 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                             logger.LogError(ex.Message);
                             logger.LogError(ex.StackTrace);
 
-                            var exResource = new Dictionary<string,string>
+                            var exResource = new Dictionary<string, string>
                             {
                                 { "Message", ex.Message },
-                                {"StackTrace", ex.StackTrace }
+                                { "StackTrace", ex.StackTrace }
                             };
                             content = new Resource(resourceName, "StonehengeContent.Invoke.POST", ResourceType.Json,
                                 JsonSerializer.Serialize(exResource), Resource.Cache.None);
@@ -269,27 +253,28 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
                 context.Response.ContentType = content.ContentType;
 
-                if (context.Items["stonehenge.HostOptions"] is StonehengeHostOptions {DisableClientCache: true})
+                if (context.Items["stonehenge.HostOptions"] is StonehengeHostOptions { DisableClientCache: true })
                 {
-                    context.Response.Headers.Add("Cache-Control", new[] {"no-cache", "no-store", "must-revalidate", "proxy-revalidate"});
-                    context.Response.Headers.Add("Pragma", new[] {"no-cache"});
-                    context.Response.Headers.Add("Expires", new[] {"0"});
+                    context.Response.Headers.Add("Cache-Control",
+                        new[] { "no-cache", "no-store", "must-revalidate", "proxy-revalidate" });
+                    context.Response.Headers.Add("Pragma", new[] { "no-cache" });
+                    context.Response.Headers.Add("Expires", new[] { "0" });
                 }
                 else
                 {
                     switch (content.CacheMode)
                     {
                         case Resource.Cache.None:
-                            context.Response.Headers.Add("Cache-Control", new[] {"no-cache"});
+                            context.Response.Headers.Add("Cache-Control", new[] { "no-cache" });
                             break;
                         case Resource.Cache.Revalidate:
                             context.Response.Headers.Add("Cache-Control",
-                                new[] {"max-age=3600", "must-revalidate", "proxy-revalidate"});
+                                new[] { "max-age=3600", "must-revalidate", "proxy-revalidate" });
                             var etag = AppSession.GetResourceETag(path);
                             context.Response.Headers.Add(HeaderNames.ETag, new StringValues(etag));
                             break;
                         case Resource.Cache.OneDay:
-                            context.Response.Headers.Add("Cache-Control", new[] {"max-age=86400"});
+                            context.Response.Headers.Add("Cache-Control", new[] { "max-age=86400" });
                             break;
                     }
                 }
@@ -306,10 +291,10 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 {
                     context.Response.Headers.Add("X-Stonehenge-Id", new[] { appSession.Id });
                 }
-                
+
                 if (content.IsNoContent)
                 {
-                    context.Response.StatusCode = (int) HttpStatusCode.NoContent;
+                    context.Response.StatusCode = (int)HttpStatusCode.NoContent;
                 }
                 else if (content.IsBinary)
                 {
@@ -386,7 +371,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
 
                 appSession.SetUser(identityName, identityId, identityMail);
             }
-            
+
             var isLocal = context.IsLocal();
             if (!isLocal) return;
 
@@ -396,7 +381,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
                 appSession.SetUser(identityId, "", "");
             }
-            
+
             // RDP with more than one session: How to find app and session using request's client IP port
         }
 

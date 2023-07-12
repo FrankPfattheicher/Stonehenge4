@@ -34,6 +34,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public bool ShowCookies { get; private set; }
 
         public string Culture { get; set; }
+        public string UploadFile { get; set; }
         
         public bool AppBoxVisible { get; private set; }
         public string AppBoxCaption { get; private set; }

@@ -74,6 +74,10 @@ jobs:
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.DropEdit/IctBaden.Stonehenge4.DropEdit.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.DropEdit/bin/Release/net6.0/IctBaden.Stonehenge4.DropEdit.dll artifacts/lib
+    - name: Build Mermaid
+      run: |
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.Mermaid/IctBaden.Stonehenge4.Mermaid.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
+        cp IctBaden.Stonehenge4.Mermaid/bin/Release/net6.0/IctBaden.Stonehenge4.Mermaid.dll artifacts/lib
         
     - name: Test with dotnet
       env: 

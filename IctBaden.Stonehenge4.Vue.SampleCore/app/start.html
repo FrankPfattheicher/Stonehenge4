@@ -71,11 +71,12 @@
                 File Upload
             </h4>
 
-            <form action="/Data/Test.txt" method="post" enctype="multipart/form-data">
-                <input type="file" name="uploadFile" class="form-control">
-                <br>
-                <input class="btn btn-sm btn-secondary" type="submit">
-            </form>
+            <input id="uploadFile" type="file" v-model="UploadFile" class="form-control">
+            <br>
+            <button class="btn btn-sm btn-secondary" 
+                    @click="window.UploadFile('/Data/Upload.exe', window.document.getElementById('uploadFile').files[0]);">
+                OK
+            </button>
 
         </div>
 
