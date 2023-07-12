@@ -6,8 +6,11 @@
     <div class="row">
         <div class="col-md-4" style="font-size: 90%; border: 1px solid black; padding-top: 1em;">
             <st-tree-view :treeView="WorldTree"
-                          @select="TreeSelect($event)" @toggle="TreeToggle($event)">
+                          @change="TreeChange($event)"
+                          @select="TreeSelect($event)" 
+                          @toggle="TreeToggle($event)">
             </st-tree-view>
+            {{CheckedContinents}}
         </div>
         <div class="col-md-8">
             <table style="width: 100%;">

@@ -4,7 +4,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class Continent
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public string Icon { get; set; }
     public int Countries { get; set; }
     /// <summary>

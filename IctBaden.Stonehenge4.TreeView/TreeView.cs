@@ -18,9 +18,10 @@ namespace IctBaden.Stonehenge.Extension;
 public class TreeView : IStonehengeExtension
 {
     public List<TreeNode> RootNodes { get; set; }
-    public TreeNode? SelectedNode { get; private set; }
 
     public event Action<TreeNode>? SelectionChanged;
+
+    public TreeNode? SelectedNode;
 
     // ReSharper disable once UnusedMember.Global
     public TreeView()
@@ -64,6 +65,16 @@ public class TreeView : IStonehengeExtension
             treeNode.IsSelected = false;
         }
         node.IsSelected = true;
+        SelectedNode = node;
+        SelectionChanged?.Invoke(SelectedNode);
+    }
+
+    public void TreeChange(string nodeId)
+    {
+        var node = FindNodeById(nodeId);
+        if (node == null) return;
+
+        node.IsChecked = !node.IsChecked;
         SelectedNode = node;
         SelectionChanged?.Invoke(SelectedNode);
     }
