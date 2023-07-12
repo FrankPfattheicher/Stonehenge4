@@ -19,7 +19,7 @@ function stonehengeReloadOnError(error) {
     window.location.reload();
 }
 
-function stonehengeMakeRequest(method, url) {
+function stonehengeMakeRequest(method, url, data) {
     return new Promise(function (resolve, reject) {
 
         const xhr = new XMLHttpRequest();
@@ -40,7 +40,7 @@ function stonehengeMakeRequest(method, url) {
                 statusText: xhr.statusText
             });
         };
-        xhr.send();
+        xhr.send(data);
     });
 }
 
@@ -49,6 +49,20 @@ function stonehengeMakeGetRequest(url) {
 }
 function stonehengeMakePostRequest(url) {
     return stonehengeMakeRequest('POST', url);
+}
+
+function stonehengeUploadFile(url, file) {
+
+    const fileName = file.name;
+    const formData = new FormData();
+    let reader = new FileReader();
+    reader.onload = function () {
+        const data = new Blob([reader.result], { type: 'application/octet-stream' });
+        formData.append('uploadFile', data, fileName);
+        return stonehengeMakeRequest('POST', url, formData);
+    };
+    reader.readAsArrayBuffer(file);
+
 }
 
 async function stonehengeLoadComponent(name) {
@@ -137,7 +151,6 @@ Vue.directive('select', {
 function AppCommand(cmdName) {
     stonehengeMakePostRequest('Command/' + cmdName);
 }
-
 // Components
 
 //stonehengeElements
@@ -155,6 +168,10 @@ const app = new Vue({
     },
     router: router
 }).$mount('#app');
+
+// allow window access in v-on handlers
+Vue.prototype.window = window;
+window.UploadFile = stonehengeUploadFile;
 
 router.push('stonehengeRootPage');
 
