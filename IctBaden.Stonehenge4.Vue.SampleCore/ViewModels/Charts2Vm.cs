@@ -46,7 +46,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 {
                     new("Alice"),
                     new("Bert"),
-                    new("Bob") { Color = KnownColor.Coral },
+                    new("Bob") { Color = Color.Coral },
                     new("Carol"),
                     new("Doris")
                 },

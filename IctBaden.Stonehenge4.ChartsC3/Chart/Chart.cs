@@ -95,9 +95,9 @@ public class Chart
         get
         {
             var colors = new Dictionary<string, object>();
-            foreach (var series in Series.Where(s => s.Color != KnownColor.Transparent))
+            foreach (var series in Series.Where(s => s.Color != Color.Transparent))
             {
-                var c = Color.FromKnownColor(series.Color);
+                var c = series.Color;
                 colors.Add(series.Label, $"#{c.R:X2}{c.G:X2}{c.B:X2}");
             }
             return colors;

@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using System.Text.Json.Serialization;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 
@@ -16,15 +17,8 @@ public class SankeyNode
     }
 
     [JsonIgnore]    
-    public KnownColor Color { get; set; } = KnownColor.LightSkyBlue;
-    public string ColorRgb
-    {
-        get
-        {
-            var c = System.Drawing.Color.FromKnownColor(Color);
-            return $"#{c.R:X2}{c.G:X2}{c.B:X2}";
-        }
-    }
+    public Color Color { get; set; } = Color.LightSkyBlue;
+    public string ColorRgb => $"#{Color.R:X2}{Color.G:X2}{Color.B:X2}";
 
     public string? NodeStroke { get; set; }
 

@@ -1,4 +1,5 @@
 
+* 4.4.3 - ChartsC3 KnownColor replaced by generic Color
 * 4.4.2 - Fixed read POST content using buffering 
 * 4.4.1 - Added UploadFile function, added TreeVie checkbox and HTML node support
 * 4.4.0 - Added Mermaid extension, Serialize view model first, then Stonehenge internal properties
