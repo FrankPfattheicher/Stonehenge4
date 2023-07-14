@@ -197,29 +197,53 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                         try
                         {
                             var formData = new Dictionary<string, string>();
-                            try
+                            context.Request.EnableBuffering();
+                            var body = new StreamReader(context.Request.Body).ReadToEndAsync().Result;
+                            if (body.StartsWith("{"))
                             {
-                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body);
-                                foreach (var p in parser.Parameters)
+                                try
                                 {
-                                    formData.Add(p.Name, p.Data);
+                                    var jsonObject = JsonSerializer.Deserialize<JsonObject>(body);
+                                    if (jsonObject != null)
+                                    {
+                                        foreach (var kv in jsonObject.AsObject())
+                                        {
+                                            formData.Add(kv.Key, kv.Value?.ToString());
+                                        }
+                                    }
                                 }
-
-                                foreach (var f in parser.Files)
+                                catch (Exception)
                                 {
-                                    // Save temp file
-                                    var fileName = Path.GetTempFileName();
-                                    await using var file = File.OpenWrite(fileName);
-                                    await f.Data.CopyToAsync(file);
-                                    file.Close();
-                                    formData.Add(f.Name, fileName);
-                                    formData.Add(f.Name + ".SourceName", f.FileName);
-                                    formData.Add(f.Name + ".ContentType", f.ContentType);
+                                    logger?.LogWarning("Failed to parse post data as json");
                                 }
                             }
-                            catch (Exception)
+                            else
                             {
-                                logger?.LogWarning("Failed to parse post data as multipart form data");
+                                try
+                                {
+                                    context.Request.Body.Seek(0, SeekOrigin.Begin);
+                                    var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body);
+                                    foreach (var p in parser.Parameters)
+                                    {
+                                        formData.Add(p.Name, p.Data);
+                                    }
+
+                                    foreach (var f in parser.Files)
+                                    {
+                                        // Save temp file
+                                        var fileName = Path.GetTempFileName();
+                                        await using var file = File.OpenWrite(fileName);
+                                        await f.Data.CopyToAsync(file);
+                                        file.Close();
+                                        formData.Add(f.Name, fileName);
+                                        formData.Add(f.Name + ".SourceName", f.FileName);
+                                        formData.Add(f.Name + ".ContentType", f.ContentType);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    logger?.LogWarning("Failed to parse post data as multipart form data");
+                                }
                             }
 
                             if (resourceLoader != null)
