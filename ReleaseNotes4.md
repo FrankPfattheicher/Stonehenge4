@@ -1,4 +1,5 @@
 
+* 4.4.6 - TreeNode enable setting id in constructor
 * 4.4.5 - TreeNode enable setting id on init
 * 4.4.4 - TreeView IExpandedProvider extended to IStateProvider
 * 4.4.3 - ChartsC3 KnownColor replaced by generic Color
