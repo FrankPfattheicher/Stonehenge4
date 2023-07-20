@@ -13,9 +13,10 @@ namespace IctBaden.Stonehenge.Extension;
 
 public class TreeNode
 {
-    public string Id { get; }
+    public string Id { get; init; }
     /// for example fa fa-folder, fa fa-folder-open
     public string Icon { get; set; }
+    // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public string Name { get; set; }
     public string Tooltip { get; set; } = string.Empty;
 
