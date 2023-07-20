@@ -44,14 +44,15 @@ public class TreeNode
     public readonly TreeNode? Parent;
     public readonly object? Item;
         
-    public TreeNode(TreeNode? parentNode, object? item, IExpandedProvider? expanded = null)
+    public TreeNode(TreeNode? parentNode, object? item, IStateProvider? stateProvider = null)
     {
         Item = item;
         Id = (GetItemProperty("Id") as string) ?? Guid.NewGuid().ToString("N");
         Parent = parentNode;
         Children = new List<TreeNode>();
             
-        IsExpanded = expanded?.GetExpanded(Id) ?? false;
+        IsExpanded = stateProvider?.GetExpanded(Id) ?? false;
+        IsChecked = stateProvider?.GetChecked(Id) ?? false;
         IsDraggable = parentNode != null;
 
         Name = GetItemProperty("Name") as string ?? string.Empty;

@@ -66,7 +66,7 @@ public class TreeVm : ActiveViewModel
             Countries = Continents.Select(c => c.Countries).Sum(),
             Children = Continents.ToList()
         };
-        var worldNode = new TreeNode(null, world, new SessionExpandedProvider(session)); 
+        var worldNode = new TreeNode(null, world, new SessionStateProvider(session)); 
             
         WorldTree.SetRootNodes(new []{ worldNode }, true);
         WorldTree.SelectionChanged += WorldTreeOnSelectionChanged;
