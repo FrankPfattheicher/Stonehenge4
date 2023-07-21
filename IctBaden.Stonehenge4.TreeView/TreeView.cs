@@ -50,9 +50,7 @@ public class TreeView : IStonehengeExtension
     public void TreeToggle(string nodeId)
     {
         var node = FindNodeById(nodeId);
-        if (node == null) return;
-
-        node.IsExpanded = !node.IsExpanded;
+        node?.SetExpanded(!node.IsExpanded);
     }
 
     public void TreeSelect(string nodeId)
@@ -72,11 +70,7 @@ public class TreeView : IStonehengeExtension
     public void TreeChange(string nodeId)
     {
         var node = FindNodeById(nodeId);
-        if (node == null) return;
-
-        node.IsChecked = !node.IsChecked;
-        SelectedNode = node;
-        SelectionChanged?.Invoke(SelectedNode);
+        node?.SetChecked(!node.IsChecked);
     }
 
 }

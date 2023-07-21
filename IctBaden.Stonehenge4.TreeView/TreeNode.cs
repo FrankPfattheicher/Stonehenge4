@@ -22,15 +22,15 @@ public class TreeNode
     public string Name { get; set; }
     public string Tooltip { get; set; } = string.Empty;
 
-    public bool Checkbox { get; set; }
+    public bool Checkbox { get; init; }
 
     public List<TreeNode> Children { get; set; }
 
     // ReSharper disable once UnusedMember.Global
     public bool IsVisible => Parent?.IsExpanded ?? true;
-    public bool IsExpanded { get; set; }
-    public bool IsSelected { get; set; }
-    public bool IsChecked { get; set; }
+    public bool IsExpanded { get; internal set; }
+    public bool IsSelected { get; internal set; }
+    public bool IsChecked { get; private set; }
 
     // ReSharper disable once UnusedMember.Global
     public bool HasChildren => Children.Count > 0;
@@ -46,6 +46,7 @@ public class TreeNode
 
     public readonly TreeNode? Parent;
     public readonly object? Item;
+    private readonly IStateProvider? _stateProvider;
 
     public TreeNode(TreeNode? parentNode, object? item, IStateProvider? stateProvider = null)
         : this(null, parentNode, item, stateProvider)
@@ -55,6 +56,7 @@ public class TreeNode
     public TreeNode(string? id, TreeNode? parentNode, object? item, IStateProvider? stateProvider = null)
     {
         Item = item;
+        _stateProvider = stateProvider;
         Id = id ?? GetItemProperty("Id") as string ?? Guid.NewGuid().ToString("N");
         Parent = parentNode;
         Children = new List<TreeNode>();
@@ -82,4 +84,21 @@ public class TreeNode
             yield return node;
         }
     }
+
+    public void SetExpanded(bool isExpanded)
+    {
+        IsExpanded = isExpanded;
+        _stateProvider?.SetExpanded(Id, isExpanded);
+    }
+    public void SetSelected(bool isSelected)
+    {
+        IsSelected = isSelected;
+    }
+    public void SetChecked(bool isChecked)
+    {
+        IsChecked = isChecked;
+        _stateProvider?.SetChecked(Id, isChecked);
+    }
+
+    
 }
