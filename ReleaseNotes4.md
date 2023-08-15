@@ -1,4 +1,5 @@
 
+* 4.5.0 - IStonehengeResourceProvider added PUT and DELETE
 * 4.4.7 - TreeNode set methods to trigger state provider
 * 4.4.6 - TreeNode enable setting id in constructor
 * 4.4.5 - TreeNode enable setting id on init
