@@ -71,7 +71,7 @@ public class StonehengeContent
             var requestVerb = context.Request.Method;
             var cookiesHeader = context.Request.Headers
                 .FirstOrDefault(h => h.Key == HeaderNames.Cookie).Value.ToString();
-            var requestCookies = cookiesHeader
+            var requestCookies = cookiesHeader!
                 .Split(';')
                 .Select(s => s.Trim())
                 .Select(s => s.Split('='));
@@ -84,7 +84,7 @@ public class StonehengeContent
                 }
             }
 
-            var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
+            var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
             var parameters = queryString.AllKeys.Where(k => !string.IsNullOrEmpty(k))
                 .ToDictionary(key => key, key => queryString[key]);
             Resource content = null;

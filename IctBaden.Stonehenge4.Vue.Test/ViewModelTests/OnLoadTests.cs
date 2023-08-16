@@ -8,12 +8,7 @@ namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 public class OnLoadTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
-    private readonly VueTestApp _app;
-
-    public OnLoadTests()
-    {
-        _app = new VueTestApp();
-    }
+    private readonly VueTestApp _app = new();
 
     public void Dispose()
     {

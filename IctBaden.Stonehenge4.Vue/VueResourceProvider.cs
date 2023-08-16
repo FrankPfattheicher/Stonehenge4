@@ -206,9 +206,9 @@ public class VueResourceProvider : IStonehengeResourceProvider
     }
 
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
+    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
 
     public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
     {

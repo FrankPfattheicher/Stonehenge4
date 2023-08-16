@@ -45,19 +45,11 @@ public class ViewModelProvider : IStonehengeResourceProvider
     {
     }
 
-    public Task<Resource> Put(AppSession session, string resourceName,
-        Dictionary<string, string> parameters, Dictionary<string, string> formData)
-    {
-        return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
-            GetViewModelJson(session.ViewModel), Resource.Cache.None));
-    }
+    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
+        Task.FromResult<Resource>(null);
 
-    public Task<Resource> Delete(AppSession session, string resourceName,
-        Dictionary<string, string> parameters, Dictionary<string, string> formData)
-    {
-        return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
-            GetViewModelJson(session.ViewModel), Resource.Cache.None));
-    }
+    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
+        Task.FromResult<Resource>(null);
 
     public Task<Resource> Post(AppSession session, string resourceName,
         Dictionary<string, string> parameters, Dictionary<string, string> formData)
@@ -98,15 +90,16 @@ public class ViewModelProvider : IStonehengeResourceProvider
                     Resource.Cache.None));
             }
         }
-        else if (resourceName.StartsWith("Data/"))
+
+        if (resourceName.StartsWith("Data/"))
         {
             return PostDataResource(session, resourceName.Substring(5), parameters, formData);
         }
 
-        if (!resourceName.StartsWith("ViewModel/")) return null;
+        if (!resourceName.StartsWith("ViewModel/")) return Task.FromResult<Resource>(null);
 
         var parts = resourceName.Split('/');
-        if (parts.Length != 3) return null;
+        if (parts.Length != 3) return Task.FromResult<Resource>(null);
 
         var vmTypeName = parts[1];
         var methodName = parts[2];
@@ -135,7 +128,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
         if (method == null)
         {
             _logger.LogWarning($"ViewModelProvider: ActionMethod {methodName} not found.");
-            return null;
+            return Task.FromResult<Resource>(null);
         }
 
         try

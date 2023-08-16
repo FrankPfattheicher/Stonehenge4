@@ -157,20 +157,32 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         resourceLoader?.AddAssembly(assembly);
     }
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
-        return Providers.Select(loader => loader.Post(session, resourceName, parameters, formData))
-            .FirstOrDefault(resource => resource != null);
+        foreach (var provider in Providers)
+        {
+            var resource = await provider.Post(session, resourceName, parameters, formData);
+            if (resource != null) return resource;
+        }
+        return null;
     }
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
-        return Providers.Select(loader => loader.Put(session, resourceName, parameters, formData))
-            .FirstOrDefault(resource => resource != null);
+        foreach (var provider in Providers)
+        {
+            var resource = await provider.Put(session, resourceName, parameters, formData);
+            if (resource != null) return resource;
+        }
+        return null;
     }
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
-        return Providers.Select(loader => loader.Delete(session, resourceName, parameters, formData))
-            .FirstOrDefault(resource => resource != null);
+        foreach (var provider in Providers)
+        {
+            var resource = await provider.Delete(session, resourceName, parameters, formData);
+            if (resource != null) return resource;
+        }
+        return null;
     }
 
 }

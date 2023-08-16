@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -26,9 +27,29 @@ public class TestResourceLoader : IStonehengeResourceProvider
     {
     }
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => null;
+    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    {
+        var data = parameters;
+        data.Add("method", "POST");
+        var json = JsonSerializer.Serialize(data);
+        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+    }
+
+    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) 
+    {
+        var data = parameters;
+        data.Add("method", "PUT");
+        var json = JsonSerializer.Serialize(data);
+        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+    }
+
+    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    {
+        var data = parameters;
+        data.Add("method", "DELETE");
+        var json = JsonSerializer.Serialize(data);
+        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+    }
 
     public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
     {
