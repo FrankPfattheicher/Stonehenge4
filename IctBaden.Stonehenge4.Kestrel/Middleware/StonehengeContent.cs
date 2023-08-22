@@ -193,6 +193,7 @@ public class StonehengeContent
 
                 case "POST":
                 case "PUT":
+                case "PATCH":
                 case "DELETE":
                     appSession?.Accessed(cookies, true);
 
@@ -253,6 +254,7 @@ public class StonehengeContent
                             switch (requestVerb)
                             {
                                 case "PUT":
+                                case "PATCH":
                                     content = await resourceLoader.Put(appSession, resourceName, parameters, formData);
                                     break;
                                 case "DELETE":
@@ -315,14 +317,6 @@ public class StonehengeContent
                         break;
                 }
             }
-
-            // if (appSession is {StonehengeCookieSet: false} && appSession.HostOptions.AllowCookies)
-            // {
-            //     context.Response.Headers.Add("Set-Cookie",
-            //         appSession.SecureCookies
-            //             ? new[] {"stonehenge-id=" + appSession.Id, "Secure"}
-            //             : new[] {"stonehenge-id=" + appSession.Id});
-            // }
 
             if (appSession != null)
             {
