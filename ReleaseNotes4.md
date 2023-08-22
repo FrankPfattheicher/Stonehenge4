@@ -1,4 +1,8 @@
 
+* 4.5.1 - Fixed async POST, PUT and DELETE requests, tests added
+* 4.5.0 - IStonehengeResourceProvider added PUT and DELETE
+* 4.4.7 - TreeNode set methods to trigger state provider
+* 4.4.6 - TreeNode enable setting id in constructor
 * 4.4.5 - TreeNode enable setting id on init
 * 4.4.4 - TreeView IExpandedProvider extended to IStateProvider
 * 4.4.3 - ChartsC3 KnownColor replaced by generic Color

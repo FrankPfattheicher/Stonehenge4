@@ -13,28 +13,30 @@ namespace IctBaden.Stonehenge.Extension;
 
 public class TreeNode
 {
-    public string Id { get; init; }
+    public string Id { get; }
+
     /// for example fa fa-folder, fa fa-folder-open
     public string Icon { get; set; }
+
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public string Name { get; set; }
     public string Tooltip { get; set; } = string.Empty;
 
-    public bool Checkbox { get; set; }
+    public bool Checkbox { get; init; }
 
     public List<TreeNode> Children { get; set; }
 
     // ReSharper disable once UnusedMember.Global
     public bool IsVisible => Parent?.IsExpanded ?? true;
-    public bool IsExpanded { get; set; }
-    public bool IsSelected { get; set; }
-    public bool IsChecked { get; set; }
+    public bool IsExpanded { get; internal set; }
+    public bool IsSelected { get; internal set; }
+    public bool IsChecked { get; private set; }
 
     // ReSharper disable once UnusedMember.Global
     public bool HasChildren => Children.Count > 0;
     public bool IsDraggable { get; internal set; }
 
-        
+
     public string Class => IsSelected ? "tree-selected" : "";
 
     public string ExpandIcon => HasChildren
@@ -44,14 +46,21 @@ public class TreeNode
 
     public readonly TreeNode? Parent;
     public readonly object? Item;
-        
+    private readonly IStateProvider? _stateProvider;
+
     public TreeNode(TreeNode? parentNode, object? item, IStateProvider? stateProvider = null)
+        : this(null, parentNode, item, stateProvider)
+    {
+    }
+
+    public TreeNode(string? id, TreeNode? parentNode, object? item, IStateProvider? stateProvider = null)
     {
         Item = item;
-        Id = (GetItemProperty("Id") as string) ?? Guid.NewGuid().ToString("N");
+        _stateProvider = stateProvider;
+        Id = id ?? GetItemProperty("Id") as string ?? Guid.NewGuid().ToString("N");
         Parent = parentNode;
         Children = new List<TreeNode>();
-            
+
         IsExpanded = stateProvider?.GetExpanded(Id) ?? false;
         IsChecked = stateProvider?.GetChecked(Id) ?? false;
         IsDraggable = parentNode != null;
@@ -66,7 +75,7 @@ public class TreeNode
         var prop = Item.GetType().GetProperty(propertyName);
         return prop == null ? null : prop.GetValue(Item);
     }
-        
+
     public IEnumerable<TreeNode> AllNodes()
     {
         yield return this;
@@ -76,4 +85,20 @@ public class TreeNode
         }
     }
 
+    public void SetExpanded(bool isExpanded)
+    {
+        IsExpanded = isExpanded;
+        _stateProvider?.SetExpanded(Id, isExpanded);
+    }
+    public void SetSelected(bool isSelected)
+    {
+        IsSelected = isSelected;
+    }
+    public void SetChecked(bool isChecked)
+    {
+        IsChecked = isChecked;
+        _stateProvider?.SetChecked(Id, isChecked);
+    }
+
+    
 }

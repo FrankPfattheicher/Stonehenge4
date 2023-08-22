@@ -45,9 +45,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj" />
+    <ProjectReference Include="..\IctBaden.Stonehenge4.Test\IctBaden.Stonehenge4.Test.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue.TestApp2\IctBaden.Stonehenge4.Vue.TestApp2.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue\IctBaden.Stonehenge4.Vue.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
+
 
 </Project>

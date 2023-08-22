@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
@@ -101,11 +100,11 @@ public class TreeVm : ActiveViewModel
         var node = new TreeNode(parent, continent)
         {
             Name = continent.Name,
-            Checkbox = true, 
-            IsChecked = continent.Name == "Eurasia"
+            Checkbox = true 
         };
+        node.SetChecked(continent.Name == "Eurasia");
         node.Children = continent.Children
-            .Select(c => new TreeNode(node, c) { Id = Guid.NewGuid().ToString("N"), Name = c.Name})
+            .Select(c => new TreeNode(node, c) { Name = c.Name })
             .ToList();
         return node;
     }

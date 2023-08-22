@@ -9,54 +9,52 @@ using Microsoft.Extensions.Logging;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace IctBaden.Stonehenge.Resources
+namespace IctBaden.Stonehenge.Resources;
+
+public class FileLoader : IStonehengeResourceProvider
 {
-    public class FileLoader : IStonehengeResourceProvider
+    private readonly ILogger _logger;
+    public string RootPath { get; private set; }
+
+    public FileLoader(ILogger logger, string path)
     {
-        private readonly ILogger _logger;
-        public string RootPath { get; private set; }
-
-        public FileLoader(ILogger logger, string path)
-        {
-            _logger = logger;
-            RootPath = path;
-        }
-        
-        public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
-        {
-        }
-
-        public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
-
-        public void Dispose()
-        {
-        }
-
-        public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
-        {
-            return null;
-        }
-        public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
-        {
-            var fullFileName = Path.Combine(RootPath, resourceName);
-            if(!File.Exists(fullFileName)) return Task.FromResult<Resource>(null);
-
-            var resourceExtension = Path.GetExtension(resourceName);
-            var resourceType = ResourceType.GetByExtension(resourceExtension);
-            if (resourceType == null)
-            {
-                _logger.LogInformation($"FileLoader({resourceName}): not found");
-                return Task.FromResult<Resource>(null);
-            }
-
-            _logger.LogTrace($"FileLoader({resourceName}): {fullFileName}");
-            if (resourceType.IsBinary)
-            {
-                return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay));
-            }
-
-            return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
-        }
-
+        _logger = logger;
+        RootPath = path;
     }
+        
+    public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
+    {
+    }
+
+    public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+
+    public void Dispose()
+    {
+    }
+
+    public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    {
+        var fullFileName = Path.Combine(RootPath, resourceName);
+        if(!File.Exists(fullFileName)) return Task.FromResult<Resource>(null);
+
+        var resourceExtension = Path.GetExtension(resourceName);
+        var resourceType = ResourceType.GetByExtension(resourceExtension);
+        if (resourceType == null)
+        {
+            _logger.LogInformation($"FileLoader({resourceName}): not found");
+            return Task.FromResult<Resource>(null);
+        }
+
+        _logger.LogTrace($"FileLoader({resourceName}): {fullFileName}");
+        if (resourceType.IsBinary)
+        {
+            return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay));
+        }
+
+        return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
+    }
+
+    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
 }
