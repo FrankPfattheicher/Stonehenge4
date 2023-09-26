@@ -49,6 +49,7 @@ public class Chart
     /// <summary>
     /// Define chart's title
     /// </summary>
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public ChartTitle? Title { get; set; }
 
     private object[] Columns
@@ -65,7 +66,7 @@ public class Chart
 
             foreach (var serie in Series)
             {
-                var colData = new List<object> { serie.Label };
+                var colData = new List<object?> { serie.Label };
                 colData.AddRange(serie.Data);
                 columns.Add(colData.ToArray());
             }
