@@ -13,7 +13,7 @@ public class ChartSeries
 
     public Color Color { get; set; }
     
-    public object[] Data { get; set; }
+    public object?[] Data { get; set; }
 
     public ChartSeries(string label)
     {

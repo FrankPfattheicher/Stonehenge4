@@ -1,4 +1,5 @@
 
+* 4.5.2 - Handle PATCH requests same as PUT, ChartSeries.Data as object?[]
 * 4.5.1 - Fixed async POST, PUT and DELETE requests, tests added
 * 4.5.0 - IStonehengeResourceProvider added PUT and DELETE
 * 4.4.7 - TreeNode set methods to trigger state provider
