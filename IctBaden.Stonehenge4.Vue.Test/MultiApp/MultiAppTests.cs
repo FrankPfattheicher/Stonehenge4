@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ public class MultiAppTests : IDisposable
     }
 
     [Fact]
-    public void RunningMultipleAppsShouldNotMixUpContent()
+    public async Task RunningMultipleAppsShouldNotMixUpContent()
     {
         var response = string.Empty;
 
@@ -28,7 +29,7 @@ public class MultiAppTests : IDisposable
         {
             // ReSharper disable once ConvertToUsingDeclaration
             using var client = new RedirectableHttpClient();
-            response = client.DownloadStringWithSession(_app1.BaseUrl + "/app.js").Result;
+            response = await client.DownloadStringWithSession(_app1.BaseUrl + "/app.js");
         }
         catch (Exception ex)
         {
@@ -45,7 +46,7 @@ public class MultiAppTests : IDisposable
             // ReSharper disable once ConvertToUsingDeclaration
             using (var client = new RedirectableHttpClient())
             {
-                response = client.DownloadStringWithSession(_app2.BaseUrl + "/app.js").Result;
+                response = await client.DownloadStringWithSession(_app2.BaseUrl + "/app.js");
             }
         }
         catch (Exception ex)

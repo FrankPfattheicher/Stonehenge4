@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -17,14 +18,14 @@ public class SecondAppTests : IDisposable
     }
 
     [Fact]
-    public void SecondAppShouldContainPagesFromSecondAssemblyOnly()
+    public async Task SecondAppShouldContainPagesFromSecondAssemblyOnly()
     {
         var response = string.Empty;
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
             using var client = new RedirectableHttpClient();
-            response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
         }
         catch (Exception ex)
         {

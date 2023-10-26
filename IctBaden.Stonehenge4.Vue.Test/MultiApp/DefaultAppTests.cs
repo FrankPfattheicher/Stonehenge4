@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -16,7 +17,7 @@ public class DefaultAppTests : IDisposable
     }
 
     [Fact]
-    public void DefaultAppShouldContainPagesFromCurrentAssemblyOnly()
+    public async Task DefaultAppShouldContainPagesFromCurrentAssemblyOnly()
     {
         var response = string.Empty;
         try
@@ -24,7 +25,7 @@ public class DefaultAppTests : IDisposable
             // ReSharper disable once ConvertToUsingDeclaration
             using (var client = new RedirectableHttpClient())
             {
-                response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
+                response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
             }
         }
         catch (Exception ex)

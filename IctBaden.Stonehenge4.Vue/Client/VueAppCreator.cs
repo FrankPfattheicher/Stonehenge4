@@ -211,7 +211,8 @@ namespace IctBaden.Stonehenge.Vue.Client
             var text = _controllerTemplate
                 .Replace("stonehengeDebugBuild", DebugBuild ? "true" : "false")
                 .Replace("stonehengeViewModelName", vmName)
-                .Replace("stonehengePollDelay", _options.GetPollDelayMs().ToString());
+                .Replace("stonehengePollDelay", _options.GetPollDelayMs().ToString())
+                .Replace("stonehengePollRetries", _options.PollRetries.ToString());
 
             var propertyNames = GetPropNames(viewModel);
             if (propertyNames.Count > 0)

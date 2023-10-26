@@ -22,7 +22,7 @@ public class StonehengeResourceProviderTests : IDisposable
         try
         {
             using var client = new RedirectableHttpClient();
-            response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
             response = await client.Post(_app.BaseUrl + "/user/request?p1=11&p2=22", "{}");
         }
         catch (Exception ex)
@@ -43,7 +43,7 @@ public class StonehengeResourceProviderTests : IDisposable
         try
         {
             using var client = new RedirectableHttpClient();
-            response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
             response = await client.Put(_app.BaseUrl + "/user/request?p1=11&p2=22", "{}");
         }
         catch (Exception ex)
@@ -64,7 +64,7 @@ public class StonehengeResourceProviderTests : IDisposable
         try
         {
             using var client = new RedirectableHttpClient();
-            response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
             response = await client.Delete(_app.BaseUrl + "/user/request?p1=11&p2=22");
         }
         catch (Exception ex)
