@@ -220,6 +220,15 @@ public class StonehengeContent
                                 logger?.LogWarning("Failed to parse post data as json");
                             }
                         }
+                        else if (context.Request.ContentType == "application/x-www-form-urlencoded")
+                        {
+                            var result = HttpUtility.ParseQueryString(body);
+                            foreach (string key in result)
+                            {
+                                var value = result[key];
+                                formData.Add(key, value);
+                            }
+                        }
                         else
                         {
                             try
