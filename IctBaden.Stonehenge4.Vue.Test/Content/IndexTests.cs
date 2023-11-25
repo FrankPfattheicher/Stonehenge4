@@ -10,14 +10,8 @@ namespace IctBaden.Stonehenge.Vue.Test.Content;
 public class IndexTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
-    private readonly VueTestApp _app1;
-    private readonly VueTestApp _app2;
-
-    public IndexTests()
-    {
-        _app1 = new VueTestApp();
-        _app2 = new VueTestApp(typeof(SecondAppVm).Assembly);
-    }
+    private readonly VueTestApp _app1 = new();
+    private readonly VueTestApp _app2 = new(typeof(SecondAppVm).Assembly);
 
     public void Dispose()
     {
