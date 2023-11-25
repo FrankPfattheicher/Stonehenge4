@@ -41,6 +41,11 @@ namespace IctBaden.Stonehenge.Hosting
         public int PollIntervalSec { get; set; }
 
         /// <summary>
+        /// Count of event poll retries before setting StonehengeIsDisconnected 
+        /// </summary>
+        public int PollRetries { get; set; } = 1;
+
+        /// <summary>
         /// Forth NTLM authentication using HttpSys.
         /// (Windows host only)
         /// </summary>
