@@ -1,5 +1,6 @@
 
-* 4.5.4 - Support POST requeste with conten type application/x-www-form-urlencoded
+* 4.5.5 - 25.11.2023 Decode user agent, session.OnNavigate, dispose AppSession 
+* 4.5.4 - Support POST request with content type application/x-www-form-urlencoded
 * 4.5.3 - Use setting PollRetries (default 1) to avoid StonehengeIsDisconnected on single failure
 * 4.5.2 - Handle PATCH requests same as PUT, ChartSeries.Data as object?[]
 * 4.5.1 - Fixed async POST, PUT and DELETE requests, tests added

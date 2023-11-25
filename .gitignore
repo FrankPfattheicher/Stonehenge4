@@ -10,3 +10,5 @@ nuget
 /artifacts
 /xunit.html
 /IctBaden.Stonehenge3/app/Thumbs.db
+
+*.user
