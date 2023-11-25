@@ -66,7 +66,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target,
             DynamicMetaObject errorSuggestion)
         {
-            return null;
+            return null!;
         }
     }
 
