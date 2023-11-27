@@ -21,39 +21,39 @@ public class TestResourceLoader : IStonehengeResourceProvider
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+    public List<ViewModelInfo> GetViewModelInfos() => new();
 
     public void Dispose()
     {
     }
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         var data = parameters;
         data.Add("method", "POST");
         var json = JsonSerializer.Serialize(data);
-        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) 
+    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) 
     {
         var data = parameters;
         data.Add("method", "PUT");
         var json = JsonSerializer.Serialize(data);
-        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         var data = parameters;
         data.Add("method", "DELETE");
         var json = JsonSerializer.Serialize(data);
-        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
     {
         var resourceExtension = Path.GetExtension(resourceName);
-        return Task.FromResult(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), _content, Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), _content, Resource.Cache.None));
     }
 }

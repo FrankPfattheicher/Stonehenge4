@@ -47,7 +47,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         Providers.Clear();
     }
 
-    public async Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    public async Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
     {
         var disableCache = false;
 
@@ -57,7 +57,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
             disableCache = true;
         }
 
-        Resource loadedResource = null;
+        Resource? loadedResource = null;
         foreach (var loader in Providers)
         {
             try
@@ -81,7 +81,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         return loadedResource;
     }
         
-    private string ReplaceFields(AppSession session, string resourceName)
+    private string ReplaceFields(AppSession? session, string resourceName)
     {
         // support es6 format "${}"
         var replaced = string.Empty;
@@ -106,7 +106,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
             var end = field.IndexOf('}');
             field = field.Substring(0, end);
 
-            if (session.Cookies.TryGetValue(field, out var fieldCookie))
+            if (session != null && session.Cookies.TryGetValue(field, out var fieldCookie))
             {
                 replaced += fieldCookie;
             }
@@ -116,20 +116,22 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         return replaced;
     }
 
-    public static StonehengeResourceLoader CreateDefaultLoader(ILogger logger, IStonehengeResourceProvider provider)
+    public static StonehengeResourceLoader CreateDefaultLoader(ILogger logger, IStonehengeResourceProvider? provider)
     {
         return CreateDefaultLoader(logger, provider, Assembly.GetCallingAssembly());
     }
-    public static StonehengeResourceLoader CreateDefaultLoader(ILogger logger, IStonehengeResourceProvider provider, Assembly appAssembly)
+    public static StonehengeResourceLoader CreateDefaultLoader(ILogger logger, IStonehengeResourceProvider? provider, Assembly appAssembly)
     {
-        var assemblies = new List<Assembly>
+        var assemblies = new List<Assembly?>
             {
                 appAssembly,
                 Assembly.GetEntryAssembly(),
                 Assembly.GetExecutingAssembly(),
                 Assembly.GetAssembly(typeof(ResourceLoader))
             }
+            .Where(a => a != null)
             .Distinct()
+            .Cast<Assembly>()
             .ToList();
 
         var resLoader = new ResourceLoader(logger, assemblies, appAssembly);
@@ -157,7 +159,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         resourceLoader?.AddAssembly(assembly);
     }
 
-    public async Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {
@@ -166,7 +168,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         }
         return null;
     }
-    public async Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {
@@ -175,7 +177,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         }
         return null;
     }
-    public async Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {

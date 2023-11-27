@@ -1,10 +1,13 @@
 
-* 4.5.5 - 25.11.2023 Decode user agent, session.OnNavigate, dispose AppSession 
+* 4.6.0 - 27.11.2023 Nullable enabled
+ 
+* 4.5.5 - 25.11.2023 Decode user agent, session.OnNavigate, dispose AppSession
 * 4.5.4 - Support POST request with content type application/x-www-form-urlencoded
 * 4.5.3 - Use setting PollRetries (default 1) to avoid StonehengeIsDisconnected on single failure
 * 4.5.2 - Handle PATCH requests same as PUT, ChartSeries.Data as object?[]
 * 4.5.1 - Fixed async POST, PUT and DELETE requests, tests added
 * 4.5.0 - IStonehengeResourceProvider added PUT and DELETE
+
 * 4.4.7 - TreeNode set methods to trigger state provider
 * 4.4.6 - TreeNode enable setting id in constructor
 * 4.4.5 - TreeNode enable setting id on init

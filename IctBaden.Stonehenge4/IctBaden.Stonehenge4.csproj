@@ -10,6 +10,7 @@
     <PackageIcon>icon64.png</PackageIcon>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   
   <ItemGroup>

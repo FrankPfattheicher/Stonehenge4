@@ -16,13 +16,15 @@ namespace IctBaden.Stonehenge.Test.Resources
 
         public ResourceLoaderTests()
         {
-            var assemblies = new List<Assembly>
+            var assemblies = new List<Assembly?>
                  {
                      Assembly.GetAssembly(typeof(ResourceLoader)),
                      Assembly.GetExecutingAssembly(),
                      Assembly.GetCallingAssembly()
                  }
+                .Where(a => a != null)
                 .Distinct()
+                .Cast<Assembly>()
                 .ToList();
             _loader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, Assembly.GetCallingAssembly());
         }
@@ -47,6 +49,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
+            Assert.NotNull(resource.Data);
             Assert.Equal(201, resource.Data.Length);
         }
 
@@ -57,6 +60,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
+            Assert.NotNull(resource.Data);
             Assert.Equal(354, resource.Data.Length);
         }
 
@@ -67,6 +71,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/jpeg", resource.ContentType);
             Assert.True(resource.IsBinary);
+            Assert.NotNull(resource.Data);
             Assert.Equal(1009, resource.Data.Length);
         }
 

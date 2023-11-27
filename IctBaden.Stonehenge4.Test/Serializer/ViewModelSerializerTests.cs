@@ -165,11 +165,11 @@ namespace IctBaden.Stonehenge.Test.Serializer
                 return new HierarchicalClass
                 {
                     Name = name,
-                    Children = (depth > 0)
+                    Children = depth > 0
                         ? Enumerable.Range(1, 10)
                             .Select(ix => NewHierarchicalClass($"child {depth} {ix}", depth - 1))
                             .ToList()
-                        : null
+                        : new List<HierarchicalClass>()
                 };
             }
 

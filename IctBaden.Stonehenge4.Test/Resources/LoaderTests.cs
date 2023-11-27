@@ -19,13 +19,15 @@ namespace IctBaden.Stonehenge.Test.Resources
 
         public LoaderTests()
         {
-            var assemblies = new List<Assembly>
+            var assemblies = new List<Assembly?>
                 {
                     Assembly.GetAssembly(typeof(ResourceLoader)),
                     Assembly.GetExecutingAssembly(),
                     Assembly.GetCallingAssembly()
                 }
+                .Where(a => a != null)
                 .Distinct()
+                .Cast<Assembly>()
                 .ToList();
             var resLoader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, Assembly.GetCallingAssembly());
             var fileLoader = new FileLoader(StonehengeLogger.DefaultLogger, Path.GetTempPath());
@@ -41,7 +43,7 @@ namespace IctBaden.Stonehenge.Test.Resources
 
         public void Dispose()
         {
-            _fileTest?.Dispose();
+            _fileTest.Dispose();
         }
 
         // ReSharper disable InconsistentNaming
@@ -55,7 +57,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
-            Assert.Equal(16, resource.Data.Length);
+            Assert.Equal(16, resource.Data!.Length);
             Assert.StartsWith("file://", resource.Source);
         }
 
@@ -66,7 +68,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/jpeg", resource.ContentType);
             Assert.True(resource.IsBinary);
-            Assert.Equal(1009, resource.Data.Length);
+            Assert.Equal(1009, resource.Data!.Length);
             Assert.StartsWith("res://", resource.Source);
         }
 

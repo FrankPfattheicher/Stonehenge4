@@ -240,7 +240,7 @@ public class Chart
         DataRegions = Array.Empty<ChartDataRegion>();
     }
 
-    public void SetSeriesData(string series, object[] data)
+    public void SetSeriesData(string series, object?[] data)
     {
         var serie = Series.FirstOrDefault(s => s.Label == series);
         if (serie != null) serie.Data = data;

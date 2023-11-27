@@ -7,8 +7,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class MermaidViewVm : ActiveViewModel
 {
-    public string MermaidGraph { get; private set; }
-    public string MermaidGraph2 { get; private set; }
+    public string MermaidGraph { get; private set; } = string.Empty;
+    public string MermaidGraph2 { get; private set; } = string.Empty;
 
     public MermaidViewVm(AppSession session)
         : base(session)

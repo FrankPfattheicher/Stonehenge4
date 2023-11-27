@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,7 @@ using Microsoft.Net.Http.Headers;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
 public class StonehengeContent
 {
     private readonly RequestDelegate _next;
@@ -60,7 +62,14 @@ public class StonehengeContent
 
     private async Task InvokeLocked(HttpContext context)
     {
-        var logger = context.Items["stonehenge.Logger"] as ILogger;
+        var logger = (ILogger)context.Items["stonehenge.Logger"];
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (logger == null)
+        {
+            Debugger.Break();
+            return;
+        }
+        
         var path = context.Request.Path.Value.Replace("//", "/");
         try
         {
@@ -85,9 +94,11 @@ public class StonehengeContent
             }
 
             var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
-            var parameters = queryString.AllKeys.Where(k => !string.IsNullOrEmpty(k))
-                .ToDictionary(key => key, key => queryString[key]);
-            Resource content = null;
+            var parameters = queryString.AllKeys
+                .Where(k => !string.IsNullOrEmpty(k) && !string.IsNullOrEmpty(queryString[k]))
+                .ToDictionary(key => key!, key => queryString[key]!);
+            
+            Resource? content = null;
 
             appSession?.SetParameters(parameters);
             if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
@@ -121,19 +132,21 @@ public class StonehengeContent
                     var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                     if (authResponse != null)
                     {
-                        appSession.AccessToken = authResponse["id_token"]?.ToString();
+                        appSession.AccessToken = authResponse["id_token"]?.ToString() ?? string.Empty;
                         if (string.IsNullOrEmpty(appSession.AccessToken))
-                            appSession.AccessToken = authResponse["access_token"]?.ToString();
+                        {
+                            appSession.AccessToken = authResponse["access_token"]?.ToString() ?? string.Empty;
+                        }
 
-                        appSession.RefreshToken = authResponse["refresh_token"]?.ToString();
+                        appSession.RefreshToken = authResponse["refresh_token"]?.ToString() ?? string.Empty;
 
-                        if (appSession.AccessToken != null)
+                        if (!string.IsNullOrEmpty(appSession.AccessToken))
                         {
                             var handler = new JwtSecurityTokenHandler();
                             var jwtToken = handler.ReadToken(appSession.AccessToken) as JwtSecurityToken;
-                            var identityId = jwtToken?.Subject;
-                            var identityName = jwtToken?.Payload["name"]?.ToString();
-                            var identityMail = jwtToken?.Payload["email"]?.ToString();
+                            var identityId = jwtToken?.Subject ?? string.Empty;
+                            var identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
+                            var identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
                             appSession.SetUser(identityName, identityId, identityMail);
                             (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
                         }
@@ -167,13 +180,13 @@ public class StonehengeContent
             {
                 case "GET":
                     appSession?.Accessed(cookies, false);
-                    content = (resourceLoader != null)
+                    content = resourceLoader != null
                         ? await resourceLoader.Get(appSession, resourceName, parameters)
                         : null;
                     if (content == null && appSession != null &&
                         resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        logger?.LogError(
+                        logger.LogError(
                             $"Invalid path in index resource {resourceName} - redirecting to root index");
 
                         var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ??
@@ -183,7 +196,8 @@ public class StonehengeContent
                         return;
                     }
 
-                    if (string.Compare(resourceName, "index.html",
+                    if (content != null &&
+                        string.Compare(resourceName, "index.html",
                             StringComparison.InvariantCultureIgnoreCase) == 0)
                     {
                         HandleIndexContent(context, content);
@@ -211,13 +225,14 @@ public class StonehengeContent
                                 {
                                     foreach (var kv in jsonObject.AsObject())
                                     {
-                                        formData.Add(kv.Key, kv.Value?.ToString());
+                                        if(kv.Value != null)
+                                            formData.Add(kv.Key, kv.Value.ToString());
                                     }
                                 }
                             }
                             catch (Exception)
                             {
-                                logger?.LogWarning("Failed to parse post data as json");
+                                logger.LogWarning("Failed to parse post data as json");
                             }
                         }
                         else if (context.Request.ContentType == "application/x-www-form-urlencoded")
@@ -226,7 +241,7 @@ public class StonehengeContent
                             foreach (string key in result)
                             {
                                 var value = result[key];
-                                formData.Add(key, value);
+                                if(value != null) formData.Add(key, value);
                             }
                         }
                         else
@@ -254,7 +269,7 @@ public class StonehengeContent
                             }
                             catch (Exception)
                             {
-                                logger?.LogWarning("Failed to parse post data as multipart form data");
+                                logger.LogWarning("Failed to parse post data as multipart form data");
                             }
                         }
 
@@ -284,10 +299,12 @@ public class StonehengeContent
                         var exResource = new Dictionary<string, string>
                         {
                             { "Message", ex.Message },
-                            { "StackTrace", ex.StackTrace }
+                            { "StackTrace", ex.StackTrace ?? string.Empty }
                         };
                         content = new Resource(resourceName, $"StonehengeContent.Invoke.{requestVerb}", ResourceType.Json,
                             JsonSerializer.Serialize(exResource), Resource.Cache.None);
+                        
+                        Debugger.Break();
                     }
 
                     break;
@@ -349,13 +366,13 @@ public class StonehengeContent
         }
         catch (Exception ex)
         {
-            logger.LogError(
-                $"StonehengeContent write response: {ex.Message}" + Environment.NewLine + ex.StackTrace);
+            logger.LogError($"StonehengeContent write response: {ex.Message}" + Environment.NewLine + ex.StackTrace);
             while (ex.InnerException != null)
             {
                 ex = ex.InnerException;
                 logger.LogError(" + " + ex.Message);
             }
+            Debugger.Break();
         }
     }
 
@@ -376,7 +393,7 @@ public class StonehengeContent
             var user = usrPwd[0];
             var pwd = usrPwd[1];
             var isValid = appSession.Passwords.IsValid(user, pwd);
-            appSession.VerifiedBasicAuth = isValid ? auth : null;
+            appSession.VerifiedBasicAuth = isValid ? auth : string.Empty;
             return isValid;
         }
 
@@ -385,8 +402,8 @@ public class StonehengeContent
 
     private void SetUserNameFromContext(AppSession appSession, HttpContext context)
     {
-        var identityId = context.User.Identity?.Name;
-        if (identityId != null) return;
+        var identityId = context.User.Identity?.Name ?? string.Empty;
+        if (!string.IsNullOrEmpty(identityId)) return;
 
         var identityName = "";
         var identityMail = "";
@@ -397,16 +414,16 @@ public class StonehengeContent
             if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
             {
                 var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
-                identityId = userPassword.Split(':').FirstOrDefault();
+                identityId = userPassword.Split(':').FirstOrDefault() ?? string.Empty;
             }
             else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
             {
                 var token = auth.Substring(7);
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                identityId = jwtToken?.Subject;
-                identityName = jwtToken?.Payload["name"]?.ToString();
-                identityMail = jwtToken?.Payload["email"]?.ToString();
+                identityId = jwtToken?.Subject ?? string.Empty;
+                identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
+                identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
             }
 
             appSession.SetUser(identityName, identityId, identityMail);
@@ -429,6 +446,6 @@ public class StonehengeContent
     {
         const string placeholderAppTitle = "stonehengeAppTitle";
         var appTitle = context.Items["stonehenge.AppTitle"].ToString();
-        content.Text = content.Text.Replace(placeholderAppTitle, appTitle);
+        content.Text = content.Text?.Replace(placeholderAppTitle, appTitle);
     }
 }

@@ -13,7 +13,7 @@ namespace IctBaden.Stonehenge.Caching.Client
     public static class ContentDeliveryNetworkSupport
     {
         private const string CdnConfigurationFileName = "CDN.cfg";
-        private static Dictionary<string, string> _cdnLookup;
+        private static Dictionary<string, string>? _cdnLookup;
 
         public static Dictionary<string, string> CdnLookup
         {

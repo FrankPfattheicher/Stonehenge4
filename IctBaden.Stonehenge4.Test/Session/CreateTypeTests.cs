@@ -11,11 +11,11 @@ public class CreateTypeTests
         var session = new AppSession();
         var instance = session.SetViewModelType("TestVm");
         
-        Assert.Equal(nameof(TestVm), instance.GetType().Name);
+        Assert.Equal(nameof(TestVm), instance?.GetType().Name);
 
         instance = session.SetViewModelType("ExtraTestVm");
         
-        Assert.Equal(nameof(ExtraTestVm), instance.GetType().Name);
+        Assert.Equal(nameof(ExtraTestVm), instance?.GetType().Name);
     }
 
 }

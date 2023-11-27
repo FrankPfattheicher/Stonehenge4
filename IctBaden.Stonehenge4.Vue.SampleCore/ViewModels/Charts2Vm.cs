@@ -25,8 +25,8 @@ public class Charts2Vm : ActiveViewModel
 
     public bool FullTimeRange { get; set; } = true;
 
-    public Chart LineChart { get; private set; }
-    public Sankey SankeyChart { get; private set; }
+    public Chart? LineChart { get; private set; }
+    public Sankey? SankeyChart { get; private set; }
 
     public int Speed { get; private set; }
     private int _start;
@@ -81,7 +81,9 @@ public class Charts2Vm : ActiveViewModel
 
     private void UpdateData()
     {
-        var data = new object[60];
+        if(SankeyChart == null || LineChart == null) return;
+        
+        var data = new object?[60];
         for (var ix = 0; ix < 60; ix++)
         {
             data[ix] = FullTimeRange || ix >= 30

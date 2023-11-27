@@ -32,29 +32,21 @@ public class FileLoader : IStonehengeResourceProvider
     {
     }
 
-    public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
     {
         var fullFileName = Path.Combine(RootPath, resourceName);
-        if(!File.Exists(fullFileName)) return Task.FromResult<Resource>(null);
+        if(!File.Exists(fullFileName)) return Task.FromResult<Resource?>(null);
 
         var resourceExtension = Path.GetExtension(resourceName);
         var resourceType = ResourceType.GetByExtension(resourceExtension);
-        if (resourceType == null)
-        {
-            _logger.LogInformation($"FileLoader({resourceName}): not found");
-            return Task.FromResult<Resource>(null);
-        }
 
         _logger.LogTrace($"FileLoader({resourceName}): {fullFileName}");
-        if (resourceType.IsBinary)
-        {
-            return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay));
-        }
-
-        return Task.FromResult(new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
+        return Task.FromResult<Resource?>(resourceType.IsBinary 
+            ? new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay) 
+            : new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
     }
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 }

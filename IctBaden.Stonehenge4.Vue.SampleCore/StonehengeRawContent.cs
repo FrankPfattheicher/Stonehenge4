@@ -20,7 +20,7 @@ public class StonehengeRawContent
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
     {
-        var path = context.Request.Path.Value;
+        var path = context.Request.Path.Value ?? string.Empty;
 
         if (path.StartsWith("/metrics"))
         {

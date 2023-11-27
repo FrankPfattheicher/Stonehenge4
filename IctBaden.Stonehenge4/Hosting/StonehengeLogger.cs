@@ -10,7 +10,7 @@ namespace IctBaden.Stonehenge.Hosting
 {
     public static class StonehengeLogger
     {
-        private static ILoggerFactory _defaultFactory;
+        private static ILoggerFactory? _defaultFactory;
 
         /// <summary>
         /// Tries to find static field of type ILoggerFactory in entry assembly.
@@ -26,11 +26,14 @@ namespace IctBaden.Stonehenge.Hosting
                 var entry = Assembly.GetEntryAssembly();
                 foreach (var entryType in entry!.DefinedTypes)
                 {
-                    var fieldInfo = entryType.DeclaredFields.FirstOrDefault(f => f.FieldType == typeof(ILoggerFactory));
+                    var fieldInfo = entryType.DeclaredFields
+                        .FirstOrDefault(f => f.FieldType == typeof(ILoggerFactory));
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                     var loggerFactory = (ILoggerFactory)fieldInfo?.GetValue(null);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                     if (loggerFactory == null) continue;
 
-                    Trace.TraceInformation($"Using LoggerFactory '{fieldInfo.Name}' of type '{entryType.Name}'.");
+                    Trace.TraceInformation($"Using LoggerFactory '{fieldInfo?.Name}' of type '{entryType.Name}'.");
                     return loggerFactory;
                 }
 
@@ -92,7 +95,8 @@ namespace IctBaden.Stonehenge.Hosting
 
         public IDisposable BeginScope<TState>(TState state)
         {
-            return new LogScope(this, state.ToString());
+            var context = state?.ToString() ?? string.Empty; 
+            return new LogScope(this, context);
         }
 
         public bool IsEnabled(LogLevel logLevel)
@@ -100,7 +104,7 @@ namespace IctBaden.Stonehenge.Hosting
             return true;
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
             Func<TState, Exception, string> formatter)
         {
             try
@@ -111,7 +115,10 @@ namespace IctBaden.Stonehenge.Hosting
                     logLine += _scopeContext + " ";
                 }
 
-                logLine += state.ToString();
+                if (state != null)
+                {
+                    logLine += state.ToString();
+                }
                 if (exception != null)
                 {
                     logLine += ", " + exception.Message;
@@ -138,6 +145,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
+                Debugger.Break();
             }
         }
     }

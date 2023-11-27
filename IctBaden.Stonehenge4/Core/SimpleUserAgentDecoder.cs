@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace IctBaden.Stonehenge.Core;
@@ -13,9 +15,17 @@ internal class SimpleUserAgentDecoder
     public SimpleUserAgentDecoder(string userAgent)
     {
         if (string.IsNullOrEmpty(userAgent)) return;
-        
-        DetectBrowser(userAgent);
-        DetectOperatingSystem(userAgent);
+
+        try
+        {
+            DetectBrowser(userAgent);
+            DetectOperatingSystem(userAgent);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            Debugger.Break();
+        }
     }
 
     private void DetectBrowser(string userAgent)

@@ -15,14 +15,14 @@ public class FormsVm : ActiveViewModel
 
     public string TimeText => DateTime.Now.ToString("G");
 
-    public string RefreshText { get; private set; }
+    public string RefreshText { get; private set; } = string.Empty;
 
     public int RangeDays { get; private set; }
-    public string RangeText { get; private set; }
-    public string RangeValue { get; set; }
+    public string RangeText { get; private set; } = string.Empty;
+    public string RangeValue { get; set; } = string.Empty;
     public string[] RangeYears { get; set; }
-    public string RangeStart { get; private set; }
-    public string RangeEnd { get; private set; }
+    public string RangeStart { get; private set; } = string.Empty;
+    public string RangeEnd { get; private set; } = string.Empty;
 
     public string Test { get; set; }
 

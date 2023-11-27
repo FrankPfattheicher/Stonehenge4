@@ -4,9 +4,10 @@ using IctBaden.Stonehenge.ViewModel;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
+// ReSharper disable once UnusedType.Global
 public class CookieVm : ActiveViewModel
 {
-    public string Theme { get; set; }
+    public string Theme { get; set; } = string.Empty;
 
     public CookieVm(AppSession session)
         : base(session)
