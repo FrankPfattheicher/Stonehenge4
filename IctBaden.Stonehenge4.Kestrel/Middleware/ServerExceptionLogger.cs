@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 if (ex.InnerException != null) message += "; " + ex.InnerException.Message;
                 logger?.LogError($"ServerExceptionHandler: {ex.GetType().Name}(HR=0x{ex.HResult:X8}): {message}" + Environment.NewLine + 
                                  $"ServerExceptionHandler: StackTrace: {ex.StackTrace}");
+                Debugger.Break();
                 return;
             }
             if (context.Response.StatusCode == (int) HttpStatusCode.InternalServerError)

@@ -12,7 +12,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
 {
     internal static class Program
     {
-        private static IStonehengeHost _server;
+        private static IStonehengeHost? _server;
 
         // ReSharper disable once MemberCanBePrivate.Global
         public static readonly ILoggerFactory LoggerFactory = StonehengeLogger.DefaultFactory;
@@ -32,7 +32,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             logger.LogInformation("Vue.SampleCore started");
 
             // ReSharper disable once RedundantAssignment
-            KeycloakAuthenticationOptions keycloak = null;
+            KeycloakAuthenticationOptions? keycloak = null;
             keycloak = new KeycloakAuthenticationOptions
             {
                 ClientId = "frontend",

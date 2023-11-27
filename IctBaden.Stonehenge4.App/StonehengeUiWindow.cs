@@ -14,7 +14,7 @@ public class StonehengeUiWindow : IDisposable
     private readonly ILogger _logger;
     private readonly StonehengeHostOptions _options;
     private readonly StonehengeUi _ui;
-    private HostWindow _wnd;
+    private HostWindow? _wnd;
 
     public StonehengeUiWindow(ILogger logger, StonehengeHostOptions options)
     {
@@ -46,8 +46,13 @@ public class StonehengeUiWindow : IDisposable
             _logger.LogCritical($"StonehengeUiWindow failed to start on port {port}, ({(publicReachable ? "" : "not ")}public reachable)");
             return false;
         }
+        if (string.IsNullOrEmpty(_ui.Server?.BaseUrl))
+        {
+            _logger.LogCritical($"StonehengeUiWindow failed to start: No base URL given");
+            return false;
+        }
 
-        _wnd = new HostWindow(_ui.Server.BaseUrl, _options.Title, windowSize);
+        _wnd = new HostWindow(_ui.Server?.BaseUrl!, _options.Title, windowSize);
         if(!_wnd.Open()) return false;
         
         var terminate = new AutoResetEvent(false);
@@ -59,6 +64,6 @@ public class StonehengeUiWindow : IDisposable
     public void Dispose()
     {
         _wnd?.Dispose();
-        _ui?.Dispose();
+        _ui.Dispose();
     }
 }

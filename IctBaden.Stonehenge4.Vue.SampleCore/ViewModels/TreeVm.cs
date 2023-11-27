@@ -19,7 +19,7 @@ public class TreeVm : ActiveViewModel
     public readonly int TotalCountries;
 
     public TreeView WorldTree { get; } = new();
-    public string SelectedContinent { get; private set; }
+    public string SelectedContinent { get; private set; } = string.Empty;
     public string CheckedContinents { get; private set; } = string.Empty;
     public Gauge Area { get; private init; }
     public Gauge Countries { get; private init; }

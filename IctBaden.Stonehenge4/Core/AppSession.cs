@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,20 +33,21 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Core;
 
+[SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
 public class AppSession : INotifyPropertyChanged, IDisposable
 {
     public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
 
-    public StonehengeHostOptions HostOptions { get; private set; }
-    public string HostDomain { get; private set; }
-    public string HostUrl { get; private set; }
+    public StonehengeHostOptions HostOptions { get; private set; } = new();
+    public string HostDomain { get; private set; } = string.Empty;
+    public string HostUrl { get; private set; } = string.Empty;
     public bool IsLocal { get; private set; }
     public bool IsDebug { get; private set; }
-    public string ClientAddress { get; private set; }
+    public string ClientAddress { get; private set; } = string.Empty;
     public int ClientPort { get; private set; }
-    public string UserAgent { get; private set; }
-    public string Platform { get; private set; }
-    public string Browser { get; private set; }
+    public string UserAgent { get; private set; } = string.Empty;
+    public string Platform { get; private set; } = string.Empty;
+    public string Browser { get; private set; } = string.Empty;
 
     public bool CookiesSupported { get; private set; }
     public bool StonehengeCookieSet { get; private set; }
@@ -54,32 +56,32 @@ public class AppSession : INotifyPropertyChanged, IDisposable
 
     public DateTime ConnectedSince { get; private set; }
     public DateTime LastAccess { get; private set; }
-    public string CurrentRoute => _history.FirstOrDefault();
-    public string Context { get; private set; }
+    public string CurrentRoute => _history.FirstOrDefault() ?? string.Empty;
+    public string Context { get; private set; } = string.Empty;
 
 
     /// User login is requested on next request 
     public bool RequestLogin;
 
     /// Redirect URL used to complete authorization 
-    public string AuthorizeRedirectUrl;
+    public string AuthorizeRedirectUrl = string.Empty;
     /// Access token given from authorization 
-    public string AccessToken;
+    public string AccessToken = string.Empty;
     /// Refresh token given from authorization 
-    public string RefreshToken;
+    public string RefreshToken = string.Empty;
 
 
     /// Name of user identity 
-    public string UserIdentity { get; private set; } = "";
+    public string UserIdentity { get; private set; } = string.Empty;
 
     /// Name of user identity 
-    public string UserIdentityId { get; private set; } = "";
+    public string UserIdentityId { get; private set; } = string.Empty;
 
     /// Name of user identity 
-    public string UserIdentityEMail { get; private set; } = "";
+    public string UserIdentityEMail { get; private set; } = string.Empty;
 
         
-    public CultureInfo SessionCulture { get; private set; }
+    public CultureInfo SessionCulture { get; private set; } = CultureInfo.CurrentUICulture;
         
         
     public DateTime LastUserAction { get; private set; }
@@ -87,17 +89,17 @@ public class AppSession : INotifyPropertyChanged, IDisposable
     private readonly Guid _id;
     public string Id => $"{_id:N}";
 
-    public string PermanentSessionId { get; private set; }
+    public string PermanentSessionId { get; private set; } = string.Empty;
 
     public readonly bool UseBasicAuth;
-    public readonly Passwords Passwords;
-    public string VerifiedBasicAuth;
+    public readonly Passwords Passwords = new(string.Empty);
+    public string VerifiedBasicAuth = string.Empty;
 
     private readonly int _eventTimeoutMs;
 
     private readonly List<string> _events = new();
 
-    private CancellationTokenSource _eventRelease;
+    private CancellationTokenSource? _eventRelease;
     private bool _forceUpdate;
     private readonly List<string> _history = new();
 
@@ -176,12 +178,12 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    public event Action<string> OnNavigate; 
+    public event Action<string>? OnNavigate; 
     
     
-    private object _viewModel;
+    private object? _viewModel;
 
-    public object ViewModel
+    public object? ViewModel
     {
         get => _viewModel;
         set
@@ -193,14 +195,14 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             {
                 npc.PropertyChanged += (sender, args) =>
                 {
-                    if (!(sender is ActiveViewModel avm))
-                    {
-                        return;
-                    }
+                    if (sender is not ActiveViewModel avm) return;
 
                     lock (avm.Session._events)
                     {
-                        avm.Session.UpdateProperty(args.PropertyName);
+                        if (!string.IsNullOrEmpty(args.PropertyName))
+                        {
+                            avm.Session.UpdateProperty(args.PropertyName);
+                        }
                     }
                 };
             }
@@ -214,7 +216,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         NotifyPropertyChanged(nameof(ClientAddress));
     }
 
-    internal object SetViewModelType(string typeName)
+    internal object? SetViewModelType(string typeName)
     {
         var oldViewModel = ViewModel;
         if (oldViewModel != null)
@@ -230,8 +232,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             disposable?.Dispose();
         }
 
-        var resourceLoader =
-            _resourceLoader.Providers.First(ld => ld.GetType() == typeof(ResourceLoader)) as ResourceLoader;
+        var resourceLoader = _resourceLoader.Providers
+            .First(ld => ld.GetType() == typeof(ResourceLoader)) as ResourceLoader;
         if (resourceLoader == null)
         {
             ViewModel = null;
@@ -266,9 +268,9 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         return ViewModel;
     }
 
-    public object CreateType(string context, Type type)
+    public object? CreateType(string context, Type type)
     {
-        object instance = null;
+        object? instance = null;
         var typeConstructors = type.GetConstructors();
         if (!typeConstructors.Any())
         {
@@ -283,7 +285,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
                 break;
             }
 
-            var paramValues = new object[parameters.Length];
+            var paramValues = new object?[parameters.Length];
 
             for (var ix = 0; ix < parameters.Length; ix++)
             {
@@ -331,9 +333,9 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    private readonly Dictionary<string, object> _userData;
+    private readonly Dictionary<string, object?> _userData;
 
-    public object this[string key]
+    public object? this[string key]
     {
         get => _userData.ContainsKey(key) ? _userData[key] : null;
         set
@@ -350,12 +352,12 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _userData[key] = value;
     }
 
-    public T Get<T>(string key)
+    public T? Get<T>(string key)
     {
         if (!_userData.ContainsKey(key))
             return default;
 
-        return (T)_userData[key];
+        return (T?)_userData[key];
     }
 
     public void Remove(string key)
@@ -370,8 +372,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
     // ReSharper disable once UnusedMember.Global
     public TimeSpan LastUserActionDuration => DateTime.Now - LastUserAction;
 
-    public event Action TimedOut;
-    private Timer _pollSessionTimeout;
+    public event Action? TimedOut;
+    private Timer? _pollSessionTimeout;
     public TimeSpan SessionTimeout { get; private set; }
     public bool IsTimedOut => LastAccessDuration > SessionTimeout;
 
@@ -387,11 +389,11 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    private void CheckSessionTimeout(object _)
+    private void CheckSessionTimeout(object? _)
     {
         if ((LastAccessDuration > SessionTimeout) && (_terminator != null))
         {
-            _pollSessionTimeout.Dispose();
+            _pollSessionTimeout?.Dispose();
             _terminator.Dispose();
             TimedOut?.Invoke();
         }
@@ -400,7 +402,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         NotifyPropertyChanged(nameof(LastAccessDuration));
     }
 
-    private IDisposable _terminator;
+    private IDisposable? _terminator;
 
 
     // ReSharper disable once UnusedMember.Global
@@ -409,24 +411,26 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _terminator = disposable;
     }
 
-    private StonehengeResourceLoader _resourceLoader;
+    private readonly StonehengeResourceLoader _resourceLoader;
 
     public AppSession()
         : this(null, new StonehengeHostOptions())
     {
     }
 
-    public AppSession(StonehengeResourceLoader resourceLoader, StonehengeHostOptions options)
+    public AppSession(StonehengeResourceLoader? resourceLoader, StonehengeHostOptions options)
     {
         if (resourceLoader == null)
         {
-            var assemblies = new List<Assembly>
+            var assemblies = new List<Assembly?>
                 {
                     Assembly.GetEntryAssembly(),
                     Assembly.GetExecutingAssembly(),
                     Assembly.GetAssembly(typeof(ResourceLoader))
                 }
+                .Where(a => a != null)
                 .Distinct()
+                .Cast<Assembly>()
                 .ToList();
 
             Logger = StonehengeLogger.DefaultLogger;
@@ -439,7 +443,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         }
 
         _resourceLoader = resourceLoader;
-        _userData = new Dictionary<string, object>();
+        _userData = new Dictionary<string, object?>();
         _id = Guid.NewGuid();
         SessionTimeout = TimeSpan.FromSeconds(10); // TimeSpan.FromMinutes(15);
         Cookies = new Dictionary<string, string>();
@@ -483,7 +487,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
     }
 
     // ReSharper disable once UnusedMember.Global
-    public bool IsInitialized => UserAgent != null;
+    public bool IsInitialized => !string.IsNullOrEmpty(UserAgent);
 
 
     private bool IsAssemblyDebugBuild(Assembly assembly)
@@ -504,7 +508,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         ConnectedSince = DateTime.Now;
 
         DetectBrowser(userAgent);
-        IsDebug = IsAssemblyDebugBuild(Assembly.GetEntryAssembly());
+        IsDebug = IsAssemblyDebugBuild(Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly());
     }
 
     // ReSharper disable once UnusedParameter.Local
@@ -535,7 +539,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         }
 
 
-        if ((PermanentSessionId == null) && cookies.TryGetValue("ss-pid", out var ssPid))
+        if (string.IsNullOrEmpty(PermanentSessionId) && cookies.TryGetValue("ss-pid", out var ssPid))
         {
             PermanentSessionId = ssPid;
         }
@@ -605,7 +609,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             ConnectedSince.ToShortDateString() + " " + ConnectedSince.ToShortTimeString(), SubDomain);
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     private void NotifyPropertyChanged(string propertyName)
@@ -637,8 +641,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         
     public void UserLogin()
     {
-        SetUser("", "", "");
-        AuthorizeRedirectUrl = null;
+        SetUser(string.Empty, string.Empty, string.Empty);
+        AuthorizeRedirectUrl = string.Empty;
 
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
@@ -676,16 +680,16 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
             
-        SetUser("", "", "");
-        AuthorizeRedirectUrl = null;
+        SetUser(string.Empty, string.Empty, string.Empty);
+        AuthorizeRedirectUrl = string.Empty;
 
         return result.StatusCode == HttpStatusCode.NoContent;
     }
 
     public void Dispose()
     {
-        _eventRelease?.Dispose();
-        _eventRelease = null;
+        // _eventRelease?.Dispose();
+        // _eventRelease = null;
         
         _pollSessionTimeout?.Dispose();
         _pollSessionTimeout = null;
@@ -693,9 +697,6 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _terminator?.Dispose();
         _terminator = null;
         
-        _resourceLoader?.Dispose();
-        _resourceLoader = null;
-
         OnNavigate = null;
     }
 }

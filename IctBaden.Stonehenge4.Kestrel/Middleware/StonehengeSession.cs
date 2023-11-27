@@ -205,7 +205,7 @@ public class StonehengeSession
     }
 
     private static AppSession NewSession(ILogger logger, ICollection<AppSession> appSessions, HttpContext context,
-        StonehengeResourceLoader resourceLoader)
+        StonehengeResourceLoader? resourceLoader)
     {
         var options = (StonehengeHostOptions)context.Items["stonehenge.HostOptions"];
         var session = new AppSession(resourceLoader, options);
@@ -218,9 +218,9 @@ public class StonehengeSession
         }
 
         var httpContext = context.Request?.HttpContext;
-        var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString();
+        var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString() ?? string.Empty;
         var clientPort = httpContext?.Connection.RemotePort ?? 0;
-        var hostDomain = context.Request?.Host.Value;
+        var hostDomain = context.Request?.Host.Value ?? string.Empty;
         var hostUrl = $"{context.Request?.Scheme ?? "http"}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
         appSessions.Add(session);
@@ -230,7 +230,7 @@ public class StonehengeSession
 
     private static CultureInfo GetCulture(string languages)
     {
-        if (string.IsNullOrEmpty(languages)) return null;
+        if (string.IsNullOrEmpty(languages)) return CultureInfo.CurrentCulture;
 
         foreach (var language in languages.Split(';'))
         {
@@ -243,6 +243,6 @@ public class StonehengeSession
             }
         }
 
-        return null;
+        return CultureInfo.CurrentCulture;
     }
 }

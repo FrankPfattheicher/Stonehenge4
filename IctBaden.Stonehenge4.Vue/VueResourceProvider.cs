@@ -21,30 +21,32 @@ namespace IctBaden.Stonehenge.Vue;
 public class VueResourceProvider : IStonehengeResourceProvider
 {
     private readonly ILogger _logger;
-    private Dictionary<string, Resource> _vueContent;
+    private Dictionary<string, Resource> _vueContent = new();
     private List<Assembly> _assemblies;
-    private Assembly _appAssembly;
+    private Assembly _appAssembly = Assembly.GetExecutingAssembly();
     private readonly List<ViewModelInfo> _viewModels;
 
     public VueResourceProvider(ILogger logger)
     {
         _logger = logger;
-        _assemblies = new List<Assembly>
+        _assemblies = new List<Assembly?>
             {
                 Assembly.GetEntryAssembly(),
                 Assembly.GetAssembly(GetType())
             }
             .Concat(AppDomain.CurrentDomain.GetAssemblies())
+            .Where(a => a != null)
             .Distinct()
+            .Cast<Assembly>()
             .ToList();
         _viewModels = new List<ViewModelInfo>();
     }
 
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
-        _vueContent = new Dictionary<string, Resource>();
+        _vueContent.Clear();
 
-        if (loader?.Providers
+        if (loader.Providers
                 .FirstOrDefault(p => p.GetType() == typeof(ResourceLoader)) is ResourceLoader resourceLoader)
         {
             _assemblies = resourceLoader.ResourceAssemblies;
@@ -89,7 +91,7 @@ public class VueResourceProvider : IStonehengeResourceProvider
                     .ToList();
             }
 
-            info.VmName = null;
+            info.VmName = string.Empty;
             info.SortIndex = 0;
         }
         else
@@ -206,15 +208,15 @@ public class VueResourceProvider : IStonehengeResourceProvider
     }
 
 
-    public Task<Resource> Post(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource>(null);
+    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 
-    public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
     {
         resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
         return _vueContent.TryGetValue(resourceName, out var value) 
-            ? Task.FromResult(value) 
-            : Task.FromResult<Resource>(null);
+            ? Task.FromResult<Resource?>(value) 
+            : Task.FromResult<Resource?>(null);
     }
 }

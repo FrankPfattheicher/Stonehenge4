@@ -37,6 +37,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Client
         public async void StartComponentShouldHaveExpectedMembers()
         {
             var resource = await _loader.Get(_session, "start.js", new Dictionary<string, string>());
+            Assert.NotNull(resource);
             Assert.Contains("VmPropInteger", resource.Text);
             Assert.Contains("VmPropText", resource.Text);
             Assert.Contains("VmPropList", resource.Text);
@@ -55,6 +56,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Client
         public async void DiComponentShouldHaveExpectedMembers()
         {
             var resource = await _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
+            Assert.NotNull(resource);
             Assert.Contains("VmPropInteger", resource.Text);
             Assert.Contains("VmPropText", resource.Text);
             Assert.Contains("VmPropList", resource.Text);

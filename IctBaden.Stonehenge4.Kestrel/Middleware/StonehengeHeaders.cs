@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
@@ -11,10 +13,11 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Kestrel.Middleware
 {
+    [SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
     public class StonehengeHeaders
     {
         private readonly RequestDelegate _next;
-        private static Dictionary<string, string> _headers;
+        private static Dictionary<string, string>? _headers;
 
         // ReSharper disable once UnusedMember.Global
         public StonehengeHeaders(RequestDelegate next)
@@ -25,6 +28,11 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
         public async Task Invoke(HttpContext context)
         {
             var logger = context.Items["stonehenge.Logger"] as ILogger;
+            if (logger == null)
+            {
+                Debugger.Break();
+                return;
+            }
             
             try
             {
@@ -32,15 +40,18 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 {
                     LoadHeaders(logger);
                 }
-                // ReSharper disable once PossibleNullReferenceException
-                foreach (var header in _headers)
+                if (_headers != null)
                 {
-                    context.Response.Headers.Add(header.Key, header.Value);
+                    foreach (var header in _headers)
+                    {
+                        context.Response.Headers.Add(header.Key, header.Value);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                logger?.LogError("Error handling default headers: " + ex.Message);
+                logger.LogError("Error handling default headers: " + ex.Message);
+                Debugger.Break();
             }
             await _next.Invoke(context);
         }

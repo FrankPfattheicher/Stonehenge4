@@ -6,6 +6,7 @@
         <LangVersion>11</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.App</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

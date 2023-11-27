@@ -10,7 +10,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class InfoVm : ActiveViewModel
 {
-    public string AppReleaseDate { get; private set; }
+    public string AppReleaseDate { get; private set; } = string.Empty;
 
     public InfoVm(AppSession session) : base(session)
     {

@@ -6,7 +6,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
 {
     public class HierarchicalClass
     {
-        public string Name { get; set; }
-        public List<HierarchicalClass> Children { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<HierarchicalClass> Children { get; set; } = new();
     }
 }

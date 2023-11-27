@@ -45,13 +45,13 @@ public class ViewModelProvider : IStonehengeResourceProvider
     {
     }
 
-    public Task<Resource> Put(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
-        Task.FromResult<Resource>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
+        Task.FromResult<Resource?>(null);
 
-    public Task<Resource> Delete(AppSession session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
-        Task.FromResult<Resource>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) =>
+        Task.FromResult<Resource?>(null);
 
-    public Task<Resource> Post(AppSession session, string resourceName,
+    public Task<Resource?> Post(AppSession? session, string resourceName,
         Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
         if (resourceName.StartsWith("Command/"))
@@ -62,7 +62,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
                 .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IStonehengeAppCommands)));
             if (appCommandsType != null)
             {
-                var appCommands = session.CreateType("AppCommands", appCommandsType);
+                var appCommands = session?.CreateType("AppCommands", appCommandsType);
 
                 var commandHandler = appCommands?.GetType().GetMethod(commandName);
                 if (commandHandler != null)
@@ -75,20 +75,16 @@ public class ViewModelProvider : IStonehengeResourceProvider
 
                     commandHandler.Invoke(appCommands, cmdParameters.ToArray());
 
-                    return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
+                    return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': true }",
                         Resource.Cache.None));
                 }
-                else
-                {
-                    return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
-                        Resource.Cache.None));
-                }
-            }
-            else
-            {
-                return Task.FromResult(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
+
+                return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
                     Resource.Cache.None));
             }
+
+            return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json, "{ 'executed': false }",
+                Resource.Cache.None));
         }
 
         if (resourceName.StartsWith("Data/"))
@@ -96,31 +92,31 @@ public class ViewModelProvider : IStonehengeResourceProvider
             return PostDataResource(session, resourceName.Substring(5), parameters, formData);
         }
 
-        if (!resourceName.StartsWith("ViewModel/")) return Task.FromResult<Resource>(null);
+        if (!resourceName.StartsWith("ViewModel/")) return Task.FromResult<Resource?>(null);
 
         var parts = resourceName.Split('/');
-        if (parts.Length != 3) return Task.FromResult<Resource>(null);
+        if (parts.Length != 3) return Task.FromResult<Resource?>(null);
 
         var vmTypeName = parts[1];
         var methodName = parts[2];
 
-        if (session.ViewModel == null)
+        if (session?.ViewModel == null)
         {
             _logger.LogWarning($"ViewModelProvider: Set VM={vmTypeName}, no current VM");
-            session.SetViewModelType(vmTypeName);
+            session?.SetViewModelType(vmTypeName);
         }
 
         foreach (var (key, value) in formData)
         {
             _logger.LogDebug($"ViewModelProvider: Set {key}={value}");
-            SetPropertyValue(_logger, session.ViewModel, key, value);
+            SetPropertyValue(_logger, session?.ViewModel, key, value);
         }
 
-        var vmType = session.ViewModel?.GetType();
+        var vmType = session?.ViewModel?.GetType();
         if (vmType?.Name != vmTypeName)
         {
             _logger.LogWarning($"ViewModelProvider: Request for VM={vmTypeName}, current VM={vmType?.Name}");
-            return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+            return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
                 "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
         }
 
@@ -128,7 +124,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
         if (method == null)
         {
             _logger.LogWarning($"ViewModelProvider: ActionMethod {methodName} not found.");
-            return Task.FromResult<Resource>(null);
+            return Task.FromResult<Resource?>(null);
         }
 
         try
@@ -147,11 +143,11 @@ public class ViewModelProvider : IStonehengeResourceProvider
                 .ToArray();
             if (executeAsync)
             {
-                Task.Run(() => method.Invoke(session.ViewModel, methodParams));
+                Task.Run(() => method.Invoke(session?.ViewModel, methodParams));
                 return GetEvents(session, resourceName);
             }
 
-            method.Invoke(session.ViewModel, methodParams);
+            method.Invoke(session?.ViewModel, methodParams);
         }
         catch (Exception ex)
         {
@@ -168,21 +164,21 @@ public class ViewModelProvider : IStonehengeResourceProvider
             var exResource = new Dictionary<string, string>
             {
                 { "Message", ex.Message },
-                { "StackTrace", ex.StackTrace }
+                { "StackTrace", ex.StackTrace ?? string.Empty }
             };
-            return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
+            return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json, GetViewModelJson(exResource),
                 Resource.Cache.None));
         }
 
-        return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
-            GetViewModelJson(session.ViewModel), Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+            GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }
 
-    public Task<Resource> Get(AppSession session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
     {
         if (resourceName.StartsWith("ViewModel/"))
         {
-            if (SetViewModel(session, resourceName))
+            if (session != null && SetViewModel(session, resourceName))
             {
                 if (session.ViewModel is ActiveViewModel avm)
                 {
@@ -196,15 +192,15 @@ public class ViewModelProvider : IStonehengeResourceProvider
         {
             return GetEvents(session, resourceName);
         }
-        else if (resourceName.StartsWith("Data/"))
+        else if (session != null && resourceName.StartsWith("Data/"))
         {
             return GetDataResource(session, resourceName.Substring(5), parameters);
         }
 
-        return Task.FromResult<Resource>(null);
+        return Task.FromResult<Resource?>(null);
     }
 
-    private bool SetViewModel(AppSession session, string resourceName)
+    private bool SetViewModel(AppSession? session, string resourceName)
     {
         if (session == null) return false;
         var vmTypeName = Path.GetFileNameWithoutExtension(resourceName);
@@ -225,16 +221,16 @@ public class ViewModelProvider : IStonehengeResourceProvider
         return false;
     }
 
-    private Task<Resource> GetViewModel(AppSession session, string resourceName)
+    private Task<Resource?> GetViewModel(AppSession session, string resourceName)
     {
         session.EventsClear(true);
 
-        return Task.FromResult(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
+        return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
             GetViewModelJson(session.ViewModel),
             Resource.Cache.None));
     }
 
-    private static async Task<Resource> GetEvents(AppSession session, string resourceName)
+    private static async Task<Resource?> GetEvents(AppSession? session, string resourceName)
     {
         var parts = resourceName.Split('/');
         if (parts.Length < 2) return null;
@@ -256,8 +252,10 @@ public class ViewModelProvider : IStonehengeResourceProvider
         }
 
         var data = new List<string> { "\"StonehengeContinuePolling\":true" };
-        var events = await session.CollectEvents();
-        if (session.ViewModel is ActiveViewModel activeVm)
+        var events = session == null
+            ? Array.Empty<string>()  
+            : await session.CollectEvents();
+        if (session?.ViewModel is ActiveViewModel activeVm)
         {
             try
             {
@@ -281,32 +279,31 @@ public class ViewModelProvider : IStonehengeResourceProvider
         return new Resource(resourceName, "ViewModelProvider", ResourceType.Json, json, Resource.Cache.None);
     }
 
-    private static void ClearStonehengeInternalProperties(ActiveViewModel activeVm)
+    private static void ClearStonehengeInternalProperties(ActiveViewModel? activeVm)
     {
         if (activeVm == null) return;
             
         // clear only if navigation happens
-        activeVm.NavigateToRoute = null;
+        activeVm.NavigateToRoute = string.Empty;
     }
         
     private static void AddStonehengeInternalProperties(ICollection<string> data, ActiveViewModel activeVm)
     {
         if (!string.IsNullOrEmpty(activeVm.MessageBoxTitle) || !string.IsNullOrEmpty(activeVm.MessageBoxText))
         {
-            var title = activeVm.MessageBoxTitle ?? "";
-            var text = activeVm.MessageBoxText ?? "";
-            var script =
-                $"alert('{HttpUtility.JavaScriptStringEncode(title)}\\r\\n{HttpUtility.JavaScriptStringEncode(text)}');";
+            var title = activeVm.MessageBoxTitle;
+            var text = activeVm.MessageBoxText;
+            var script = $"alert('{HttpUtility.JavaScriptStringEncode(title)}\\r\\n{HttpUtility.JavaScriptStringEncode(text)}');";
             data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
-            activeVm.MessageBoxTitle = null;
-            activeVm.MessageBoxText = null;
+            activeVm.MessageBoxTitle = string.Empty;
+            activeVm.MessageBoxText = string.Empty;
         }
 
         if (!string.IsNullOrEmpty(activeVm.ClientScript))
         {
             var script = activeVm.ClientScript;
             data.Add($"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
-            activeVm.ClientScript = null;
+            activeVm.ClientScript = string.Empty;
         }
 
         if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
@@ -316,7 +313,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
         }
     }
 
-    private static Task<Resource> GetDataResource(AppSession session, string resourceName,
+    private static Task<Resource?> GetDataResource(AppSession session, string resourceName,
         Dictionary<string, string> parameters)
     {
         var vm = session.ViewModel as ActiveViewModel;
@@ -324,51 +321,51 @@ public class ViewModelProvider : IStonehengeResourceProvider
             .GetMethods()
             .FirstOrDefault(m =>
                 string.Compare(m.Name, "GetDataResource", StringComparison.InvariantCultureIgnoreCase) == 0);
-        if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource>(null);
+        if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource?>(null);
 
-        Resource data;
+        Resource? data;
         if (method.GetParameters().Length == 2)
         {
-            data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters });
+            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters });
         }
         else
         {
-            data = (Resource)method.Invoke(vm, new object[] { resourceName });
+            data = (Resource?)method.Invoke(vm, new object[] { resourceName });
         }
 
         return Task.FromResult(data);
     }
 
-    private static Task<Resource> PostDataResource(AppSession session, string resourceName,
+    private static Task<Resource?> PostDataResource(AppSession? session, string resourceName,
         Dictionary<string, string> parameters, Dictionary<string, string> formData)
     {
-        var vm = session.ViewModel as ActiveViewModel;
+        var vm = session?.ViewModel as ActiveViewModel;
         var method = vm?.GetType()
             .GetMethods()
             .FirstOrDefault(m =>
                 string.Compare(m.Name, "PostDataResource", StringComparison.InvariantCultureIgnoreCase) == 0);
-        if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource>(null);
+        if (method == null || method.ReturnType != typeof(Resource)) return Task.FromResult<Resource?>(null);
 
-        Resource data;
+        Resource? data;
         if (method.GetParameters().Length == 3)
         {
-            data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters, formData });
+            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters, formData });
         }
         else if (method.GetParameters().Length == 2)
         {
-            data = (Resource)method.Invoke(vm, new object[] { resourceName, parameters });
+            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters });
         }
         else
         {
-            data = (Resource)method.Invoke(vm, new object[] { resourceName });
+            data = (Resource?)method.Invoke(vm, new object[] { resourceName });
         }
 
         return Task.FromResult(data);
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static void DeserializeStructValue(ILogger logger, ref object structObj, string structValue,
-        Type structType)
+    public static void DeserializeStructValue(ILogger logger, ref object? structObj, 
+        string? structValue, Type structType)
     {
         try
         {
@@ -394,7 +391,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
                     return;
                 }
 
-                var addMethod = structObj.GetType().GetMethod("Add");
+                var addMethod = structObj?.GetType().GetMethod("Add");
                 if (addMethod == null)
                 {
                     structObj = null;
@@ -429,7 +426,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
         }
     }
 
-    private static void SetMembers(ILogger logger, ref object structObj, Type structType, JsonObject members)
+    private static void SetMembers(ILogger logger, ref object? structObj, Type structType, JsonObject members)
     {
         foreach (var member in members)
         {
@@ -443,13 +440,13 @@ public class ViewModelProvider : IStonehengeResourceProvider
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static object DeserializePropertyValue(ILogger logger, string propValue, Type propType)
+    public static object? DeserializePropertyValue(ILogger logger, string? propValue, Type propType)
     {
         try
         {
             if (propType == typeof(string))
                 return propValue;
-            if (propType == typeof(bool))
+            if (propType == typeof(bool) && !string.IsNullOrEmpty(propValue))
                 return bool.Parse(propValue);
             if (propType == typeof(float))
             {
@@ -483,7 +480,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
                     return dt;
             }
 
-            if (propType.IsClass && !propType.IsArray)
+            if (propType is { IsClass: true, IsArray: false })
             {
                 var structObj = Activator.CreateInstance(propType);
                 if (structObj != null)
@@ -508,7 +505,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
         return null;
     }
 
-    private static void SetPropertyValue(ILogger logger, object vm, string propName, string newValue)
+    private static void SetPropertyValue(ILogger logger, object? vm, string propName, string newValue)
     {
         try
         {
@@ -545,7 +542,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
             }
             else
             {
-                var pi = vm.GetType().GetProperty(propName);
+                var pi = vm?.GetType().GetProperty(propName);
                 if ((pi == null) || !pi.CanWrite)
                     return;
 
@@ -560,8 +557,10 @@ public class ViewModelProvider : IStonehengeResourceProvider
         }
     }
 
-    private string GetViewModelJson(object viewModel)
+    private string GetViewModelJson(object? viewModel)
     {
+        if (viewModel == null) return string.Empty;
+        
         var watch = new Stopwatch();
         watch.Start();
 
@@ -606,7 +605,7 @@ public class ViewModelProvider : IStonehengeResourceProvider
             var exResource = new Dictionary<string, string>
             {
                 { "Message", ex.Message },
-                { "StackTrace", ex.StackTrace }
+                { "StackTrace", ex.StackTrace ?? string.Empty }
             };
             return JsonSerializer.SerializeToElement(exResource, JsonOptions).ToString();
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
@@ -37,6 +38,7 @@ public class NotifyTests : IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, nameof(ModifyNotifyPropertyShouldCreateEvent));
+            Debugger.Break();
         }
 
         Assert.NotNull(response);

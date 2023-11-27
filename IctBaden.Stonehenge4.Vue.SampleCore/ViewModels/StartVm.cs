@@ -25,32 +25,32 @@ public class StartVm : ActiveViewModel
     public string TimeStamp => DateTime.Now.ToLongTimeString();
     public double Numeric { get; set; }
     public string Version => Assembly.GetAssembly(typeof(Program))!.GetName().Version!.ToString(2);
-    public bool IsLocal => Session?.IsLocal ?? true;
-    public string Browser => Session?.Browser ?? "(unknown)";
-    public string Platform => Session?.Platform ?? "(unknown)";
-    public string ClientAddress => Session.ClientAddress ?? "(unknown)";
-    public string UserIdentity => Session.UserIdentity ?? "(unknown)";
-    public string UserIdentityId => Session.UserIdentityId ?? "(unknown)";
-    public string UserIdentityEMail => Session.UserIdentityEMail ?? "(unknown)";
+    public bool IsLocal => Session.IsLocal;
+    public string Browser => Session.Browser;
+    public string Platform => Session.Platform;
+    public string ClientAddress => Session.ClientAddress;
+    public string UserIdentity => Session.UserIdentity;
+    public string UserIdentityId => Session.UserIdentityId;
+    public string UserIdentityEMail => Session.UserIdentityEMail;
 
     public bool ShowCookies { get; private set; }
 
-    public string Culture { get; set; }
-    public string UploadFile { get; set; }
+    public string Culture { get; set; } = string.Empty;
+    public string UploadFile { get; set; } = string.Empty;
         
     public bool AppBoxVisible { get; private set; }
-    public string AppBoxCaption { get; private set; }
-    public string AppBoxText { get; private set; }
+    public string AppBoxCaption { get; private set; } = string.Empty;
+    public string AppBoxText { get; private set; } = string.Empty;
         
     public bool AppDialogVisible { get; private set; }
-    public string AppDialogCaption { get; private set; }
+    public string AppDialogCaption { get; private set; } = string.Empty;
         
 
 
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
 
-    public string NotInitialized { get; set; }
+    public string? NotInitialized { get; set; }
 
     private string _text = "This ist the content of user file ;-) Press Alt+Left to return.";
 
@@ -64,7 +64,7 @@ public class StartVm : ActiveViewModel
     public override void OnLoad()
     {
         Session.OnNavigate += route => Console.WriteLine("Session.OnNavigate " + route); 
-        Culture = Session.SessionCulture?.ToString() ?? "";
+        Culture = Session.SessionCulture.ToString();
     }
 
     public override void OnUpdateTimer()
@@ -184,7 +184,7 @@ END:VCALENDAR
     {
         if (string.IsNullOrEmpty(Culture))
         {
-            Session.SetSessionCulture(null);
+            Session.SetSessionCulture(CultureInfo.CurrentUICulture);
             return;
         }
 

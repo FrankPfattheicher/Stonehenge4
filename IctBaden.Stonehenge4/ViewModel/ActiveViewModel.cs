@@ -64,7 +64,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
 
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target,
-            DynamicMetaObject errorSuggestion)
+            DynamicMetaObject? errorSuggestion)
         {
             return null!;
         }
@@ -77,19 +77,19 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
 
         public override DynamicMetaObject FallbackSetMember(DynamicMetaObject target, DynamicMetaObject value,
-            DynamicMetaObject errorSuggestion)
+            DynamicMetaObject? errorSuggestion)
         {
-            return null;
+            return null!;
         }
     }
 
     class PropertyDescriptorEx : PropertyDescriptor
     {
         private readonly string _propertyName;
-        private readonly PropertyDescriptor _originalDescriptor;
+        private readonly PropertyDescriptor? _originalDescriptor;
         private readonly bool _readOnly;
 
-        internal PropertyDescriptorEx(string name, PropertyInfo info, bool readOnly)
+        internal PropertyDescriptorEx(string name, PropertyInfo? info, bool readOnly)
             : base(name, null)
         {
             _propertyName = name;
@@ -99,7 +99,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         public override AttributeCollection Attributes => _originalDescriptor?.Attributes ?? base.Attributes;
 
-        public override object GetValue(object component)
+        public override object? GetValue(object? component)
         {
             if (!(component is DynamicObject dynComponent))
                 return _originalDescriptor?.GetValue(component);
@@ -109,7 +109,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
                 : _originalDescriptor?.GetValue(component);
         }
 
-        public override void SetValue(object component, object value)
+        public override void SetValue(object? component, object? value)
         {
             if (component is DynamicObject dynComponent)
             {
@@ -125,25 +125,19 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         public override Type PropertyType
             => _originalDescriptor == null ? typeof(object) : _originalDescriptor.PropertyType;
 
-        public override bool CanResetValue(object component)
-        {
-            return _originalDescriptor != null && _originalDescriptor.CanResetValue(component);
-        }
+        public override bool CanResetValue(object component) 
+            => _originalDescriptor != null && _originalDescriptor.CanResetValue(component);
 
         public override Type ComponentType
             => _originalDescriptor == null ? typeof(object) : _originalDescriptor.ComponentType;
 
-        public override void ResetValue(object component)
-        {
-            _originalDescriptor?.ResetValue(component);
-        }
+        public override void ResetValue(object component) 
+            => _originalDescriptor?.ResetValue(component);
 
-        public override bool ShouldSerializeValue(object component)
-        {
-            return _originalDescriptor != null && _originalDescriptor.ShouldSerializeValue(component);
-        }
+        public override bool ShouldSerializeValue(object component) 
+            => _originalDescriptor != null && _originalDescriptor.ShouldSerializeValue(component);
 
-        private static PropertyDescriptor FindOrigPropertyDescriptor(PropertyInfo propertyInfo)
+        private static PropertyDescriptor? FindOrigPropertyDescriptor(PropertyInfo? propertyInfo)
         {
             return propertyInfo == null || propertyInfo.DeclaringType == null
                 ? null
@@ -171,8 +165,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region properties
 
-    private readonly Dictionary<string, List<string>> _dependencies = new Dictionary<string, List<string>>();
-    private readonly Dictionary<string, object> _dictionary = new Dictionary<string, object>();
+    private readonly Dictionary<string, List<string>> _dependencies = new();
+    private readonly Dictionary<string, object?> _dictionary = new();
 
     [Browsable(false)] internal int Count => GetProperties().Count;
 
@@ -180,9 +174,9 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     [Browsable(false)] public bool SupportsEvents;
 
     // ReSharper disable InconsistentNaming
-    [Bindable(false)] public string _stonehenge_CommandSenderName_ { get; set; }
+    [Bindable(false)] public string _stonehenge_CommandSenderName_ { get; set; } = string.Empty;
 
-    private Timer _updateTimer;
+    private Timer? _updateTimer;
 
     public string GetCommandSenderName()
     {
@@ -196,7 +190,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
     }
 
-    public ActiveViewModel(AppSession session)
+    public ActiveViewModel(AppSession? session)
     {
         SupportsEvents = (session != null);
         Session = session ?? new AppSession();
@@ -228,22 +222,28 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     protected void SetParent(ActiveViewModel parent)
     {
-        PropertyChanged += (_, args) => parent.NotifyPropertyChanged(args.PropertyName);
+        PropertyChanged += (_, args) =>
+        {
+            if (!string.IsNullOrEmpty(args.PropertyName))
+            {
+                parent.NotifyPropertyChanged(args.PropertyName);
+            }
+        };
     }
 
-    public object TryGetMember(string name)
+    public object? TryGetMember(string name)
     {
         TryGetMember(new GetMemberBinderEx(name), out var result);
         return result;
     }
 
-    public void TrySetMember(string name, object value)
+    public void TrySetMember(string name, object? value)
     {
         TrySetMember(new SetMemberBinderEx(name), value);
     }
 
     [Browsable(false)]
-    protected object this[string name]
+    protected object? this[string name]
     {
         get => TryGetMember(name);
         set => TrySetMember(name, value);
@@ -263,13 +263,13 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return _dictionary.Select(e => e.Key);
     }
 
-    private PropertyInfoEx GetPropertyInfoEx(string name)
+    private PropertyInfoEx? GetPropertyInfoEx(string name)
     {
         var pi = GetType().GetProperty(name);
         return pi != null ? new PropertyInfoEx(pi, this, false) : null;
     }
 
-    public PropertyInfo GetPropertyInfo(string name)
+    public PropertyInfo? GetPropertyInfo(string name)
     {
         var infoEx = GetPropertyInfoEx(name);
         return infoEx?.Info;
@@ -281,7 +281,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return (infoEx == null) || infoEx.ReadOnly;
     }
 
-    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
         var pi = GetPropertyInfoEx(binder.Name);
         if (pi != null)
@@ -294,7 +294,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return _dictionary.TryGetValue(binder.Name, out result);
     }
 
-    public override bool TrySetMember(SetMemberBinder binder, object value)
+    public override bool TrySetMember(SetMemberBinder binder, object? value)
     {
         var pi = GetPropertyInfoEx(binder.Name);
         if (pi != null)
@@ -320,12 +320,12 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public string GetClassName()
     {
-        return TypeDescriptor.GetClassName(this, true);
+        return TypeDescriptor.GetClassName(this, true) ?? string.Empty;
     }
 
     public string GetComponentName()
     {
-        return TypeDescriptor.GetComponentName(this, true);
+        return TypeDescriptor.GetComponentName(this, true) ?? string.Empty;
     }
 
     public TypeConverter GetConverter()
@@ -333,22 +333,22 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return TypeDescriptor.GetConverter(this, true);
     }
 
-    public EventDescriptor GetDefaultEvent()
+    public EventDescriptor? GetDefaultEvent()
     {
         return TypeDescriptor.GetDefaultEvent(this, true);
     }
 
-    public PropertyDescriptor GetDefaultProperty()
+    public PropertyDescriptor? GetDefaultProperty()
     {
         return TypeDescriptor.GetDefaultProperty(this, true);
     }
 
-    public object GetEditor(Type editorBaseType)
+    public object? GetEditor(Type editorBaseType)
     {
         return TypeDescriptor.GetEditor(this, editorBaseType, true);
     }
 
-    public EventDescriptorCollection GetEvents(Attribute[] attributes)
+    public EventDescriptorCollection GetEvents(Attribute[]? attributes)
     {
         return TypeDescriptor.GetEvents(this, attributes, true);
     }
@@ -358,7 +358,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return TypeDescriptor.GetEvents(this, true);
     }
 
-    private PropertyDescriptorCollection properties;
+    private PropertyDescriptorCollection? properties;
 
     public PropertyDescriptorCollection GetProperties()
     {
@@ -411,9 +411,9 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return properties;
     }
 
-    private PropertyDescriptorCollection propertiesAttribute;
+    private PropertyDescriptorCollection? propertiesAttribute;
 
-    public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+    public PropertyDescriptorCollection GetProperties(Attribute[]? attributes)
     {
         if (propertiesAttribute != null)
             return propertiesAttribute;
@@ -424,7 +424,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return propertiesAttribute;
     }
 
-    public object GetPropertyOwner(PropertyDescriptor pd)
+    public object GetPropertyOwner(PropertyDescriptor? pd)
     {
         return this;
     }
@@ -433,7 +433,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region INotifyPropertyChanged
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private void ExecuteHandler(PropertyChangedEventHandler handler, string name)
     {
@@ -489,9 +489,12 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public void NotifyAllPropertiesChanged()
     {
-        foreach (PropertyDescriptorEx prop in properties)
+        if(properties != null)
         {
-            NotifyPropertyChanged(prop.Name);
+            foreach (PropertyDescriptorEx prop in properties)
+            {
+                NotifyPropertyChanged(prop.Name);
+            }
         }
 
         Session.UpdatePropertiesImmediately();
@@ -501,8 +504,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region MessageBox
 
-    public string MessageBoxTitle;
-    public string MessageBoxText;
+    public string MessageBoxTitle = string.Empty;
+    public string MessageBoxText = string.Empty;
 
     public void MessageBox(string title, string text)
     {
@@ -526,7 +529,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region Server side navigation
 
-    public string NavigateToRoute;
+    public string NavigateToRoute = string.Empty;
 
     public void NavigateTo(string route)
     {
@@ -554,7 +557,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region Client site scripting
 
-    public string ClientScript;
+    public string ClientScript = string.Empty;
 
     public void ExecuteClientScript(string script)
     {
@@ -589,17 +592,17 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #endregion
 
-    public virtual Resource GetDataResource(string resourceName)
+    public virtual Resource? GetDataResource(string resourceName)
     {
         return null;
     }
 
-    public virtual Resource GetDataResource(string resourceName, Dictionary<string, string> parameters)
+    public virtual Resource? GetDataResource(string resourceName, Dictionary<string, string> parameters)
     {
         return null;
     }
 
-    public virtual Resource PostDataResource(string resourceName, Dictionary<string, string> parameters,
+    public virtual Resource? PostDataResource(string resourceName, Dictionary<string, string> parameters,
         Dictionary<string, string> formData)
     {
         return null;
@@ -630,13 +633,10 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         _updateTimer = null;
     }
 
-    private void UpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private void UpdateTimerOnElapsed(object? sender, ElapsedEventArgs e)
     {
-        if(Session.SessionCulture != null)
-        {
-            Thread.CurrentThread.CurrentCulture = Session.SessionCulture;
-            Thread.CurrentThread.CurrentUICulture = Session.SessionCulture;
-        }
+        Thread.CurrentThread.CurrentCulture = Session.SessionCulture;
+        Thread.CurrentThread.CurrentUICulture = Session.SessionCulture;
         OnUpdateTimer();
     }
         

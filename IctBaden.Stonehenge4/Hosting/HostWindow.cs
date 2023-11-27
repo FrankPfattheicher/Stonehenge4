@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Web;
+// ReSharper disable NotAccessedField.Global
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable CommentTypo
 // ReSharper disable StringLiteralTypo
@@ -15,10 +16,10 @@ namespace IctBaden.Stonehenge.Hosting
         private readonly string _title;
         private readonly Point _windowSize;
         private readonly string _startUrl;
-        private Process _ui;
+        private Process? _ui;
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public string LastError;
+        public string LastError = string.Empty;
         public int ProcessId => _ui?.Id ?? 0;
         public IntPtr MainWindowHandle => _ui?.MainWindowHandle ?? IntPtr.Zero;
 
@@ -63,7 +64,7 @@ namespace IctBaden.Stonehenge.Hosting
         public HostWindow(string startUrl, string title, Point windowSize)
         {
             _startUrl = startUrl;
-            _title = title ?? Assembly.GetEntryAssembly()?.GetName().Name ?? "";
+            _title = title;
             _windowSize = windowSize;
 
             AppDomain.CurrentDomain.ProcessExit += (_, _) => { Dispose(); };
@@ -149,6 +150,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -178,6 +180,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -214,6 +217,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -240,6 +244,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -265,6 +270,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -291,6 +297,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -315,6 +322,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }
@@ -342,6 +350,7 @@ namespace IctBaden.Stonehenge.Hosting
             catch (Exception ex)
             {
                 LastError = ex.Message;
+                Debugger.Break();
                 return false;
             }
         }

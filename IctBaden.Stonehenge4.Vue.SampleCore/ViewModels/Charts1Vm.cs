@@ -23,7 +23,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public int RangeMax { get; } = 40;
 
         
-        public Chart TrendChart { get; private set; }
+        public Chart? TrendChart { get; private set; }
         public PieChart PieChart { get; }
 
         public Charts1Vm(AppSession session) : base(session)
@@ -69,6 +69,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         [ActionMethod]
         public void RangeChanged()
         {
+            if (TrendChart == null) return;
+            
             var newData = new object[] { 10, 12, 15, 14, 13, 20, 22, 25 }
                 .Concat(new object[] { Range })
                 .ToArray();

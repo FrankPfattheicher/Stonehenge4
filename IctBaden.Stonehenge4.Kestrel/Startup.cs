@@ -21,7 +21,7 @@ namespace IctBaden.Stonehenge.Kestrel
         private readonly ILogger _logger;
         private readonly IStonehengeResourceProvider _resourceLoader;
         public readonly List<AppSession> AppSessions = new();
-        private readonly StonehengeHostOptions _options;
+        private readonly StonehengeHostOptions? _options;
 
         // ReSharper disable once UnusedMember.Global
         public Startup(ILogger logger, IConfiguration configuration, IStonehengeResourceProvider resourceLoader)
@@ -62,7 +62,7 @@ namespace IctBaden.Stonehenge.Kestrel
                 context.Items.Add("stonehenge.AppSessions", AppSessions);
                 return next.Invoke();
             });
-            if (_options.CustomMiddleware != null)
+            if (_options?.CustomMiddleware != null)
             {
                 foreach (var cm in _options.CustomMiddleware)
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,15 +27,15 @@ namespace IctBaden.Stonehenge.Kestrel;
 
 public class KestrelHost : IStonehengeHost
 {
-    public string BaseUrl { get; private set; }
-    private IWebHost _webApp;
-    private Task _host;
-    private CancellationTokenSource _cancel;
+    public string BaseUrl { get; private set; } = string.Empty;
+    private IWebHost? _webApp;
+    private Task? _host;
+    private CancellationTokenSource? _cancel;
 
     private readonly IStonehengeResourceProvider _resourceProvider;
     private readonly StonehengeHostOptions _options;
     private readonly ILogger _logger;
-    private Startup _startup;
+    private Startup? _startup;
 
     public KestrelHost(IStonehengeResourceProvider provider)
         : this(provider, new StonehengeHostOptions())
@@ -70,8 +71,11 @@ public class KestrelHost : IStonehengeHost
             throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">" + 
                                             Environment.NewLine + "AppContext=" + ctx);
         }
-            
-        provider.InitProvider(provider as StonehengeResourceLoader, options);
+
+        if (provider is StonehengeResourceLoader loader)
+        {
+            provider.InitProvider(loader, options);
+        }
     }
 
     public bool Start(string hostAddress, int hostPort)
@@ -223,8 +227,10 @@ public class KestrelHost : IStonehengeHost
             }
 
             _logger.LogError("KestrelHost.Start: " + message);
-            _host.Dispose();
+            _host?.Dispose();
             _host = null;
+            
+            Debugger.Break();
         }
 
         return _host != null;
@@ -244,6 +250,7 @@ public class KestrelHost : IStonehengeHost
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            Debugger.Break();
         }
 
         try
@@ -255,6 +262,7 @@ public class KestrelHost : IStonehengeHost
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            Debugger.Break();
         }
 
         _logger.LogInformation("KestrelHost.Terminate: Terminated");
@@ -270,7 +278,7 @@ public class KestrelHost : IStonehengeHost
         var sessions = _startup?.AppSessions;
         if (sessions == null) return;
             
-        foreach (var viewModel in sessions.Select(session => session?.ViewModel as ActiveViewModel))
+        foreach (var viewModel in sessions.Select(session => session.ViewModel as ActiveViewModel))
         {
             viewModel?.EnableRoute(route, enabled);
         }

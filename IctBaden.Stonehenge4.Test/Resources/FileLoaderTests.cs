@@ -14,7 +14,7 @@ namespace IctBaden.Stonehenge.Test.Resources
         private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
         private readonly FileLoader _loader;
         private readonly AppSession _session = new AppSession();
-        private string _fullFileName;
+        private string? _fullFileName;
 
         public FileLoaderTests()
         {
@@ -79,7 +79,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/png", resource.ContentType);
             Assert.True(resource.IsBinary);
-            Assert.Equal(16, resource.Data.Length);
+            Assert.Equal(16, resource.Data!.Length);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace IctBaden.Stonehenge.Test.Resources
             Assert.NotNull(resource);
             Assert.Equal("image/jpeg", resource.ContentType);
             Assert.True(resource.IsBinary);
-            Assert.Equal(16, resource.Data.Length);
+            Assert.Equal(16, resource.Data!.Length);
         }
 
         [Fact]

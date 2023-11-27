@@ -5,15 +5,11 @@ namespace IctBaden.Stonehenge.Test.Hosting
 {
     public class RedirectableWebClient : IDisposable
     {
-        private readonly HttpClient _client;
-        public RedirectableWebClient()
-        {
-            _client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
-        }
-        
+        private readonly HttpClient _client = new(new HttpClientHandler { AllowAutoRedirect = true });
+
         public void Dispose()
         {
-            _client?.Dispose();
+            _client.Dispose();
         }
         
         

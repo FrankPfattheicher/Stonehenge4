@@ -9,12 +9,7 @@ namespace IctBaden.Stonehenge.Vue.Test.Content;
 public class UserContentTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
-    private readonly VueTestApp _app;
-
-    public UserContentTests()
-    {
-        _app = new VueTestApp();
-    }
+    private readonly VueTestApp _app = new();
 
     public void Dispose()
     {
