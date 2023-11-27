@@ -44,7 +44,7 @@ public class VueResourceProvider : IStonehengeResourceProvider
 
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
-        _vueContent = new Dictionary<string, Resource>();
+        _vueContent.Clear();
 
         if (loader.Providers
                 .FirstOrDefault(p => p.GetType() == typeof(ResourceLoader)) is ResourceLoader resourceLoader)

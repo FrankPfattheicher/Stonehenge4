@@ -83,7 +83,7 @@ internal class VueAppCreator
         const string pageTemplate = "{{ path: '{0}', name: '{1}', title: '{2}', component: () => Promise.resolve(stonehengeLoadComponent('{3}')), visible: {4} }}";
 
         var contentPages = _vueContent
-            .Where(res => res.Value.ViewModel?.ElementName == null)
+            .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
             .Select(res => new {res.Value.Name, Vm = res.Value.ViewModel})
             .OrderBy(route => Math.Abs(route.Vm!.SortIndex))
             .ToList();
@@ -172,6 +172,7 @@ internal class VueAppCreator
                 catch(Exception ex)
                 {
                     _logger.LogError($"VueAppCreator.CreateComponents: {viewModel.ViewModel.VmName} EXCEPTION: {ex.Message}");
+                    Debugger.Break();
                 }
             }
         }
@@ -343,7 +344,7 @@ internal class VueAppCreator
     public async Task<List<string>> CreateElements()
     {
         var customElements = _vueContent
-            .Where(res => res.Value.ViewModel?.ElementName != null)
+            .Where(res => !string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
             .Select(res => res.Value)
             .Distinct()
             .ToList();
@@ -351,26 +352,34 @@ internal class VueAppCreator
         var elements = new List<string>();
         foreach (var element in customElements)
         {
-            var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName);
+            try
+            {
+                var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName);
                 
-            var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
-            elementJs = elementJs.Replace("stonehengeViewModelName", source);
+                var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
+                elementJs = elementJs.Replace("stonehengeViewModelName", source);
 
-            var bindings = element.ViewModel?.Bindings.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
-            elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
+                var bindings = element.ViewModel?.Bindings.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
+                elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
 
-            var template = await LoadResourceText($"{source}.html");
-            template = JsonSerializer.Serialize(template);
-            elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
+                var template = await LoadResourceText($"{source}.html");
+                template = JsonSerializer.Serialize(template);
+                elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
 
-            var methods = await LoadResourceText($"{source}.js");
-            if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
-            elementJs = elementJs.Replace("//stonehengeElementMethods", methods);
+                var methods = await LoadResourceText($"{source}.js");
+                if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
+                elementJs = elementJs.Replace("//stonehengeElementMethods", methods);
 
-            elements.Add(elementJs);
+                elements.Add(elementJs);
 
-            var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs, Resource.Cache.Revalidate);
-            _vueContent.Add(resource.Name, resource);
+                var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs, Resource.Cache.Revalidate);
+                _vueContent.Add(resource.Name, resource);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"VueAppCreator.CreateComponents: {element.Name} EXCEPTION: {ex.Message}");
+                Debugger.Break();
+            }
         }
 
         return elements;
