@@ -95,7 +95,7 @@ public class StonehengeContent
 
             var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
             var parameters = queryString.AllKeys
-                .Where(k => !string.IsNullOrEmpty(k) && !string.IsNullOrEmpty(queryString[k]))
+                .Where(k => !string.IsNullOrEmpty(k))
                 .ToDictionary(key => key!, key => queryString[key]!);
             
             Resource? content = null;

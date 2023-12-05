@@ -28,6 +28,9 @@ public class FormsVm : ActiveViewModel
 
     public int CheckValue { get; set; }
 
+    public string InputParameter { get; private set; } = string.Empty;
+    public string ReceivedParameter { get; private set; } = string.Empty;
+
     
     public string DropEditValue1 { get; set; }
     public string DropEditValue2 { get; set; }
@@ -230,4 +233,11 @@ public class FormsVm : ActiveViewModel
         CheckValue ^= 1 << bit;
     }
 
+    [ActionMethod]
+    public void InputWithParameter(string parameter)
+    {
+        ReceivedParameter = string.IsNullOrEmpty(parameter)
+            ? "EMPTY" : parameter;
+    }
+    
 }

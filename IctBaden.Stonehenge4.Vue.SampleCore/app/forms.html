@@ -173,4 +173,24 @@
     </div>
 
 
+    <div class="col-md-4" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+
+        <h4>
+            ActionMethod with Parameter
+        </h4>
+
+        <p>
+            <label>
+                Input Parameter: 
+                <input v-model="InputParameter" class="form-control" style="width: 8em;"/>
+            </label>
+            &nbsp;&nbsp;
+            <button class="btn btn-sm btn-secondary" @click="InputWithParameter(InputParameter)">Call with Parameter</button>
+            <br>
+            Received Parameter: {{ReceivedParameter}}
+        </p>
+
+    </div>
+
+
 </div>

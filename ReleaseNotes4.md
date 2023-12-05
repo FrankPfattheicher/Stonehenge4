@@ -1,4 +1,5 @@
 
+* 4.6.1 - 05.12.2023 Allow empty query parameters
 * 4.6.0 - 27.11.2023 Nullable enabled
  
 * 4.5.5 - 25.11.2023 Decode user agent, session.OnNavigate, dispose AppSession
