@@ -69,12 +69,13 @@ public class RedirectableHttpClient : HttpClient
 
     public async Task<string> Post(string address, string data)
     {
+        DefaultRequestHeaders.Add("X-Stonehenge-Id", SessionId);
         var response = await PostAsync(address, new StringContent(data));
         var body = response.Content.ReadAsStringAsync().Result;
         response.Dispose();
         return body;
     }
-    
+
     public async Task<string> Put(string address, string data)
     {
         var response = await PutAsync(address, new StringContent(data));
