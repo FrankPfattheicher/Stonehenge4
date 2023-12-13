@@ -1,4 +1,5 @@
 
+* 4.6.2 - 13.12.2023 Fixed session timeout, added pie char sector colors
 * 4.6.1 - 05.12.2023 Allow empty query parameters
 * 4.6.0 - 27.11.2023 Nullable enabled
  
