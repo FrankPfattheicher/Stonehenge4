@@ -1,8 +1,6 @@
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
-using IctBaden.Stonehenge.Vue.Test.ViewModels;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
