@@ -3,6 +3,4 @@ using IctBaden.Stonehenge.Extensions;
 namespace IctBaden.Stonehenge.Extension;
 
 // ReSharper disable once UnusedType.Global
-public class ChartsC3 : IStonehengeExtension
-{
-}
+public class ChartsC3 : IStonehengeExtension;

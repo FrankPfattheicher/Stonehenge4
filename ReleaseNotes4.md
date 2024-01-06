@@ -1,4 +1,5 @@
 
+* 4.6.4 - 06.01.2024 C#12, options with SessionTimeout
 * 4.6.3 - 13.12.2023 Pie chart uses element size
 * 4.6.2 - 13.12.2023 Fixed session timeout, added pie chart sector colors
 * 4.6.1 - 05.12.2023 Allow empty query parameters

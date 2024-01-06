@@ -4,7 +4,7 @@
         <Company>ICT Baden GmbH</Company>
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.Vue</RootNamespace>
         <Nullable>enable</Nullable>

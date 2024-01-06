@@ -3,7 +3,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.App</RootNamespace>
         <Nullable>enable</Nullable>

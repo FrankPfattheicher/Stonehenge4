@@ -6,7 +6,7 @@
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
     <ApplicationIcon>app\favicon.ico</ApplicationIcon>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <PackageIcon>icon64.png</PackageIcon>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge</RootNamespace>

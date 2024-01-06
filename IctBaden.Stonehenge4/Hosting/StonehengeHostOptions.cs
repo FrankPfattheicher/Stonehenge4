@@ -103,7 +103,11 @@ public class StonehengeHostOptions
     /// to set session locale
     /// </summary>
     public bool UseClientLocale { get; set; }
-        
+
+    /// <summary>
+    /// Timeout a session will be terminated without further access.
+    /// </summary>
+    public TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes(15);
         
     /// <summary>
     /// Delay [ms] the client should wait for new poll.
