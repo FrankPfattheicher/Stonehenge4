@@ -26,9 +26,9 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             StonehengeLogger.DefaultLevel = LogLevel.Trace;
             var logger = LoggerFactory.CreateLogger("stonehenge");
 
-            Console.WriteLine(@"");
-            Console.WriteLine(@"Stonehenge 4 Sample");
-            Console.WriteLine(@"");
+            Console.WriteLine();
+            Console.WriteLine("Stonehenge 4 Sample");
+            Console.WriteLine();
             logger.LogInformation("Vue.SampleCore started");
 
             // ReSharper disable once RedundantAssignment
@@ -48,7 +48,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
                 ServerPushMode = ServerPushModes.LongPolling,
                 PollIntervalSec = 10,
                 HandleWindowResized = true,
-                CustomMiddleware = new []{ nameof(StonehengeRawContent) },
+                CustomMiddleware = [nameof(StonehengeRawContent)],
                 UseClientLocale = true,
                 UseKeycloakAuthentication = keycloak
                 // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),

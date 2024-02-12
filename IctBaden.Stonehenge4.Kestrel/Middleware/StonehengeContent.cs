@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -30,18 +29,12 @@ using Microsoft.Net.Http.Headers;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-[SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
-public class StonehengeContent
+public class StonehengeContent(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
 
     // ReSharper disable once UnusedMember.Global
-    public StonehengeContent(RequestDelegate next)
-    {
-        _next = next;
-    }
 
     // ReSharper disable once UnusedMember.Global
     public Task Invoke(HttpContext context)
@@ -152,8 +145,9 @@ public class StonehengeContent
                         }
                     }
 
-                    Console.WriteLine(result);
+                    logger.LogTrace("Auth result: {Result}", result);
                 }
+                
                 else
                 {
                     var newSession =
@@ -163,8 +157,7 @@ public class StonehengeContent
                 }
             }
 
-            if (appSession != null
-                && appSession.HostOptions.UseKeycloakAuthentication == null
+            if (appSession is { HostOptions.UseKeycloakAuthentication: null }
                 && string.IsNullOrEmpty(appSession.UserIdentity))
             {
                 SetUserNameFromContext(appSession, context);
@@ -312,7 +305,7 @@ public class StonehengeContent
 
             if (content == null)
             {
-                await _next.Invoke(context);
+                await next.Invoke(context);
                 return;
             }
 

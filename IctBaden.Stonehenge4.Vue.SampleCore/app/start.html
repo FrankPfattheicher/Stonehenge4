@@ -154,10 +154,13 @@
                 Users
             </h4>
             <p>
-                <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+                Current User <b>{{UserIdentity}}</b> 
             </p>
             <p>
                 <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+            </p>
+            <p>
+                <button class="btn btn-sm btn-secondary" @click="UserLogout()">Logout</button>
             </p>
 
         </div>
