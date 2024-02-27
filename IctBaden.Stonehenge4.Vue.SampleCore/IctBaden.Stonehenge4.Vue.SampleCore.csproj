@@ -69,7 +69,6 @@
     <None Remove="app\forms.html" />
     <EmbeddedResource Include="app\forms.html" />
     <None Remove="app\index.html" />
-    <EmbeddedResource Include="app\index.html" />
     <EmbeddedResource Include="app\mermaidview.html" />
     <None Remove="app\mermaidview.html" />
   </ItemGroup>
