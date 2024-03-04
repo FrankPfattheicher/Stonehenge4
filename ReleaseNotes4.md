@@ -1,4 +1,5 @@
 
+* 4.6.7 - 04.03.2024 CSS display st-nav '' or 'none'
 * 4.6.6 - 27.02.2024 Added UserContentLinks.AddStyleSheet, removing sample custom index.html
 * 4.6.5 - 24.02.2024 On error hide nav bar and reload page
 * 4.6.4 - 06.01.2024 C#12, options with SessionTimeout
