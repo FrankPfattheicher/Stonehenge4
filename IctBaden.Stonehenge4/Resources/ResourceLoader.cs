@@ -112,7 +112,7 @@ public class ResourceLoader : IStonehengeResourceProvider
             var asmResource = new AssemblyResource(resource, shortName, assembly);
             if (!dict.ContainsKey(resourceId))
             {
-                _logger.LogDebug($"ResourceLoader.AddAssemblyResources: Added {shortName}");
+                _logger.LogDebug("ResourceLoader.AddAssemblyResources: Added {ShortName}", shortName);
                 dict.Add(resourceId, asmResource);
             }
         }
@@ -142,7 +142,7 @@ public class ResourceLoader : IStonehengeResourceProvider
             
         if (asmResource.Key == null)
         {
-            _logger.LogInformation($"ResourceLoader({resourceName}): not found");
+            _logger.LogInformation("ResourceLoader({ResourceName}): not found", resourceName);
             return Task.FromResult<Resource?>(null);
         }
 
@@ -159,31 +159,29 @@ public class ResourceLoader : IStonehengeResourceProvider
                     using (var reader = new BinaryReader(stream))
                     {
                         var data = reader.ReadBytes((int)stream.Length);
-                        _logger.LogDebug($"ResourceLoader({resourceName}): {asmResource.Value.FullName}");
+                        _logger.LogDebug("ResourceLoader({ResourceName}): {FullName}", resourceName, asmResource.Value.FullName);
                         return Task.FromResult<Resource?>(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, data, Resource.Cache.Revalidate));
                     }
                 }
-                else
+
+                // ReSharper disable once ConvertToUsingDeclaration
+                using (var reader = new StreamReader(stream))
                 {
-                    // ReSharper disable once ConvertToUsingDeclaration
-                    using (var reader = new StreamReader(stream))
+                    var text = reader.ReadToEnd();
+                    _logger.LogDebug("ResourceLoader({ResourceName}): {FullName}", resourceName, asmResource.Value.FullName);
+                    if (resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var text = reader.ReadToEnd();
-                        _logger.LogDebug($"ResourceLoader({resourceName}): {asmResource.Value.FullName}");
-                        if (resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            text = UserContentLinks.InsertUserCssLinks(AppAssembly, "", text,session?.SubDomain ?? "");
-                            text = UserContentLinks.InsertUserJsLinks(AppAssembly, "", text);
-                            text = UserContentLinks.InsertExtensionLinks(ResourceAssemblies, text);
-                        }
-                        text = text.Replace("{.min}", (session?.IsDebug ?? false) ? "" : ".min");
-                        return Task.FromResult<Resource?>(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, text, Resource.Cache.Revalidate));
+                        var theme = session?.SubDomain ?? string.Empty;
+                        UserContentLinks.InitializeUserContentLinks(AppAssembly, ResourceAssemblies, string.Empty, theme);
+                        text = UserContentLinks.InsertUserLinks(text,theme);
                     }
+                    text = text.Replace("{.min}", (session?.IsDebug ?? false) ? "" : ".min");
+                    return Task.FromResult<Resource?>(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, text, Resource.Cache.Revalidate));
                 }
             }
         }
 
-        _logger.LogInformation($"ResourceLoader({resourceName}): not found");
+        _logger.LogInformation("ResourceLoader({ResourceName}): not found", resourceName);
         return Task.FromResult<Resource?>(null);
     }
     

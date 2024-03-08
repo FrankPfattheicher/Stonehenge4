@@ -1,4 +1,6 @@
 
+* 4.7.0 - 08.03.2024 Fixed memory leak and improved UserContentLinks
+
 * 4.6.8 - 08.03.2024 Fixed "No VM for type  defined."
 * 4.6.7 - 04.03.2024 CSS display st-nav '' or 'none'
 * 4.6.6 - 27.02.2024 Added UserContentLinks.AddStyleSheet, removing sample custom index.html

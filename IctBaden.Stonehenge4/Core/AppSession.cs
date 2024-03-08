@@ -325,6 +325,13 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             if (string.IsNullOrEmpty(HostDomain))
                 return string.Empty;
 
+            var port = HostDomain.Split(':');
+            if (port.Length > 1)
+            {
+                if(IPAddress.TryParse(port[0], out _))
+                    return string.Empty;
+            }
+            
             var parts = HostDomain.Split('.');
             if (parts.Length == 1) return string.Empty;
 

@@ -18,7 +18,10 @@ public static class UserContentLinks
     private const string JsLinkTemplate = "<script type='application/javascript' src='{0}'></script>";
 
     private static readonly Dictionary<string, string> StyleSheets = new();
+    private static readonly List<string> ThemeInitialized = new();
     private static readonly string AppPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
+    private static string _userJs = string.Empty;
+    private static string _extensions = string.Empty;
 
     public static void AddStyleSheet(string theme, string css)
     {
@@ -26,7 +29,21 @@ public static class UserContentLinks
         StyleSheets.TryAdd(theme, link);
     }
 
-    public static string InsertUserCssLinks(Assembly appAssembly, string appFilesPath, string text, string theme)
+    public static void InitializeUserContentLinks(Assembly appAssembly, List<Assembly> resourceAssemblies, string appFilesPath, string theme)
+    {
+        if (ThemeInitialized.Contains(theme)) return;
+        CreateUserCssLinks(appAssembly, appFilesPath, theme);
+        CreateUserJsLinks(appAssembly, appFilesPath);
+        CreateExtensionLinks(resourceAssemblies);
+        ThemeInitialized.Add(theme);
+    }
+
+    public static string InsertUserLinks(string text, string theme) =>
+        text.Replace(CssInsertPoint, StyleSheets[theme])
+            .Replace(JsUserScriptsInsertPoint, _userJs)
+            .Replace(ExtensionsInsertPoint, _extensions);
+
+    private static void CreateUserCssLinks(Assembly appAssembly, string appFilesPath, string theme)
     {
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
         var styleSheets = StyleSheets.ContainsKey(theme)
@@ -78,20 +95,18 @@ public static class UserContentLinks
         else
             StyleSheets.TryAdd(theme, styleSheets);
 
-        return text.Replace(CssInsertPoint, StyleSheets[theme]);
+        
     }
 
-    public static string InsertUserJsLinks(Assembly userAssembly, string appFilesPath, string text)
+    private static void CreateUserJsLinks(Assembly userAssembly, string appFilesPath)
     {
-        var scripts = string.Empty;
-
         var path = Path.Combine(appFilesPath, "scripts");
         if (Directory.Exists(path))
         {
             var links = Directory.GetFiles(path, "*.js", SearchOption.AllDirectories)
                 .Select(dir => string.Format(JsLinkTemplate,
                     dir.Substring(dir.IndexOf(AppPath, StringComparison.InvariantCulture) + 1).Replace('\\', '/')));
-            scripts = string.Join(Environment.NewLine, links);
+            _userJs = string.Join(Environment.NewLine, links);
         }
 
         const string resourceBaseName = ".app.";
@@ -104,16 +119,12 @@ public static class UserContentLinks
             var js = ResourceLoader.GetShortResourceName(userAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/")
                 .Replace("/js", ".js");
-            scripts += Environment.NewLine + string.Format(JsLinkTemplate, js);
+            _userJs += Environment.NewLine + string.Format(JsLinkTemplate, js);
         }
-
-        return text.Replace(JsUserScriptsInsertPoint, scripts);
     }
 
-    public static string InsertExtensionLinks(List<Assembly> assemblies, string text)
+    private static void CreateExtensionLinks(List<Assembly> assemblies)
     {
-        var scripts = string.Empty;
-
         const string resourceBaseName = ".app.";
         const string baseNameSrc = resourceBaseName + "src.";
         foreach (var assembly in assemblies)
@@ -137,7 +148,7 @@ public static class UserContentLinks
                     js = js.Replace(".js", "{.min}.js");
                 }
 
-                scripts += Environment.NewLine + string.Format(JsLinkTemplate, js);
+                _extensions += Environment.NewLine + string.Format(JsLinkTemplate, js);
             }
 
             var cssResources = resources
@@ -154,10 +165,9 @@ public static class UserContentLinks
                     css = css.Replace(".css", "{.min}.css");
                 }
 
-                scripts += Environment.NewLine + string.Format(CssLinkTemplate, css);
+                _extensions += Environment.NewLine + string.Format(CssLinkTemplate, css);
             }
         }
-
-        return text.Replace(ExtensionsInsertPoint, scripts);
     }
+    
 }
