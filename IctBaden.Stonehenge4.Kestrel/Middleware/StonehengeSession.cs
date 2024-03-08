@@ -47,15 +47,9 @@ internal static class HttpContextExtensions
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class StonehengeSession
+public class StonehengeSession(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
     // ReSharper disable once UnusedMember.Global
-    public StonehengeSession(RequestDelegate next)
-    {
-        _next = next;
-    }
 
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
@@ -70,7 +64,7 @@ public class StonehengeSession
         if (path.ToLower().Contains("/user/"))
         {
             logger.LogTrace($"Kestrel Begin USER {context.Request.Method} {path}");
-            await _next.Invoke(context);
+            await next.Invoke(context);
             logger.LogTrace($"Kestrel End USER {context.Request.Method} {path}");
             return;
         }
@@ -169,7 +163,7 @@ public class StonehengeSession
         else
         {
             context.Items.Add("stonehenge.AppSession", session);
-            await _next.Invoke(context);
+            await next.Invoke(context);
         }
 
         timer.Stop();
