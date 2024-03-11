@@ -95,20 +95,21 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
 
         if (session?.ViewModel == null)
         {
-            logger.LogWarning($"ViewModelProvider: Set VM={vmTypeName}, no current VM");
+            logger.LogWarning("ViewModelProvider: Set VM={VmTypeName}, no current VM", vmTypeName);
             session?.SetViewModelType(vmTypeName);
         }
 
         foreach (var (key, value) in formData)
         {
-            logger.LogDebug($"ViewModelProvider: Set {key}={value}");
+            logger.LogDebug("ViewModelProvider: Set {Key}={Value}", key, value);
             SetPropertyValue(logger, session?.ViewModel, key, value);
         }
 
         var vmType = session?.ViewModel?.GetType();
         if (vmType?.Name != vmTypeName)
         {
-            logger.LogWarning($"ViewModelProvider: Request for VM={vmTypeName}, current VM={vmType?.Name}");
+            logger.LogWarning("ViewModelProvider: Request for VM={VmTypeName}, current VM={CurrentVmTypeName}",
+                vmTypeName, vmType?.Name);
             return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
                 "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
         }
@@ -116,7 +117,8 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         var method = vmType.GetMethod(methodName);
         if (method == null)
         {
-            logger.LogWarning($"ViewModelProvider: ActionMethod {methodName} not found.");
+            logger.LogWarning("ViewModelProvider: ActionMethod {MethodName} not found", methodName);
+            Debugger.Break();
             return Task.FromResult<Resource?>(null);
         }
 
@@ -146,11 +148,10 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         {
             if (ex.InnerException != null) ex = ex.InnerException;
 
-            logger.LogError(
-                $"ViewModelProvider: ActionMethod {methodName} has {method.GetParameters().Length} params.");
-            logger.LogError($"ViewModelProvider: Called with {parameters.Count} params.");
-            logger.LogError("ViewModelProvider: " + ex.Message);
-            logger.LogError("ViewModelProvider: " + ex.StackTrace);
+            logger.LogError("ViewModelProvider: ActionMethod {MethodName} has {Count} params",
+                methodName, method.GetParameters().Length);
+            logger.LogError("ViewModelProvider: Called with {Count} params: {Message}\r\n{StackTrace}",
+                parameters.Count, ex.Message, ex.StackTrace);
 
             Debugger.Break();
 
@@ -210,7 +211,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
             return true;
         }
 
-        logger.LogError("Could not set ViewModel type to " + vmTypeName);
+        logger.LogError("Could not set ViewModel type to {VmTypeName}", vmTypeName);
         return false;
     }
 
@@ -414,7 +415,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializeStructValue: " + ex.Message);
+            logger.LogError("DeserializeStructValue: {Message}", ex.Message);
             Debugger.Break();
         }
     }
@@ -491,7 +492,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializePropertyValue: " + ex.Message);
+            logger.LogError("DeserializePropertyValue: {Message}", ex.Message);
             Debugger.Break();
         }
 
@@ -545,7 +546,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         }
         catch (Exception ex)
         {
-            logger.LogError($"SetPropertyValue({propName}): " + ex.Message);
+            logger.LogError("SetPropertyValue({PropName}): {Message}", propName, ex.Message);
             Debugger.Break();
         }
     }
@@ -558,7 +559,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         watch.Start();
 
         var ty = viewModel.GetType();
-        logger.LogDebug("ViewModelProvider: ViewModel=" + ty.Name);
+        logger.LogDebug("ViewModelProvider: ViewModel={VmTypeName}", ty.Name);
 
         var data = new List<string>();
         var context = "";
@@ -589,9 +590,8 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         }
         catch (Exception ex)
         {
-            logger.LogError($"Exception serializing ViewModel({ty.Name}) : {context}");
-            logger.LogError(ex.Message);
-            logger.LogError(ex.StackTrace);
+            logger.LogError("Exception serializing ViewModel({VmTypeName}) {Context} : {Message}\r\n{StackTrace}", 
+                ty.Name, context, ex.Message, ex.StackTrace);
 
             Debugger.Break();
 
@@ -606,7 +606,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         var json = "{" + string.Join(",", data) + "}";
 
         watch.Stop();
-        logger.LogTrace($"GetViewModelJson: {watch.ElapsedMilliseconds}ms");
+        logger.LogTrace("GetViewModelJson: {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
         return json;
     }
 

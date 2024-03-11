@@ -179,8 +179,7 @@ public class StonehengeContent(RequestDelegate next)
                     if (content == null && appSession != null &&
                         resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        logger.LogError(
-                            $"Invalid path in index resource {resourceName} - redirecting to root index");
+                        logger.LogError("Invalid path in index resource {ResourceName} - redirecting to root index", resourceName);
 
                         var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ??
                                                                  string.Empty);
@@ -286,8 +285,7 @@ public class StonehengeContent(RequestDelegate next)
                     catch (Exception ex)
                     {
                         if (ex.InnerException != null) ex = ex.InnerException;
-                        logger.LogError(ex.Message);
-                        logger.LogError(ex.StackTrace);
+                        logger.LogError("Request Exception {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
 
                         var exResource = new Dictionary<string, string>
                         {
@@ -359,11 +357,11 @@ public class StonehengeContent(RequestDelegate next)
         }
         catch (Exception ex)
         {
-            logger.LogError($"StonehengeContent write response: {ex.Message}" + Environment.NewLine + ex.StackTrace);
+            logger.LogError("StonehengeContent write response: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             while (ex.InnerException != null)
             {
                 ex = ex.InnerException;
-                logger.LogError(" + " + ex.Message);
+                logger.LogError("Inner exception: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             }
             Debugger.Break();
         }

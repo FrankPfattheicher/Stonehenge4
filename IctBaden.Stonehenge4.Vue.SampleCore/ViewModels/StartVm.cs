@@ -32,6 +32,7 @@ public class StartVm : ActiveViewModel
     public string UserIdentity => string.IsNullOrEmpty(Session.UserIdentity) ? "<none>" : Session.UserIdentity;
     public string UserIdentityId => Session.UserIdentityId;
     public string UserIdentityEMail => Session.UserIdentityEMail;
+    public int SessionCount => Session.SessionCount;
 
     public bool ShowCookies { get; private set; }
 

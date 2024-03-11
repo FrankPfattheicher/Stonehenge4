@@ -63,9 +63,9 @@ public class StonehengeSession(RequestDelegate next)
 
         if (path.ToLower().Contains("/user/"))
         {
-            logger.LogTrace($"Kestrel Begin USER {context.Request.Method} {path}");
+            logger.LogTrace("Kestrel Begin USER {Method} {Path}", context.Request.Method, path);
             await next.Invoke(context);
-            logger.LogTrace($"Kestrel End USER {context.Request.Method} {path}");
+            logger.LogTrace("Kestrel End USER {Method} {Path}", context.Request.Method, path);
             return;
         }
 
@@ -101,7 +101,7 @@ public class StonehengeSession(RequestDelegate next)
                     .Select(m => m.Groups[1].Value).ToArray();
                 if (ids.Length > 1)
                 {
-                    logger.LogError("Multiple Stonehenge Ids in cookie: " + string.Join(", ", ids));
+                    logger.LogError("Multiple Stonehenge Ids in cookie: {StonehengeIds}", string.Join(", ", ids));
                 }
 
                 if (ids.Length > 0)
@@ -111,8 +111,7 @@ public class StonehengeSession(RequestDelegate next)
             }
         }
 
-        logger.LogTrace(
-            $"Kestrel[{stonehengeId}] Begin {context.Request.Method} {path}{context.Request.QueryString}");
+        logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
 
         CleanupTimedOutSessions(logger, appSessions);
         var session = appSessions.FirstOrDefault(s => s.Id == stonehengeId);
@@ -127,8 +126,7 @@ public class StonehengeSession(RequestDelegate next)
                 : null;
             if (directoryName.Length > 1 && resource == null && stonehengeId != null)
             {
-                logger.LogTrace(
-                    $"Kestrel[{stonehengeId}] Abort {context.Request.Method} {path}{context.Request.QueryString}");
+                logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
                 return;
             }
 
@@ -147,8 +145,7 @@ public class StonehengeSession(RequestDelegate next)
 
                 var remoteIp = context.Connection.RemoteIpAddress;
                 var remotePort = context.Connection.RemotePort;
-                logger.LogTrace(
-                    $"Kestrel[{stonehengeId}] From IP {remoteIp}:{remotePort} - redirect to {session.Id}");
+                logger.LogTrace("Kestrel[{StonehengeId}] From IP {RemoteIp}:{RemotePort} - redirect to {SessionId}", stonehengeId, remoteIp, remotePort, session.Id);
                 return;
             }
         }
@@ -170,16 +167,16 @@ public class StonehengeSession(RequestDelegate next)
 
         if (context.RequestAborted.IsCancellationRequested)
         {
-            logger.LogTrace(
-                $"Kestrel[{stonehengeId}] Canceled {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
+            logger.LogTrace("Kestrel[{StonehengeId}] Canceled {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms", 
+                stonehengeId, context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
             throw new TaskCanceledException();
         }
 
-        logger.LogTrace(
-            $"Kestrel[{stonehengeId}] End {context.Request.Method}={context.Response.StatusCode} {path}, {timer.ElapsedMilliseconds}ms");
+        logger.LogTrace("Kestrel[{StonehengeId}] End {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms",
+            stonehengeId, context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
     }
 
-    private static void CleanupTimedOutSessions(ILogger logger, ICollection<AppSession> appSessions)
+    private static void CleanupTimedOutSessions(ILogger logger, List<AppSession> appSessions)
     {
         var timedOutSessions = appSessions.Where(s => s.IsTimedOut).ToArray();
         foreach (var session in timedOutSessions)
@@ -187,14 +184,18 @@ public class StonehengeSession(RequestDelegate next)
             var vm = session.ViewModel as IDisposable;
             vm?.Dispose();
             session.ViewModel = null;
-            appSessions.Remove(session);
-            logger.LogInformation($"Kestrel Session timed out {session.Id}.");
+            
+            appSessions = appSessions
+                .Where(s => s.Id != session.Id)
+                .ToList();
+ 
+            logger.LogInformation("Kestrel Session timed out {SessionId}", session.Id);
             session.Dispose();
         }
 
         if (timedOutSessions.Any())
         {
-            logger.LogInformation($"Kestrel {appSessions.Count} sessions.");
+            logger.LogInformation("Kestrel {Count} sessions", appSessions.Count);
         }
     }
 
@@ -218,7 +219,7 @@ public class StonehengeSession(RequestDelegate next)
         var hostUrl = $"{context.Request?.Scheme ?? "http"}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
         appSessions.Add(session);
-        logger.LogInformation($"Kestrel New session {session.Id}. {appSessions.Count} sessions.");
+        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
         return session;
     }
 

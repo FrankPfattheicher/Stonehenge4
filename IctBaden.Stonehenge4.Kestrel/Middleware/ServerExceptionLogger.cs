@@ -8,45 +8,38 @@ using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 
-namespace IctBaden.Stonehenge.Kestrel.Middleware
+namespace IctBaden.Stonehenge.Kestrel.Middleware;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+public class ServerExceptionLogger(RequestDelegate next)
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    public class ServerExceptionLogger
+    // ReSharper disable once UnusedMember.Global
+
+    public async Task Invoke(HttpContext context)
     {
-        private readonly RequestDelegate _next;
-
-        // ReSharper disable once UnusedMember.Global
-        public ServerExceptionLogger(RequestDelegate next)
+        var logger = context.Items["stonehenge.Logger"] as ILogger;
+        try
         {
-            _next = next;
+            await next.Invoke(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (TaskCanceledException)
         {
-            var logger = context.Items["stonehenge.Logger"] as ILogger;
-            try
-            {
-                await _next.Invoke(context);
-            }
-            catch (TaskCanceledException)
-            {
-                // ignore
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                if (ex.InnerException != null) message += "; " + ex.InnerException.Message;
-                logger?.LogError($"ServerExceptionHandler: {ex.GetType().Name}(HR=0x{ex.HResult:X8}): {message}" + Environment.NewLine + 
-                                 $"ServerExceptionHandler: StackTrace: {ex.StackTrace}");
-                Debugger.Break();
-                return;
-            }
-            if (context.Response.StatusCode == (int) HttpStatusCode.InternalServerError)
-            {
-                using var reader = new StreamReader(context.Response.Body);
-                var message = await reader.ReadToEndAsync();
-                logger?.LogError($"ServerExceptionHandler: Message: {message}");
-            }
+            // ignore
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            if (ex.InnerException != null) message += "; " + ex.InnerException.Message;
+            logger?.LogError("ServerExceptionHandler: {ExTypeName}(HR=0x{HResult}): {Message}\r\n{StackTrace}",
+                ex.GetType().Name, ex.HResult.ToString("X8"), message, ex.StackTrace);
+            Debugger.Break();
+            return;
+        }
+        if (context.Response.StatusCode == (int) HttpStatusCode.InternalServerError)
+        {
+            using var reader = new StreamReader(context.Response.Body);
+            var message = await reader.ReadToEndAsync();
+            logger?.LogError("ServerExceptionHandler: {Message}", message);
         }
     }
 }

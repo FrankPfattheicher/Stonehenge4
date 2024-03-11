@@ -77,7 +77,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
                 var value = header.Substring(colon + 1).Trim();
                 if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                 {
-                    logger.LogDebug($"Add header: {key}: {value}");
+                    logger.LogDebug("Add header: {Key}: {Value}", key, value);
                     _headers.Add(key, value);
                 }
             }

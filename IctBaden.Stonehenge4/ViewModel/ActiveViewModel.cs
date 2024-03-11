@@ -521,7 +521,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public void EnableRoute(string route, bool enabled)
     {
         route = route.Replace("-", "_");
-        Session.Logger.LogInformation($"ActiveViewModel.EnableRoute({route}) = {enabled}");
+        Session.Logger.LogInformation("ActiveViewModel.EnableRoute({Route}) = {Enabled}", route, enabled);
         ExecuteClientScript($"stonehengeEnableRoute('{route}', {enabled.ToString().ToLower()})");
     }
 
@@ -534,7 +534,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public void NavigateTo(string route)
     {
         if (Session.CurrentRoute == route) return;
-        Session.Logger.LogInformation("ActiveViewModel.NavigateTo: " + route);
+        Session.Logger.LogInformation("ActiveViewModel.NavigateTo: {Route}", route);
         NavigateToRoute = route.StartsWith("http")
             ? route
             : route.Replace("-", "_");
@@ -547,7 +547,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             Session.Logger.LogWarning("ActiveViewModel.NavigateBack: No back route");
             return;
         }
-        Session.Logger.LogInformation("ActiveViewModel.NavigateBack: " + route);
+        Session.Logger.LogInformation("ActiveViewModel.NavigateBack: {Route}", route);
         NavigateToRoute = route.Replace("-", "_");
     }
 

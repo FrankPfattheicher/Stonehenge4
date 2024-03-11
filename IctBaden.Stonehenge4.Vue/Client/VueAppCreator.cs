@@ -153,8 +153,8 @@ internal class VueAppCreator
             
             try
             {
-                _logger.LogInformation(
-                    $"VueAppCreator.CreateComponents: {vmName} => src.{viewModel.Name}.js");
+                _logger.LogInformation("VueAppCreator.CreateComponents: {VmName} => src.{ViewModelName}.js",
+                    vmName, viewModel.Name);
 
                 var name = _appAssembly?.GetManifestResourceNames()
                     .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js"));
@@ -173,8 +173,8 @@ internal class VueAppCreator
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    $"VueAppCreator.CreateComponents: {vmName} EXCEPTION: {ex.Message}");
+                _logger.LogError("VueAppCreator.CreateComponents: {VmName} EXCEPTION: {Message}",
+                    vmName, ex.Message);
                 Debugger.Break();
             }
         }
@@ -207,7 +207,7 @@ internal class VueAppCreator
         var vmType = GetVmType(vmName);
         if (vmType == null)
         {
-            _logger.LogError($"No VM for type {vmName} defined.");
+            _logger.LogError("No VM for type {VmName} defined", vmName);
             return null;
         }
 
@@ -274,7 +274,8 @@ internal class VueAppCreator
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to create ViewModel '{vmType.Name}' : " + ex.Message);
+            _logger.LogError("Failed to create ViewModel '{VmTypeName}' : {Message}", 
+                vmType.Name, ex.Message);
             Debugger.Break();
             return null;
         }
@@ -382,7 +383,8 @@ internal class VueAppCreator
             }
             catch (Exception ex)
             {
-                _logger.LogError($"VueAppCreator.CreateComponents: {element.Name} EXCEPTION: {ex.Message}");
+                _logger.LogError("VueAppCreator.CreateComponents: {ElementName} EXCEPTION: {Message}",
+                    element.Name, ex.Message);
                 Debugger.Break();
             }
         }

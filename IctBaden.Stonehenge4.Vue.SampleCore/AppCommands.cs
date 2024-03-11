@@ -33,8 +33,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore
             var paramWidth = session.Parameters.FirstOrDefault(p => p.Key == "width").Value;
             var paramHeight = session.Parameters.FirstOrDefault(p => p.Key == "height").Value;
             
-            _logger.LogTrace($"AppCommands.WindowResized(URL): width={paramWidth}, height={paramHeight}");
-            _logger.LogTrace($"AppCommands.WindowResized(binding): width={width}, height={height}");
+            _logger.LogTrace("AppCommands.WindowResized(URL): width={ParamWidth}, height={ParamHeight}", paramWidth, paramHeight);
+            _logger.LogTrace("AppCommands.WindowResized(binding): width={Width}, height={Height}", width, height);
 
             var chartVm = session.ViewModel as Charts1Vm;
             chartVm?.ChangeShowStacked();

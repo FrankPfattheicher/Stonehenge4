@@ -181,7 +181,7 @@ namespace IctBaden.Stonehenge.Test.Serializer
             var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(hierarchy));
 
             watch.Stop();
-            _logger.LogTrace($"HierarchicalClassesSerialization: {watch.ElapsedMilliseconds}ms");
+            _logger.LogTrace("HierarchicalClassesSerialization: {ElapsedMilliseconds}ms", watch.ElapsedMilliseconds);
             
             var obj = JsonSerializer.Deserialize<object>(json);
             Assert.NotNull(obj);

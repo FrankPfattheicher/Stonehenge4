@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using IctBaden.Stonehenge.Core;
@@ -20,7 +19,6 @@ namespace IctBaden.Stonehenge.Kestrel
         private readonly string _appTitle;
         private readonly ILogger _logger;
         private readonly IStonehengeResourceProvider _resourceLoader;
-        public readonly List<AppSession> AppSessions = new();
         private readonly StonehengeHostOptions? _options;
 
         // ReSharper disable once UnusedMember.Global
@@ -59,7 +57,7 @@ namespace IctBaden.Stonehenge.Kestrel
                 context.Items.Add("stonehenge.AppTitle", _appTitle);
                 context.Items.Add("stonehenge.HostOptions", _options);
                 context.Items.Add("stonehenge.ResourceLoader", _resourceLoader);
-                context.Items.Add("stonehenge.AppSessions", AppSessions);
+                context.Items.Add("stonehenge.AppSessions", AppSession.AppSessions);
                 return next.Invoke();
             });
             if (_options?.CustomMiddleware != null)
