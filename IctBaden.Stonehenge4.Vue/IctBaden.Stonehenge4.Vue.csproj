@@ -131,6 +131,10 @@
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.4" />
     </ItemGroup>
     <ItemGroup>

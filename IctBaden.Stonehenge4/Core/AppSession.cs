@@ -34,7 +34,7 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.Core;
 
 [SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
-public class AppSession : INotifyPropertyChanged, IDisposable
+public sealed class AppSession : INotifyPropertyChanged, IDisposable
 {
     public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
     public static List<AppSession> AppSessions { get; private set; } = [];
@@ -128,6 +128,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         IsWaitingForEvents = true;
         var eventVm = ViewModel;
 
+        _eventRelease?.Dispose();
         _eventRelease = new CancellationTokenSource();
 
         // wait _eventTimeoutMs for events - if there is one - continue
@@ -189,20 +190,23 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         get => _viewModel;
         set
         {
-            (_viewModel as IDisposable)?.Dispose();
+            if (_viewModel is IDisposable vm)
+            {
+                vm.Dispose();
+            }
 
             _viewModel = value;
-            if (value is INotifyPropertyChanged npc)
+            if (value is INotifyPropertyChanged notifyPropertyChanged)
             {
-                npc.PropertyChanged += (sender, args) =>
+                notifyPropertyChanged.PropertyChanged += (sender, args) =>
                 {
-                    if (sender is not ActiveViewModel avm) return;
+                    if (sender is not ActiveViewModel activeViewModel) return;
 
-                    lock (avm.Session._events)
+                    lock (activeViewModel.Session._events)
                     {
                         if (!string.IsNullOrEmpty(args.PropertyName))
                         {
-                            avm.Session.UpdateProperty(args.PropertyName);
+                            activeViewModel.Session.UpdateProperty(args.PropertyName);
                         }
                     }
                 };
@@ -364,10 +368,9 @@ public class AppSession : INotifyPropertyChanged, IDisposable
 
     public T? Get<T>(string key)
     {
-        if (!_userData.ContainsKey(key))
+        if (!_userData.TryGetValue(key, out var value))
             return default;
-
-        return (T?)_userData[key];
+        return (T?)value;
     }
 
     public void Remove(string key)
@@ -401,10 +404,9 @@ public class AppSession : INotifyPropertyChanged, IDisposable
 
     private void CheckSessionTimeout(object? _)
     {
-        if ((LastAccessDuration > SessionTimeout) && (_terminator != null))
+        if (LastAccessDuration > SessionTimeout && _terminator != null)
         {
             _pollSessionTimeout?.Dispose();
-            _terminator.Dispose();
             TimedOut?.Invoke();
         }
 
@@ -421,7 +423,9 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _terminator = disposable;
     }
 
+#pragma warning disable IDISP008
     private readonly StonehengeResourceLoader _resourceLoader;
+#pragma warning restore IDISP008
 
     public AppSession()
         : this(null, new StonehengeHostOptions())
@@ -444,8 +448,10 @@ public class AppSession : INotifyPropertyChanged, IDisposable
                 .ToList();
 
             Logger = StonehengeLogger.DefaultLogger;
-            var loader = new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly());
-            resourceLoader = new StonehengeResourceLoader(Logger, new List<IStonehengeResourceProvider> { loader });
+            resourceLoader = new StonehengeResourceLoader(Logger,
+                [
+                    new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly())
+                ]);
         }
         else
         {
@@ -484,11 +490,10 @@ public class AppSession : INotifyPropertyChanged, IDisposable
 
             var settings = File.ReadAllLines(cfg);
             var secureCookies = settings.FirstOrDefault(s => s.Contains("SecureCookies"));
-            if (secureCookies != null)
-            {
-                var set = secureCookies.Split('=');
-                SecureCookies = (set.Length > 1) && (set[1].Trim() == "1");
-            }
+            if (secureCookies == null) return;
+            
+            var set = secureCookies.Split('=');
+            SecureCookies = (set.Length > 1) && (set[1].Trim() == "1");
         }
         catch
         {
@@ -684,9 +689,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
             
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
-        var result = client.PostAsync(logoutUrl,
-                new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
-            .Result;
+        using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
+        using var result = client.PostAsync(logoutUrl, content).Result;
 
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
@@ -705,9 +709,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _pollSessionTimeout?.Dispose();
         _pollSessionTimeout = null;
         
-        _terminator?.Dispose();
-        _terminator = null;
-        
         OnNavigate = null;
+        _eventRelease?.Dispose();
     }
 }
