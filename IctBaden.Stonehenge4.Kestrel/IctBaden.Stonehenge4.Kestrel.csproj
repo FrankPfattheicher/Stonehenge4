@@ -5,7 +5,7 @@
     <Company>ICT Baden GmbH</Company>
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <OutputType>Library</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge.Kestrel</RootNamespace>
@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.4" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.33.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
   </ItemGroup>
 
   <ItemGroup>

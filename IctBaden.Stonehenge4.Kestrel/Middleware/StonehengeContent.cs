@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -30,18 +29,12 @@ using Microsoft.Net.Http.Headers;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-[SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
-public class StonehengeContent
+public class StonehengeContent(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
 
     // ReSharper disable once UnusedMember.Global
-    public StonehengeContent(RequestDelegate next)
-    {
-        _next = next;
-    }
 
     // ReSharper disable once UnusedMember.Global
     public Task Invoke(HttpContext context)
@@ -95,7 +88,7 @@ public class StonehengeContent
 
             var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
             var parameters = queryString.AllKeys
-                .Where(k => !string.IsNullOrEmpty(k) && !string.IsNullOrEmpty(queryString[k]))
+                .Where(k => !string.IsNullOrEmpty(k))
                 .ToDictionary(key => key!, key => queryString[key]!);
             
             Resource? content = null;
@@ -152,8 +145,9 @@ public class StonehengeContent
                         }
                     }
 
-                    Console.WriteLine(result);
+                    logger.LogTrace("Auth result: {Result}", result);
                 }
+                
                 else
                 {
                     var newSession =
@@ -163,8 +157,7 @@ public class StonehengeContent
                 }
             }
 
-            if (appSession != null
-                && appSession.HostOptions.UseKeycloakAuthentication == null
+            if (appSession is { HostOptions.UseKeycloakAuthentication: null }
                 && string.IsNullOrEmpty(appSession.UserIdentity))
             {
                 SetUserNameFromContext(appSession, context);
@@ -186,8 +179,7 @@ public class StonehengeContent
                     if (content == null && appSession != null &&
                         resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        logger.LogError(
-                            $"Invalid path in index resource {resourceName} - redirecting to root index");
+                        logger.LogError("Invalid path in index resource {ResourceName} - redirecting to root index", resourceName);
 
                         var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ??
                                                                  string.Empty);
@@ -293,8 +285,7 @@ public class StonehengeContent
                     catch (Exception ex)
                     {
                         if (ex.InnerException != null) ex = ex.InnerException;
-                        logger.LogError(ex.Message);
-                        logger.LogError(ex.StackTrace);
+                        logger.LogError("Request Exception {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
 
                         var exResource = new Dictionary<string, string>
                         {
@@ -312,7 +303,7 @@ public class StonehengeContent
 
             if (content == null)
             {
-                await _next.Invoke(context);
+                await next.Invoke(context);
                 return;
             }
 
@@ -366,11 +357,11 @@ public class StonehengeContent
         }
         catch (Exception ex)
         {
-            logger.LogError($"StonehengeContent write response: {ex.Message}" + Environment.NewLine + ex.StackTrace);
+            logger.LogError("StonehengeContent write response: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             while (ex.InnerException != null)
             {
                 ex = ex.InnerException;
-                logger.LogError(" + " + ex.Message);
+                logger.LogError("Inner exception: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             }
             Debugger.Break();
         }

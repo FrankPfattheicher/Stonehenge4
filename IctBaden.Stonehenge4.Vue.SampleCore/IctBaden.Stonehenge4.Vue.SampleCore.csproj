@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>VueSampleCore</AssemblyName>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <AssemblyVersion>4.0.4</AssemblyVersion>
     <FileVersion>4.0.4</FileVersion>
     <TargetFramework>net6.0</TargetFramework>
@@ -69,7 +69,6 @@
     <None Remove="app\forms.html" />
     <EmbeddedResource Include="app\forms.html" />
     <None Remove="app\index.html" />
-    <EmbeddedResource Include="app\index.html" />
     <EmbeddedResource Include="app\mermaidview.html" />
     <None Remove="app\mermaidview.html" />
   </ItemGroup>

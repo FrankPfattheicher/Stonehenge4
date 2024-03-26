@@ -43,12 +43,12 @@ public class StonehengeUiWindow : IDisposable
     {
         if (!_ui.Start(port, publicReachable))
         {
-            _logger.LogCritical($"StonehengeUiWindow failed to start on port {port}, ({(publicReachable ? "" : "not ")}public reachable)");
+            _logger.LogCritical("StonehengeUiWindow failed to start on port {Port}, (public reachable: {PublicReachable})", port, publicReachable);
             return false;
         }
         if (string.IsNullOrEmpty(_ui.Server?.BaseUrl))
         {
-            _logger.LogCritical($"StonehengeUiWindow failed to start: No base URL given");
+            _logger.LogCritical("StonehengeUiWindow failed to start: No base URL given");
             return false;
         }
 

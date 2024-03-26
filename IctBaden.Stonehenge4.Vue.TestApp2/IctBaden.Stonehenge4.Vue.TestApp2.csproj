@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
         <TargetFramework>net6.0</TargetFramework>
         <AssemblyName>IctBaden.Stonehenge.Vue.TestApp2</AssemblyName>
         <RootNamespace>IctBaden.Stonehenge.Vue.TestApp2</RootNamespace>

@@ -66,8 +66,8 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
             }
             catch (Exception ex)
             {
-                Logger.LogError($"StonehengeResourceLoader.{loader.GetType().Name}({resourceName}) exception: {ex.Message}" + 
-                                Environment.NewLine + ex.StackTrace);
+                Logger.LogError("StonehengeResourceLoader.{Name}({ResourceName}) exception: {Message}\r\n{StackTrace}",
+                    loader.GetType().Name, resourceName, ex.Message, ex.StackTrace);
                 Debugger.Break();
             }
             if (loadedResource != null) break;

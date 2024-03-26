@@ -40,7 +40,7 @@ public class FileLoader : IStonehengeResourceProvider
         var resourceExtension = Path.GetExtension(resourceName);
         var resourceType = ResourceType.GetByExtension(resourceExtension);
 
-        _logger.LogTrace($"FileLoader({resourceName}): {fullFileName}");
+        _logger.LogTrace("FileLoader({ResourceName}): {FullFileName}", resourceName, fullFileName);
         return Task.FromResult<Resource?>(resourceType.IsBinary 
             ? new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay) 
             : new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));

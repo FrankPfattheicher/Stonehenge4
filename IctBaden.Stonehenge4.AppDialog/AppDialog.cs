@@ -3,6 +3,4 @@
 namespace IctBaden.Stonehenge.Extension;
 
 // ReSharper disable once UnusedType.Global
-public class AppDialog : IStonehengeExtension
-{
-}
+public class AppDialog : IStonehengeExtension;

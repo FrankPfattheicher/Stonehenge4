@@ -41,7 +41,7 @@ internal class VueAppCreator
         _appAssembly = appAssembly;
         _vueContent = vueContent;
         _vueAssembly = Assembly.GetAssembly(typeof(VueAppCreator))!;
-            
+
         _controllerTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeComponent.js");
         _elementTemplate = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeElement.js");
     }
@@ -70,7 +70,8 @@ internal class VueAppCreator
         applicationJs = InsertRoutes(applicationJs);
         applicationJs = InsertElements(applicationJs);
 
-        var resource = new Resource("app.js", "VueResourceProvider", ResourceType.Js, applicationJs, Resource.Cache.Revalidate);
+        var resource = new Resource("app.js", "VueResourceProvider", ResourceType.Js, applicationJs,
+            Resource.Cache.Revalidate);
         _vueContent.Add("app.js", resource);
     }
 
@@ -80,11 +81,12 @@ internal class VueAppCreator
         const string stonehengeAppTitleInsertPoint = "stonehengeAppTitle";
         const string stonehengeRootPageInsertPoint = "stonehengeRootPage";
         const string stonehengeAppHandleWindowResized = "stonehengeAppHandleWindowResized";
-        const string pageTemplate = "{{ path: '{0}', name: '{1}', title: '{2}', component: () => Promise.resolve(stonehengeLoadComponent('{3}')), visible: {4} }}";
+        const string pageTemplate =
+            "{{ path: '{0}', name: '{1}', title: '{2}', component: () => Promise.resolve(stonehengeLoadComponent('{3}')), visible: {4} }}";
 
         var contentPages = _vueContent
             .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
-            .Select(res => new {res.Value.Name, Vm = res.Value.ViewModel})
+            .Select(res => new { res.Value.Name, Vm = res.Value.ViewModel })
             .OrderBy(route => Math.Abs(route.Vm!.SortIndex))
             .ToList();
 
@@ -94,7 +96,7 @@ internal class VueAppCreator
                 route.Name,
                 route.Vm!.Title,
                 route.Name,
-                route.Vm.Visible ? "true" : "false" ))
+                route.Vm.Visible ? "true" : "false"))
             .ToList();
 
         var startPageName = _options.StartPage;
@@ -115,13 +117,13 @@ internal class VueAppCreator
         {
             startPageName = startPageName.Replace("-", "_");
         }
-            
+
         var (key, value) = _vueContent.FirstOrDefault(page => page.Value.Name == startPageName);
-        if(key != null)
+        if (key != null)
         {
             pages.Insert(0, string.Format(pageTemplate, "", "", value.ViewModel!.Title, value.Name, "false"));
         }
-            
+
         var routes = string.Join("," + Environment.NewLine, pages);
         pageText = pageText
             .Replace(routesInsertPoint, routes)
@@ -143,37 +145,37 @@ internal class VueAppCreator
 
         foreach (var viewModel in viewModels)
         {
-            var controllerJs = GetController(viewModel.ViewModel!.VmName, resourceLoader);
-            if (!string.IsNullOrEmpty(controllerJs))
+            var vmName = viewModel.ViewModel?.VmName;
+            if (string.IsNullOrEmpty(vmName)) continue;
+            
+            var controllerJs = GetController(vmName, resourceLoader);
+            if (string.IsNullOrEmpty(controllerJs)) continue;
+            
+            try
             {
-                if (string.IsNullOrEmpty(viewModel.ViewModel.VmName))
-                {
-                    _logger.LogError($"VueAppCreator.CreateComponents: <UNKNOWN VM> => src.{viewModel.Name}.js");
-                    continue;
-                }
-                try
-                {
-                    _logger.LogInformation($"VueAppCreator.CreateComponents: {viewModel.ViewModel.VmName} => src.{viewModel.Name}.js");
+                _logger.LogInformation("VueAppCreator.CreateComponents: {VmName} => src.{ViewModelName}.js",
+                    vmName, viewModel.Name);
 
-                    var name = _appAssembly?.GetManifestResourceNames()
-                        .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js"));
-                    if (!string.IsNullOrEmpty(name) && _appAssembly != null)
+                var name = _appAssembly?.GetManifestResourceNames()
+                    .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js"));
+                if (!string.IsNullOrEmpty(name) && _appAssembly != null)
+                {
+                    var userJs = LoadResourceText(_appAssembly, name);
+                    if (!string.IsNullOrWhiteSpace(userJs))
                     {
-                        var userJs = LoadResourceText(_appAssembly, name);
-                        if (!string.IsNullOrWhiteSpace(userJs))
-                        {
-                            controllerJs += userJs;
-                        }
+                        controllerJs += userJs;
                     }
+                }
 
-                    var resource = new Resource($"{viewModel.Name}.js", "ViewModel", ResourceType.Js, controllerJs, Resource.Cache.Revalidate);
-                    _vueContent.Add(resource.Name, resource);
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError($"VueAppCreator.CreateComponents: {viewModel.ViewModel.VmName} EXCEPTION: {ex.Message}");
-                    Debugger.Break();
-                }
+                var resource = new Resource($"{viewModel.Name}.js", "ViewModel", ResourceType.Js, controllerJs,
+                    Resource.Cache.Revalidate);
+                _vueContent.Add(resource.Name, resource);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("VueAppCreator.CreateComponents: {VmName} EXCEPTION: {Message}",
+                    vmName, ex.Message);
+                Debugger.Break();
             }
         }
     }
@@ -199,18 +201,18 @@ internal class VueAppCreator
 
     private static readonly bool DebugBuild = Assembly.GetEntryAssembly()?.GetCustomAttributes(false)
         .OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled) ?? true;
-        
+
     private string? GetController(string vmName, StonehengeResourceLoader resourceLoader)
     {
         var vmType = GetVmType(vmName);
         if (vmType == null)
         {
-            _logger.LogError($"No VM for type {vmName} defined.");
+            _logger.LogError("No VM for type {VmName} defined", vmName);
             return null;
         }
 
         var viewModel = CreateViewModel(vmType, resourceLoader);
-            
+
         var text = _controllerTemplate
             .Replace("stonehengeDebugBuild", DebugBuild ? "true" : "false")
             .Replace("stonehengeViewModelName", vmName)
@@ -223,16 +225,18 @@ internal class VueAppCreator
             var propDefinitions = propertyNames.Select(pn => pn + " : ''\r\n");
             text = text.Replace("//stonehengeProperties", "," + string.Join(",", propDefinitions));
         }
-            
+
         var postBackPropNames = GetPostBackPropNames(viewModel, propertyNames)
             .Select(name => "'" + name + "'");
         text = text.Replace("'propNames'", string.Join(",", postBackPropNames));
 
         // supply functions for action methods
-        const string methodTemplate = @"stonehengeMethodName: function({paramNames}) { app.stonehengeViewModelName.StonehengePost('ViewModel/stonehengeViewModelName/stonehengeMethodName{paramValues}'); }";
+        const string methodTemplate =
+            @"stonehengeMethodName: function({paramNames}) { app.stonehengeViewModelName.StonehengePost('ViewModel/stonehengeViewModelName/stonehengeMethodName{paramValues}'); }";
 
         var actionMethods = new List<string>();
-        foreach (var methodInfo in vmType.GetMethods().Where(methodInfo => methodInfo.GetCustomAttributes(false).OfType<ActionMethodAttribute>().Any()))
+        foreach (var methodInfo in vmType.GetMethods().Where(methodInfo =>
+                     methodInfo.GetCustomAttributes(false).OfType<ActionMethodAttribute>().Any()))
         {
             //var method = (methodInfo.GetParameters().Length > 0)
             //  ? "%method%: function (data, event, param) { if(!IsLoading()) post_ViewModelName_Data(self, event.currentTarget, '%method%', param); },".Replace("%method%", methodInfo.Name)
@@ -270,17 +274,18 @@ internal class VueAppCreator
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to create ViewModel '{vmType.Name}' : " + ex.Message);
+            _logger.LogError("Failed to create ViewModel '{VmTypeName}' : {Message}", 
+                vmType.Name, ex.Message);
             Debugger.Break();
             return null;
         }
     }
-        
-        
+
+
     private static List<string> GetPropNames(object? viewModel)
     {
         // properties
-        if(viewModel == null) return new List<string>();
+        if (viewModel == null) return new List<string>();
 
         var vmProps = new List<PropertyDescriptor>();
         if (viewModel is ActiveViewModel activeVm)
@@ -300,11 +305,11 @@ internal class VueAppCreator
 
         return propertyNames;
     }
-        
+
     private static List<string> GetPostBackPropNames(object? viewModel, IEnumerable<string> propertyNames)
     {
-        if(viewModel == null) return new List<string>();
-            
+        if (viewModel == null) return new List<string>();
+
         var postBackPropNames = new List<string>();
         var activeVm = viewModel as ActiveViewModel;
         var vmType = viewModel.GetType();
@@ -355,7 +360,7 @@ internal class VueAppCreator
             try
             {
                 var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName);
-                
+
                 var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
                 elementJs = elementJs.Replace("stonehengeViewModelName", source);
 
@@ -372,12 +377,14 @@ internal class VueAppCreator
 
                 elements.Add(elementJs);
 
-                var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs, Resource.Cache.Revalidate);
+                var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs,
+                    Resource.Cache.Revalidate);
                 _vueContent.Add(resource.Name, resource);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError($"VueAppCreator.CreateComponents: {element.Name} EXCEPTION: {ex.Message}");
+                _logger.LogError("VueAppCreator.CreateComponents: {ElementName} EXCEPTION: {Message}",
+                    element.Name, ex.Message);
                 Debugger.Break();
             }
         }

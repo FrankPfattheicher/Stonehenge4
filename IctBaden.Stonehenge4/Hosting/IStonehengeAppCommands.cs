@@ -1,6 +1,3 @@
-﻿namespace IctBaden.Stonehenge.Hosting
-{
-    public interface IStonehengeAppCommands
-    {
-    }
-}
+﻿namespace IctBaden.Stonehenge.Hosting;
+
+public interface IStonehengeAppCommands;

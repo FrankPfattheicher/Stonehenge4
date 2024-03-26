@@ -3,6 +3,4 @@
 namespace IctBaden.Stonehenge4.DropEdit;
 
 // ReSharper disable once UnusedType.Global
-public class DropEdit : IStonehengeExtension
-{
-}
+public class DropEdit : IStonehengeExtension;

@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
@@ -37,7 +38,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
                 Sectors = new PieSector[]
                 {
                     new() { Label = "Wert", Value = 100 },
-                    new() { Label = "Sonst", Value = 100 }
+                    new() { Label = "Sonst", Value = 100, Color = Color.Black}
                 }
             };
 

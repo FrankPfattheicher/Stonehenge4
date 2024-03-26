@@ -18,7 +18,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 // ReSharper disable once UnusedType.Global
-public class Charts2Vm : ActiveViewModel
+public class Charts2Vm(AppSession session) : ActiveViewModel(session)
 {
     public int RangeMin { get; } = 0;
     public int RangeMax { get; } = 100;
@@ -28,13 +28,8 @@ public class Charts2Vm : ActiveViewModel
     public Chart? LineChart { get; private set; }
     public Sankey? SankeyChart { get; private set; }
 
-    public int Speed { get; private set; }
+    public int Speed { get; private set; } = 500;
     private int _start;
-
-    public Charts2Vm(AppSession session) : base(session)
-    {
-        Speed = 500;
-    }
 
     public override void OnLoad()
     {

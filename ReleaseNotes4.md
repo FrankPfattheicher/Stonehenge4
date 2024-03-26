@@ -1,4 +1,15 @@
 
+* 4.7.1 - 11.03.2024 Packets updated, static logging templates, AppSessions moved to AppSession  
+* 4.7.0 - 08.03.2024 Fixed memory leak and improved UserContentLinks
+
+* 4.6.8 - 08.03.2024 Fixed "No VM for type  defined."
+* 4.6.7 - 04.03.2024 CSS display st-nav '' or 'none'
+* 4.6.6 - 27.02.2024 Added UserContentLinks.AddStyleSheet, removing sample custom index.html
+* 4.6.5 - 24.02.2024 On error hide nav bar and reload page
+* 4.6.4 - 06.01.2024 C#12, options with SessionTimeout
+* 4.6.3 - 13.12.2023 Pie chart uses element size
+* 4.6.2 - 13.12.2023 Fixed session timeout, added pie chart sector colors
+* 4.6.1 - 05.12.2023 Allow empty query parameters
 * 4.6.0 - 27.11.2023 Nullable enabled
  
 * 4.5.5 - 25.11.2023 Decode user agent, session.OnNavigate, dispose AppSession

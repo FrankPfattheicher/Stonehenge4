@@ -129,7 +129,7 @@ public class VueResourceProvider : IStonehengeResourceProvider
 
     private void AddFileSystemContent(string appFilesPath)
     {
-        _logger.LogInformation("VueResourceProvider: Using file system app path " + appFilesPath);
+        _logger.LogInformation("VueResourceProvider: Using file system app path {AppFilesPath}", appFilesPath);
         if (Directory.Exists(appFilesPath))
         {
             var appPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
@@ -177,8 +177,7 @@ public class VueResourceProvider : IStonehengeResourceProvider
                     .Replace("._9", ".9");
                 if (_vueContent.ContainsKey(resourceId))
                 {
-                    _logger.LogWarning(
-                        $"VueResourceProvider.AddResourceContent: Resource with id {resourceId} already exits");
+                    _logger.LogWarning("VueResourceProvider.AddResourceContent: Resource with id {ResourceId} already exits", resourceId);
                     continue;
                 }
 

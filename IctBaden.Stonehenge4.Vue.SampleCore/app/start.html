@@ -29,6 +29,7 @@
                 StonehengePostActive = <span v-if="StonehengePostActive"><b>TRUE</b></span><span
                     v-else>false</span><br/>
                 StonehengeSession = {{StonehengeSession}}<br/>
+                SessionCount = {{SessionCount}}<br/>
                 Session.IsLocal = <span v-if="IsLocal"><b>TRUE</b></span><span v-else>false</span><br/>
                 Session.ClientAddress = {{ClientAddress}}<br/>
                 Session.UserIdentity = {{UserIdentity}}<br/>
@@ -154,10 +155,13 @@
                 Users
             </h4>
             <p>
-                <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+                Current User <b>{{UserIdentity}}</b> 
             </p>
             <p>
                 <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+            </p>
+            <p>
+                <button class="btn btn-sm btn-secondary" @click="UserLogout()">Logout</button>
             </p>
 
         </div>

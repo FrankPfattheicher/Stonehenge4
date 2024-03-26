@@ -28,7 +28,7 @@
 
 <div id="app">
 
-    <b-navbar toggleable="md" type="dark" variant="info">
+    <b-navbar id="st-nav" style="display: none;" toggleable="md" type="dark" variant="info">
 
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
@@ -78,6 +78,29 @@
 </div>
 
 <script type="application/javascript" src="app.js" onerror="setTimeout(function () { window.location.reload(); }, 1000);"></script>
+
+<script type="application/javascript">
+
+    function showNav(show) {
+        if(typeof(router) != 'undefined') {
+            let nav = document.getElementById('st-nav');
+            if(nav) {
+                nav.style.display = show ? '' : 'none';
+            }
+        }
+    }
+
+    function stonehengeReloadOnError() {
+        if(typeof(router) == 'undefined') {
+            showNav(false);
+            window.location.reload();
+        }
+    }
+
+    setTimeout(function() { stonehengeReloadOnError(); }, 10000);
+    showNav(true);
+
+</script>
 
 </body>
 </html>

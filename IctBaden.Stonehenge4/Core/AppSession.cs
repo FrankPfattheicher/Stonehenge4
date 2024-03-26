@@ -37,6 +37,7 @@ namespace IctBaden.Stonehenge.Core;
 public class AppSession : INotifyPropertyChanged, IDisposable
 {
     public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
+    public static List<AppSession> AppSessions { get; private set; } = [];
 
     public StonehengeHostOptions HostOptions { get; private set; } = new();
     public string HostDomain { get; private set; } = string.Empty;
@@ -48,7 +49,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
     public string UserAgent { get; private set; } = string.Empty;
     public string Platform { get; private set; } = string.Empty;
     public string Browser { get; private set; } = string.Empty;
-
+    public int SessionCount => AppSessions.Count;
     public bool CookiesSupported { get; private set; }
     public bool StonehengeCookieSet { get; private set; }
     public Dictionary<string, string> Cookies { get; private set; }
@@ -237,7 +238,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         if (resourceLoader == null)
         {
             ViewModel = null;
-            Logger.LogError("Could not create ViewModel - No resourceLoader specified:" + typeName);
+            Logger.LogError("Could not create ViewModel - No resourceLoader specified: {TypeName}", typeName);
             return null;
         }
 
@@ -248,7 +249,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         if (newViewModelType == null)
         {
             ViewModel = null;
-            Logger.LogError("Could not create ViewModel:" + typeName);
+            Logger.LogError("Could not create ViewModel: {TypeName}", typeName);
             return null;
         }
 
@@ -274,7 +275,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         var typeConstructors = type.GetConstructors();
         if (!typeConstructors.Any())
         {
-            Logger.LogError($"AppSession.CreateType({context}, {type.Name}): No public constructors");
+            Logger.LogError("AppSession.CreateType({Context}, {TypeName}): No public constructors",
+                context, type.Name);
         }
         foreach (var constructor in typeConstructors)
         {
@@ -309,7 +311,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             }
             catch (Exception ex)
             {
-                Logger.LogError($"AppSession.CreateType({context}, {type.Name}): " + ex.Message);
+                Logger.LogError("AppSession.CreateType({Context}, {TypeName}): {Message}",
+                    context, type.Name, ex.Message);
                 Debugger.Break();
             }
         }
@@ -325,6 +328,13 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             if (string.IsNullOrEmpty(HostDomain))
                 return string.Empty;
 
+            var port = HostDomain.Split(':');
+            if (port.Length > 1)
+            {
+                if(IPAddress.TryParse(port[0], out _))
+                    return string.Empty;
+            }
+            
             var parts = HostDomain.Split('.');
             if (parts.Length == 1) return string.Empty;
 
@@ -445,7 +455,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
         _resourceLoader = resourceLoader;
         _userData = new Dictionary<string, object?>();
         _id = Guid.NewGuid();
-        SessionTimeout = TimeSpan.FromSeconds(10); // TimeSpan.FromMinutes(15);
+        SessionTimeout = options.SessionTimeout;
         Cookies = new Dictionary<string, string>();
         Parameters = new Dictionary<string, string>();
         LastAccess = DateTime.Now;
@@ -460,7 +470,7 @@ public class AppSession : INotifyPropertyChanged, IDisposable
             }
             else
             {
-                Logger.LogError("Option UseBasicAuth requires .htpasswd file " + htpasswd);
+                Logger.LogError("Option UseBasicAuth requires .htpasswd file {Htpasswd}", htpasswd);
             }
         }
 
@@ -563,7 +573,8 @@ public class AppSession : INotifyPropertyChanged, IDisposable
 
     public void EventsClear(bool forceEnd)
     {
-        Logger.LogTrace($"Session({Id}).EventsClear({forceEnd})");
+        Logger.LogTrace("Session({SessionId}).EventsClear({ForceEnd})",
+            Id, forceEnd);
         lock (_events)
         {
             //var privateEvents = Events.Where(e => e.StartsWith(AppService.PropertyNameId)).ToList();

@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
@@ -82,7 +83,7 @@ public class KestrelHost : IStonehengeHost
     {
         try
         {
-            _logger.LogInformation($"KestrelHost.Start({hostAddress}, {hostPort})");
+            _logger.LogInformation("KestrelHost.Start({HostAddress}, {HostPort})", hostAddress, hostPort);
             if (hostPort == 0)
             {
                 hostPort = Network.GetFreeTcpPort();
@@ -94,11 +95,11 @@ public class KestrelHost : IStonehengeHost
             {
                 if (useSsl)
                 {
-                    _logger.LogInformation("KestrelHost.Start: Using SSL using certificate " + _options.SslCertificatePath);
+                    _logger.LogInformation("KestrelHost.Start: Using SSL using certificate {SslCertificatePath}", _options.SslCertificatePath);
                 }
                 else
                 {
-                    _logger.LogError("KestrelHost.Start: NOT using SSL - certificate not found: " + _options.SslCertificatePath);
+                    _logger.LogError("KestrelHost.Start: NOT using SSL - certificate not found: {SslCertificatePath}", _options.SslCertificatePath);
                 }
             }
 
@@ -203,7 +204,7 @@ public class KestrelHost : IStonehengeHost
             var serverAddressesFeature = _webApp.ServerFeatures.Get<IServerAddressesFeature>();
             foreach (var address in serverAddressesFeature.Addresses)
             {
-                _logger.LogInformation($"KestrelHost.Start: Listening on {address}");
+                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", address);
             }
 
             _logger.LogInformation("KestrelHost.Start: succeeded");
@@ -212,7 +213,7 @@ public class KestrelHost : IStonehengeHost
         {
             if ((ex.InnerException is HttpListenerException {ErrorCode: 5}))
             {
-                _logger.LogError($"Access denied: Try netsh http delete urlacl {BaseUrl}");
+                _logger.LogError("Access denied: Try netsh http delete urlacl {BaseUrl}", BaseUrl);
             }
             else if (ex is MissingMemberException && ex.Message.Contains("Microsoft.Owin.Host.HttpListener"))
             {
@@ -226,7 +227,7 @@ public class KestrelHost : IStonehengeHost
                 message += Environment.NewLine + "    " + ex.Message;
             }
 
-            _logger.LogError("KestrelHost.Start: " + message);
+            _logger.LogError("KestrelHost.Start: {Message}", message);
             _host?.Dispose();
             _host = null;
             
@@ -275,9 +276,7 @@ public class KestrelHost : IStonehengeHost
 
     public void EnableRoute(string route, bool enabled)
     {
-        var sessions = _startup?.AppSessions;
-        if (sessions == null) return;
-            
+        var sessions = AppSession.AppSessions;
         foreach (var viewModel in sessions.Select(session => session.ViewModel as ActiveViewModel))
         {
             viewModel?.EnableRoute(route, enabled);

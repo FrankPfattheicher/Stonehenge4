@@ -2,6 +2,4 @@
 
 namespace IctBaden.Stonehenge.Extension;
 
-public class Mermaid : IStonehengeExtension
-{
-}
+public class Mermaid : IStonehengeExtension;
