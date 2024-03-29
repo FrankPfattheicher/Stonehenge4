@@ -44,7 +44,7 @@ public sealed class StonehengeUiWindow(ILogger logger, StonehengeHostOptions opt
         }
 
         _wnd?.Dispose();
-        _wnd = new HostWindow(_ui.Server?.BaseUrl!, options.Title, windowSize);
+        _wnd = new HostWindow(logger, _ui.Server?.BaseUrl!, options.Title, windowSize);
         if(!_wnd.Open()) return false;
         
         using var terminate = new AutoResetEvent(false);

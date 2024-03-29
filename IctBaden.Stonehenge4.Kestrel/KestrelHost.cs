@@ -213,7 +213,8 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
             var serverAddressesFeature = _webApp.ServerFeatures.Get<IServerAddressesFeature>();
             foreach (var address in serverAddressesFeature.Addresses)
             {
-                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", address);
+                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", 
+                    address.Replace("0.0.0.0", "127.0.0.1"));
             }
 
             _logger.LogInformation("KestrelHost.Start: succeeded");

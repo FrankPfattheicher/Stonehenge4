@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Web;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable UnusedMember.Global
@@ -16,6 +17,7 @@ public sealed class HostWindow : IDisposable
 {
     private readonly string _title;
     private readonly Point _windowSize;
+    private readonly ILogger _logger;
     private readonly string _startUrl;
     private Process? _ui;
 
@@ -47,23 +49,28 @@ public sealed class HostWindow : IDisposable
     }
 
     public HostWindow()
-        : this("http://localhost", "", DefaultWindowSize)
+        : this(StonehengeLogger.DefaultLogger, "http://localhost", "", DefaultWindowSize)
+    {
+    }
+    public HostWindow(ILogger logger)
+        : this(logger, "http://localhost", "", DefaultWindowSize)
     {
     }
 
-    public HostWindow(string startUrl)
-        : this(startUrl, "", DefaultWindowSize)
+    public HostWindow(ILogger logger, string startUrl)
+        : this(logger, startUrl, "", DefaultWindowSize)
     {
     }
 
-    public HostWindow(string startUrl, string title)
-        : this(startUrl, title, DefaultWindowSize)
+    public HostWindow(ILogger logger, string startUrl, string title)
+        : this(logger, startUrl, title, DefaultWindowSize)
     {
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public HostWindow(string startUrl, string title, Point windowSize)
+    public HostWindow(ILogger logger, string startUrl, string title, Point windowSize)
     {
+        _logger = logger;
         _startUrl = startUrl;
         _title = title;
         _windowSize = windowSize;
@@ -84,6 +91,12 @@ public sealed class HostWindow : IDisposable
         }
     }
 
+    private void LogStart(string name)
+    {
+        _logger.LogInformation("AppHost [{Name}] created at {DateTime}, listening on {StartUrl}",
+            name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
+    }
+    
     /// <summary>
     /// Open a UI window using an installed browser 
     /// in kino mode - if possible.
@@ -145,7 +158,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(pi.FileName);
             _ui.WaitForExit();
             return true;
         }
@@ -176,7 +189,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }
@@ -214,7 +227,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(pi.FileName);
             _ui.WaitForExit();
             return true;
         }
@@ -234,15 +247,16 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            var cmd = "epiphany";
             var parameter = $"{_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
-            _ui = Process.Start("epiphany", parameter);
+            _ui = Process.Start(cmd, parameter);
             if ((_ui == null) || _ui.HasExited)
             {
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }
@@ -261,15 +275,16 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            var cmd = "midori";
             var parameter = $"-e Navigationbar -c {path} -a {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
-            _ui = Process.Start("midori", parameter);
-            if ((_ui == null) || _ui.HasExited)
+            _ui = Process.Start(cmd, parameter);
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }
@@ -297,7 +312,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }
@@ -323,7 +338,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }
@@ -352,7 +367,7 @@ public sealed class HostWindow : IDisposable
                 return false;
             }
 
-            Console.WriteLine("AppHost Created at {0}, listening on {1}", DateTime.Now, _startUrl);
+            LogStart(cmd);
             _ui.WaitForExit();
             return true;
         }

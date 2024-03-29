@@ -72,10 +72,10 @@ internal static class Program
         loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology
-        Console.WriteLine(@"Using Kestrel hosting");
+        Console.WriteLine("Using Kestrel hosting");
         _server = new KestrelHost(loader, options);
 
-        Console.WriteLine(@"Starting server");
+        Console.WriteLine("Starting server");
         using var terminate = new AutoResetEvent(false);
         // ReSharper disable once AccessToDisposedClosure
         Console.CancelKeyPress += (_, _) => { terminate.Set(); };
@@ -83,11 +83,11 @@ internal static class Program
         var host = Environment.CommandLine.Contains("/localhost") ? "localhost" : "*";
         if (_server.Start(host, 32000))
         {
-            Console.WriteLine(@"Server reachable on: " + _server.BaseUrl);
+            Console.WriteLine($"Server reachable on: {_server.BaseUrl}");
 
             if (Environment.CommandLine.Contains("/window"))
             {
-                using var wnd = new HostWindow(_server.BaseUrl, options.Title);
+                using var wnd = new HostWindow(logger, _server.BaseUrl, options.Title);
                 if (!wnd.Open())
                 {
                     logger.LogError("Failed to open main window");
@@ -103,14 +103,14 @@ internal static class Program
         }
         else
         {
-            Console.WriteLine(@"Failed to start server on: " + _server.BaseUrl);
+            Console.WriteLine("Failed to start server on: " + _server.BaseUrl);
         }
 
 #pragma warning disable 0162
         // ReSharper disable once HeuristicUnreachableCode
         _server.Terminate();
 
-        Console.WriteLine(@"Exit sample app");
+        Console.WriteLine("Exit sample app");
         Environment.Exit(0);
     }
 }
