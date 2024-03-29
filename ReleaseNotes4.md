@@ -1,4 +1,6 @@
 
+* 4.8.0 - 29.03.2024 Using IDisposableAnalyzers, removed AppSession SetTerminator
+
 * 4.7.1 - 11.03.2024 Packets updated, static logging templates, AppSessions moved to AppSession  
 * 4.7.0 - 08.03.2024 Fixed memory leak and improved UserContentLinks
 

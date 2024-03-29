@@ -23,6 +23,7 @@
     <None Remove="app\tree-node.js" />
     <None Remove="app\tree-view.html" />
     <None Remove="app\tree.html" />
+    <None Remove="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\cookie.html" />

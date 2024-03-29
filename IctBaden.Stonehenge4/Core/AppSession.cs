@@ -403,7 +403,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     private void CheckSessionTimeout(object? _)
     {
-        if (LastAccessDuration > SessionTimeout && _terminator != null)
+        if (LastAccessDuration > SessionTimeout)
         {
             _pollSessionTimeout?.Dispose();
             TimedOut?.Invoke();
@@ -411,15 +411,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         NotifyPropertyChanged(nameof(ConnectedDuration));
         NotifyPropertyChanged(nameof(LastAccessDuration));
-    }
-
-    private IDisposable? _terminator;
-
-
-    // ReSharper disable once UnusedMember.Global
-    public void SetTerminatorObsolete(IDisposable disposable)
-    {
-        _terminator = disposable;
     }
 
 #pragma warning disable IDISP008
