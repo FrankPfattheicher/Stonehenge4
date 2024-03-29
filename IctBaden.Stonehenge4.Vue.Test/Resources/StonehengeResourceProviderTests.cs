@@ -5,7 +5,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Resources;
 
-public class StonehengeResourceProviderTests : IDisposable
+public sealed class StonehengeResourceProviderTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new();
@@ -21,7 +21,9 @@ public class StonehengeResourceProviderTests : IDisposable
         var response = string.Empty;
         try
         {
+#pragma warning disable IDISP014
             using var client = new RedirectableHttpClient();
+#pragma warning restore IDISP014
             response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
             response = await client.Post(_app.BaseUrl + "/user/request?p1=11&p2=22", "{}");
         }

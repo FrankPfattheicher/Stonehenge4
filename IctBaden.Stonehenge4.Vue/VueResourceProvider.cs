@@ -18,10 +18,10 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue;
 
-public class VueResourceProvider : IStonehengeResourceProvider
+public sealed class VueResourceProvider : IStonehengeResourceProvider
 {
     private readonly ILogger _logger;
-    private Dictionary<string, Resource> _vueContent = new();
+    private readonly Dictionary<string, Resource> _vueContent = new();
     private List<Assembly> _assemblies;
     private Assembly _appAssembly = Assembly.GetExecutingAssembly();
     private readonly List<ViewModelInfo> _viewModels;
@@ -47,7 +47,7 @@ public class VueResourceProvider : IStonehengeResourceProvider
         _vueContent.Clear();
 
         if (loader.Providers
-                .FirstOrDefault(p => p.GetType() == typeof(ResourceLoader)) is ResourceLoader resourceLoader)
+                .FirstOrDefault(p => p is ResourceLoader) is ResourceLoader resourceLoader)
         {
             _assemblies = resourceLoader.ResourceAssemblies;
             _appAssembly = resourceLoader.AppAssembly;

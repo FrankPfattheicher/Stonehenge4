@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.ViewModel;
 
-public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
+public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -174,9 +174,9 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         {
             if (session != null && SetViewModel(session, resourceName))
             {
-                if (session.ViewModel is ActiveViewModel avm)
+                if (session.ViewModel is ActiveViewModel activeViewModel)
                 {
-                    avm.OnLoad();
+                    activeViewModel.OnLoad();
                 }
 
                 return GetViewModel(session, resourceName);
@@ -247,7 +247,7 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
 
         var data = new List<string> { "\"StonehengeContinuePolling\":true" };
         var events = session == null
-            ? Array.Empty<string>()  
+            ? []  
             : await session.CollectEvents();
         if (session?.ViewModel is ActiveViewModel activeVm)
         {
@@ -567,11 +567,11 @@ public class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
         {
             // ensure view model data available before executing client scripts
             context = "view model";
-            var vm = JsonSerializer.SerializeToDocument(viewModel, JsonOptions);
-            foreach (var jsonElement in vm.RootElement.EnumerateObject())
-            {
-                data.Add(jsonElement.ToString());
-            }
+            using var jsonDocument = JsonSerializer.SerializeToDocument(viewModel, JsonOptions);
+#pragma warning disable IDISP004
+            data.AddRange(jsonDocument.RootElement.EnumerateObject()
+                .Select(jsonElement => jsonElement.ToString()));
+#pragma warning restore IDISP004
 
             if (viewModel is ActiveViewModel activeVm)
             {

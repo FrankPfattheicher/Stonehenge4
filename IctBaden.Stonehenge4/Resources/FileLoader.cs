@@ -11,22 +11,15 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Resources;
 
-public class FileLoader : IStonehengeResourceProvider
+public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourceProvider
 {
-    private readonly ILogger _logger;
-    public string RootPath { get; private set; }
+    public string RootPath { get; private set; } = path;
 
-    public FileLoader(ILogger logger, string path)
-    {
-        _logger = logger;
-        RootPath = path;
-    }
-        
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+    public List<ViewModelInfo> GetViewModelInfos() => [];
 
     public void Dispose()
     {
@@ -40,7 +33,7 @@ public class FileLoader : IStonehengeResourceProvider
         var resourceExtension = Path.GetExtension(resourceName);
         var resourceType = ResourceType.GetByExtension(resourceExtension);
 
-        _logger.LogTrace("FileLoader({ResourceName}): {FullFileName}", resourceName, fullFileName);
+        logger.LogTrace("FileLoader({ResourceName}): {FullFileName}", resourceName, fullFileName);
         return Task.FromResult<Resource?>(resourceType.IsBinary 
             ? new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllBytes(fullFileName), Resource.Cache.OneDay) 
             : new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));

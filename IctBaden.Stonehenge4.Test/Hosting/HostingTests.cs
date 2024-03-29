@@ -21,8 +21,8 @@ public class HostingTests
         {
             Title = "Test"
         };
-        var loader = new TestResourceLoader(content);
-        var host = new KestrelHost(loader, options);
+        using var loader = new TestResourceLoader(content);
+        using var host = new KestrelHost(loader, options);
 
         var startOk = host.Start("localhost", 32001);
         Assert.True(startOk, "Start failed");
@@ -52,14 +52,14 @@ public class HostingTests
         {
             Title = "Test"
         };
-        var loader1 = new TestResourceLoader(content1);
-        var host1 = new KestrelHost(loader1, options);
+        using var loader1 = new TestResourceLoader(content1);
+        using var host1 = new KestrelHost(loader1, options);
 
         var startOk = host1.Start("localhost", 32002);
         Assert.True(startOk, "Start host1 failed");
 
-        var loader2 = new TestResourceLoader(content2);
-        var host2 = new KestrelHost(loader2, options);
+        using var loader2 = new TestResourceLoader(content2);
+        using var host2 = new KestrelHost(loader2, options);
 
         startOk = host2.Start("localhost", 32003);
         Assert.True(startOk, "Start host2 failed");

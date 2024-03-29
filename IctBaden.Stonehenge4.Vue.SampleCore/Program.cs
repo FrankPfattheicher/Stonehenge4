@@ -60,8 +60,10 @@ internal static class Program
 
         // Select client framework
         Console.WriteLine(@"Using client framework vue");
+#pragma warning disable IDISP001
         var vue = new VueResourceProvider(logger);
         var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
+#pragma warning restore IDISP001
         loader.AddResourceAssembly(typeof(TreeView).Assembly);
         loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
@@ -74,7 +76,8 @@ internal static class Program
         _server = new KestrelHost(loader, options);
 
         Console.WriteLine(@"Starting server");
-        var terminate = new AutoResetEvent(false);
+        using var terminate = new AutoResetEvent(false);
+        // ReSharper disable once AccessToDisposedClosure
         Console.CancelKeyPress += (_, _) => { terminate.Set(); };
 
         var host = Environment.CommandLine.Contains("/localhost") ? "localhost" : "*";

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.MultiApp;
 
-public class DefaultAppTests : IDisposable
+public sealed class DefaultAppTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new();
@@ -23,10 +23,10 @@ public class DefaultAppTests : IDisposable
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
-            }
+#pragma warning disable IDISP014
+            using var client = new RedirectableHttpClient();
+#pragma warning restore IDISP014
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/app.js");
         }
         catch (Exception ex)
         {

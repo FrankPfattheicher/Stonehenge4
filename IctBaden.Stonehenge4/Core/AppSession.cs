@@ -237,9 +237,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             disposable?.Dispose();
         }
 
-        var resourceLoader = _resourceLoader.Providers
-            .First(ld => ld.GetType() == typeof(ResourceLoader)) as ResourceLoader;
-        if (resourceLoader == null)
+        if (_resourceLoader.Providers
+                .FirstOrDefault(ld => ld is ResourceLoader) is not ResourceLoader)
         {
             ViewModel = null;
             Logger.LogError("Could not create ViewModel - No resourceLoader specified: {TypeName}", typeName);
@@ -261,7 +260,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         var viewModelInfo = _resourceLoader.Providers
             .SelectMany(p => p.GetViewModelInfos())
-            .FirstOrDefault(vmi => vmi.VmName == typeName);
+            .FirstOrDefault(vmInfo => vmInfo.VmName == typeName);
 
         var route = viewModelInfo?.Route ?? string.Empty;
         _history.Insert(0, route);
@@ -418,7 +417,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
 
     // ReSharper disable once UnusedMember.Global
-    public void SetTerminator(IDisposable disposable)
+    public void SetTerminatorObsolete(IDisposable disposable)
     {
         _terminator = disposable;
     }
@@ -427,6 +426,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     private readonly StonehengeResourceLoader _resourceLoader;
 #pragma warning restore IDISP008
 
+    
+    public static readonly AppSession None = new(); 
+    
     public AppSession()
         : this(null, new StonehengeHostOptions())
     {

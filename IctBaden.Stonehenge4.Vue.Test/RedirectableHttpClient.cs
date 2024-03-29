@@ -31,7 +31,7 @@ public class RedirectableHttpClient : HttpClient
     {
         for (var redirect = 0; redirect < 10; redirect++)
         {
-            var response = await GetAsync(address);
+            using var response = await GetAsync(address);
 
             var redirectUrl = response.Headers.Location;
             string? redirectAddr = null;
@@ -50,8 +50,6 @@ public class RedirectableHttpClient : HttpClient
             }
 
             var body = response.Content.ReadAsStringAsync().Result;
-            response.Dispose();
-
             if (redirectUrl == null)
             {
                 return body;
@@ -70,25 +68,24 @@ public class RedirectableHttpClient : HttpClient
     public async Task<string> Post(string address, string data)
     {
         DefaultRequestHeaders.Add("X-Stonehenge-Id", SessionId);
-        var response = await PostAsync(address, new StringContent(data));
+        using var content = new StringContent(data);
+        using var response = await PostAsync(address, content);
         var body = response.Content.ReadAsStringAsync().Result;
-        response.Dispose();
         return body;
     }
 
     public async Task<string> Put(string address, string data)
     {
-        var response = await PutAsync(address, new StringContent(data));
+        using var content = new StringContent(data);
+        using var response = await PutAsync(address, content);
         var body = response.Content.ReadAsStringAsync().Result;
-        response.Dispose();
         return body;
     }
     
     public async Task<string> Delete(string address)
     {
-        var response = await DeleteAsync(address);
+        using var response = await DeleteAsync(address);
         var body = response.Content.ReadAsStringAsync().Result;
-        response.Dispose();
         return body;
     }
     

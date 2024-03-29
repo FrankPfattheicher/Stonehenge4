@@ -17,19 +17,13 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Resources;
 
-public class StonehengeResourceLoader : IStonehengeResourceProvider
+public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeResourceProvider> loaders)
+    : IStonehengeResourceProvider
 {
-    public readonly ILogger Logger;
+    public readonly ILogger Logger = logger;
         
-    public List<IStonehengeResourceProvider> Providers { get; }
-    public readonly ServiceContainer Services;
-
-    public StonehengeResourceLoader(ILogger logger, List<IStonehengeResourceProvider> loaders)
-    {
-        Logger = logger;
-        Providers = loaders;
-        Services = new ServiceContainer();
-    }
+    public List<IStonehengeResourceProvider> Providers { get; } = loaders;
+    public readonly ServiceContainer Services = new();
 
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
@@ -39,7 +33,7 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
         }
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+    public List<ViewModelInfo> GetViewModelInfos() => [];
 
     public void Dispose()
     {
@@ -134,6 +128,8 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
             .Cast<Assembly>()
             .ToList();
 
+#pragma warning disable IDISP001
+        
         var resLoader = new ResourceLoader(logger, assemblies, appAssembly);
         if (provider != null)
         {
@@ -145,11 +141,14 @@ public class StonehengeResourceLoader : IStonehengeResourceProvider
 
         var viewModelCreator = new ViewModelProvider(logger);
 
-        var loader = new StonehengeResourceLoader(logger, new List<IStonehengeResourceProvider> { fileLoader, resLoader, viewModelCreator });
+#pragma warning restore IDISP001
+
+        var loader = new StonehengeResourceLoader(logger, [fileLoader, resLoader, viewModelCreator]);
         if (provider != null)
         {
             loader.Providers.Add(provider);
         }
+
         return loader;
     }
 

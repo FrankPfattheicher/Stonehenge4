@@ -3,7 +3,7 @@
 // Author:
 //  Frank Pfattheicher <fpf@ict-baden.de>
 //
-// Copyright (C)2011-2022 ICT Baden GmbH
+// Copyright (C)2011-2024 ICT Baden GmbH
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -57,12 +57,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 {
     #region helper classes
 
-    class GetMemberBinderEx : GetMemberBinder
+    class GetMemberBinderEx(string name) : GetMemberBinder(name, false)
     {
-        public GetMemberBinderEx(string name) : base(name, false)
-        {
-        }
-
         public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target,
             DynamicMetaObject? errorSuggestion)
         {
@@ -70,12 +66,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
     }
 
-    class SetMemberBinderEx : SetMemberBinder
+    class SetMemberBinderEx(string name) : SetMemberBinder(name, false)
     {
-        public SetMemberBinderEx(string name) : base(name, false)
-        {
-        }
-
         public override DynamicMetaObject FallbackSetMember(DynamicMetaObject target, DynamicMetaObject value,
             DynamicMetaObject? errorSuggestion)
         {
@@ -147,18 +139,11 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
     }
 
-    class PropertyInfoEx
+    class PropertyInfoEx(PropertyInfo pi, object obj, bool readOnly)
     {
-        public PropertyInfo Info { get; private set; }
-        public object Obj { get; private set; }
-        public bool ReadOnly { get; private set; }
-
-        public PropertyInfoEx(PropertyInfo pi, object obj, bool readOnly)
-        {
-            Info = pi;
-            Obj = obj;
-            ReadOnly = readOnly;
-        }
+        public PropertyInfo Info { get; private set; } = pi;
+        public object Obj { get; private set; } = obj;
+        public bool ReadOnly { get; private set; } = readOnly;
     }
 
     #endregion
@@ -170,7 +155,9 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     [Browsable(false)] internal int Count => GetProperties().Count;
 
+#pragma warning disable IDISP008
     [Browsable(false)] public AppSession Session;
+#pragma warning restore IDISP008
     [Browsable(false)] public bool SupportsEvents;
 
     // ReSharper disable InconsistentNaming
@@ -365,7 +352,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         if (properties != null)
             return properties;
 
-        properties = new PropertyDescriptorCollection(Array.Empty<PropertyDescriptor>());
+        properties = new PropertyDescriptorCollection([]);
         foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this, true))
         {
             var pi = GetType().GetProperty(prop.Name);
@@ -402,7 +389,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             foreach (DependsOnAttribute attribute in dependsOnAttributes)
             {
                 if (!_dependencies.ContainsKey(attribute.Name))
-                    _dependencies[attribute.Name] = new List<string>();
+                    _dependencies[attribute.Name] = [];
 
                 _dependencies[attribute.Name].Add(method.Name);
             }
@@ -418,7 +405,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         if (propertiesAttribute != null)
             return propertiesAttribute;
 
-        propertiesAttribute = new PropertyDescriptorCollection(Array.Empty<PropertyDescriptor>());
+        propertiesAttribute = new PropertyDescriptorCollection([]);
         foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this, true))
             propertiesAttribute.Add(prop);
         return propertiesAttribute;
@@ -467,10 +454,10 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             ExecuteHandler(handler, name);
         }
 
-        if (!_dependencies.ContainsKey(name))
+        if (!_dependencies.TryGetValue(name, out var dependency))
             return;
 
-        foreach (var dependentName in _dependencies[name])
+        foreach (var dependentName in dependency)
         {
             if (handler != null)
             {
@@ -644,7 +631,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         StopUpdateTimer();
         OnDispose();

@@ -14,7 +14,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Test.ActionMethod;
 
-public class ActionMethodTests : IDisposable
+public sealed class ActionMethodTests : IDisposable
 {
     private readonly StonehengeResourceLoader _loader;
     private readonly AppSession _session = new();
@@ -32,8 +32,10 @@ public class ActionMethodTests : IDisposable
             .Cast<Assembly>()
             .ToList();
 
+#pragma warning disable IDISP001
         var resLoader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, Assembly.GetCallingAssembly());
         var fileLoader = new FileLoader(StonehengeLogger.DefaultLogger, Path.GetTempPath());
+#pragma warning restore IDISP001
 
         var providers = new List<IStonehengeResourceProvider>
         {
@@ -46,6 +48,7 @@ public class ActionMethodTests : IDisposable
 
     public void Dispose()
     {
+        _loader.Dispose();
     }
 
     [Fact]

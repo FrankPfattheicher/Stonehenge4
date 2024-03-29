@@ -113,14 +113,14 @@ public class StonehengeContent(RequestDelegate next)
                 if (state.StartsWith(appSession.Id))
                 {
                     var code = requestQuery["code"];
-                    var data =
-                        $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
+                    var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
 
+#pragma warning disable IDISP014
                     using var client = new HttpClient();
+#pragma warning restore IDISP014
                     var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
-                    var result = client.PostAsync(tokenUrl,
-                            new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
-                        .Result;
+                    using var authParams = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
+                    using var result = client.PostAsync(tokenUrl, authParams).Result;
                     var json = result.Content.ReadAsStringAsync().Result;
                     var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                     if (authResponse != null)
@@ -207,7 +207,8 @@ public class StonehengeContent(RequestDelegate next)
                     {
                         var formData = new Dictionary<string, string>();
                         context.Request.EnableBuffering();
-                        var body = new StreamReader(context.Request.Body).ReadToEndAsync().Result;
+                        using var bodyReader = new StreamReader(context.Request.Body); 
+                        var body = bodyReader.ReadToEndAsync().Result;
                         if (body.StartsWith("{"))
                         {
                             try
