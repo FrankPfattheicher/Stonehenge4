@@ -133,8 +133,10 @@ public class StonehengeSession(RequestDelegate next)
             if (directoryName.Length <= 1 || resource == null)
             {
                 // redirect to new session
+#pragma warning disable IDISP001
                 session = NewSession(logger, appSessions, context, resourceLoader);
                 context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
+#pragma warning restore IDISP001
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
@@ -182,7 +184,9 @@ public class StonehengeSession(RequestDelegate next)
         foreach (var session in timedOutSessions)
         {
             var vm = session.ViewModel as IDisposable;
+#pragma warning disable IDISP007
             vm?.Dispose();
+#pragma warning restore IDISP007
             session.ViewModel = null;
             
             appSessions = appSessions

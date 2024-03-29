@@ -20,4 +20,11 @@
       <EmbeddedResource Include="app\st-tree-view.html" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>

@@ -3,9 +3,11 @@ using System.Net.Http;
 
 namespace IctBaden.Stonehenge.Test.Hosting
 {
-    public class RedirectableWebClient : IDisposable
+    public sealed class RedirectableWebClient : IDisposable
     {
+#pragma warning disable IDISP004
         private readonly HttpClient _client = new(new HttpClientHandler { AllowAutoRedirect = true });
+#pragma warning restore IDISP004
 
         public void Dispose()
         {
@@ -17,15 +19,13 @@ namespace IctBaden.Stonehenge.Test.Hosting
         {
             for (var redirect = 0; redirect < 10; redirect++)
             {
-                var response = _client.GetAsync(address).Result;
+                using var response = _client.GetAsync(address).Result;
 
                 var redirectUrl = response.Headers.Location;
                 if (redirectUrl == null)
                 {
                     // address = response.Headers.ResponseUri.ToString();
                 }
-
-                response.Dispose();
 
                 if (redirectUrl == null)
                     break;

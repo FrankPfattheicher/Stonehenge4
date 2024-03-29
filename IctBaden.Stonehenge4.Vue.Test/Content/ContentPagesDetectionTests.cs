@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Content;
 
-public class ContentPagesDetectionTests : IDisposable
+public sealed class ContentPagesDetectionTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app;
@@ -20,10 +20,10 @@ public class ContentPagesDetectionTests : IDisposable
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                _response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
-            }
+#pragma warning disable IDISP014
+            using var client = new RedirectableHttpClient();
+#pragma warning restore IDISP014
+            _response = client.DownloadStringWithSession(_app.BaseUrl + "/app.js").Result;
         }
         catch (Exception ex)
         {

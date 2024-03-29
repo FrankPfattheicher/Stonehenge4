@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Content;
 
-public class UserContentTests : IDisposable
+public sealed class UserContentTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new();

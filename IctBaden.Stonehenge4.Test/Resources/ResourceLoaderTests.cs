@@ -9,10 +9,10 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Test.Resources;
 
-public class ResourceLoaderTests : IDisposable
+public sealed class ResourceLoaderTests : IDisposable
 {
     private readonly ResourceLoader _loader;
-    private readonly AppSession _session = new AppSession();
+    private readonly AppSession _session = new();
 
     public ResourceLoaderTests()
     {
@@ -31,6 +31,7 @@ public class ResourceLoaderTests : IDisposable
 
     public void Dispose()
     {
+        _loader.Dispose();
     }
 
     // ReSharper disable InconsistentNaming

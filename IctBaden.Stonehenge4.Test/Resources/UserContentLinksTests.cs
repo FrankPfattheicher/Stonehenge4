@@ -10,7 +10,7 @@ namespace IctBaden.Stonehenge.Test.Resources
 {
     public class UserContentLinksTests
     {
-        private readonly AppSession _session = new AppSession();
+        private readonly AppSession _session = new();
         private readonly Resource? _index;
 
         public UserContentLinksTests()
@@ -25,7 +25,9 @@ namespace IctBaden.Stonehenge.Test.Resources
                 .Distinct()
                 .Cast<Assembly>()
                 .ToList();
+#pragma warning disable IDISP001
             var loader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, typeof(UserContentLinksTests).Assembly);
+#pragma warning restore IDISP001
             _index = loader.Get(_session, "index.html", new Dictionary<string, string>()).Result;
         }
 

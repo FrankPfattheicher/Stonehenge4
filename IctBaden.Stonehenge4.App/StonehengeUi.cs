@@ -11,12 +11,14 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.App;
 
-public class StonehengeUi : IDisposable
+public sealed class StonehengeUi : IDisposable
 {
-    public IStonehengeHost? Server;
+    public IStonehengeHost? Server { get; private set; }
     public readonly ILogger Logger;
 
+#pragma warning disable IDISP002
     private readonly StonehengeResourceLoader _loader;
+#pragma warning restore IDISP002
     private readonly StonehengeHostOptions _options;
 
     // ReSharper disable once UnusedMember.Global
@@ -43,8 +45,10 @@ public class StonehengeUi : IDisposable
         StonehengeLogger.DefaultLevel = LogLevel.Trace;
         Logger = logger;
 
+#pragma warning disable IDISP001
         var vue = new VueResourceProvider(Logger);
         _loader = StonehengeResourceLoader.CreateDefaultLoader(Logger, vue, appAssembly);
+#pragma warning restore IDISP001
     }
 
     public void AddResourceAssembly(Assembly assembly)
@@ -56,7 +60,9 @@ public class StonehengeUi : IDisposable
     public bool Start(int port, bool publicReachable)
     {
         var host = publicReachable ? "*" : "localhost";
+#pragma warning disable IDISP003
         Server = new KestrelHost(_loader, _options);
+#pragma warning restore IDISP003
         return Server.Start(host, port);
     }
 

@@ -48,7 +48,7 @@ internal class VueAppCreator
 
     private async Task<string> LoadResourceText(string resourceName)
     {
-        var resource = await _loader.Get(new AppSession(), resourceName, new Dictionary<string, string>());
+        var resource = await _loader.Get(AppSession.None, resourceName, new Dictionary<string, string>());
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }
 
@@ -268,7 +268,7 @@ internal class VueAppCreator
     {
         try
         {
-            var session = new AppSession(resourceLoader, _options);
+            using var session = new AppSession(resourceLoader, _options);
             var viewModel = session.CreateType("CreateViewModel", vmType);
             return viewModel;
         }

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.MultiApp;
 
-public class SecondAppTests : IDisposable
+public sealed class SecondAppTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new(typeof(SecondAppVm).Assembly);

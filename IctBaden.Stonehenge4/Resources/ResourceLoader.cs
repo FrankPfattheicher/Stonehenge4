@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Resources;
 
-public class ResourceLoader : IStonehengeResourceProvider
+public sealed class ResourceLoader : IStonehengeResourceProvider
 {
     public readonly List<Assembly> ResourceAssemblies;
     private readonly ILogger _logger;

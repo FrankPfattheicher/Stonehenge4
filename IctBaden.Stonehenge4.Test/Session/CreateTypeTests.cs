@@ -8,7 +8,7 @@ public class CreateTypeTests
     [Fact]
     public void SetViewModelTypeShouldMatchTypeNameExactly()
     {
-        var session = new AppSession();
+        using var session = new AppSession();
         var instance = session.SetViewModelType("TestVm");
         
         Assert.Equal(nameof(TestVm), instance?.GetType().Name);

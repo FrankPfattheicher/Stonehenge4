@@ -43,7 +43,9 @@ namespace IctBaden.Stonehenge.Kestrel
                 options.Providers.Add<GzipCompressionProvider>();
             });
             services.AddCors();
+#pragma warning disable IDISP005
             return services.BuildServiceProvider();
+#pragma warning restore IDISP005
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

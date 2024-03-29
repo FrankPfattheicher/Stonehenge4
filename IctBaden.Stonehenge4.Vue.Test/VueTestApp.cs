@@ -10,7 +10,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test;
 
-public class VueTestApp : IDisposable
+public sealed class VueTestApp : IDisposable
 {
     public string BaseUrl => _server.BaseUrl;
 
@@ -20,10 +20,12 @@ public class VueTestApp : IDisposable
 
     public VueTestApp(Assembly? appAssembly = null)
     {
+#pragma warning disable IDISP001
         var vue = new VueResourceProvider(StonehengeLogger.DefaultLogger);
         var loader = appAssembly != null
             ? StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue, appAssembly)
             : StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue);
+#pragma warning restore IDISP001
         loader.Providers.Add(new TestResourceLoader("none"));
         loader.Services.AddService(typeof(VueTestData), Data);
         _server = new KestrelHost(loader);

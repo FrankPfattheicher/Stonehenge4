@@ -9,20 +9,11 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.App;
 
 // ReSharper disable once UnusedType.Global
-public class StonehengeUiWindow : IDisposable
+public sealed class StonehengeUiWindow(ILogger logger, StonehengeHostOptions options) : IDisposable
 {
-    private readonly ILogger _logger;
-    private readonly StonehengeHostOptions _options;
-    private readonly StonehengeUi _ui;
+    private readonly StonehengeUi _ui = new(logger, options);
     private HostWindow? _wnd;
 
-    public StonehengeUiWindow(ILogger logger, StonehengeHostOptions options)
-    {
-        _logger = logger;
-        _options = options;
-        _ui = new StonehengeUi(logger, options);
-    }
-    
     /// <summary>
     /// Start window process with
     /// random free port, not public reachable
@@ -43,19 +34,21 @@ public class StonehengeUiWindow : IDisposable
     {
         if (!_ui.Start(port, publicReachable))
         {
-            _logger.LogCritical("StonehengeUiWindow failed to start on port {Port}, (public reachable: {PublicReachable})", port, publicReachable);
+            logger.LogCritical("StonehengeUiWindow failed to start on port {Port}, (public reachable: {PublicReachable})", port, publicReachable);
             return false;
         }
         if (string.IsNullOrEmpty(_ui.Server?.BaseUrl))
         {
-            _logger.LogCritical("StonehengeUiWindow failed to start: No base URL given");
+            logger.LogCritical("StonehengeUiWindow failed to start: No base URL given");
             return false;
         }
 
-        _wnd = new HostWindow(_ui.Server?.BaseUrl!, _options.Title, windowSize);
+        _wnd?.Dispose();
+        _wnd = new HostWindow(logger, _ui.Server?.BaseUrl!, options.Title, windowSize);
         if(!_wnd.Open()) return false;
         
-        var terminate = new AutoResetEvent(false);
+        using var terminate = new AutoResetEvent(false);
+        // ReSharper disable once AccessToDisposedClosure
         Console.CancelKeyPress += (_, _) => { terminate.Set(); };
         terminate.WaitOne();
         return true;

@@ -10,10 +10,10 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Test.Resources
 {
-    public class LoaderTests : IDisposable
+    public sealed class LoaderTests : IDisposable
     {
         private readonly StonehengeResourceLoader _loader;
-        private readonly AppSession _session = new AppSession();
+        private readonly AppSession _session = new();
 
         private readonly FileLoaderTests _fileTest;
 
@@ -29,14 +29,15 @@ namespace IctBaden.Stonehenge.Test.Resources
                 .Distinct()
                 .Cast<Assembly>()
                 .ToList();
+#pragma warning disable IDISP001
             var resLoader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, Assembly.GetCallingAssembly());
             var fileLoader = new FileLoader(StonehengeLogger.DefaultLogger, Path.GetTempPath());
+#pragma warning restore IDISP001
 
-            _loader = new StonehengeResourceLoader(StonehengeLogger.DefaultLogger, new List<IStonehengeResourceProvider>
-            {
+            _loader = new StonehengeResourceLoader(StonehengeLogger.DefaultLogger, [
                 fileLoader,
                 resLoader
-            });
+            ]);
 
             _fileTest = new FileLoaderTests();
         }
@@ -44,6 +45,7 @@ namespace IctBaden.Stonehenge.Test.Resources
         public void Dispose()
         {
             _fileTest.Dispose();
+            _loader.Dispose();
         }
 
         // ReSharper disable InconsistentNaming

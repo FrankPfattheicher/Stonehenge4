@@ -5,15 +5,10 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 
-public class InvalidValuesTests : IDisposable
+public sealed class InvalidValuesTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
-    private readonly VueTestApp _app;
-
-    public InvalidValuesTests()
-    {
-        _app = new VueTestApp();
-    }
+    private readonly VueTestApp _app = new();
 
     public void Dispose()
     {

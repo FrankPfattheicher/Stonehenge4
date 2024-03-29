@@ -26,7 +26,7 @@ using AuthenticationSchemes = Microsoft.AspNetCore.Server.HttpSys.Authentication
 
 namespace IctBaden.Stonehenge.Kestrel;
 
-public class KestrelHost : IStonehengeHost
+public sealed class KestrelHost : IStonehengeHost, IDisposable
 {
     public string BaseUrl { get; private set; } = string.Empty;
     private IWebHost? _webApp;
@@ -77,6 +77,13 @@ public class KestrelHost : IStonehengeHost
         {
             provider.InitProvider(loader, options);
         }
+    }
+
+    public void Dispose()
+    {
+        _webApp?.Dispose();
+        _host?.Dispose();
+        _cancel?.Dispose();
     }
 
     public bool Start(string hostAddress, int hostPort)
@@ -188,8 +195,10 @@ public class KestrelHost : IStonehengeHost
                 builder = WindowsHosting.EnableIIS(builder);
             }
 
+            _webApp?.Dispose();
             _webApp = builder.Build();
 
+            _cancel?.Dispose();
             _cancel = new CancellationTokenSource();
             _host = _webApp.RunAsync(_cancel.Token);
 
@@ -204,7 +213,8 @@ public class KestrelHost : IStonehengeHost
             var serverAddressesFeature = _webApp.ServerFeatures.Get<IServerAddressesFeature>();
             foreach (var address in serverAddressesFeature.Addresses)
             {
-                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", address);
+                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", 
+                    address.Replace("0.0.0.0", "127.0.0.1"));
             }
 
             _logger.LogInformation("KestrelHost.Start: succeeded");
@@ -282,5 +292,5 @@ public class KestrelHost : IStonehengeHost
             viewModel?.EnableRoute(route, enabled);
         }
     }
-        
+
 }

@@ -18,7 +18,7 @@ public static class UserContentLinks
     private const string JsLinkTemplate = "<script type='application/javascript' src='{0}'></script>";
 
     private static readonly Dictionary<string, string> StyleSheets = new();
-    private static readonly List<string> ThemeInitialized = new();
+    private static readonly List<string> ThemeInitialized = [];
     private static readonly string AppPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
     private static string _userJs = string.Empty;
     private static string _extensions = string.Empty;

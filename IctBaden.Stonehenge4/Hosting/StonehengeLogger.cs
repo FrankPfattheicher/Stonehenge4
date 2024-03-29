@@ -39,6 +39,7 @@ namespace IctBaden.Stonehenge.Hosting
 
                 Trace.TraceWarning($"No LoggerFactory found. Using console factory.");
                 var emptyConfiguration = new ConfigurationBuilder().Build();
+                _defaultFactory?.Dispose();
                 _defaultFactory = CreateConsoleAndTronFactory(emptyConfiguration);
                 return _defaultFactory;
             }
@@ -59,20 +60,21 @@ namespace IctBaden.Stonehenge.Hosting
 
             var loggerFactory = LoggerFactory.Create(builder =>
             {
+#pragma warning disable IDISP004
                 builder.AddProvider(new TraceLoggerProvider("stonehenge"));
                 builder.SetMinimumLevel(minimumLogLevel);
+#pragma warning restore IDISP004
             });
             return loggerFactory;
         }
     }
 
 
-    internal class TraceLogger : ILogger
+    internal class TraceLogger(string context) : ILogger
     {
-        private readonly string _context;
         private string _scopeContext = "";
 
-        private class LogScope : IDisposable
+        private sealed class LogScope : IDisposable
         {
             private readonly TraceLogger _logger;
 
@@ -86,11 +88,6 @@ namespace IctBaden.Stonehenge.Hosting
             {
                 _logger._scopeContext = "";
             }
-        }
-
-        public TraceLogger(string context)
-        {
-            _context = context;
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -109,7 +106,7 @@ namespace IctBaden.Stonehenge.Hosting
         {
             try
             {
-                var logLine = _context + ": ";
+                var logLine = context + ": ";
                 if (!string.IsNullOrEmpty(_scopeContext))
                 {
                     logLine += _scopeContext + " ";
@@ -150,20 +147,13 @@ namespace IctBaden.Stonehenge.Hosting
         }
     }
 
-    internal class TraceLoggerProvider : ILoggerProvider
+    internal sealed class TraceLoggerProvider(string context) : ILoggerProvider
     {
-        private readonly string _context;
-
         private readonly ConcurrentDictionary<string, TraceLogger> _loggers =
             new ConcurrentDictionary<string, TraceLogger>();
 
-        public TraceLoggerProvider(string context)
-        {
-            _context = context;
-        }
-
         public ILogger CreateLogger(string categoryName) =>
-            _loggers.GetOrAdd(categoryName, _ => new TraceLogger(_context));
+            _loggers.GetOrAdd(categoryName, _ => new TraceLogger(context));
 
         public void Dispose() => _loggers.Clear();
     }

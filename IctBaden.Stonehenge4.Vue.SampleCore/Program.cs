@@ -59,9 +59,11 @@ internal static class Program
         };
 
         // Select client framework
-        Console.WriteLine(@"Using client framework vue");
+        logger.LogInformation("Using client framework VUE");
+#pragma warning disable IDISP001
         var vue = new VueResourceProvider(logger);
         var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
+#pragma warning restore IDISP001
         loader.AddResourceAssembly(typeof(TreeView).Assembly);
         loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
@@ -70,21 +72,20 @@ internal static class Program
         loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology
-        Console.WriteLine(@"Using Kestrel hosting");
+        logger.LogInformation("Using Kestrel hosting");
         _server = new KestrelHost(loader, options);
 
-        Console.WriteLine(@"Starting server");
-        var terminate = new AutoResetEvent(false);
+        logger.LogInformation("Starting server");
+        using var terminate = new AutoResetEvent(false);
+        // ReSharper disable once AccessToDisposedClosure
         Console.CancelKeyPress += (_, _) => { terminate.Set(); };
 
         var host = Environment.CommandLine.Contains("/localhost") ? "localhost" : "*";
         if (_server.Start(host, 32000))
         {
-            Console.WriteLine(@"Server reachable on: " + _server.BaseUrl);
-
             if (Environment.CommandLine.Contains("/window"))
             {
-                using var wnd = new HostWindow(_server.BaseUrl, options.Title);
+                using var wnd = new HostWindow(logger, _server.BaseUrl, options.Title, new Point(1400, 1100));
                 if (!wnd.Open())
                 {
                     logger.LogError("Failed to open main window");
@@ -96,18 +97,18 @@ internal static class Program
                 terminate.WaitOne();
             }
 
-            Console.WriteLine(@"Server terminated.");
+            logger.LogInformation("Server terminated");
         }
         else
         {
-            Console.WriteLine(@"Failed to start server on: " + _server.BaseUrl);
+            logger.LogError("Failed to start server on: {BaseUrl}", _server.BaseUrl);
         }
 
 #pragma warning disable 0162
         // ReSharper disable once HeuristicUnreachableCode
         _server.Terminate();
 
-        Console.WriteLine(@"Exit sample app");
+        logger.LogInformation("Exit sample app");
         Environment.Exit(0);
     }
 }

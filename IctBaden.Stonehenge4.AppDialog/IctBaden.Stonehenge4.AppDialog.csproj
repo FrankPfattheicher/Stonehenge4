@@ -29,4 +29,11 @@
       <EmbeddedResource Include="app\app-dialog.js" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>

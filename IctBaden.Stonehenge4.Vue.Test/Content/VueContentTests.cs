@@ -6,14 +6,9 @@ namespace IctBaden.Stonehenge.Vue.Test.Content
     /// <summary>
     /// Content that should be available as embedded resource
     /// </summary>
-    public class VueContentTests : IDisposable
+    public sealed class VueContentTests : IDisposable
     {
-        private readonly VueTestApp _app;
-
-        public VueContentTests()
-        {
-            _app = new VueTestApp();
-        }
+        private readonly VueTestApp _app = new();
 
         public void Dispose()
         {
