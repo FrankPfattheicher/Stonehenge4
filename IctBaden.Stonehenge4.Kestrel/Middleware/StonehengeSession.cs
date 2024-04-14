@@ -113,7 +113,7 @@ public class StonehengeSession(RequestDelegate next)
 
         logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
 
-        CleanupTimedOutSessions(logger, appSessions);
+        CleanupTimedOutSessions(logger);
         var session = appSessions.FirstOrDefault(s => s.Id == stonehengeId);
         if (session == null)
         {
@@ -178,9 +178,9 @@ public class StonehengeSession(RequestDelegate next)
             stonehengeId, context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
     }
 
-    private static void CleanupTimedOutSessions(ILogger logger, List<AppSession> appSessions)
+    private static void CleanupTimedOutSessions(ILogger logger)
     {
-        var timedOutSessions = appSessions.Where(s => s.IsTimedOut).ToArray();
+        var timedOutSessions = AppSession.AppSessions.Where(s => s.IsTimedOut).ToArray();
         foreach (var session in timedOutSessions)
         {
             var vm = session.ViewModel as IDisposable;
@@ -189,9 +189,7 @@ public class StonehengeSession(RequestDelegate next)
 #pragma warning restore IDISP007
             session.ViewModel = null;
             
-            appSessions = appSessions
-                .Where(s => s.Id != session.Id)
-                .ToList();
+            AppSession.AppSessions.RemoveAll(s => s.Id == session.Id);
  
             logger.LogInformation("Kestrel Session timed out {SessionId}", session.Id);
             session.Dispose();
@@ -199,7 +197,8 @@ public class StonehengeSession(RequestDelegate next)
 
         if (timedOutSessions.Any())
         {
-            logger.LogInformation("Kestrel {Count} sessions", appSessions.Count);
+            logger.LogInformation("Kestrel {Count} sessions", AppSession.AppSessions.Count);
+            
         }
     }
 

@@ -1,4 +1,5 @@
 
+* 4.8.1 - 14.04.2024 Initial session timeout 10sec, provide empty map resources
 * 4.8.0 - 29.03.2024 Using IDisposableAnalyzers, removed AppSession SetTerminator
 
 * 4.7.1 - 11.03.2024 Packets updated, static logging templates, AppSessions moved to AppSession  

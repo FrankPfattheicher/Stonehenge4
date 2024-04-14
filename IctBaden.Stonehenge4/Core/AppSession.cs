@@ -98,11 +98,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     private readonly int _eventTimeoutMs;
 
-    private readonly List<string> _events = new();
+    private readonly List<string> _events = [];
 
     private CancellationTokenSource? _eventRelease;
     private bool _forceUpdate;
-    private readonly List<string> _history = new();
+    private readonly List<string> _history = [];
 
     public string GetBackRoute()
     {
@@ -454,7 +454,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         _resourceLoader = resourceLoader;
         _userData = new Dictionary<string, object?>();
         _id = Guid.NewGuid();
-        SessionTimeout = options.SessionTimeout;
+        SessionTimeout = TimeSpan.FromSeconds(10); //options.SessionTimeout;
         Cookies = new Dictionary<string, string>();
         Parameters = new Dictionary<string, string>();
         LastAccess = DateTime.Now;
@@ -498,10 +498,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public bool IsInitialized => !string.IsNullOrEmpty(UserAgent);
 
 
-    private bool IsAssemblyDebugBuild(Assembly assembly)
-    {
-        return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Any(da => da.IsJITTrackingEnabled);
-    }
+    private bool IsAssemblyDebugBuild(Assembly assembly) => assembly
+        .GetCustomAttributes(false)
+        .OfType<DebuggableAttribute>()
+        .Any(da => da.IsJITTrackingEnabled);
 
     public void Initialize(StonehengeHostOptions hostOptions, string hostUrl, string hostDomain,
         bool isLocal, string clientAddress, int clientPort, string userAgent)
@@ -545,7 +545,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             Cookies[cookie.Key] = cookie.Value;
         }
-
 
         if (string.IsNullOrEmpty(PermanentSessionId) && cookies.TryGetValue("ss-pid", out var ssPid))
         {
