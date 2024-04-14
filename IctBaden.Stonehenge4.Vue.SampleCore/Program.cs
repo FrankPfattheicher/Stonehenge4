@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
@@ -16,7 +17,8 @@ internal static class Program
     private static IStonehengeHost? _server;
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static readonly ILoggerFactory LoggerFactory = StonehengeLogger.DefaultFactory;
+    public static readonly ILoggerFactory LoggerFactory = 
+        Logger.CreateConsoleAndTronFactory(Logger.GetLogConfiguration(LogLevel.Trace));
 
     /// <summary>
     /// The main entry point for the application.

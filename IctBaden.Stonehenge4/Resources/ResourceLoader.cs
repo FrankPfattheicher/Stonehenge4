@@ -126,8 +126,17 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
         
     public Task<Resource?> Get(AppSession? session, string name, Dictionary<string, string> parameters)
     {
-        if (name.StartsWith("Events/")) return Task.FromResult<Resource?>(null);
-            
+        if (name.StartsWith("Events/"))
+        {
+            return Task.FromResult<Resource?>(null);
+        }
+
+        if (name.EndsWith(".js.map") || name.EndsWith(".css.map"))
+        {
+            var map = new Resource(name, "auto", ResourceType.Json, "{}", Resource.Cache.OneDay);
+            return Task.FromResult<Resource?>(map);
+        }
+
         var resourceName = GetAssemblyResourceName(name);
 
         var asmResource = _resources.Value

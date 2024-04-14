@@ -176,8 +176,8 @@ public class StonehengeContent(RequestDelegate next)
                     content = resourceLoader != null
                         ? await resourceLoader.Get(appSession, resourceName, parameters)
                         : null;
-                    if (content == null && appSession != null &&
-                        resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
+                    var isIndex = resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase);
+                    if (content == null && appSession != null && isIndex)
                     {
                         logger.LogError("Invalid path in index resource {ResourceName} - redirecting to root index", resourceName);
 
@@ -188,11 +188,13 @@ public class StonehengeContent(RequestDelegate next)
                         return;
                     }
 
-                    if (content != null &&
-                        string.Compare(resourceName, "index.html",
-                            StringComparison.InvariantCultureIgnoreCase) == 0)
+                    if (content != null && isIndex)
                     {
                         HandleIndexContent(context, content);
+                    }
+                    if (content != null && !isIndex)
+                    {
+                        appSession?.SetTimeout(appSession.HostOptions.SessionTimeout);
                     }
 
                     break;
