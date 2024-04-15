@@ -286,7 +286,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
     public void EnableRoute(string route, bool enabled)
     {
-        var sessions = AppSession.AppSessions;
+        var sessions = AppSessions.GetAllSessions();
         foreach (var viewModel in sessions.Select(session => session.ViewModel as ActiveViewModel))
         {
             viewModel?.EnableRoute(route, enabled);

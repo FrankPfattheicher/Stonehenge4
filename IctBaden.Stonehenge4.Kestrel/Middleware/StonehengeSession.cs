@@ -69,9 +69,6 @@ public class StonehengeSession(RequestDelegate next)
             return;
         }
 
-        var appSessions = context.Items["stonehenge.AppSessions"] as List<AppSession>;
-        Debug.Assert(appSessions != null);
-
         // Header id has first priority
         var stonehengeId = context.Request.Headers["X-Stonehenge-Id"].FirstOrDefault();
         if (string.IsNullOrEmpty(stonehengeId))
@@ -106,7 +103,7 @@ public class StonehengeSession(RequestDelegate next)
 
                 if (ids.Length > 0)
                 {
-                    stonehengeId = ids.LastOrDefault(id => appSessions.Any(s => s.Id == id));
+                    stonehengeId = ids.LastOrDefault(id => AppSessions.GetAllSessions().Any(s => s.Id == id));
                 }
             }
         }
@@ -114,7 +111,7 @@ public class StonehengeSession(RequestDelegate next)
         logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
 
         CleanupTimedOutSessions(logger);
-        var session = appSessions.FirstOrDefault(s => s.Id == stonehengeId);
+        var session = AppSessions.GetSessionById(stonehengeId);
         if (session == null)
         {
             // session not found
@@ -134,9 +131,10 @@ public class StonehengeSession(RequestDelegate next)
             {
                 // redirect to new session
 #pragma warning disable IDISP001
-                session = NewSession(logger, appSessions, context, resourceLoader);
-                context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
+                session?.Dispose();
+                session = NewSession(logger, context, resourceLoader);
 #pragma warning restore IDISP001
+                context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
@@ -180,7 +178,7 @@ public class StonehengeSession(RequestDelegate next)
 
     private static void CleanupTimedOutSessions(ILogger logger)
     {
-        var timedOutSessions = AppSession.AppSessions.Where(s => s.IsTimedOut).ToArray();
+        var timedOutSessions = AppSessions.GetTimedOutSessions();
         foreach (var session in timedOutSessions)
         {
             var vm = session.ViewModel as IDisposable;
@@ -189,7 +187,7 @@ public class StonehengeSession(RequestDelegate next)
 #pragma warning restore IDISP007
             session.ViewModel = null;
             
-            AppSession.AppSessions.RemoveAll(s => s.Id == session.Id);
+            AppSessions.RemoveSessionById(session.Id);
  
             logger.LogInformation("Kestrel Session timed out {SessionId}", session.Id);
             session.Dispose();
@@ -197,13 +195,12 @@ public class StonehengeSession(RequestDelegate next)
 
         if (timedOutSessions.Any())
         {
-            logger.LogInformation("Kestrel {Count} sessions", AppSession.AppSessions.Count);
+            logger.LogInformation("Kestrel {Count} sessions", AppSessions.Count);
             
         }
     }
 
-    private static AppSession NewSession(ILogger logger, ICollection<AppSession> appSessions, HttpContext context,
-        StonehengeResourceLoader? resourceLoader)
+    private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader)
     {
         var options = (StonehengeHostOptions)context.Items["stonehenge.HostOptions"];
         var session = new AppSession(resourceLoader, options);
@@ -221,8 +218,8 @@ public class StonehengeSession(RequestDelegate next)
         var hostDomain = context.Request?.Host.Value ?? string.Empty;
         var hostUrl = $"{context.Request?.Scheme ?? "http"}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
-        appSessions.Add(session);
-        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
+        AppSessions.AddSession(session);
+        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, AppSessions.Count);
         return session;
     }
 
