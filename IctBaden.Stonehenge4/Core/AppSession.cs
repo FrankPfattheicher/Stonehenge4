@@ -37,7 +37,6 @@ namespace IctBaden.Stonehenge.Core;
 public sealed class AppSession : INotifyPropertyChanged, IDisposable
 {
     public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
-    public static List<AppSession> AppSessions { get; private set; } = [];
 
     public StonehengeHostOptions HostOptions { get; private set; } = new();
     public string HostDomain { get; private set; } = string.Empty;

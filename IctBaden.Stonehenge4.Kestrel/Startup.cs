@@ -59,7 +59,6 @@ namespace IctBaden.Stonehenge.Kestrel
                 context.Items.Add("stonehenge.AppTitle", _appTitle);
                 context.Items.Add("stonehenge.HostOptions", _options);
                 context.Items.Add("stonehenge.ResourceLoader", _resourceLoader);
-                context.Items.Add("stonehenge.AppSessions", AppSession.AppSessions);
                 return next.Invoke();
             });
             if (_options?.CustomMiddleware != null)

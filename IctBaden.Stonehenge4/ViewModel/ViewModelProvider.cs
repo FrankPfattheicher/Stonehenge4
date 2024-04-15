@@ -415,7 +415,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializeStructValue: {Message}", ex.Message);
+            logger.LogError("ViewModelProvider.DeserializeStructValue: {Message}", ex.Message);
             Debugger.Break();
         }
     }
@@ -427,8 +427,15 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             var mProp = structType.GetProperty(member.Key);
             if (mProp != null && member.Value != null)
             {
-                var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
-                mProp.SetValue(structObj, val, null);
+                try
+                {
+                    var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
+                    mProp.SetValue(structObj, val, null);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("ViewModelProvider.SetMembers: {Message}", ex.Message);
+                }
             }
         }
     }
