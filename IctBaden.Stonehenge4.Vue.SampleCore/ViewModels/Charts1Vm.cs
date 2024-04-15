@@ -25,26 +25,29 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
 
         
         public Chart? TrendChart { get; private set; }
-        public PieChart PieChart { get; }
+        public PieChart PieChart { get; set; }
 
         public Charts1Vm(AppSession session) : base(session)
         {
             Range = 20;
 
             CreateTrendChart();
-            
-            PieChart = new PieChart
-            {
-                Sectors = new PieSector[]
-                {
-                    new() { Label = "Wert", Value = 100 },
-                    new() { Label = "Sonst", Value = 100, Color = Color.Black}
-                }
-            };
-
+            CreatePieChart();
             RangeChanged();
         }
 
+        private void CreatePieChart()
+        {
+            PieChart = new PieChart
+            {
+                Sectors =
+                [
+                    new() { Label = "Wert", Value = 100 },
+                    new() { Label = "Sonst", Value = 100, Color = Color.Black}
+                ]
+            };
+        }
+        
         private void CreateTrendChart()
         {
             TrendChart = new Chart
@@ -89,13 +92,14 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels
         public void ChangeShowStacked()
         {
             CreateTrendChart();
+            CreatePieChart();
             RangeChanged();
+            NotifyAllPropertiesChanged();
         }
 
         [ActionMethod]
         public void ClickData(int dataIndex)
         {
-            
         }
         
         
