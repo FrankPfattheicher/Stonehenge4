@@ -2,25 +2,22 @@
 
 namespace IctBaden.Stonehenge.Resources;
 
-public class ViewModelInfo
+public class ViewModelInfo(string route, string name)
 {
     // CustomComponent
     public string ElementName { get; set; } = string.Empty;
-    public List<string> Bindings { get; set; } = new();
+    public List<string> Bindings { get; set; } = [];
 
     // ViewModel
-    public string Route { get; set; }
-    public string VmName { get; set; }
+    public string Route { get; set; } = route;
+    public string VmName { get; set; } = name;
     public string Title { get; set; } = string.Empty;
-    public int SortIndex { get; set; }
+    public int SortIndex { get; set; } = 1; // ensure visible
     public bool Visible { get; set; }
-
-    public ViewModelInfo(string route, string name)
+    
+    public override string ToString()
     {
-        Route = route;
-        VmName = name;
-        SortIndex = 1;    // ensure visible
+        return $"{SortIndex}: {VmName} - Vis={Visible}";
     }
-
 
 }

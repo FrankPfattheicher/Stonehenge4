@@ -34,7 +34,7 @@ public class StartVm : ActiveViewModel
     public string UserIdentityEMail => Session.UserIdentityEMail;
     public int SessionCount => Session.SessionCount;
 
-    public bool ShowCookies { get; private set; }
+    public bool ShowCookies => IsRouteEnabled("cookie");
 
     public string Culture { get; set; } = string.Empty;
     public string UploadFile { get; set; } = string.Empty;
@@ -196,7 +196,6 @@ END:VCALENDAR
     [ActionMethod]
     public void ToggleShowCookies()
     {
-        ShowCookies = !ShowCookies;
-        EnableRoute("cookie", ShowCookies);
+        EnableRoute("cookie", !ShowCookies);
     }
 }
