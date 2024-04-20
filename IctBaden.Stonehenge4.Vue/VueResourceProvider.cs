@@ -57,7 +57,16 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
 
         AddFileSystemContent(options.AppFilesPath);
         AddResourceContent();
-        appCreator.CreateApplication();
+        
+        var contentPages = _vueContent
+            .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
+            .Select(res => res.Value.ViewModel)
+            .OfType<ViewModelInfo>()
+            .OrderBy(vmInfo => Math.Abs(vmInfo.SortIndex))
+            .ToArray();
+        AppPages.SetPages(contentPages);
+
+        appCreator.CreateApplication(contentPages);
         appCreator.CreateComponents(loader);
     }
 

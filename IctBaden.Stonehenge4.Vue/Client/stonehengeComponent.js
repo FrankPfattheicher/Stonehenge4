@@ -21,7 +21,7 @@ stonehengeViewModelName = function component() {
                         } catch (error) {
                             // ignore
                             if (console && console.log) {
-                                console.log("stonehengeViewModelName error: " + error);
+                                console.log("StonehengeNavigate error: " + error);
                             }
                         }
                     } else {
@@ -35,7 +35,20 @@ stonehengeViewModelName = function component() {
                         // ignore
                         if (console && console.log) {
                             console.log("script: " + script);
-                            console.log("stonehengeViewModelName error: " + error);
+                            console.log("StonehengeEval error: " + error);
+                        }
+                    }
+                } else if (propertyName === "StonehengeRoutes") {
+                    try {
+                        let routes = vmData[propertyName];
+                        for(let route in routes) {
+                            stonehengeEnableRoute(route, routes[route]);
+                        }
+                    } catch (error) {
+                        // ignore
+                        if (console && console.log) {
+                            console.log("routes: " + routes);
+                            console.log("StonehengeRoutes error: " + error);
                         }
                     }
                 } else {

@@ -505,12 +505,17 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region Server side page enabling
 
+    public bool UpdateRoutes;
+
     public void EnableRoute(string route, bool enabled)
     {
         route = route.Replace("-", "_");
         Session.Logger.LogInformation("ActiveViewModel.EnableRoute({Route}) = {Enabled}", route, enabled);
-        ExecuteClientScript($"stonehengeEnableRoute('{route}', {enabled.ToString().ToLower()})");
+        AppPages.EnableRoute(route, enabled);
+        UpdateRoutes = true;
     }
+    public bool IsRouteEnabled(string route) => 
+        AppPages.IsRouteEnabled(route.Replace("-", "_"));
 
     #endregion
 

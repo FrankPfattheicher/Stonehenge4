@@ -1,4 +1,6 @@
 
+* 4.9.0 - 19.04.2024 EnableRoute w/o exec client script, added IsRouteEnabled
+
 * 4.8.2 - 15.04.2024 static class AppSessions to handle sessions thread safe
 * 4.8.1 - 14.04.2024 Initial session timeout 10sec, provide empty map resources
 * 4.8.0 - 29.03.2024 Using IDisposableAnalyzers, removed AppSession SetTerminator
