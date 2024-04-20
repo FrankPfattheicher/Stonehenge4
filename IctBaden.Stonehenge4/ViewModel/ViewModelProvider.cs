@@ -509,7 +509,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializePropertyValue: {Message}", ex.Message);
+            logger.LogError("DeserializePropertyValue('{Value}'): {Message}", propValue, ex.Message);
             Debugger.Break();
         }
 

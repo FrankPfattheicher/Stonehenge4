@@ -50,7 +50,7 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware
             }
             catch (Exception ex)
             {
-                logger.LogError("Error handling default headers: " + ex.Message);
+                logger.LogError("Error handling default headers: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
                 Debugger.Break();
             }
             await _next.Invoke(context);
