@@ -300,6 +300,16 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             activeVm.ClientScript = string.Empty;
         }
 
+        if (activeVm.UpdateRoutes)
+        {
+            var routes = AppPages.Pages
+                .Select(page => $"\"{page.Route}\": {page.Visible.ToString().ToLower()}")
+                .ToArray();
+            var json = "{ " + string.Join(", ", routes) + " }";
+            data.Add($"\"StonehengeRoutes\":{json}");
+            activeVm.UpdateRoutes = false;
+        }
+
         if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
         {
             var route = activeVm.NavigateToRoute;
@@ -499,7 +509,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializePropertyValue: {Message}", ex.Message);
+            logger.LogError("DeserializePropertyValue('{Value}'): {Message}", propValue, ex.Message);
             Debugger.Break();
         }
 

@@ -1,4 +1,6 @@
 using System.Drawing;
+using IctBaden.Stonehenge.Types;
+
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 
 // ReSharper disable UnusedMember.Global
@@ -9,7 +11,10 @@ namespace IctBaden.Stonehenge.Extension;
 
 public class Chart
 {
-    public string Id { get; } = Guid.NewGuid().ToString("N");
+    /// <summary>
+    /// Id of chart element
+    /// </summary>
+    public string Id { get; private set; } = Element.NewId();
     
     /// <summary>
     /// Show series points
@@ -29,22 +34,22 @@ public class Chart
     /// <summary>
     /// Define the chart's values axes (maximum two)
     /// </summary>
-    public ChartValueAxis[] ValueAxes;
+    public ChartValueAxis[] ValueAxes = [new ChartValueAxis(ValueAxisId.y)];
 
     /// <summary>
     /// The chart's data series
     /// </summary>
-    public ChartSeries[] Series;
+    public ChartSeries[] Series = [];
 
     /// <summary>
     /// Define chart's additionally grid lines
     /// </summary>
-    public ChartGridLine[] GridLines;
+    public ChartGridLine[] GridLines = [];
 
     /// <summary>
     /// Define chart's additionally axes and series regions
     /// </summary>
-    public ChartDataRegion[] DataRegions;
+    public ChartDataRegion[] DataRegions = [];
 
     /// <summary>
     /// Define chart's title
@@ -231,14 +236,7 @@ public class Chart
         }
     }
 
-
-    public Chart()
-    {
-        ValueAxes = new[] { new ChartValueAxis(ValueAxisId.y) };
-        Series = Array.Empty<ChartSeries>();
-        GridLines = Array.Empty<ChartGridLine>();
-        DataRegions = Array.Empty<ChartDataRegion>();
-    }
+    public void UpdateId() => Id = Element.NewId();
 
     public void SetSeriesData(string series, object?[] data)
     {

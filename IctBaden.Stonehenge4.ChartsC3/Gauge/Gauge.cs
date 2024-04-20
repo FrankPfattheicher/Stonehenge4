@@ -1,8 +1,16 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+
+using IctBaden.Stonehenge.Types;
+
 namespace IctBaden.Stonehenge.Extension;
 
 public class Gauge
 {
+    /// <summary>
+    /// Id of gauge chart element
+    /// </summary>
+    public string Id { get; private set; } = Element.NewId();
+    
     public string? Label { get; set; }
 
     public bool MinMaxLabels { get; set; } = true;
@@ -19,5 +27,7 @@ public class Gauge
     /// </summary>
     public int Thickness { get; set; } = 32;
     public string? Units { get; set; }
+
+    public void UpdateId() => Id = Element.NewId();
 
 }

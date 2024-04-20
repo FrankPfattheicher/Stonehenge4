@@ -1,11 +1,16 @@
 using System.Drawing;
+using IctBaden.Stonehenge.Types;
+
 // ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Extension.Pie;
 
 public class PieChart
 {
-    public string Id { get; } = Guid.NewGuid().ToString("N");
+    /// <summary>
+    /// Id of pie chart element
+    /// </summary>
+    public string Id { get; private set; } = Element.NewId();
 
     public Dictionary<string, object> Data =>
         new()
@@ -33,4 +38,8 @@ public class PieChart
     private string ColorRgb(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
 
     public PieSector[] Sectors = Array.Empty<PieSector>();
+
+    
+    public void UpdateId() => Id = Element.NewId();
+
 }

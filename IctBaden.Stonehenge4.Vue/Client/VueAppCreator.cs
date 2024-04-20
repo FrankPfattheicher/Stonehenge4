@@ -64,10 +64,10 @@ internal class VueAppCreator
         return resourceText;
     }
 
-    public void CreateApplication()
+    public void CreateApplication(ViewModelInfo[] contentPages)
     {
         var applicationJs = LoadResourceText(_vueAssembly, "IctBaden.Stonehenge.Vue.Client.stonehengeApp.js");
-        applicationJs = InsertRoutes(applicationJs);
+        applicationJs = InsertRoutes(applicationJs, contentPages);
         applicationJs = InsertElements(applicationJs);
 
         var resource = new Resource("app.js", "VueResourceProvider", ResourceType.Js, applicationJs,
@@ -75,7 +75,7 @@ internal class VueAppCreator
         _vueContent.Add("app.js", resource);
     }
 
-    private string InsertRoutes(string pageText)
+    private string InsertRoutes(string pageText, ViewModelInfo[] contentPages)
     {
         const string routesInsertPoint = "//stonehengeAppRoutes";
         const string stonehengeAppTitleInsertPoint = "stonehengeAppTitle";
@@ -84,19 +84,13 @@ internal class VueAppCreator
         const string pageTemplate =
             "{{ path: '{0}', name: '{1}', title: '{2}', component: () => Promise.resolve(stonehengeLoadComponent('{3}')), visible: {4} }}";
 
-        var contentPages = _vueContent
-            .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
-            .Select(res => new { res.Value.Name, Vm = res.Value.ViewModel })
-            .OrderBy(route => Math.Abs(route.Vm!.SortIndex))
-            .ToList();
-
         var pages = contentPages
-            .Select(route => string.Format(pageTemplate,
-                "/" + route.Name,
-                route.Name,
-                route.Vm!.Title,
-                route.Name,
-                route.Vm.Visible ? "true" : "false"))
+            .Select(vmInfo => string.Format(pageTemplate,
+                "/" + vmInfo.Route,
+                vmInfo.Route,
+                vmInfo.Title,
+                vmInfo.Route,
+                vmInfo.Visible ? "true" : "false"))
             .ToList();
 
         var startPageName = _options.StartPage;
@@ -106,7 +100,7 @@ internal class VueAppCreator
         }
         else if (string.IsNullOrEmpty(startPageName))
         {
-            startPageName = contentPages.First(p => p.Vm!.Visible).Name;
+            startPageName = contentPages.First(vmInfo => vmInfo.Visible).Route;
         }
 
         if (string.IsNullOrEmpty(startPageName))
@@ -118,10 +112,10 @@ internal class VueAppCreator
             startPageName = startPageName.Replace("-", "_");
         }
 
-        var (key, value) = _vueContent.FirstOrDefault(page => page.Value.Name == startPageName);
-        if (key != null)
+        var startPage = contentPages.FirstOrDefault(page => page.Route == startPageName);
+        if (startPage != null)
         {
-            pages.Insert(0, string.Format(pageTemplate, "", "", value.ViewModel!.Title, value.Name, "false"));
+            pages.Insert(0, string.Format(pageTemplate, string.Empty, string.Empty, startPage.Title, startPage.Route, "false"));
         }
 
         var routes = string.Join("," + Environment.NewLine, pages);
@@ -232,7 +226,7 @@ internal class VueAppCreator
 
         // supply functions for action methods
         const string methodTemplate =
-            @"stonehengeMethodName: function({paramNames}) { app.stonehengeViewModelName.StonehengePost('ViewModel/stonehengeViewModelName/stonehengeMethodName{paramValues}'); }";
+            "stonehengeMethodName: function({paramNames}) { app.stonehengeViewModelName.StonehengePost('ViewModel/stonehengeViewModelName/stonehengeMethodName{paramValues}'); }";
 
         var actionMethods = new List<string>();
         foreach (var methodInfo in vmType.GetMethods().Where(methodInfo =>
@@ -285,7 +279,7 @@ internal class VueAppCreator
     private static List<string> GetPropNames(object? viewModel)
     {
         // properties
-        if (viewModel == null) return new List<string>();
+        if (viewModel == null) return [];
 
         var vmProps = new List<PropertyDescriptor>();
         if (viewModel is ActiveViewModel activeVm)
@@ -308,7 +302,7 @@ internal class VueAppCreator
 
     private static List<string> GetPostBackPropNames(object? viewModel, IEnumerable<string> propertyNames)
     {
-        if (viewModel == null) return new List<string>();
+        if (viewModel == null) return [];
 
         var postBackPropNames = new List<string>();
         var activeVm = viewModel as ActiveViewModel;
