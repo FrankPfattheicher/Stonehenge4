@@ -277,8 +277,17 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var typeConstructors = type.GetConstructors();
         if (!typeConstructors.Any())
         {
-            Logger.LogError("AppSession.CreateType({Context}, {TypeName}): No public constructors",
-                context, type.Name);
+            if (type.IsValueType)
+            {
+                Logger.LogWarning("AppSession.CreateType({Context}, {TypeName}): Using default value",
+                    context, type.Name);
+                instance = RuntimeHelpers.GetUninitializedObject(type);
+            }
+            else
+            {
+                Logger.LogError("AppSession.CreateType({Context}, {TypeName}): No public constructors",
+                    context, type.Name);
+            }
         }
         foreach (var constructor in typeConstructors)
         {

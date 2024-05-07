@@ -1,4 +1,5 @@
 
+* 4.9.1 - 23.04.2024 CreateType using default values for value types 
 * 4.9.0 - 20.04.2024 EnableRoute w/o exec client script, added IsRouteEnabled, C3 charts method UpdateId
 
 * 4.8.2 - 15.04.2024 static class AppSessions to handle sessions thread safe
