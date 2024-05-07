@@ -7,7 +7,7 @@ using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.Extension;
-using IctBaden.Stonehenge4.DropEdit;
+using IctBaden.Stonehenge4.Forms;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;
@@ -69,7 +69,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(TreeView).Assembly);
         loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
-        loader.AddResourceAssembly(typeof(DropEdit).Assembly);
+        loader.AddResourceAssembly(typeof(Forms).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             

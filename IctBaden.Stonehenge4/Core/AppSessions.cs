@@ -3,57 +3,58 @@ using System.Linq;
 
 namespace IctBaden.Stonehenge.Core;
 
-public static class AppSessions
+public class AppSessions
 {
-    private static readonly List<AppSession> Sessions = [];
-    public static int Count
+    private readonly List<AppSession> _sessions = [];
+    
+    public int Count
     {
         get
         {
-            lock (Sessions)
+            lock (_sessions)
             {
-                return Sessions.Count;
+                return _sessions.Count;
             }
         }
     }
 
-    public static void AddSession(AppSession session)
+    public void AddSession(AppSession session)
     {
-        lock (Sessions)
+        lock (_sessions)
         {
-            Sessions.Add(session);
+            _sessions.Add(session);
         }
     }
 
-    public static AppSession? GetSessionById(string? sessionId)
+    public AppSession? GetSessionById(string? sessionId)
     {
-        lock (Sessions)
+        lock (_sessions)
         {
-            return Sessions.FirstOrDefault(s => s.Id == sessionId);
+            return _sessions.FirstOrDefault(s => s.Id == sessionId);
         }
     }
     
-    public static void RemoveSessionById(string sessionId)
+    public void RemoveSessionById(string sessionId)
     {
-        lock (Sessions)
+        lock (_sessions)
         {
-            Sessions.RemoveAll(s => s.Id == sessionId);
+            _sessions.RemoveAll(s => s.Id == sessionId);
         }
     }
 
-    public static AppSession[] GetAllSessions()
+    public AppSession[] GetAllSessions()
     {
-        lock (Sessions)
+        lock (_sessions)
         {
-            return Sessions.ToArray();
+            return _sessions.ToArray();
         }
     }
 
-    public static AppSession[] GetTimedOutSessions()
+    public AppSession[] GetTimedOutSessions()
     {
-        lock (Sessions)
+        lock (_sessions)
         {
-            var timedOutSessions = Sessions
+            var timedOutSessions = _sessions
                 .Where(s => s.IsTimedOut)
                 .ToArray();
             return timedOutSessions;

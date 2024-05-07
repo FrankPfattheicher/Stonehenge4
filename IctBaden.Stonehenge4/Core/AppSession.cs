@@ -48,7 +48,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string UserAgent { get; private set; } = string.Empty;
     public string Platform { get; private set; } = string.Empty;
     public string Browser { get; private set; } = string.Empty;
-    public int SessionCount => AppSessions.Count;
+    public int SessionCount => _resourceLoader.AppSessions.Count;
     public bool CookiesSupported { get; private set; }
     public bool StonehengeCookieSet { get; private set; }
     public Dictionary<string, string> Cookies { get; private set; }

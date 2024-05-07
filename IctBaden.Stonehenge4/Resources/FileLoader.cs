@@ -15,8 +15,11 @@ public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourc
 {
     public string RootPath { get; private set; } = path;
 
+    public AppSessions AppSessions { get; private set; } = new();
+    
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
+        AppSessions = loader.AppSessions;
     }
 
     public List<ViewModelInfo> GetViewModelInfos() => [];

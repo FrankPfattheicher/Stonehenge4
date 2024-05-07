@@ -56,6 +56,7 @@ namespace IctBaden.Stonehenge.Kestrel
             app.Use((context, next) =>
             {
                 context.Items.Add("stonehenge.Logger", _logger);
+                context.Items.Add("stonehenge.AppSessions", _resourceLoader.AppSessions);
                 context.Items.Add("stonehenge.AppTitle", _appTitle);
                 context.Items.Add("stonehenge.HostOptions", _options);
                 context.Items.Add("stonehenge.ResourceLoader", _resourceLoader);

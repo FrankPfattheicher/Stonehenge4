@@ -21,12 +21,15 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
     : IStonehengeResourceProvider
 {
     public readonly ILogger Logger = logger;
+    public AppSessions AppSessions { get; private set; } = new(); 
         
     public List<IStonehengeResourceProvider> Providers { get; } = loaders;
     public readonly ServiceContainer Services = new();
 
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
+        AppSessions = loader.AppSessions;
+        
         foreach (var provider in Providers)
         {
             provider.InitProvider(loader, options);

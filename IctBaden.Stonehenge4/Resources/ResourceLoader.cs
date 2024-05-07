@@ -52,8 +52,11 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
             });
     }
 
+    public AppSessions AppSessions { get; private set; } = new();
+    
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
+        AppSessions = loader.AppSessions;
     }
 
     public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
