@@ -7,7 +7,7 @@
         <RootNamespace>IctBaden.Stonehenge.Extension</RootNamespace>
         <PackageVersion>1.0.1</PackageVersion>
         <Authors>Frank Pfattheicher</Authors>
-        <Copyright>©2022 ICT Baden GmbH</Copyright>
+        <Copyright>©2022-2024 ICT Baden GmbH</Copyright>
         <AssemblyVersion>1.0.1</AssemblyVersion>
         <FileVersion>1.0.1</FileVersion>
         <IsPackable>false</IsPackable>
