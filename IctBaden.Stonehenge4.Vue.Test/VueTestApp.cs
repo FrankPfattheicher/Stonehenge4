@@ -12,9 +12,9 @@ namespace IctBaden.Stonehenge.Vue.Test;
 
 public sealed class VueTestApp : IDisposable
 {
-    public string BaseUrl => _server.BaseUrl;
+    public string BaseUrl => Server.BaseUrl;
 
-    private readonly IStonehengeHost _server;
+    public readonly IStonehengeHost Server;
 
     public readonly VueTestData Data = new();
 
@@ -28,13 +28,13 @@ public sealed class VueTestApp : IDisposable
 #pragma warning restore IDISP001
         loader.Providers.Add(new TestResourceLoader("none"));
         loader.Services.AddService(typeof(VueTestData), Data);
-        _server = new KestrelHost(loader);
-        _server.Start("localhost");
+        Server = new KestrelHost(loader);
+        Server.Start("localhost");
     }
 
     public void Dispose()
     {
-        _server.Terminate();
+        Server.Terminate();
     }
         
 }

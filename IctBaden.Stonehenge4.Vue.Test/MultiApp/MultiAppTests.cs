@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
@@ -57,6 +58,46 @@ public sealed class MultiAppTests : IDisposable
         Assert.NotNull(response);
         Assert.Contains("'secondapp'", response);
         Assert.DoesNotContain("'start'", response);
+    }
+
+    [Fact]
+    public async Task RunningMultipleAppsShouldNotMixUpSessions()
+    {
+        var response = string.Empty;
+
+        // app1
+        try
+        {
+            // ReSharper disable once ConvertToUsingDeclaration
+            using var client = new RedirectableHttpClient();
+            response = await client.DownloadStringWithSession(_app1.BaseUrl + "/");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, nameof(RunningMultipleAppsShouldNotMixUpContent));
+        }
+
+        Assert.NotNull(response);
+        Assert.Single(_app1.Server.GetAllSessions());
+
+        // app2
+        try
+        {
+            // ReSharper disable once ConvertToUsingDeclaration
+            using (var client = new RedirectableHttpClient())
+            {
+                response = await client.DownloadStringWithSession(_app2.BaseUrl + "/");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, nameof(RunningMultipleAppsShouldNotMixUpContent));
+        }
+
+        Assert.NotNull(response);
+        Assert.Single(_app2.Server.GetAllSessions());
+        
+        Assert.NotEqual(_app1.Server.GetAllSessions().First().Id, _app2.Server.GetAllSessions().First().Id);
     }
 
 }
