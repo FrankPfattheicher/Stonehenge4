@@ -5,9 +5,9 @@
     <LangVersion>12</LangVersion>
     <AssemblyVersion>4.0.4</AssemblyVersion>
     <FileVersion>4.0.4</FileVersion>
-    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge.Vue.SampleCore</RootNamespace>
     <Nullable>enable</Nullable>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="app\cookie.html" />

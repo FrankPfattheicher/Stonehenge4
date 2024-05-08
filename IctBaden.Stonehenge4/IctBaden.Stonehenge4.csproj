@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>Copyright ©2013-2022 ICT Baden GmbH</Copyright>
+    <Copyright>Copyright ©2013-2024 ICT Baden GmbH</Copyright>
     <Company>ICT Baden GmbH</Company>
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
     <ApplicationIcon>app\favicon.ico</ApplicationIcon>
     <LangVersion>12</LangVersion>
     <PackageIcon>icon64.png</PackageIcon>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <RootNamespace>IctBaden.Stonehenge</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>

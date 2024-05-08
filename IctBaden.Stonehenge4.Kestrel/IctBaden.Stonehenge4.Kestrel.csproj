@@ -7,7 +7,7 @@
     <Product>Web Application Framework</Product>
     <LangVersion>12</LangVersion>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <RootNamespace>IctBaden.Stonehenge.Kestrel</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>

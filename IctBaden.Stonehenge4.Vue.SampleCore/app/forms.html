@@ -156,18 +156,11 @@
     <div class="col-md-4" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
 
         <h4>
-            Dropdown Edit
+            Error Message
         </h4>
 
         <p>
-            Value1: {{DropEditValue1}}, Value2: {{DropEditValue2}}
-        </p>
-
-        <p>
-            <st-drop-edit id="de1" :value="DropEditValue1" :values="DropEditValues" @change="DropEditValue1=$event" style="width: 20em;"></st-drop-edit>
-        </p>
-        <p>
-            <st-drop-edit id="de2" :value="DropEditValue2" :values="DropEditValues" @change="DropEditValue2=$event" dropList="true" style="width: 10em;"></st-drop-edit>
+            <st-error-message :message="Test"></st-error-message>
         </p>
 
     </div>
@@ -188,6 +181,26 @@
             <button class="btn btn-sm btn-secondary" @click="InputWithParameter(InputParameter)">Call with Parameter</button>
             <br>
             Received Parameter: {{ReceivedParameter}}
+        </p>
+
+    </div>
+
+
+    <div class="col-md-4" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+
+        <h4>
+            Dropdown Edit
+        </h4>
+
+        <p>
+            Value1: {{DropEditValue1}}, Value2: {{DropEditValue2}}
+        </p>
+
+        <p>
+            <st-drop-edit id="de1" :value="DropEditValue1" :values="DropEditValues" @change="DropEditValue1=$event" style="width: 20em;"></st-drop-edit>
+        </p>
+        <p>
+            <st-drop-edit id="de2" :value="DropEditValue2" :values="DropEditValues" @change="DropEditValue2=$event" dropList="true" style="width: 10em;"></st-drop-edit>
         </p>
 
     </div>

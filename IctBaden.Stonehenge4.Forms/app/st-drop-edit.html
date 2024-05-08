@@ -9,7 +9,7 @@
     </label>
     <input :id="id" type="checkbox" v-model="dropList">
     <div class="st-drop-edit-items"
-         style="position: absolute; z-index: 1; max-height: 40vh; overflow-y: auto; background-color: white; padding-top: .5em; border: 1px solid var(--bs-gray-400);">
+         style="position: absolute; z-index: 1; max-height: 40vh; overflow-y: auto; padding-top: .5em; border: 1px solid var(--bs-gray-400);">
         <ul style="list-style-type: none; margin-left: -2em;">
             <li class="st-drop-edit-item" v-for="v in values" style="margin-left: 1em; margin-right: 1em;" @click="value=v; dropList=false; $emit('change',v);">
                 &nbsp;{{v}}

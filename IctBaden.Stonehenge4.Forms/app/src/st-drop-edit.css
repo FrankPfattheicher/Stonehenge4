@@ -14,6 +14,10 @@
     display: none;
 }
 
+.st-drop-edit-items {
+    background-color: white;
+}
+
 .st-drop-edit input[type=checkbox] ~ .st-drop-edit-items {
     transform: scaleY(0);
 }
@@ -29,4 +33,16 @@
 
 .st-drop-edit-item:hover {
     background-color: var(--bs-gray-400);
+}
+
+
+.st-error-message {
+    font-weight: bold;
+    font-size: 120%;
+    background-color: orange;
+    color: black;
+    padding-left: 1em;
+    height: 2em;
+    align-content: center;
+    border-radius: 5px;}
 }

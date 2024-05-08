@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>12</LangVersion>
@@ -20,6 +20,8 @@
       <EmbeddedResource Include="app\src\st-drop-edit.css" />
       <None Remove="app\st-drop-edit.html" />
       <EmbeddedResource Include="app\st-drop-edit.html" />
+      <None Remove="app\st-error-message.html" />
+      <EmbeddedResource Include="app\st-error-message.html" />
     </ItemGroup>
 
     <ItemGroup>
