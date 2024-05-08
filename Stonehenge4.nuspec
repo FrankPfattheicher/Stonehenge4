@@ -44,11 +44,22 @@
                 <reference file="IctBaden.Stonehenge4.Forms.dll"/>
                 <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
             </group>
+            <group targetFramework="net8.0" >
+                <reference file="IctBaden.Stonehenge4.dll"/>
+                <reference file="IctBaden.Stonehenge4.Vue.dll"/>
+                <reference file="IctBaden.Stonehenge4.Kestrel.dll"/>
+                <reference file="IctBaden.Stonehenge4.App.dll"/>
+                <reference file="IctBaden.Stonehenge4.TreeView.dll"/>
+                <reference file="IctBaden.Stonehenge4.AppDialog.dll"/>
+                <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
+                <reference file="IctBaden.Stonehenge4.Forms.dll"/>
+                <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
+            </group>
         </references>
     </metadata>
     <files>
         <file src="../icon64.png" target="images"/>
         <file src="lib/*.dll" target="lib/net6.0"/>
-        <file src="lib/*.pdb" target="lib/net6.0"/>
+        <file src="lib/*.dll" target="lib/net8.0"/>
     </files>
 </package>
