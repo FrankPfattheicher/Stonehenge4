@@ -39,6 +39,9 @@
 .st-error-message {
     font-weight: bold;
     font-size: 120%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     background-color: orange;
     color: black;
     padding-left: 1em;

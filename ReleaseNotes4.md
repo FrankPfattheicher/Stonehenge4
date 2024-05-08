@@ -1,5 +1,5 @@
 
-* 4.9.2 - 07.05.2024 Make AppSessions non static, rename extension DropEdit to more generic name Forms
+* 4.9.2 - 07.05.2024 Make AppSessions non static, rename extension DropEdit to more generic name Forms, added st-error-message
 * 4.9.1 - 23.04.2024 CreateType using default values for value types 
 * 4.9.0 - 20.04.2024 EnableRoute w/o exec client script, added IsRouteEnabled, C3 charts method UpdateId
 

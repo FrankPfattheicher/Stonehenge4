@@ -16,12 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="app\src\st-drop-edit.css" />
-      <EmbeddedResource Include="app\src\st-drop-edit.css" />
       <None Remove="app\st-drop-edit.html" />
       <EmbeddedResource Include="app\st-drop-edit.html" />
       <None Remove="app\st-error-message.html" />
       <EmbeddedResource Include="app\st-error-message.html" />
+      <None Remove="app\src\st-forms.css" />
+      <EmbeddedResource Include="app\src\st-forms.css" />
     </ItemGroup>
 
     <ItemGroup>
