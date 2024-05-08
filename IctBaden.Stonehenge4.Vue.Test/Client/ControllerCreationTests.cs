@@ -23,7 +23,7 @@ public sealed class ControllerCreationTests : IDisposable
         _loader = StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, _vue);
         _loader.InitProvider(_loader, _options);
         _loader.Services.AddService(typeof(DiDependency), new DiDependency());
-        _session = new AppSession(_loader, _options);
+        _session = new AppSession(_loader, _options, new AppSessions());
     }
 
     public void Dispose()

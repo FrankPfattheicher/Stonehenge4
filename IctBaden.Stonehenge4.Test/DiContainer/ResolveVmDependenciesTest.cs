@@ -21,7 +21,7 @@ public sealed class ResolveVmDependenciesTest : IDisposable
         Id = Guid.NewGuid();
         _loader = StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, null);
         _loader.Services.AddService(typeof(ResolveVmDependenciesTest), this);
-        _session = new AppSession(_loader, new StonehengeHostOptions());
+        _session = new AppSession(_loader, new StonehengeHostOptions(), new AppSessions());
     }
 
     public void Dispose()

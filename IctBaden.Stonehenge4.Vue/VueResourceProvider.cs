@@ -42,11 +42,8 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
         _viewModels = new List<ViewModelInfo>();
     }
 
-    public AppSessions AppSessions { get; private set; } = new();
-
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
-        AppSessions = loader.AppSessions;
         _vueContent.Clear();
 
         if (loader.Providers

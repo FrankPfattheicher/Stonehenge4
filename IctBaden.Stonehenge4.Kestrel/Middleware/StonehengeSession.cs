@@ -133,7 +133,7 @@ public class StonehengeSession(RequestDelegate next)
                 // redirect to new session
 #pragma warning disable IDISP001
                 session?.Dispose();
-                session = NewSession(logger, context, resourceLoader);
+                session = NewSession(logger, context, resourceLoader, appSessions);
 #pragma warning restore IDISP001
                 context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
 
@@ -200,10 +200,10 @@ public class StonehengeSession(RequestDelegate next)
         }
     }
 
-    private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader)
+    private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader, AppSessions appSessions)
     {
         var options = (StonehengeHostOptions)context.Items["stonehenge.HostOptions"];
-        var session = new AppSession(resourceLoader, options);
+        var session = new AppSession(resourceLoader, options, appSessions);
         var isLocal = context.IsLocal();
         var userAgent = context.Request.Headers["User-Agent"];
         var userLanguages = context.Request.Headers["Accept-Language"];
@@ -218,8 +218,8 @@ public class StonehengeSession(RequestDelegate next)
         var hostDomain = context.Request?.Host.Value ?? string.Empty;
         var hostUrl = $"{context.Request?.Scheme ?? "http"}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
-        resourceLoader?.AppSessions.AddSession(session);
-        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, resourceLoader?.AppSessions.Count ?? 0);
+        appSessions.AddSession(session);
+        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
         return session;
     }
 

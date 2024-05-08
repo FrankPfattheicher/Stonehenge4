@@ -10,11 +10,8 @@ namespace IctBaden.Stonehenge.Test.Tools;
 
 public sealed class TestResourceLoader(string content) : IStonehengeResourceProvider
 {
-    public AppSessions AppSessions { get; private set; } = new();
-
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
-        AppSessions = loader.AppSessions;
     }
 
     public List<ViewModelInfo> GetViewModelInfos() => [];
