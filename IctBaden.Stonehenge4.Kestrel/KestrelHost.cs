@@ -29,6 +29,11 @@ namespace IctBaden.Stonehenge.Kestrel;
 public sealed class KestrelHost : IStonehengeHost, IDisposable
 {
     public string BaseUrl { get; private set; } = string.Empty;
+    
+    private readonly AppSessions _appSessions = new();
+
+    public AppSession[] GetAllSessions() => _appSessions.GetAllSessions();
+    
     private IWebHost? _webApp;
     private Task? _host;
     private CancellationTokenSource? _cancel;
@@ -145,12 +150,13 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 .Add(mem)
                 .Build();
 
-            _startup = new Startup(_logger, config, _resourceProvider);
+            _startup = new Startup(_logger, config, _resourceProvider, _appSessions);
                 
             var builder = new WebHostBuilder()
                 .UseConfiguration(config)
                 .ConfigureServices(s => { s.AddSingleton(_logger); })
                 .ConfigureServices(s => { s.AddSingleton<IConfiguration>(config); })
+                .ConfigureServices(s => { s.AddSingleton(_appSessions); })
                 .ConfigureServices(s => { s.AddSingleton(_resourceProvider); })
                 .ConfigureServices(s => { s.AddSingleton<IStartup>(_startup); });
 
@@ -286,7 +292,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
     public void EnableRoute(string route, bool enabled)
     {
-        var sessions = AppSessions.GetAllSessions();
+        var sessions = _appSessions.GetAllSessions();
         foreach (var viewModel in sessions.Select(session => session.ViewModel as ActiveViewModel))
         {
             viewModel?.EnableRoute(route, enabled);

@@ -53,7 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DBED7D7D
 		publish.sh = publish.sh
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.DropEdit", "IctBaden.Stonehenge4.DropEdit\IctBaden.Stonehenge4.DropEdit.csproj", "{8AA92C70-3547-4A90-80B5-E16995F3AFDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.Forms", "IctBaden.Stonehenge4.Forms\IctBaden.Stonehenge4.Forms.csproj", "{8AA92C70-3547-4A90-80B5-E16995F3AFDA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{693A626F-DECC-4BCD-B509-63FDF4215679}"
 	ProjectSection(SolutionItems) = preProject

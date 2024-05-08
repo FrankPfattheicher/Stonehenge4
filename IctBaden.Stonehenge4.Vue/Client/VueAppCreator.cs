@@ -205,7 +205,7 @@ internal class VueAppCreator
             return null;
         }
 
-        var viewModel = CreateViewModel(vmType, resourceLoader);
+        var viewModel = CreateViewModel(vmType, resourceLoader, new AppSessions());
 
         var text = _controllerTemplate
             .Replace("stonehengeDebugBuild", DebugBuild ? "true" : "false")
@@ -258,11 +258,11 @@ internal class VueAppCreator
         return text.Replace("/*commands*/", string.Join("," + Environment.NewLine, actionMethods));
     }
 
-    private object? CreateViewModel(Type vmType, StonehengeResourceLoader resourceLoader)
+    private object? CreateViewModel(Type vmType, StonehengeResourceLoader resourceLoader, AppSessions appSessions)
     {
         try
         {
-            using var session = new AppSession(resourceLoader, _options);
+            using var session = new AppSession(resourceLoader, _options, appSessions);
             var viewModel = session.CreateType("CreateViewModel", vmType);
             return viewModel;
         }

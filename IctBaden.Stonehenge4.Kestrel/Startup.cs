@@ -19,14 +19,16 @@ namespace IctBaden.Stonehenge.Kestrel
         private readonly string _appTitle;
         private readonly ILogger _logger;
         private readonly IStonehengeResourceProvider _resourceLoader;
+        private readonly AppSessions _appSessions;
         private readonly StonehengeHostOptions? _options;
 
         // ReSharper disable once UnusedMember.Global
-        public Startup(ILogger logger, IConfiguration configuration, IStonehengeResourceProvider resourceLoader)
+        public Startup(ILogger logger, IConfiguration configuration, IStonehengeResourceProvider resourceLoader, AppSessions appSessions)
         {
             Configuration = configuration;
             _logger = logger;
             _resourceLoader = resourceLoader;
+            _appSessions = appSessions;
             _appTitle = Configuration["AppTitle"];
             _options = JsonSerializer.Deserialize<StonehengeHostOptions>(Configuration["HostOptions"]);
         }
@@ -56,6 +58,7 @@ namespace IctBaden.Stonehenge.Kestrel
             app.Use((context, next) =>
             {
                 context.Items.Add("stonehenge.Logger", _logger);
+                context.Items.Add("stonehenge.AppSessions", _appSessions);
                 context.Items.Add("stonehenge.AppTitle", _appTitle);
                 context.Items.Add("stonehenge.HostOptions", _options);
                 context.Items.Add("stonehenge.ResourceLoader", _resourceLoader);

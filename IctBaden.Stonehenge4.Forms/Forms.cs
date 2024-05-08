@@ -1,6 +1,6 @@
 ﻿using IctBaden.Stonehenge.Extensions;
 
-namespace IctBaden.Stonehenge4.DropEdit;
+namespace IctBaden.Stonehenge4.Forms;
 
 // ReSharper disable once UnusedType.Global
-public class DropEdit : IStonehengeExtension;
+public class Forms : IStonehengeExtension;

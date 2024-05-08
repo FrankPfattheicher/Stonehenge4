@@ -48,7 +48,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string UserAgent { get; private set; } = string.Empty;
     public string Platform { get; private set; } = string.Empty;
     public string Browser { get; private set; } = string.Empty;
-    public int SessionCount => AppSessions.Count;
+    public int SessionCount => _appSessions.Count;
     public bool CookiesSupported { get; private set; }
     public bool StonehengeCookieSet { get; private set; }
     public Dictionary<string, string> Cookies { get; private set; }
@@ -98,6 +98,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     private readonly int _eventTimeoutMs;
 
     private readonly List<string> _events = [];
+    private readonly AppSessions _appSessions;
 
     private CancellationTokenSource? _eventRelease;
     private bool _forceUpdate;
@@ -429,12 +430,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public static readonly AppSession None = new(); 
     
     public AppSession()
-        : this(null, new StonehengeHostOptions())
+        : this(null, new StonehengeHostOptions(), new AppSessions())
     {
     }
 
-    public AppSession(StonehengeResourceLoader? resourceLoader, StonehengeHostOptions options)
+    public AppSession(StonehengeResourceLoader? resourceLoader, StonehengeHostOptions options, AppSessions appSessions)
     {
+        _appSessions = appSessions;
+        
         if (resourceLoader == null)
         {
             var assemblies = new List<Assembly?>

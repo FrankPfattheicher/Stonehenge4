@@ -1,0 +1,9 @@
+<!--CustomElement:message-->
+<div>
+    <div class="st-error-message" v-if="message != ''" :title="message">
+        {{message}}
+    </div>
+    <div class="st-error-message" v-else style="background-color: transparent;">
+        &nbsp;
+    </div>
+</div>

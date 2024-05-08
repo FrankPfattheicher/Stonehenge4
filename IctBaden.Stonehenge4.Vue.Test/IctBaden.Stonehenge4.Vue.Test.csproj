@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <LangVersion>12</LangVersion>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <RootNamespace>IctBaden.Stonehenge.Vue.Test</RootNamespace>
     <AssemblyName>IctBaden.Stonehenge.Vue.Test</AssemblyName>
     <Nullable>enable</Nullable>

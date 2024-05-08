@@ -13,7 +13,7 @@
         <description>X-Platform Web Application Framework</description>
         <releaseNotes>Stable</releaseNotes>
         <copyright>Copyright ICT Baden GmbH 2013-2024</copyright>
-        <tags>.NET Core HTML CSS Kestrel Vue</tags>
+        <tags>.NET HTML CSS Kestrel Vue</tags>
         <dependencies>
             <dependency id="HttpMultipartParser" version="8.2.0" />
             <dependency id="Microsoft.AspNetCore.Cors" version="2.2.0"/>
@@ -41,7 +41,18 @@
                 <reference file="IctBaden.Stonehenge4.TreeView.dll"/>
                 <reference file="IctBaden.Stonehenge4.AppDialog.dll"/>
                 <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
-                <reference file="IctBaden.Stonehenge4.DropEdit.dll"/>
+                <reference file="IctBaden.Stonehenge4.Forms.dll"/>
+                <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
+            </group>
+            <group targetFramework="net8.0" >
+                <reference file="IctBaden.Stonehenge4.dll"/>
+                <reference file="IctBaden.Stonehenge4.Vue.dll"/>
+                <reference file="IctBaden.Stonehenge4.Kestrel.dll"/>
+                <reference file="IctBaden.Stonehenge4.App.dll"/>
+                <reference file="IctBaden.Stonehenge4.TreeView.dll"/>
+                <reference file="IctBaden.Stonehenge4.AppDialog.dll"/>
+                <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
+                <reference file="IctBaden.Stonehenge4.Forms.dll"/>
                 <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
             </group>
         </references>
@@ -49,6 +60,6 @@
     <files>
         <file src="../icon64.png" target="images"/>
         <file src="lib/*.dll" target="lib/net6.0"/>
-        <file src="lib/*.pdb" target="lib/net6.0"/>
+        <file src="lib/*.dll" target="lib/net8.0"/>
     </files>
 </package>

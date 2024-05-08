@@ -26,8 +26,8 @@ public class StonehengeRawContent
         {
             var response = context.Response.Body;
 
-            context.Response.Headers.Add("Cache-Control", new[] { "no-cache" });
-            context.Response.Headers.Add("Content-Type", MediaTypeNames.Text.Plain);
+            context.Response.Headers.CacheControl = new[] { "no-cache" };
+            context.Response.Headers.ContentType = MediaTypeNames.Text.Plain;
 
             await using var writer = new StreamWriter(response);
             await writer.WriteAsync("test test test test test test");

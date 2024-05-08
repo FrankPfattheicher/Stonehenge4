@@ -18,10 +18,10 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Setup dotnet 7.0.x
+    - name: Setup dotnet 8.0.x
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
 
     - name: Setup Nuget
       uses: NuGet/setup-nuget@v1
@@ -70,10 +70,10 @@ jobs:
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.TreeView/IctBaden.Stonehenge4.TreeView.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.TreeView/bin/Release/net6.0/IctBaden.Stonehenge4.TreeView.dll artifacts/lib
-    - name: Build DropEdit
+    - name: Build Forms
       run: |
-        dotnet build --configuration Release ./IctBaden.Stonehenge4.DropEdit/IctBaden.Stonehenge4.DropEdit.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.DropEdit/bin/Release/net6.0/IctBaden.Stonehenge4.DropEdit.dll artifacts/lib
+        dotnet build --configuration Release ./IctBaden.Stonehenge4.Forms/IctBaden.Stonehenge4.Forms.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
+        cp IctBaden.Stonehenge4.Forms/bin/Release/net6.0/IctBaden.Stonehenge4.Forms.dll artifacts/lib
     - name: Build Mermaid
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Mermaid/IctBaden.Stonehenge4.Mermaid.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
