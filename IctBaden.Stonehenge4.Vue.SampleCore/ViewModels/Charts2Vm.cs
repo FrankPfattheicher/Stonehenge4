@@ -43,7 +43,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
         LineChart = new Chart
         {
             Title = new ChartTitle("Test"),
-            Series = new[] { new ChartSeries("Sinus") },
+            Series = [new ChartSeries("Sinus")],
             CategoryAxis = timeSeriesAxis
         };
         SankeyChart = new Sankey
