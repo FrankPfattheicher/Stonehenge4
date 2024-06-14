@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -37,14 +38,14 @@ public sealed class ResourceLoaderTests : IDisposable
     // ReSharper disable InconsistentNaming
 
     [Fact]
-    public async void Load_resource_unknown_txt()
+    public async Task Load_resource_unknown_txt()
     {
         var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
         Assert.Null(resource);
     }
 
     [Fact]
-    public async void Load_resource_icon_png()
+    public async Task Load_resource_icon_png()
     {
         var resource = await _loader.Get(_session, "icon.png", new Dictionary<string, string>());
         Assert.NotNull(resource);
@@ -55,7 +56,7 @@ public sealed class ResourceLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_resource_icon32_png()
+    public async Task Load_resource_icon32_png()
     {
         var resource = await _loader.Get(_session, "icon32.png", new Dictionary<string, string>());
         Assert.NotNull(resource);
@@ -66,7 +67,7 @@ public sealed class ResourceLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_resource_image_png()
+    public async Task Load_resource_image_png()
     {
         var resource = await _loader.Get(_session, "image.jpg", new Dictionary<string, string>());
         Assert.NotNull(resource);
@@ -77,7 +78,7 @@ public sealed class ResourceLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_resource_test_html()
+    public async Task Load_resource_test_html()
     {
         var resource = await _loader.Get(_session, "test.html", new Dictionary<string, string>());
         Assert.NotNull(resource);
@@ -93,7 +94,7 @@ public sealed class ResourceLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_resource_testscript_js()
+    public async Task Load_resource_testscript_js()
     {
         var resource = await _loader.Get(_session, "lib/testscript.js", new Dictionary<string, string>());
         Assert.NotNull(resource);

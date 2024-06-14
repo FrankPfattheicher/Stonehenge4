@@ -15,12 +15,14 @@ public class ChartSeries
     
     public object?[] Data { get; set; }
 
+    public string? Format { get; set; }
+
     public ChartSeries(string label)
     {
         Label = label;
         Type = ChartDataType.Line;
         ValueAxis = ValueAxisId.y;
         Color = Color.Transparent;
-        Data = new object[] { 0 };
+        Data = [0];
     }
 }

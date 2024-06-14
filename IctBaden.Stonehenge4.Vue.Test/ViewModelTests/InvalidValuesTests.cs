@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -16,7 +17,7 @@ public sealed class InvalidValuesTests : IDisposable
     }
 
     [Fact]
-    public async void SerializationOfInvalidViewModelShouldNotReturnError()
+    public async Task SerializationOfInvalidViewModelShouldNotReturnError()
     {
         var response = string.Empty;
 

@@ -5,7 +5,7 @@
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
         <LangVersion>12</LangVersion>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.Vue</RootNamespace>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -135,7 +135,6 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.4" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="app\src\bootstrap-vue.css" />

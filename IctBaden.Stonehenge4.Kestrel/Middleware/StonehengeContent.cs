@@ -39,6 +39,8 @@ public class StonehengeContent(RequestDelegate next)
     // ReSharper disable once UnusedMember.Global
     public Task Invoke(HttpContext context)
     {
+        if (context.Request.Path.Value == null) return Task.CompletedTask;
+            
         if (context.Request.Path.Value.Contains("/Events"))
         {
             lock (LockEvents)
@@ -55,9 +57,10 @@ public class StonehengeContent(RequestDelegate next)
 
     private async Task InvokeLocked(HttpContext context)
     {
-        var logger = (ILogger)context.Items["stonehenge.Logger"];
+        if (context.Request.Path.Value == null) return;
+
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (logger == null)
+        if (context.Items["stonehenge.Logger"] is not ILogger logger)
         {
             Debugger.Break();
             return;
@@ -73,7 +76,7 @@ public class StonehengeContent(RequestDelegate next)
             var requestVerb = context.Request.Method;
             var cookiesHeader = context.Request.Headers
                 .FirstOrDefault(h => h.Key == HeaderNames.Cookie).Value.ToString();
-            var requestCookies = cookiesHeader!
+            var requestCookies = cookiesHeader
                 .Split(';')
                 .Select(s => s.Trim())
                 .Select(s => s.Split('='));
@@ -86,7 +89,7 @@ public class StonehengeContent(RequestDelegate next)
                 }
             }
 
-            var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+            var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
             var parameters = queryString.AllKeys
                 .Where(k => !string.IsNullOrEmpty(k))
                 .ToDictionary(key => key!, key => queryString[key]!);
@@ -97,7 +100,7 @@ public class StonehengeContent(RequestDelegate next)
             if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                context.Response.Headers.Add("WWW-Authenticate", "Basic");
+                context.Response.Headers.Append("WWW-Authenticate", "Basic");
                 return;
             }
 
@@ -107,7 +110,7 @@ public class StonehengeContent(RequestDelegate next)
             {
                 var o = appSession.HostOptions.UseKeycloakAuthentication;
                 var requestQuery =
-                    HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+                    HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
 
                 var state = requestQuery["state"] ?? "";
                 if (state.StartsWith(appSession.Id))
@@ -181,8 +184,7 @@ public class StonehengeContent(RequestDelegate next)
                     {
                         logger.LogError("Invalid path in index resource {ResourceName} - redirecting to root index", resourceName);
 
-                        var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ??
-                                                                 string.Empty);
+                        var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                         query["stonehenge-id"] = appSession.Id;
                         context.Response.Redirect($"/index.html?{query}");
                         return;
@@ -314,33 +316,33 @@ public class StonehengeContent(RequestDelegate next)
 
             if (context.Items["stonehenge.HostOptions"] is StonehengeHostOptions { DisableClientCache: true })
             {
-                context.Response.Headers.Add("Cache-Control",
-                    new[] { "no-cache", "no-store", "must-revalidate", "proxy-revalidate" });
-                context.Response.Headers.Add("Pragma", new[] { "no-cache" });
-                context.Response.Headers.Add("Expires", new[] { "0" });
+                context.Response.Headers.Append("Cache-Control",
+                    (string[]) ["no-cache", "no-store", "must-revalidate", "proxy-revalidate"]);
+                context.Response.Headers.Append("Pragma", (string[]) ["no-cache"]);
+                context.Response.Headers.Append("Expires", (string[]) ["0"]);
             }
             else
             {
                 switch (content.CacheMode)
                 {
                     case Resource.Cache.None:
-                        context.Response.Headers.Add("Cache-Control", new[] { "no-cache" });
+                        context.Response.Headers.Append("Cache-Control", (string[]) ["no-cache"]);
                         break;
                     case Resource.Cache.Revalidate:
-                        context.Response.Headers.Add("Cache-Control",
-                            new[] { "max-age=3600", "must-revalidate", "proxy-revalidate" });
+                        context.Response.Headers.Append("Cache-Control",
+                            (string[]) ["max-age=3600", "must-revalidate", "proxy-revalidate"]);
                         var etag = AppSession.GetResourceETag(path);
-                        context.Response.Headers.Add(HeaderNames.ETag, new StringValues(etag));
+                        context.Response.Headers.Append(HeaderNames.ETag, new StringValues(etag));
                         break;
                     case Resource.Cache.OneDay:
-                        context.Response.Headers.Add("Cache-Control", new[] { "max-age=86400" });
+                        context.Response.Headers.Append("Cache-Control", (string[]) ["max-age=86400"]);
                         break;
                 }
             }
 
             if (appSession != null)
             {
-                context.Response.Headers.Add("X-Stonehenge-Id", new[] { appSession.Id });
+                context.Response.Headers.Append("X-Stonehenge-Id", new[] { appSession.Id });
             }
 
             if (content.IsNoContent)
@@ -439,7 +441,7 @@ public class StonehengeContent(RequestDelegate next)
     private void HandleIndexContent(HttpContext context, Resource content)
     {
         const string placeholderAppTitle = "stonehengeAppTitle";
-        var appTitle = context.Items["stonehenge.AppTitle"].ToString();
+        var appTitle = context.Items["stonehenge.AppTitle"]?.ToString() ?? string.Empty;
         content.Text = content.Text?.Replace(placeholderAppTitle, appTitle);
     }
 }

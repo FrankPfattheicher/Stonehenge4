@@ -1,4 +1,7 @@
 
+* 8.0.0 - 14.06.2024 Drop net6.0 support and AspNetCore 2.x
+
+* 4.9.3 - 18.05.2024 Added enableOk to app-dialog 
 * 4.9.2 - 08.05.2024 Make AppSessions non static, rename extension DropEdit to more generic name Forms, 
                      added st-error-message, IStonehengeHost.GetAllSessions()
 * 4.9.1 - 23.04.2024 CreateType using default values for value types 

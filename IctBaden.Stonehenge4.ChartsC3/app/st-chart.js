@@ -23,6 +23,14 @@ mounted: function() {
             size: {
                 width: this.$el.clientWidth,
                 height: this.$el.clientHeight,
+            },
+            tooltip: {
+                format: {
+                    value: function (value, ratio, id) {
+                        //debugger;
+                        return d3.format('')(value);
+                    }
+                }
             }
         });
     }
@@ -53,6 +61,14 @@ updated: function () {
             size: {
                 width: this.$el.clientWidth,
                 height: this.$el.clientHeight,
+            },
+            tooltip: {
+                format: {
+                    value: function (value, ratio, id) {
+                        //debugger;
+                        return d3.format('')(value);
+                    }
+                }
             }
         });
         this.chartId = this.$props.chartdata.Id;

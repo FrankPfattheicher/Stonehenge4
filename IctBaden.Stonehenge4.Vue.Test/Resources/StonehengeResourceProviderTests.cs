@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -16,7 +17,7 @@ public sealed class StonehengeResourceProviderTests : IDisposable
     }
 
     [Fact]
-    public async void PostRequestShouldBeHandled()
+    public async Task PostRequestShouldBeHandled()
     {
         var response = string.Empty;
         try
@@ -39,7 +40,7 @@ public sealed class StonehengeResourceProviderTests : IDisposable
     }
 
     [Fact]
-    public async void PutRequestShouldBeHandled()
+    public async Task PutRequestShouldBeHandled()
     {
         var response = string.Empty;
         try
@@ -60,7 +61,7 @@ public sealed class StonehengeResourceProviderTests : IDisposable
     }
     
     [Fact]
-    public async void DeleteRequestShouldBeHandled()
+    public async Task DeleteRequestShouldBeHandled()
     {
         var response = string.Empty;
         try

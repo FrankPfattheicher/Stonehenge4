@@ -90,15 +90,16 @@ namespace IctBaden.Stonehenge.Hosting
             }
         }
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            var context = state?.ToString() ?? string.Empty; 
-            return new LogScope(this, context);
-        }
 
         public bool IsEnabled(LogLevel logLevel)
         {
             return true;
+        }
+
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
+        {
+            var ctx = state.ToString() ?? string.Empty; 
+            return new LogScope(this, ctx);
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
