@@ -13,11 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       
-    - name: Setup dotnet 6.0.x
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-        
     - name: Setup dotnet 8.0.x
       uses: actions/setup-dotnet@v3
       with:
@@ -45,39 +40,39 @@ jobs:
     - name: Build Core
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4/bin/Release/net6.0/IctBaden.Stonehenge4.dll artifacts/lib
+        cp IctBaden.Stonehenge4/bin/Release/net8.0/IctBaden.Stonehenge4.dll artifacts/lib
     - name: Build Kestrel
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.Kestrel/bin/Release/net6.0/IctBaden.Stonehenge4.Kestrel.dll artifacts/lib
+        cp IctBaden.Stonehenge4.Kestrel/bin/Release/net8.0/IctBaden.Stonehenge4.Kestrel.dll artifacts/lib
     - name: Build Vue
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Vue/IctBaden.Stonehenge4.Vue.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.Vue/bin/Release/net6.0/IctBaden.Stonehenge4.Vue.dll artifacts/lib
+        cp IctBaden.Stonehenge4.Vue/bin/Release/net8.0/IctBaden.Stonehenge4.Vue.dll artifacts/lib
     - name: Build App
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.App/IctBaden.Stonehenge4.App.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.App/bin/Release/net6.0/IctBaden.Stonehenge4.App.dll artifacts/lib
+        cp IctBaden.Stonehenge4.App/bin/Release/net8.0/IctBaden.Stonehenge4.App.dll artifacts/lib
     - name: Build AppDialog
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.AppDialog/IctBaden.Stonehenge4.AppDialog.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.AppDialog/bin/Release/net6.0/IctBaden.Stonehenge4.AppDialog.dll artifacts/lib
+        cp IctBaden.Stonehenge4.AppDialog/bin/Release/net8.0/IctBaden.Stonehenge4.AppDialog.dll artifacts/lib
     - name: Build ChartsC3
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.ChartsC3/IctBaden.Stonehenge4.ChartsC3.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.ChartsC3/bin/Release/net6.0/IctBaden.Stonehenge4.ChartsC3.dll artifacts/lib
+        cp IctBaden.Stonehenge4.ChartsC3/bin/Release/net8.0/IctBaden.Stonehenge4.ChartsC3.dll artifacts/lib
     - name: Build TreeView
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.TreeView/IctBaden.Stonehenge4.TreeView.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.TreeView/bin/Release/net6.0/IctBaden.Stonehenge4.TreeView.dll artifacts/lib
+        cp IctBaden.Stonehenge4.TreeView/bin/Release/net8.0/IctBaden.Stonehenge4.TreeView.dll artifacts/lib
     - name: Build Forms
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Forms/IctBaden.Stonehenge4.Forms.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.Forms/bin/Release/net6.0/IctBaden.Stonehenge4.Forms.dll artifacts/lib
+        cp IctBaden.Stonehenge4.Forms/bin/Release/net8.0/IctBaden.Stonehenge4.Forms.dll artifacts/lib
     - name: Build Mermaid
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Mermaid/IctBaden.Stonehenge4.Mermaid.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4.Mermaid/bin/Release/net6.0/IctBaden.Stonehenge4.Mermaid.dll artifacts/lib
+        cp IctBaden.Stonehenge4.Mermaid/bin/Release/net8.0/IctBaden.Stonehenge4.Mermaid.dll artifacts/lib
         
     - name: Test with dotnet
       env: 
