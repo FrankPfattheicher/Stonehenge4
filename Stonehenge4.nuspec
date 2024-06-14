@@ -15,35 +15,15 @@
         <copyright>Copyright ICT Baden GmbH 2013-2024</copyright>
         <tags>.NET HTML CSS Kestrel Vue</tags>
         <dependencies>
-            <dependency id="HttpMultipartParser" version="8.2.0" />
-            <dependency id="Microsoft.AspNetCore.Cors" version="2.2.0"/>
-            <dependency id="Microsoft.AspNetCore.ResponseCompression" version="2.2.0"/>
-            <dependency id="Microsoft.AspNetCore.Server.HttpSys" version="2.2.6" />
-            <dependency id="Microsoft.AspNetCore.Server.IIS" version="2.2.6" />
-            <dependency id="Microsoft.AspNetCore.Server.IISIntegration" version="2.2.1" />
-            <dependency id="Microsoft.AspNetCore.Server.Kestrel" version="2.2.0"/>
-            <dependency id="Microsoft.AspNetCore.Http.Extensions" version="2.2.0" />
-            <dependency id="Microsoft.Extensions.Configuration" version="6.0.1"/>
-            <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="6.0.0"/>
-            <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="6.0.0"/>
-            <dependency id="Microsoft.Extensions.Http" version="6.0.0"/>
-            <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="6.0.0"/>
-            <dependency id="Microsoft.Extensions.Logging.Abstractions" version="6.0.4" />
-            <dependency id="System.IdentityModel.Tokens.Jwt" version="6.35.0" />
             <dependency id="CryptSharpStandard" version="1.0.0" />
+            <dependency id="HttpMultipartParser" version="8.4.0" />
+            <dependency id="Microsoft.Extensions.Configuration" version="8.0.0"/>
+            <dependency id="Microsoft.Extensions.Http" version="8.0.0"/>
+            <dependency id="Microsoft.Extensions.Logging" version="8.0.0" />
+            <dependency id="Microsoft.Extensions.Logging.Abstractions" version="8.0.1" />
+            <dependency id="System.IdentityModel.Tokens.Jwt" version="7.6.0" />
         </dependencies>
         <references>
-            <group targetFramework="net6.0" >
-                <reference file="IctBaden.Stonehenge4.dll"/>
-                <reference file="IctBaden.Stonehenge4.Vue.dll"/>
-                <reference file="IctBaden.Stonehenge4.Kestrel.dll"/>
-                <reference file="IctBaden.Stonehenge4.App.dll"/>
-                <reference file="IctBaden.Stonehenge4.TreeView.dll"/>
-                <reference file="IctBaden.Stonehenge4.AppDialog.dll"/>
-                <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
-                <reference file="IctBaden.Stonehenge4.Forms.dll"/>
-                <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
-            </group>
             <group targetFramework="net8.0" >
                 <reference file="IctBaden.Stonehenge4.dll"/>
                 <reference file="IctBaden.Stonehenge4.Vue.dll"/>
@@ -59,7 +39,6 @@
     </metadata>
     <files>
         <file src="../icon64.png" target="images"/>
-        <file src="lib/*.dll" target="lib/net6.0"/>
         <file src="lib/*.dll" target="lib/net8.0"/>
     </files>
 </package>
