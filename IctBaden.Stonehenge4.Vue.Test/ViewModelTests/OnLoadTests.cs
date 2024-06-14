@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
 public sealed class OnLoadTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
@@ -16,7 +19,7 @@ public sealed class OnLoadTests : IDisposable
     }
 
     [Fact]
-    public async void OnLoadShouldBeCalledForStartVmAfterFirstCall()
+    public async Task OnLoadShouldBeCalledForStartVmAfterFirstCall()
     {
         var response = string.Empty;
 

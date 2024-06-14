@@ -17,13 +17,13 @@ public sealed class ActionMethodTests : IDisposable
     }
 
     [Fact]
-    public async void PostWithParameterShouldExecuteActionAndReturnParameter()
+    public async Task PostWithParameterShouldExecuteActionAndReturnParameter()
     {
         await ExecutePost("test1234");
     }
     
     [Fact]
-    public async void PostWithEmptyParameterShouldExecuteActionAndReturnEmptyParameter()
+    public async Task PostWithEmptyParameterShouldExecuteActionAndReturnEmptyParameter()
     {
         await ExecutePost("");
     }

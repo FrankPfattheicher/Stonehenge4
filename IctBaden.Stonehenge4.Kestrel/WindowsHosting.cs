@@ -1,7 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.HttpSys;
 
 namespace IctBaden.Stonehenge.Kestrel;
 
+[SuppressMessage("Interoperability", "CA1416:Plattformkompatibilität überprüfen")]
 public static class WindowsHosting
 {
     /// <summary>
@@ -14,8 +17,21 @@ public static class WindowsHosting
     public static IWebHostBuilder EnableIIS(IWebHostBuilder builder)
     {
         return builder
-            .UseIIS()               // in-proc hosting
-            .UseIISIntegration();   // out-of-proc hosting   
+            .UseIIS() // in-proc hosting
+            .UseIISIntegration(); // out-of-proc hosting   
     }
 
+    public static IWebHostBuilder UseNtlmAuthentication(IWebHostBuilder builder, string httpSysAddress)
+    {
+        return builder
+            .UseHttpSys(options =>
+            {
+                // netsh http add urlacl url=https://+:32000/ user=TheUser
+                options.Authentication.Schemes =
+                    (AuthenticationSchemes)(System.Net.AuthenticationSchemes.Ntlm |
+                                            System.Net.AuthenticationSchemes.Negotiate);
+                options.Authentication.AllowAnonymous = false;
+                options.UrlPrefixes.Add(httpSysAddress);
+            });
+    }
 }

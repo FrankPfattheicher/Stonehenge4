@@ -47,20 +47,24 @@ internal static class HttpContextExtensions
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class StonehengeSession(RequestDelegate next)
+public partial class StonehengeSession(RequestDelegate next)
 {
     // ReSharper disable once UnusedMember.Global
 
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
     {
-        var logger = (ILogger)context.Items["stonehenge.Logger"];
-        var appSessions = (AppSessions)context.Items["stonehenge.AppSessions"];
+        if (context.Items["stonehenge.Logger"] is not ILogger logger || 
+            context.Items["stonehenge.AppSessions"] is not AppSessions appSessions)
+        {
+            Debugger.Break();
+            return;
+        }
 
         var timer = new Stopwatch();
         timer.Start();
 
-        var path = context.Request.Path.ToString() ?? string.Empty;
+        var path = context.Request.Path.ToString();
 
         if (path.ToLower().Contains("/user/"))
         {
@@ -94,8 +98,8 @@ public class StonehengeSession(RequestDelegate next)
             if (!string.IsNullOrEmpty(cookie.Value.ToString()))
             {
                 // workaround for double stonehenge-id values in cookie - take the last one
-                var ids = new Regex("stonehenge-id=([a-f0-9A-F]+)")
-                    .Matches(cookie.Value.ToString() ?? string.Empty)
+                var ids = StonehengeIdRegex()
+                    .Matches(cookie.Value.ToString())
                     .Select(m => m.Groups[1].Value).ToArray();
                 if (ids.Length > 1)
                 {
@@ -135,10 +139,10 @@ public class StonehengeSession(RequestDelegate next)
                 session?.Dispose();
                 session = NewSession(logger, context, resourceLoader, appSessions);
 #pragma warning restore IDISP001
-                context.Response.Headers.Add("X-Stonehenge-id", new StringValues(session.Id));
+                context.Response.Headers.Append("X-Stonehenge-id", new StringValues(session.Id));
 
                 var redirectUrl = "/index.html";
-                var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+                var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                 query["stonehenge-id"] = session.Id;
                 redirectUrl += $"?{query}";
 
@@ -151,7 +155,7 @@ public class StonehengeSession(RequestDelegate next)
             }
         }
 
-        var etag = context.Request.Headers["If-None-Match"];
+        var etag = context.Request.Headers.IfNoneMatch.ToString();
         if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) &&
             etag == AppSession.GetResourceETag(path))
         {
@@ -194,7 +198,7 @@ public class StonehengeSession(RequestDelegate next)
             session.Dispose();
         }
 
-        if (timedOutSessions.Any())
+        if (timedOutSessions.Length != 0)
         {
             logger.LogInformation("Kestrel {Count} sessions", appSessions.Count);
         }
@@ -202,21 +206,21 @@ public class StonehengeSession(RequestDelegate next)
 
     private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader, AppSessions appSessions)
     {
-        var options = (StonehengeHostOptions)context.Items["stonehenge.HostOptions"];
+        var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
         var session = new AppSession(resourceLoader, options, appSessions);
         var isLocal = context.IsLocal();
-        var userAgent = context.Request.Headers["User-Agent"];
-        var userLanguages = context.Request.Headers["Accept-Language"];
+        var userAgent = context.Request.Headers.UserAgent.ToString();
+        var userLanguages = context.Request.Headers.AcceptLanguage.ToString();
         if (options.UseClientLocale)
         {
             session.SetSessionCulture(GetCulture(userLanguages));
         }
 
-        var httpContext = context.Request?.HttpContext;
-        var clientAddress = httpContext?.Connection.RemoteIpAddress.ToString() ?? string.Empty;
-        var clientPort = httpContext?.Connection.RemotePort ?? 0;
-        var hostDomain = context.Request?.Host.Value ?? string.Empty;
-        var hostUrl = $"{context.Request?.Scheme ?? "http"}://{hostDomain}";
+        var httpContext = context.Request.HttpContext;
+        var clientAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        var clientPort = httpContext.Connection.RemotePort;
+        var hostDomain = context.Request.Host.Value;
+        var hostUrl = $"{context.Request.Scheme}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
         appSessions.AddSession(session);
         logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
@@ -240,4 +244,7 @@ public class StonehengeSession(RequestDelegate next)
 
         return CultureInfo.CurrentCulture;
     }
+
+    [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)")]
+    private static partial Regex StonehengeIdRegex();
 }

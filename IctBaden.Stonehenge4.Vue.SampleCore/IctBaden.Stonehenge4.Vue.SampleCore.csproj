@@ -3,11 +3,11 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>VueSampleCore</AssemblyName>
     <LangVersion>12</LangVersion>
-    <AssemblyVersion>4.0.4</AssemblyVersion>
-    <FileVersion>4.0.4</FileVersion>
+    <AssemblyVersion>4.0</AssemblyVersion>
+    <FileVersion>4.0</FileVersion>
     <RootNamespace>IctBaden.Stonehenge.Vue.SampleCore</RootNamespace>
     <Nullable>enable</Nullable>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="app\cookie.html" />
@@ -84,12 +84,12 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IctBaden.Units" Version="2.0.1" />
+    <PackageReference Include="IctBaden.Units" Version="2.1.0" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Reactive" Version="6.0.0" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Update=".htpasswd">

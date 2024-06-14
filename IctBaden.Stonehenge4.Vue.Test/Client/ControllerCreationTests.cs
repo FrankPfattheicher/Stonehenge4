@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -41,7 +42,7 @@ public sealed class ControllerCreationTests : IDisposable
     }
         
     [Fact]
-    public async void StartComponentShouldHaveExpectedMembers()
+    public async Task StartComponentShouldHaveExpectedMembers()
     {
         var resource = await _loader.Get(_session, "start.js", new Dictionary<string, string>());
         Assert.NotNull(resource);
@@ -53,14 +54,14 @@ public sealed class ControllerCreationTests : IDisposable
     }
 
     [Fact]
-    public async void ProviderShouldGenerateDiComponent()
+    public async Task ProviderShouldGenerateDiComponent()
     {
         var resource = await _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
         Assert.NotNull(resource);
     }
         
     [Fact]
-    public async void DiComponentShouldHaveExpectedMembers()
+    public async Task DiComponentShouldHaveExpectedMembers()
     {
         var resource = await _loader.Get(_session, "dicomponent.js", new Dictionary<string, string>());
         Assert.NotNull(resource);

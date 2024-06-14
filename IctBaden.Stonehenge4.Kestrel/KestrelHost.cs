@@ -17,8 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using AuthenticationSchemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes;
+
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
 // ReSharper disable StringLiteralTypo
 
@@ -62,7 +61,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         var isAspNetCoreApp = true;
         var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
-        if (!ctx.IsNullOrEmpty() && !ctx.Contains("Microsoft.AspNetCore.App"))
+        if (!string.IsNullOrEmpty(ctx) && !ctx.Contains("Microsoft.AspNetCore.App"))
         {
             isAspNetCoreApp = false;
             if (File.Exists(ctx))
@@ -139,11 +138,11 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
             var mem = new MemoryConfigurationSource()
             {
-                InitialData = new[]
-                {
-                    new KeyValuePair<string, string>("AppTitle", _options.Title),
-                    new KeyValuePair<string, string>("HostOptions", JsonSerializer.Serialize(_options))
-                }
+                InitialData =
+                [
+                    new KeyValuePair<string, string?>("AppTitle", _options.Title),
+                    new KeyValuePair<string, string?>("HostOptions", JsonSerializer.Serialize(_options))
+                ]
             };
 
             var config = new ConfigurationBuilder()
@@ -160,19 +159,10 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 .ConfigureServices(s => { s.AddSingleton(_resourceProvider); })
                 .ConfigureServices(s => { s.AddSingleton<IStartup>(_startup); });
 
-            if (_options.UseNtlmAuthentication)
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT && _options.UseNtlmAuthentication)
             {
                 _logger.LogInformation("KestrelHost.Start: Using HttpSys mode (NTLM authentication)");
-                builder = builder
-                    .UseHttpSys(options =>
-                    {
-                        // netsh http add urlacl url=https://+:32000/ user=TheUser
-                        options.Authentication.Schemes =
-                            (AuthenticationSchemes) (System.Net.AuthenticationSchemes.Ntlm |
-                                                     System.Net.AuthenticationSchemes.Negotiate);
-                        options.Authentication.AllowAnonymous = false;
-                        options.UrlPrefixes.Add(httpSysAddress);
-                    });
+                builder = WindowsHosting.UseNtlmAuthentication(builder, httpSysAddress);
             }
             else
             {
@@ -217,10 +207,13 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
             }
 
             var serverAddressesFeature = _webApp.ServerFeatures.Get<IServerAddressesFeature>();
-            foreach (var address in serverAddressesFeature.Addresses)
+            if (serverAddressesFeature != null)
             {
-                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", 
-                    address.Replace("0.0.0.0", "127.0.0.1"));
+                foreach (var address in serverAddressesFeature.Addresses)
+                {
+                    _logger.LogInformation("KestrelHost.Start: Listening on {Address}",
+                        address.Replace("0.0.0.0", "127.0.0.1"));
+                }
             }
 
             _logger.LogInformation("KestrelHost.Start: succeeded");

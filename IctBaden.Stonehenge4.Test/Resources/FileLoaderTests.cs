@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -63,14 +64,14 @@ public sealed class FileLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_file_unknown_txt()
+    public async Task Load_file_unknown_txt()
     {
         var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
         Assert.Null(resource);
     }
 
     [Fact]
-    public async void Load_file_icon_png()
+    public async Task Load_file_icon_png()
     {
         var name = $"icon_{Guid.NewGuid():N}.png";
         CreateBinaryFile(name);
@@ -82,7 +83,7 @@ public sealed class FileLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_file_index_html()
+    public async Task Load_file_index_html()
     {
         CreateTextFile("index.html");
         var resource = await _loader.Get(_session, "index.html", new Dictionary<string, string>());
@@ -93,7 +94,7 @@ public sealed class FileLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_file_image_png()
+    public async Task Load_file_image_png()
     {
         var name = $"image_{Guid.NewGuid():N}.jpg";
         CreateBinaryFile(name);
@@ -105,7 +106,7 @@ public sealed class FileLoaderTests : IDisposable
     }
 
     [Fact]
-    public async void Load_file_test_html()
+    public async Task Load_file_test_html()
     {
         CreateTextFile("test.htm");
         var resource = await _loader.Get(_session, "test.htm", new Dictionary<string, string>());
