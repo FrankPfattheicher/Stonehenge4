@@ -45,7 +45,12 @@ public class Startup : IStartup
         {
             options.Providers.Add<GzipCompressionProvider>();
         });
-        services.AddCors();
+        services.AddCors(o => o.AddPolicy("StonehengePolicy", builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }));
 #pragma warning disable IDISP005
         return services.BuildServiceProvider();
 #pragma warning restore IDISP005
@@ -79,17 +84,10 @@ public class Startup : IStartup
             }
         }
         app.UseResponseCompression();
-        app.UseCors(builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
+        app.UseCors("StonehengePolicy");
         app.UseMiddleware<StonehengeSession>();
         app.UseMiddleware<StonehengeHeaders>();
         app.UseMiddleware<StonehengeRoot>();
-            
-            
         app.UseMiddleware<StonehengeContent>();
     }
 }

@@ -21,7 +21,7 @@ public class StonehengeRoot
         var path = context.Request.Path.Value?.Replace("//", "/");
         if (path == "/")
         {
-            var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+            var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
             context.Response.Redirect($"/index.html?{query}");
             return;
         }
