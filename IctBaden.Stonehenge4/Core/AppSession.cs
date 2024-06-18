@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -60,8 +60,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string Context { get; private set; } = string.Empty;
 
 
-    /// User login is requested on next request 
-    public bool RequestLogin;
+        
+        /// Name of user identity 
+        public string UserIdentity { get; private set; }
+        /// Name of user identity 
+        public string UserIdentityId { get; private set; }
+        /// Name of user identity 
+        public string UserIdentityEMail { get; private set; }
+        public DateTime LastUserAction { get; private set; }
 
     /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
@@ -684,24 +690,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         if (HostOptions.UseKeycloakAuthentication == null) return false;
 
-        if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
-
-        var o = HostOptions.UseKeycloakAuthentication;
-
-        using var client = new HttpClient();
-        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
-            
-        var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
-        using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
-        using var result = client.PostAsync(logoutUrl, content).Result;
-
-        var text = result.Content.ReadAsStringAsync().Result;
-        Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
-            
-        SetUser(string.Empty, string.Empty, string.Empty);
-        AuthorizeRedirectUrl = string.Empty;
-
-        return result.StatusCode == HttpStatusCode.NoContent;
+        public void SetUser(string identityName, string identityId, string identityEMail)
+        {
+            UserIdentity = identityName;
+            UserIdentityId = identityId;
+            UserIdentityEMail = identityEMail;
+        }
     }
 
     public void Dispose()

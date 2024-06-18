@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using IctBaden.Framework.Logging;
@@ -61,18 +61,31 @@ internal static class Program
             // SslCertificatePassword = "test"
         };
 
-        // Select client framework
-        logger.LogInformation("Using client framework VUE");
-#pragma warning disable IDISP001
-        var vue = new VueResourceProvider(logger);
-        var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
-#pragma warning restore IDISP001
-        loader.AddResourceAssembly(typeof(TreeView).Assembly);
-        loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
-        loader.AddResourceAssembly(typeof(AppDialog).Assembly);
-        loader.AddResourceAssembly(typeof(Forms).Assembly);
-        loader.AddResourceAssembly(typeof(Mermaid).Assembly);
-        loader.Services.AddService(typeof(ILogger), logger);
+            // select hosting options
+            var options = new StonehengeHostOptions
+            {
+                Title = "VueSample",
+
+                ServerPushMode = ServerPushModes.LongPolling,
+                PollIntervalSec = 10,
+                HandleWindowResized = true,
+                UseKeycloakAuthentication = new KeycloakAuthenticationOptions
+                {
+                    ClientId = "frontend",
+                    Realm = "liva-production",
+                    AuthUrl = "https://portal.liva-aws.com/auth"
+                }
+                // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
+                // SslCertificatePassword = "test"
+            };
+
+            // Select client framework
+            Console.WriteLine(@"Using client framework vue");
+            var vue = new VueResourceProvider(logger);
+            var loader = StonehengeResourceLoader.CreateDefaultLoader(logger, vue);
+            loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
+            loader.AddResourceAssembly(typeof(AppDialog).Assembly);
+            loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology
         logger.LogInformation("Using Kestrel hosting");

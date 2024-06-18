@@ -60,11 +60,23 @@ public class StonehengeHostOptions
     /// </summary>
     public bool UseBasicAuth { get; set; }
 
-    /// <summary>
-    /// If not null, contains all options
-    /// to handle Keycloak user authentication
-    /// </summary>
-    public KeycloakAuthenticationOptions? UseKeycloakAuthentication { get; set; }
+        /// <summary>
+        /// If not null, contains all options
+        /// to handle Keycloak user authentication
+        /// </summary>
+        public KeycloakAuthenticationOptions UseKeycloakAuthentication { get; set; }
+
+        /// <summary>
+        /// Path of the pfx certificate to be used with Kestrel.
+        /// (not used with HttpSys, you need to "netsh http add sslcert ..." for the the p12 certificate in that case)
+        /// On Windows it is better to use IIS as reverse proxy.
+        /// </summary>
+        public string SslCertificatePath { get; set; }
+        /// <summary>
+        /// Password of the pfx certificate to be used with Kestrel.
+        /// (not used with HttpSys)
+        /// </summary>
+        public string SslCertificatePassword { get; set; }
 
     /// <summary>
     /// Path of the pfx certificate to be used with Kestrel.

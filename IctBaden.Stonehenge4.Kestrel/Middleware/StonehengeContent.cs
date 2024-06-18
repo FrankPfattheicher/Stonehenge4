@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,6 +18,7 @@ using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
@@ -165,11 +166,67 @@ public class StonehengeContent
                 }
             }
 
-            if (appSession is { HostOptions.UseKeycloakAuthentication: null }
-                && string.IsNullOrEmpty(appSession.UserIdentity))
-            {
-                SetUserNameFromContext(appSession, context);
-            }
+                if (appSession != null && appSession.HostOptions.UseKeycloakAuthentication != null && string.IsNullOrEmpty(appSession.UserIdentity))
+                {
+                    var o = appSession.HostOptions.UseKeycloakAuthentication;
+                    var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+
+                    var state = requestQuery["state"] ?? "";
+                    if (state.StartsWith(appSession.Id))
+                    {
+                        var code = requestQuery["code"];
+                        var redirectUri = appSession["authRedirect"].ToString();
+                        var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+                        
+                        using var client = new HttpClient();
+                        var tokenUrl = $"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/token";
+                        var result = client.PostAsync(tokenUrl, 
+                                 new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+                             .Result;
+                        var json = result.Content.ReadAsStringAsync().Result;
+                        var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
+                        if (authResponse != null)
+                        {
+                            var token = authResponse["id_token"]?.ToString();
+                            if (string.IsNullOrEmpty(token)) token = authResponse["access_token"]?.ToString();
+                            var handler = new JwtSecurityTokenHandler();
+                            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                            var identityId = jwtToken?.Subject;
+                            var identityName = jwtToken?.Payload["name"]?.ToString();
+                            var identityMail = jwtToken?.Payload["email"]?.ToString();
+                            appSession.SetUser(identityName, identityId, identityMail);
+                            context.Response.Redirect(redirectUri);
+                            return;
+                        }
+                        Console.WriteLine(result);
+                    }
+                    else if (string.IsNullOrEmpty(state))
+                    {
+                        var redirect = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}{context.Request.QueryString}";
+                        appSession["authRedirect"] = redirect;
+                        var query = new QueryBuilder
+                        {
+                            { "client_id", o.ClientId },
+                            { "redirect_uri", redirect },
+                            { "response_type", "code" },
+                            { "scope", "openid" },
+                            { "nonce", appSession.Id },
+                            { "state", appSession.Id }
+                        };
+                        context.Response
+                            .Redirect($"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/auth{query}");
+                        return;
+                    }
+
+                    var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge_id=new";
+                    context.Response.Redirect(newSession);
+                    return;
+                }
+
+                if (appSession != null && string.IsNullOrEmpty(appSession.UserIdentity))
+                {
+                    SetUserNameFromContext(appSession, context);
+                }
 
             if (appSession?.SessionCulture != null)
             {
@@ -406,28 +463,41 @@ public class StonehengeContent
         var identityId = context.User.Identity?.Name ?? string.Empty;
         if (!string.IsNullOrEmpty(identityId)) return;
 
-        var identityName = "";
-        var identityMail = "";
-
-        var auth = context.Request.Headers.Authorization.FirstOrDefault();
-        if (auth != null)
+        private void SetUserNameFromContext(AppSession appSession, HttpContext context)
         {
-            if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
-                identityId = userPassword.Split(':').FirstOrDefault() ?? string.Empty;
-            }
-            else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var token = auth.Substring(7);
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                identityId = jwtToken?.Subject ?? string.Empty;
-                identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
-                identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
-            }
+            var identityName = context.User.Identity?.Name;
+            if (identityName != null) return;
 
-            appSession.SetUser(identityName, identityId, identityMail);
+            var auth = context.Request.Headers["Authorization"].FirstOrDefault();
+            if (auth != null)
+            {
+                if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
+                    identityName = userPassword.Split(':').FirstOrDefault();
+                }
+                else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var token = auth.Substring(7);
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                    identityName = jwtToken?.Subject;
+                }
+
+                appSession.SetUser(identityName, "", "");
+            }
+            
+            var isLocal = context.IsLocal();
+            if (!isLocal) return;
+
+            var explorers = Process.GetProcessesByName("explorer");
+            if (explorers.Length == 1)
+            {
+                identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
+                return;
+            }
+            
+            // RDP with more than one session: How to find app and session using request's client IP port
         }
 
         var isLocal = context.IsLocal();
