@@ -404,7 +404,11 @@ public class StonehengeContent
     private void SetUserNameFromContext(AppSession appSession, HttpContext context)
     {
         var identityId = context.User.Identity?.Name ?? string.Empty;
-        if (!string.IsNullOrEmpty(identityId)) return;
+        if (!string.IsNullOrEmpty(identityId))
+        {
+            appSession.SetUser(identityId, identityId, "");
+            return;
+        }
 
         var identityName = "";
         var identityMail = "";
