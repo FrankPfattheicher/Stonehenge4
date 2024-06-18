@@ -1,4 +1,5 @@
 
+* 4.1.8 - Handle context.User.Identity?.Name
 * 4.1.7 - commented out  keycloak auth
 * 4.1.6 - appSession.HasUserIdentity()
 * 4.1.5 - Try to fix keycloak auth
