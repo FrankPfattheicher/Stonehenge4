@@ -62,11 +62,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         
         /// Name of user identity 
-        public string UserIdentity { get; private set; }
+        public string? UserIdentity { get; private set; }
         /// Name of user identity 
-        public string UserIdentityId { get; private set; }
+        public string? UserIdentityId { get; private set; }
         /// Name of user identity 
-        public string UserIdentityEMail { get; private set; }
+        public string? UserIdentityEMail { get; private set; }
         public DateTime LastUserAction { get; private set; }
 
         /// User login is requested on next request 
@@ -664,7 +664,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
-            { "client_id", o.ClientId },
+            { "client_id", o.ClientId ?? "" },
             { "redirect_uri", AuthorizeRedirectUrl },
             { "response_type", "code" },
             { "scope", "openid" },

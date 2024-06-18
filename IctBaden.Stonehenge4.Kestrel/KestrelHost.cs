@@ -178,7 +178,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                             if (useSsl)
                             {
                                 listenOptions.UseHttps(
-                                    _options.SslCertificatePath,
+                                    _options.SslCertificatePath ?? "",
                                     _options.SslCertificatePassword);
                             }
                         });
