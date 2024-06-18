@@ -169,66 +169,66 @@ public class StonehengeContent
 
             
             // Problem here
-            if (appSession != null && !appSession.HasUserIdentity() && appSession.HostOptions.UseKeycloakAuthentication != null)
-            {
-                var o = appSession.HostOptions.UseKeycloakAuthentication;
-                var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
-            
-                var state = requestQuery["state"] ?? "";
-                if (state.StartsWith(appSession.Id))
-                {
-                    var code = requestQuery["code"];
-                    var redirectUri = appSession["authRedirect"].ToString();
-                    var data =
-                        $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
-            
-                    using var client = new HttpClient();
-                    var tokenUrl = $"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/token";
-                    var result = client.PostAsync(tokenUrl,
-                            new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
-                        .Result;
-                    var json = result.Content.ReadAsStringAsync().Result;
-                    var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
-                    if (authResponse != null)
-                    {
-                        var token = authResponse["id_token"]?.ToString();
-                        if (string.IsNullOrEmpty(token)) token = authResponse["access_token"]?.ToString();
-                        var handler = new JwtSecurityTokenHandler();
-                        var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                        var identityId = jwtToken?.Subject;
-                        var identityName = jwtToken?.Payload["name"]?.ToString();
-                        var identityMail = jwtToken?.Payload["email"]?.ToString();
-                        appSession.SetUser(identityName, identityId, identityMail);
-                        context.Response.Redirect(redirectUri);
-                        return;
-                    }
-            
-                    Console.WriteLine(result);
-                }
-                else if (string.IsNullOrEmpty(state))
-                {
-                    var redirect =
-                        $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}{context.Request.QueryString}";
-                    appSession["authRedirect"] = redirect;
-                    var query = new QueryBuilder
-                    {
-                        { "client_id", o.ClientId },
-                        { "redirect_uri", redirect },
-                        { "response_type", "code" },
-                        { "scope", "openid" },
-                        { "nonce", appSession.Id },
-                        { "state", appSession.Id }
-                    };
-                    context.Response
-                        .Redirect($"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/auth{query}");
-                    return;
-                }
-            
-                var newSession =
-                    $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge_id=new";
-                context.Response.Redirect(newSession);
-                return;
-            }
+            //if (appSession != null && !appSession.HasUserIdentity() && appSession.HostOptions.UseKeycloakAuthentication != null)
+            // {
+            //     var o = appSession.HostOptions.UseKeycloakAuthentication;
+            //     var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
+            //
+            //     var state = requestQuery["state"] ?? "";
+            //     if (state.StartsWith(appSession.Id))
+            //     {
+            //         var code = requestQuery["code"];
+            //         var redirectUri = appSession["authRedirect"].ToString();
+            //         var data =
+            //             $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
+            //
+            //         using var client = new HttpClient();
+            //         var tokenUrl = $"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/token";
+            //         var result = client.PostAsync(tokenUrl,
+            //                 new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded"))
+            //             .Result;
+            //         var json = result.Content.ReadAsStringAsync().Result;
+            //         var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
+            //         if (authResponse != null)
+            //         {
+            //             var token = authResponse["id_token"]?.ToString();
+            //             if (string.IsNullOrEmpty(token)) token = authResponse["access_token"]?.ToString();
+            //             var handler = new JwtSecurityTokenHandler();
+            //             var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+            //             var identityId = jwtToken?.Subject;
+            //             var identityName = jwtToken?.Payload["name"]?.ToString();
+            //             var identityMail = jwtToken?.Payload["email"]?.ToString();
+            //             appSession.SetUser(identityName, identityId, identityMail);
+            //             context.Response.Redirect(redirectUri);
+            //             return;
+            //         }
+            //
+            //         Console.WriteLine(result);
+            //     }
+            //     else if (string.IsNullOrEmpty(state))
+            //     {
+            //         var redirect =
+            //             $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}{context.Request.QueryString}";
+            //         appSession["authRedirect"] = redirect;
+            //         var query = new QueryBuilder
+            //         {
+            //             { "client_id", o.ClientId },
+            //             { "redirect_uri", redirect },
+            //             { "response_type", "code" },
+            //             { "scope", "openid" },
+            //             { "nonce", appSession.Id },
+            //             { "state", appSession.Id }
+            //         };
+            //         context.Response
+            //             .Redirect($"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/auth{query}");
+            //         return;
+            //     }
+            //
+            //     var newSession =
+            //         $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge_id=new";
+            //     context.Response.Redirect(newSession);
+            //     return;
+            // }
 
             if (appSession != null && string.IsNullOrEmpty(appSession.UserIdentity))
             {

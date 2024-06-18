@@ -666,49 +666,50 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public void UserLogin()
     {
-        SetUser(string.Empty, string.Empty, string.Empty);
-        AuthorizeRedirectUrl = string.Empty;
-
-        var o = HostOptions.UseKeycloakAuthentication;
-        if (o == null) return;
-
-        AuthorizeRedirectUrl =
-            $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
-        var query = new QueryBuilder
-        {
-            { "client_id", o.ClientId ?? "" },
-            { "redirect_uri", AuthorizeRedirectUrl },
-            { "response_type", "code" },
-            { "scope", "openid" },
-            { "nonce", Id },
-            { "state", Id }
-        };
-        (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
+        // SetUser(string.Empty, string.Empty, string.Empty);
+        // AuthorizeRedirectUrl = string.Empty;
+        //
+        // var o = HostOptions.UseKeycloakAuthentication;
+        // if (o == null) return;
+        //
+        // AuthorizeRedirectUrl =
+        //     $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+        // var query = new QueryBuilder
+        // {
+        //     { "client_id", o.ClientId ?? "" },
+        //     { "redirect_uri", AuthorizeRedirectUrl },
+        //     { "response_type", "code" },
+        //     { "scope", "openid" },
+        //     { "nonce", Id },
+        //     { "state", Id }
+        // };
+        // (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
     }
 
     public bool UserLogout()
     {
-        if (HostOptions.UseKeycloakAuthentication == null) return false;
-
-        if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
-
-        var o = HostOptions.UseKeycloakAuthentication;
-
-        using var client = new HttpClient();
-        var data =
-            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
-
-        var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
-        using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
-        using var result = client.PostAsync(logoutUrl, content).Result;
-
-        var text = result.Content.ReadAsStringAsync().Result;
-        Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
-
-        SetUser(string.Empty, string.Empty, string.Empty);
-        AuthorizeRedirectUrl = string.Empty;
-
-        return result.StatusCode == HttpStatusCode.NoContent;
+        // if (HostOptions.UseKeycloakAuthentication == null) return false;
+        //
+        // if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
+        //
+        // var o = HostOptions.UseKeycloakAuthentication;
+        //
+        // using var client = new HttpClient();
+        // var data =
+        //     $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+        //
+        // var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
+        // using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
+        // using var result = client.PostAsync(logoutUrl, content).Result;
+        //
+        // var text = result.Content.ReadAsStringAsync().Result;
+        // Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
+        //
+        // SetUser(string.Empty, string.Empty, string.Empty);
+        // AuthorizeRedirectUrl = string.Empty;
+        //
+        // return result.StatusCode == HttpStatusCode.NoContent;
+        return true;
     }
 
     public void Dispose()
