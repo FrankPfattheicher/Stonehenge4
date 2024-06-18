@@ -60,28 +60,32 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string Context { get; private set; } = string.Empty;
 
 
-        
-        /// Name of user identity 
-        public string? UserIdentity { get; private set; }
-        /// Name of user identity 
-        public string? UserIdentityId { get; private set; }
-        /// Name of user identity 
-        public string? UserIdentityEMail { get; private set; }
-        public DateTime LastUserAction { get; private set; }
+    /// Name of user identity 
+    public string? UserIdentity { get; private set; }
 
-        /// User login is requested on next request 
-        public bool RequestLogin;
+    /// Name of user identity 
+    public string? UserIdentityId { get; private set; }
 
-        /// Redirect URL used to complete authorization 
+    /// Name of user identity 
+    public string? UserIdentityEMail { get; private set; }
+
+    public DateTime LastUserAction { get; private set; }
+
+    /// User login is requested on next request 
+    public bool RequestLogin;
+
+    /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
+
     /// Access token given from authorization 
     public string AccessToken = string.Empty;
+
     /// Refresh token given from authorization 
     public string RefreshToken = string.Empty;
 
 
     public CultureInfo SessionCulture { get; private set; } = CultureInfo.CurrentUICulture;
-        
+
     private readonly Guid _id;
     public string Id => $"{_id:N}";
 
@@ -176,9 +180,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    public event Action<string>? OnNavigate; 
-    
-    
+    public event Action<string>? OnNavigate;
+
+
     private object? _viewModel;
 
     public object? ViewModel
@@ -286,6 +290,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                     context, type.Name);
             }
         }
+
         foreach (var constructor in typeConstructors)
         {
             var parameters = constructor.GetParameters();
@@ -339,10 +344,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var port = HostDomain.Split(':');
             if (port.Length > 1)
             {
-                if(IPAddress.TryParse(port[0], out _))
+                if (IPAddress.TryParse(port[0], out _))
                     return string.Empty;
             }
-            
+
             var parts = HostDomain.Split('.');
             if (parts.Length == 1) return string.Empty;
 
@@ -422,9 +427,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     private readonly StonehengeResourceLoader _resourceLoader;
 #pragma warning restore IDISP008
 
-    
-    public static readonly AppSession None = new(); 
-    
+
+    public static readonly AppSession None = new();
+
     public AppSession()
         : this(null, new StonehengeHostOptions(), new AppSessions())
     {
@@ -433,7 +438,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public AppSession(StonehengeResourceLoader? resourceLoader, StonehengeHostOptions options, AppSessions appSessions)
     {
         _appSessions = appSessions;
-        
+
         if (resourceLoader == null)
         {
             var assemblies = new List<Assembly?>
@@ -449,9 +454,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
             Logger = StonehengeLogger.DefaultLogger;
             resourceLoader = new StonehengeResourceLoader(Logger,
-                [
-                    new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly())
-                ]);
+            [
+                new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly())
+            ]);
         }
         else
         {
@@ -491,7 +496,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var settings = File.ReadAllLines(cfg);
             var secureCookies = settings.FirstOrDefault(s => s.Contains("SecureCookies"));
             if (secureCookies == null) return;
-            
+
             var set = secureCookies.Split('=');
             SecureCookies = (set.Length > 1) && (set[1].Trim() == "1");
         }
@@ -542,7 +547,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             Platform += $" {browserDecoder.ClientOsVersion}";
         }
-        
+
         CookiesSupported = true;
     }
 
@@ -640,8 +645,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
+    public bool HasUserIdentity() => !string.IsNullOrEmpty(UserIdentity) ||
+                                     !string.IsNullOrEmpty(UserIdentityId) ||
+                                     !string.IsNullOrEmpty(UserIdentityEMail);
+
     public void SetUser(string identityName, string identityId, string identityEMail)
     {
+        if (HasUserIdentity()) return;
+
         UserIdentity = identityName;
         UserIdentityId = identityId;
         UserIdentityEMail = identityEMail;
@@ -651,8 +662,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         SessionCulture = culture;
     }
-        
-        
+
+
     public void UserLogin()
     {
         SetUser(string.Empty, string.Empty, string.Empty);
@@ -660,8 +671,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
-            
-        AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+
+        AuthorizeRedirectUrl =
+            $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
             { "client_id", o.ClientId ?? "" },
@@ -683,29 +695,30 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
 
         using var client = new HttpClient();
-        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
-            
+        var data =
+            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
         using var result = client.PostAsync(logoutUrl, content).Result;
 
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
-            
+
         SetUser(string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
 
         return result.StatusCode == HttpStatusCode.NoContent;
     }
-    
+
     public void Dispose()
     {
         // _eventRelease?.Dispose();
         // _eventRelease = null;
-        
+
         _pollSessionTimeout?.Dispose();
         _pollSessionTimeout = null;
-        
+
         OnNavigate = null;
         _eventRelease?.Dispose();
     }

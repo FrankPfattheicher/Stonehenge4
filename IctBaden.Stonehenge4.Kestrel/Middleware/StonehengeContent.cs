@@ -167,13 +167,13 @@ public class StonehengeContent
                 }
             }
 
+            
             // Problem here
-            if (appSession != null && appSession.HostOptions.UseKeycloakAuthentication != null &&
-                string.IsNullOrEmpty(appSession.UserIdentity))
+            if (appSession != null && !appSession.HasUserIdentity() && appSession.HostOptions.UseKeycloakAuthentication != null)
             {
                 var o = appSession.HostOptions.UseKeycloakAuthentication;
                 var requestQuery = HttpUtility.ParseQueryString(context.Request.QueryString.ToString() ?? string.Empty);
-
+            
                 var state = requestQuery["state"] ?? "";
                 if (state.StartsWith(appSession.Id))
                 {
@@ -181,7 +181,7 @@ public class StonehengeContent
                     var redirectUri = appSession["authRedirect"].ToString();
                     var data =
                         $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(redirectUri)}";
-
+            
                     using var client = new HttpClient();
                     var tokenUrl = $"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/token";
                     var result = client.PostAsync(tokenUrl,
@@ -202,7 +202,7 @@ public class StonehengeContent
                         context.Response.Redirect(redirectUri);
                         return;
                     }
-
+            
                     Console.WriteLine(result);
                 }
                 else if (string.IsNullOrEmpty(state))
@@ -223,7 +223,7 @@ public class StonehengeContent
                         .Redirect($"{o.AuthUrl}/realm/{o.Realm}/protocol/openid-connect/auth{query}");
                     return;
                 }
-
+            
                 var newSession =
                     $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge_id=new";
                 context.Response.Redirect(newSession);
