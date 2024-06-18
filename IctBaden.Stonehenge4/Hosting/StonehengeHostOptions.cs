@@ -79,18 +79,6 @@ public class StonehengeHostOptions
         public string SslCertificatePassword { get; set; }
 
     /// <summary>
-    /// Path of the pfx certificate to be used with Kestrel.
-    /// (not used with HttpSys, you need to "netsh http add sslcert ..." for the the p12 certificate in that case)
-    /// On Windows it is better to use IIS as reverse proxy.
-    /// </summary>
-    public string SslCertificatePath { get; set; } = string.Empty;
-    /// <summary>
-    /// Password of the pfx certificate to be used with Kestrel.
-    /// (not used with HttpSys)
-    /// </summary>
-    public string SslCertificatePassword { get; set; } = string.Empty;
-
-    /// <summary>
     /// Host is using the following headers to disable clients
     /// to cache any content.
     ///     Cache-Control: no-cache, no-store, must-revalidate, proxy-revalidate

@@ -69,7 +69,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         public string UserIdentityEMail { get; private set; }
         public DateTime LastUserAction { get; private set; }
 
-    /// Redirect URL used to complete authorization 
+        /// User login is requested on next request 
+        public bool RequestLogin;
+
+        /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
     /// Access token given from authorization 
     public string AccessToken = string.Empty;
@@ -77,21 +80,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string RefreshToken = string.Empty;
 
 
-    /// Name of user identity 
-    public string UserIdentity { get; private set; } = string.Empty;
-
-    /// Name of user identity 
-    public string UserIdentityId { get; private set; } = string.Empty;
-
-    /// Name of user identity 
-    public string UserIdentityEMail { get; private set; } = string.Empty;
-
-        
     public CultureInfo SessionCulture { get; private set; } = CultureInfo.CurrentUICulture;
         
-        
-    public DateTime LastUserAction { get; private set; }
-
     private readonly Guid _id;
     public string Id => $"{_id:N}";
 
@@ -655,7 +645,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         UserIdentity = identityName;
         UserIdentityId = identityId;
         UserIdentityEMail = identityEMail;
-        RequestLogin = false;
     }
 
     public void SetSessionCulture(CultureInfo culture)
@@ -672,7 +661,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
             
-        RequestLogin = true;
         AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
@@ -690,14 +678,26 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         if (HostOptions.UseKeycloakAuthentication == null) return false;
 
-        public void SetUser(string identityName, string identityId, string identityEMail)
-        {
-            UserIdentity = identityName;
-            UserIdentityId = identityId;
-            UserIdentityEMail = identityEMail;
-        }
-    }
+        if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
 
+        var o = HostOptions.UseKeycloakAuthentication;
+
+        using var client = new HttpClient();
+        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+            
+        var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
+        using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
+        using var result = client.PostAsync(logoutUrl, content).Result;
+
+        var text = result.Content.ReadAsStringAsync().Result;
+        Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
+            
+        SetUser(string.Empty, string.Empty, string.Empty);
+        AuthorizeRedirectUrl = string.Empty;
+
+        return result.StatusCode == HttpStatusCode.NoContent;
+    }
+    
     public void Dispose()
     {
         // _eventRelease?.Dispose();

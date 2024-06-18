@@ -61,24 +61,6 @@ internal static class Program
             // SslCertificatePassword = "test"
         };
 
-            // select hosting options
-            var options = new StonehengeHostOptions
-            {
-                Title = "VueSample",
-
-                ServerPushMode = ServerPushModes.LongPolling,
-                PollIntervalSec = 10,
-                HandleWindowResized = true,
-                UseKeycloakAuthentication = new KeycloakAuthenticationOptions
-                {
-                    ClientId = "frontend",
-                    Realm = "liva-production",
-                    AuthUrl = "https://portal.liva-aws.com/auth"
-                }
-                // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
-                // SslCertificatePassword = "test"
-            };
-
             // Select client framework
             Console.WriteLine(@"Using client framework vue");
             var vue = new VueResourceProvider(logger);

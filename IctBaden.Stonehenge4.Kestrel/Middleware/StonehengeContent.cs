@@ -460,56 +460,38 @@ public class StonehengeContent
 
     private void SetUserNameFromContext(AppSession appSession, HttpContext context)
     {
-        var identityId = context.User.Identity?.Name ?? string.Empty;
-        if (!string.IsNullOrEmpty(identityId)) return;
+        var identityName = context.User.Identity?.Name;
+        if (identityName != null) return;
 
-        private void SetUserNameFromContext(AppSession appSession, HttpContext context)
+        var auth = context.Request.Headers["Authorization"].FirstOrDefault();
+        if (auth != null)
         {
-            var identityName = context.User.Identity?.Name;
-            if (identityName != null) return;
-
-            var auth = context.Request.Headers["Authorization"].FirstOrDefault();
-            if (auth != null)
+            if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
-                    identityName = userPassword.Split(':').FirstOrDefault();
-                }
-                else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var token = auth.Substring(7);
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
-                    identityName = jwtToken?.Subject;
-                }
-
-                appSession.SetUser(identityName, "", "");
+                var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
+                identityName = userPassword.Split(':').FirstOrDefault();
             }
-            
-            var isLocal = context.IsLocal();
-            if (!isLocal) return;
-
-            var explorers = Process.GetProcessesByName("explorer");
-            if (explorers.Length == 1)
+            else if (auth.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase))
             {
-                identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
-                return;
+                var token = auth.Substring(7);
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                identityName = jwtToken?.Subject;
             }
-            
-            // RDP with more than one session: How to find app and session using request's client IP port
+
+            appSession.SetUser(identityName, "", "");
         }
-
+            
         var isLocal = context.IsLocal();
         if (!isLocal) return;
 
         var explorers = Process.GetProcessesByName("explorer");
         if (explorers.Length == 1)
         {
-            identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            appSession.SetUser(identityId, "", "");
+            identityName = $"{Environment.UserDomainName}\\{Environment.UserName}";
+            return;
         }
-
+            
         // RDP with more than one session: How to find app and session using request's client IP port
     }
 
