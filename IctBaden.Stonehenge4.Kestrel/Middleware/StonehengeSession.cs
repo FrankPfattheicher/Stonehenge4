@@ -47,9 +47,18 @@ internal static class HttpContextExtensions
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public partial class StonehengeSession(RequestDelegate next)
+public class StonehengeSession
 {
-    // ReSharper disable once UnusedMember.Global
+#pragma warning disable SYSLIB1045
+    private static readonly Regex StonehengeIdRegex = new("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft | RegexOptions.Compiled);
+#pragma warning restore SYSLIB1045
+
+    private readonly RequestDelegate _next;
+
+    public StonehengeSession(RequestDelegate next)
+    {
+        _next = next;
+    }
 
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
@@ -69,7 +78,7 @@ public partial class StonehengeSession(RequestDelegate next)
         if (path.ToLower().Contains("/user/"))
         {
             logger.LogTrace("Kestrel Begin USER {Method} {Path}", context.Request.Method, path);
-            await next.Invoke(context);
+            await _next.Invoke(context);
             logger.LogTrace("Kestrel End USER {Method} {Path}", context.Request.Method, path);
             return;
         }
@@ -86,7 +95,7 @@ public partial class StonehengeSession(RequestDelegate next)
         {
             // see referer
             var referer = context.Request.Headers["Referer"].FirstOrDefault() ?? "";
-            stonehengeId = new Regex("stonehenge-id=([a-f0-9A-F]+)")
+            stonehengeId = StonehengeIdRegex
                 .Matches(referer)
                 .Select(m => m.Groups[1].Value)
                 .FirstOrDefault();
@@ -98,7 +107,7 @@ public partial class StonehengeSession(RequestDelegate next)
             if (!string.IsNullOrEmpty(cookie.Value.ToString()))
             {
                 // workaround for double stonehenge-id values in cookie - take the last one
-                var ids = StonehengeIdRegex()
+                var ids = StonehengeIdRegex
                     .Matches(cookie.Value.ToString())
                     .Select(m => m.Groups[1].Value).ToArray();
                 if (ids.Length > 1)
@@ -165,7 +174,7 @@ public partial class StonehengeSession(RequestDelegate next)
         else
         {
             context.Items.Add("stonehenge.AppSession", session);
-            await next.Invoke(context);
+            await _next.Invoke(context);
         }
 
         timer.Stop();
@@ -245,6 +254,4 @@ public partial class StonehengeSession(RequestDelegate next)
         return CultureInfo.CurrentCulture;
     }
 
-    [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)")]
-    private static partial Regex StonehengeIdRegex();
 }
