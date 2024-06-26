@@ -60,7 +60,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
         _logger = logger;
 
         var isAspNetCoreApp = true;
-        var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? "";
+        var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? string.Empty;
         if (!string.IsNullOrEmpty(ctx) && !ctx.Contains("Microsoft.AspNetCore.App"))
         {
             isAspNetCoreApp = false;
@@ -136,7 +136,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                     break;
             }
 
-            var mem = new MemoryConfigurationSource()
+            var mem = new MemoryConfigurationSource
             {
                 InitialData =
                 [

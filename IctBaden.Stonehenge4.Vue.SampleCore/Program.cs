@@ -36,12 +36,12 @@ internal static class Program
 
         // ReSharper disable once RedundantAssignment
         KeycloakAuthenticationOptions? keycloak = null;
-        keycloak = new KeycloakAuthenticationOptions
-        {
-            ClientId = "frontend",
-            Realm = "liva-pms",
-            AuthUrl = "https://auth.liva-cloud.com"
-        };
+        // keycloak = new KeycloakAuthenticationOptions
+        // {
+        //     ClientId = "frontend",
+        //     Realm = "liva-pms",
+        //     AuthUrl = "https://auth.liva-cloud.com"
+        // };
 
         UserContentLinks.AddStyleSheet(string.Empty, "theme/theme{{theme}}.css");
             
@@ -55,6 +55,7 @@ internal static class Program
             HandleWindowResized = true,
             CustomMiddleware = [nameof(StonehengeRawContent)],
             UseClientLocale = true,
+            UseNtlmAuthentication = false,
             UseKeycloakAuthentication = keycloak
             // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
             // SslCertificatePassword = "test"

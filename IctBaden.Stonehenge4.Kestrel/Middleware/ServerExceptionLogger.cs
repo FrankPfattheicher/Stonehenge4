@@ -11,16 +11,22 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ServerExceptionLogger(RequestDelegate next)
+public class ServerExceptionLogger
 {
+    private readonly RequestDelegate _next;
+
     // ReSharper disable once UnusedMember.Global
+    public ServerExceptionLogger(RequestDelegate next)
+    {
+        _next = next;
+    }
 
     public async Task Invoke(HttpContext context)
     {
         var logger = context.Items["stonehenge.Logger"] as ILogger;
         try
         {
-            await next.Invoke(context);
+            await _next.Invoke(context);
         }
         catch (TaskCanceledException)
         {

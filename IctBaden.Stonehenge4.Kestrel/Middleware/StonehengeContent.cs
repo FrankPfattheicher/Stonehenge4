@@ -29,12 +29,17 @@ using Microsoft.Net.Http.Headers;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class StonehengeContent(RequestDelegate next)
+public class StonehengeContent
 {
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
+    private readonly RequestDelegate _next;
 
     // ReSharper disable once UnusedMember.Global
+    public StonehengeContent(RequestDelegate next)
+    {
+        _next = next;
+    }
 
     // ReSharper disable once UnusedMember.Global
     public Task Invoke(HttpContext context)
@@ -308,7 +313,7 @@ public class StonehengeContent(RequestDelegate next)
 
             if (content == null)
             {
-                await next.Invoke(context);
+                await _next.Invoke(context);
                 return;
             }
 
@@ -399,12 +404,16 @@ public class StonehengeContent(RequestDelegate next)
     private void SetUserNameFromContext(AppSession appSession, HttpContext context)
     {
         var identityId = context.User.Identity?.Name ?? string.Empty;
-        if (!string.IsNullOrEmpty(identityId)) return;
+        if (!string.IsNullOrEmpty(identityId))
+        {
+            appSession.SetUser(identityId, identityId, "");
+            return;
+        }
 
         var identityName = "";
         var identityMail = "";
 
-        var auth = context.Request.Headers["Authorization"].FirstOrDefault();
+        var auth = context.Request.Headers.Authorization.FirstOrDefault();
         if (auth != null)
         {
             if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
