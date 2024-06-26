@@ -43,7 +43,8 @@ public class StartVm : ActiveViewModel
     public string AppBoxCaption { get; private set; } = string.Empty;
     public string AppBoxText { get; private set; } = string.Empty;
         
-    public bool AppDialogVisible { get; private set; }
+    public bool AppDialogVisible1 { get; private set; }
+    public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
         
 
@@ -95,18 +96,27 @@ public class StartVm : ActiveViewModel
     }
 
     [ActionMethod]
-    public void ShowAppDialog()
+    public void ShowAppDialog1()
     {
         CloseAppBox();
-        AppDialogVisible = true;
+        AppDialogVisible1 = true;
         AppDialogCaption = "Stonehenge";
+    }
+
+    [ActionMethod]
+    public void ShowAppDialog2()
+    {
+        CloseAppBox();
+        AppDialogVisible2 = true;
+        AppDialogCaption = "Stonehenge disable OK";
     }
 
     [ActionMethod]
     public void CloseAppBox()
     {
         AppBoxVisible = false;
-        AppDialogVisible = false;
+        AppDialogVisible1 = false;
+        AppDialogVisible2 = false;
     }
 
     [ActionMethod]

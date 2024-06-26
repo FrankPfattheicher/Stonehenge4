@@ -1,4 +1,5 @@
 
+* 8.0.1 - 26.06.2024 app-dialog enableOk defaults to true
 * 8.0.0 - 14.06.2024 Drop net6.0 support and AspNetCore 2.x
 
 * 4.9.3 - 18.05.2024 Added enableOk to app-dialog 
