@@ -108,7 +108,7 @@ public sealed class HostWindow : IDisposable
         var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var dir = Directory.CreateDirectory(path);
 
-        var opened = ShowWindowMidori(path) ||
+        var opened = ShowWindowMidori() ||
                      ShowWindowEpiphany() ||
                      ShowWindowChrome1(path) ||
                      ShowWindowChrome2(path) ||
@@ -268,7 +268,7 @@ public sealed class HostWindow : IDisposable
         }
     }
 
-    private bool ShowWindowMidori(string path)
+    private bool ShowWindowMidori()
     {
         if (Environment.OSVersion.Platform != PlatformID.Unix)
             return false;
@@ -276,7 +276,7 @@ public sealed class HostWindow : IDisposable
         try
         {
             var cmd = "midori";
-            var parameter = $"-e Navigationbar -c {path} -a {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
+            var parameter = $"-e Navigationbar -a {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
             if (_ui == null || _ui.HasExited)
