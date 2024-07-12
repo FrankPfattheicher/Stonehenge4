@@ -106,13 +106,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public string GetBackRoute()
     {
-        var route = "";
-        if (_history.Count > 1)
+        if (_history.Count == 0)
         {
-            route = _history.Skip(1).First();
-            _history.RemoveAt(0);
+            return string.Empty;
         }
-
+        var route = _history.Skip(1).First();
+        _history.RemoveAt(0);
         return route;
     }
 
@@ -125,52 +124,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public async Task<string[]> CollectEvents()
     {
-        IsWaitingForEvents = true;
-        var eventVm = ViewModel;
-
-        _eventRelease?.Dispose();
-        _eventRelease = new CancellationTokenSource();
-
-        // wait _eventTimeoutMs for events - if there is one - continue
-        var max = _eventTimeoutMs / 100;
-
-        async Task Wait(CancellationTokenSource cts, int milliseconds)
+        if (!IsWaitingForEvents)
         {
-            await Task.Delay(milliseconds, cts.Token)
-                .ContinueWith(_ =>
-                {
-                    if (cts is { IsCancellationRequested: true })
-                    {
-                        _forceUpdate = true;
-                    }
-                }, TaskContinuationOptions.None)
-                .ConfigureAwait(false);
+            await WaitForEvents();
         }
-
-        while (!_forceUpdate && max > 0)
-        {
-            await Wait(_eventRelease, 100);
-            max--;
-        }
-
-        if (ViewModel == eventVm)
-        {
-            // wait for maximum 500ms for more events - if there is none within - continue
-            max = 50;
-            while (!_forceUpdate && max > 0)
-            {
-                await Wait(_eventRelease, 10);
-                max--;
-            }
-        }
-        else
-        {
-            // VM has changed
-            EventsClear(false);
-        }
-
-        _forceUpdate = false;
-        IsWaitingForEvents = false;
 
         lock (_events)
         {
@@ -178,6 +135,70 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             _events.Clear();
             return events;
         }
+    }
+
+    private async Task WaitForEvents()
+    {
+        try
+        {
+            IsWaitingForEvents = true;
+            var eventVm = ViewModel;
+
+            _eventRelease?.Dispose();
+            _eventRelease = new CancellationTokenSource();
+
+            // wait _eventTimeoutMs for events - if there is one - continue
+            var max = _eventTimeoutMs / 100;
+            while (!_forceUpdate && max > 0)
+            {
+                await Wait(_eventRelease, 100);
+                max--;
+            }
+
+            if (ViewModel == eventVm)
+            {
+                // wait for maximum 500ms for more events - if there is none within - continue
+                max = 50;
+                while (!_forceUpdate && max > 0)
+                {
+                    await Wait(_eventRelease, 10);
+                    max--;
+                }
+            }
+            else
+            {
+                // VM has changed
+                EventsClear(false);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError("AppSession.CollectEvents({ViewModel}): {Message}",
+                ViewModel?.GetType().Name ?? "<UNKNOWN>", ex.Message);
+            Debugger.Break();
+        }
+        finally
+        {
+            _eventRelease?.Dispose();
+            _eventRelease = null;
+
+            _forceUpdate = false;
+            IsWaitingForEvents = false;
+        }
+    }
+    
+    private async Task Wait(CancellationTokenSource cts, int milliseconds)
+    {
+        await Task
+            .Delay(milliseconds, cts.Token)
+            .ContinueWith(_ =>
+            {
+                if (cts is { IsCancellationRequested: true })
+                {
+                    _forceUpdate = true;
+                }
+            }, TaskContinuationOptions.None)
+            .ConfigureAwait(false);
     }
 
     public event Action<string>? OnNavigate; 
@@ -585,9 +606,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             Id, forceEnd);
         lock (_events)
         {
-            //var privateEvents = Events.Where(e => e.StartsWith(AppService.PropertyNameId)).ToList();
             _events.Clear();
-            //Events.AddRange(privateEvents);
             if (forceEnd)
             {
                 _eventRelease?.Cancel();
@@ -614,7 +633,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             {
                 _events.Add(name);
             }
-
             _eventRelease?.Cancel();
         }
     }
@@ -706,13 +724,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public void Dispose()
     {
-        // _eventRelease?.Dispose();
-        // _eventRelease = null;
-        
         _pollSessionTimeout?.Dispose();
         _pollSessionTimeout = null;
-        
-        OnNavigate = null;
+ 
         _eventRelease?.Dispose();
+        _eventRelease = null;
+
+        OnNavigate = null;
     }
 }

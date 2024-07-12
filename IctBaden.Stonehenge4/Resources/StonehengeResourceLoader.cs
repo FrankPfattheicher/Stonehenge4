@@ -154,7 +154,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
 
     public void AddResourceAssembly(Assembly assembly)
     {
-        var resourceLoader = Providers.FirstOrDefault(p => p.GetType() == typeof(ResourceLoader)) as ResourceLoader;
+        var resourceLoader = Providers.FirstOrDefault(p => p is ResourceLoader) as ResourceLoader;
         resourceLoader?.AddAssembly(assembly);
     }
 

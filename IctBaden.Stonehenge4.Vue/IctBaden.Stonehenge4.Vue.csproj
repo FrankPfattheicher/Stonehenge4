@@ -131,7 +131,7 @@
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="IDisposableAnalyzers" Version="4.0.7">
+      <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
