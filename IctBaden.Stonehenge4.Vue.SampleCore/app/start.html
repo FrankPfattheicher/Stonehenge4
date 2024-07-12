@@ -124,7 +124,10 @@
                 Dialog Boxes
             </h4>
             <p>
-                <button class="btn btn-sm btn-secondary" @click="ShowAppDialog()">App Dialog</button>
+                <button class="btn btn-sm btn-secondary" @click="ShowAppDialog1()">App Dialog</button>
+            </p>
+            <p>
+                <button class="btn btn-sm btn-secondary" @click="ShowAppDialog2()">Disabled OK</button>
             </p>
 
         </div>
@@ -189,7 +192,11 @@
         <p>Dies ist der <b>{{AppBoxText}}</b></p>
     </app-message-box>
 
-    <app-dialog v-if="AppDialogVisible" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()">
+    <app-dialog v-if="AppDialogVisible1" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()">
+        <input v-model="Test" v-select/>
+        <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
+    </app-dialog>
+    <app-dialog v-if="AppDialogVisible2" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()" enableOk="false" cancelText="Schließen">
         <input v-model="Test" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>
