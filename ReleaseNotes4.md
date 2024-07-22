@@ -1,4 +1,5 @@
 
+* 8.0.7 - 22.07.2024 Fixed _eventRelease handle CancellationTokenSource exception
 * 8.0.6 - 13.07.2024 Fixed nuget reference
 * 8.0.5 - 12.07.2024 Improved CollectEvents, added log, avoid reentrancy
 * 8.0.4 - 10.07.2024 Removed -c option on midori host window
