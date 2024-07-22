@@ -609,7 +609,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             _events.Clear();
             if (forceEnd)
             {
-                _eventRelease?.Cancel();
+                try
+                {
+                    _eventRelease?.Cancel();
+                }
+                catch
+                {
+                    // ignore disposed
+                }
             }
         }
     }
@@ -633,7 +640,15 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             {
                 _events.Add(name);
             }
-            _eventRelease?.Cancel();
+
+            try
+            {
+                _eventRelease?.Cancel();
+            }
+            catch
+            {
+                // ignore disposed
+            }
         }
     }
 
