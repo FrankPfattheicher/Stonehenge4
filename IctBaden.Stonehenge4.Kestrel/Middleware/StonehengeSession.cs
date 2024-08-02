@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge.Core;
@@ -122,7 +123,8 @@ public class StonehengeSession
             }
         }
 
-        logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
+        logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", 
+            stonehengeId ?? "<none>", context.Request.Method, path, context.Request.QueryString);
 
         CleanupTimedOutSessions(logger, appSessions);
         var session = appSessions.GetSessionById(stonehengeId);
@@ -132,12 +134,13 @@ public class StonehengeSession
             var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
             var directoryName = Path.GetDirectoryName(path) ?? "/";
             var resource = resourceLoader != null
-                ? await resourceLoader.Get(null, path.Substring(1).Replace("/", "."),
+                ? await resourceLoader.Get(null, CancellationToken.None, path.Substring(1).Replace("/", "."),
                     new Dictionary<string, string>())
                 : null;
             if (directoryName.Length > 1 && resource == null && stonehengeId != null)
             {
-                logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", stonehengeId, context.Request.Method, path, context.Request.QueryString);
+                logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", 
+                    stonehengeId ?? "<none>", context.Request.Method, path, context.Request.QueryString);
                 return;
             }
 
@@ -157,9 +160,15 @@ public class StonehengeSession
 
                 context.Response.Redirect(redirectUrl);
 
-                var remoteIp = context.Connection.RemoteIpAddress;
+                var remoteHost = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+                var forwarded = context.Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? string.Empty;
+                if (!string.IsNullOrEmpty(forwarded))
+                {
+                    forwarded = $"(forwarded from {forwarded}) ";
+                }
                 var remotePort = context.Connection.RemotePort;
-                logger.LogTrace("Kestrel[{StonehengeId}] From IP {RemoteIp}:{RemotePort} - redirect to {SessionId}", stonehengeId, remoteIp, remotePort, session.Id);
+                logger.LogTrace("Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}", 
+                    stonehengeId ?? "<none>", remoteHost, remotePort, forwarded, session.Id);
                 return;
             }
         }
@@ -182,12 +191,12 @@ public class StonehengeSession
         if (context.RequestAborted.IsCancellationRequested)
         {
             logger.LogTrace("Kestrel[{StonehengeId}] Canceled {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms", 
-                stonehengeId, context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
+                stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
             throw new TaskCanceledException();
         }
 
         logger.LogTrace("Kestrel[{StonehengeId}] End {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms",
-            stonehengeId, context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
+            stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
     }
 
     private static void CleanupTimedOutSessions(ILogger logger, AppSessions appSessions)

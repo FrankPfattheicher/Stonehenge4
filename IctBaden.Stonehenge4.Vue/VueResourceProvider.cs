@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -77,9 +78,9 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
         _vueContent.Clear();
     }
 
-    private static readonly Regex ExtractName = new Regex("<!--ViewModel:(\\w+)-->");
-    private static readonly Regex ExtractElement = new Regex("<!--CustomElement(:([\\w, ]+))?-->");
-    private static readonly Regex ExtractTitle = new Regex("<!--Title:([^:]*)(:(-?\\d*))?-->");
+    private static readonly Regex ExtractName = new("<!--ViewModel:(\\w+)-->");
+    private static readonly Regex ExtractElement = new("<!--CustomElement(:([\\w, ]+))?-->");
+    private static readonly Regex ExtractTitle = new("<!--Title:([^:]*)(:(-?\\d*))?-->");
 
     private ViewModelInfo GetViewModelInfo(string route, string pageText)
     {
@@ -220,7 +221,7 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
     public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
     public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 
-    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
     {
         resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
         return _vueContent.TryGetValue(resourceName, out var value) 

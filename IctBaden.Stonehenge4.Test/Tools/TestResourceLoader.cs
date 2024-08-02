@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -44,7 +45,7 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
     {
         var resourceExtension = Path.GetExtension(resourceName);
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), content, Resource.Cache.None));

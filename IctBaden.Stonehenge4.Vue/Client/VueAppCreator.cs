@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -48,7 +49,7 @@ internal class VueAppCreator
 
     private async Task<string> LoadResourceText(string resourceName)
     {
-        var resource = await _loader.Get(AppSession.None, resourceName, new Dictionary<string, string>());
+        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName, new Dictionary<string, string>());
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }
 

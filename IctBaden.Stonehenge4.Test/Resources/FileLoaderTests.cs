@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -66,7 +67,7 @@ public sealed class FileLoaderTests : IDisposable
     [Fact]
     public async Task Load_file_unknown_txt()
     {
-        var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "unknown.txt", new Dictionary<string, string>());
         Assert.Null(resource);
     }
 
@@ -75,7 +76,7 @@ public sealed class FileLoaderTests : IDisposable
     {
         var name = $"icon_{Guid.NewGuid():N}.png";
         CreateBinaryFile(name);
-        var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("image/png", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -86,7 +87,7 @@ public sealed class FileLoaderTests : IDisposable
     public async Task Load_file_index_html()
     {
         CreateTextFile("index.html");
-        var resource = await _loader.Get(_session, "index.html", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "index.html", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);
@@ -98,7 +99,7 @@ public sealed class FileLoaderTests : IDisposable
     {
         var name = $"image_{Guid.NewGuid():N}.jpg";
         CreateBinaryFile(name);
-        var resource = await _loader.Get(_session, name, new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("image/jpeg", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -109,7 +110,7 @@ public sealed class FileLoaderTests : IDisposable
     public async Task Load_file_test_html()
     {
         CreateTextFile("test.htm");
-        var resource = await _loader.Get(_session, "test.htm", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "test.htm", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);

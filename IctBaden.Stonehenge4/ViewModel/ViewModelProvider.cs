@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge.Core;
@@ -139,7 +140,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             if (executeAsync)
             {
                 Task.Run(() => method.Invoke(session?.ViewModel, methodParams));
-                return GetEvents(session, resourceName);
+                return GetEvents(session, CancellationToken.None, resourceName);
             }
 
             method.Invoke(session?.ViewModel, methodParams);
@@ -168,7 +169,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }
 
-    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
     {
         if (resourceName.StartsWith("ViewModel/"))
         {
@@ -184,7 +185,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         else if (resourceName.StartsWith("Events/"))
         {
-            return GetEvents(session, resourceName);
+            return GetEvents(session, requestAborted, resourceName);
         }
         else if (session != null && resourceName.StartsWith("Data/"))
         {
@@ -224,7 +225,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             Resource.Cache.None));
     }
 
-    private static async Task<Resource?> GetEvents(AppSession? session, string resourceName)
+    private static async Task<Resource?> GetEvents(AppSession? session, CancellationToken requestAborted, string resourceName)
     {
         var parts = resourceName.Split('/');
         if (parts.Length < 2) return null;
@@ -248,7 +249,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         var data = new List<string> { "\"StonehengeContinuePolling\":true" };
         var events = session == null
             ? []  
-            : await session.CollectEvents();
+            : await session.CollectEvents(requestAborted);
         if (session?.ViewModel is ActiveViewModel activeVm)
         {
             try

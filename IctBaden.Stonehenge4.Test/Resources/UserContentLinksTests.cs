@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
@@ -28,7 +29,7 @@ namespace IctBaden.Stonehenge.Test.Resources
 #pragma warning disable IDISP001
             var loader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, typeof(UserContentLinksTests).Assembly);
 #pragma warning restore IDISP001
-            _index = loader.Get(_session, "index.html", new Dictionary<string, string>()).Result;
+            _index = loader.Get(_session, CancellationToken.None,"index.html", new Dictionary<string, string>()).Result;
         }
 
         [Fact]

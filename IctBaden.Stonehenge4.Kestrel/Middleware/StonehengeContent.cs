@@ -182,7 +182,7 @@ public class StonehengeContent
                 case "GET":
                     appSession?.Accessed(cookies, false);
                     content = resourceLoader != null
-                        ? await resourceLoader.Get(appSession, resourceName, parameters)
+                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceName, parameters)
                         : null;
                     var isIndex = resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase);
                     if (content == null && appSession != null && isIndex)
@@ -203,7 +203,6 @@ public class StonehengeContent
                     {
                         appSession?.SetTimeout(appSession.HostOptions.SessionTimeout);
                     }
-
                     break;
 
                 case "POST":
