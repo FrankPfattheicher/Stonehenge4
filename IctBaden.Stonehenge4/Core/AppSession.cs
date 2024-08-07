@@ -65,8 +65,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
+
     /// Access token given from authorization 
     public string AccessToken = string.Empty;
+
     /// Refresh token given from authorization 
     public string RefreshToken = string.Empty;
 
@@ -80,10 +82,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     /// Name of user identity 
     public string UserIdentityEMail { get; private set; } = string.Empty;
 
-        
+
     public CultureInfo SessionCulture { get; private set; } = CultureInfo.CurrentUICulture;
-        
-        
+
+
     public DateTime LastUserAction { get; private set; }
 
     private readonly Guid _id;
@@ -110,6 +112,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             return string.Empty;
         }
+
         var route = _history.Skip(1).First();
         _history.RemoveAt(0);
         return route;
@@ -122,12 +125,21 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public readonly ILogger Logger;
 
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-    public async Task<string[]> CollectEvents()
+    public async Task<string[]> CollectEvents(CancellationToken requestAborted)
     {
-        if (!IsWaitingForEvents)
+        try
         {
-            await WaitForEvents();
+            while (IsWaitingForEvents && !requestAborted.IsCancellationRequested)
+            {
+                await Task.Delay(1000, requestAborted);
+            }
         }
+        catch
+        {
+            // ignore TaskCanceledException on request abort
+        }
+
+        await WaitForEvents();
 
         lock (_events)
         {
@@ -149,7 +161,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
             // wait _eventTimeoutMs for events - if there is one - continue
             var max = _eventTimeoutMs / 100;
-            while (!_forceUpdate && max > 0)
+            while (!_forceUpdate && max > 0 && _eventRelease != null)
             {
                 await Wait(_eventRelease, 100);
                 max--;
@@ -159,7 +171,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             {
                 // wait for maximum 500ms for more events - if there is none within - continue
                 max = 50;
-                while (!_forceUpdate && max > 0)
+                while (!_forceUpdate && max > 0 && _eventRelease != null)
                 {
                     await Wait(_eventRelease, 10);
                     max--;
@@ -186,24 +198,31 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             IsWaitingForEvents = false;
         }
     }
-    
+
     private async Task Wait(CancellationTokenSource cts, int milliseconds)
     {
-        await Task
-            .Delay(milliseconds, cts.Token)
-            .ContinueWith(_ =>
-            {
-                if (cts is { IsCancellationRequested: true })
+        try
+        {
+            await Task
+                .Delay(milliseconds, cts.Token)
+                .ContinueWith(_ =>
                 {
-                    _forceUpdate = true;
-                }
-            }, TaskContinuationOptions.None)
-            .ConfigureAwait(false);
+                    if (cts is { IsCancellationRequested: true })
+                    {
+                        _forceUpdate = true;
+                    }
+                }, TaskContinuationOptions.None)
+                .ConfigureAwait(false);
+        }
+        catch
+        {
+            // ignore cts is disposed during wait
+        }
     }
 
-    public event Action<string>? OnNavigate; 
-    
-    
+    public event Action<string>? OnNavigate;
+
+
     private object? _viewModel;
 
     public object? ViewModel
@@ -311,6 +330,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                     context, type.Name);
             }
         }
+
         foreach (var constructor in typeConstructors)
         {
             var parameters = constructor.GetParameters();
@@ -364,10 +384,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var port = HostDomain.Split(':');
             if (port.Length > 1)
             {
-                if(IPAddress.TryParse(port[0], out _))
+                if (IPAddress.TryParse(port[0], out _))
                     return string.Empty;
             }
-            
+
             var parts = HostDomain.Split('.');
             if (parts.Length == 1) return string.Empty;
 
@@ -447,9 +467,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     private readonly StonehengeResourceLoader _resourceLoader;
 #pragma warning restore IDISP008
 
-    
-    public static readonly AppSession None = new(); 
-    
+
+    public static readonly AppSession None = new();
+
     public AppSession()
         : this(null, new StonehengeHostOptions(), new AppSessions())
     {
@@ -458,7 +478,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public AppSession(StonehengeResourceLoader? resourceLoader, StonehengeHostOptions options, AppSessions appSessions)
     {
         _appSessions = appSessions;
-        
+
         if (resourceLoader == null)
         {
             var assemblies = new List<Assembly?>
@@ -474,9 +494,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
             Logger = StonehengeLogger.DefaultLogger;
             resourceLoader = new StonehengeResourceLoader(Logger,
-                [
-                    new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly())
-                ]);
+            [
+                new ResourceLoader(Logger, assemblies, Assembly.GetCallingAssembly())
+            ]);
         }
         else
         {
@@ -516,7 +536,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var settings = File.ReadAllLines(cfg);
             var secureCookies = settings.FirstOrDefault(s => s.Contains("SecureCookies"));
             if (secureCookies == null) return;
-            
+
             var set = secureCookies.Split('=');
             SecureCookies = (set.Length > 1) && (set[1].Trim() == "1");
         }
@@ -567,7 +587,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             Platform += $" {browserDecoder.ClientOsVersion}";
         }
-        
+
         CookiesSupported = true;
     }
 
@@ -689,8 +709,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         SessionCulture = culture;
     }
-        
-        
+
+
     public void UserLogin()
     {
         SetUser(string.Empty, string.Empty, string.Empty);
@@ -698,9 +718,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
-            
+
         RequestLogin = true;
-        AuthorizeRedirectUrl = $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+        AuthorizeRedirectUrl =
+            $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
             { "client_id", o.ClientId },
@@ -722,15 +743,16 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
 
         using var client = new HttpClient();
-        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
-            
+        var data =
+            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
         using var result = client.PostAsync(logoutUrl, content).Result;
 
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
-            
+
         SetUser(string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
 
@@ -741,7 +763,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         _pollSessionTimeout?.Dispose();
         _pollSessionTimeout = null;
- 
+
         _eventRelease?.Dispose();
         _eventRelease = null;
 

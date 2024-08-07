@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -41,7 +42,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
         Providers.Clear();
     }
 
-    public async Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
+    public async Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
     {
         var disableCache = false;
 
@@ -56,7 +57,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
         {
             try
             {
-                loadedResource = await loader.Get(session, resourceName, parameters);
+                loadedResource = await loader.Get(session, requestAborted, resourceName, parameters);
             }
             catch (Exception ex)
             {

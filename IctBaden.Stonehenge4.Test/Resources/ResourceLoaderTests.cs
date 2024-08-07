@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -40,14 +41,14 @@ public sealed class ResourceLoaderTests : IDisposable
     [Fact]
     public async Task Load_resource_unknown_txt()
     {
-        var resource = await _loader.Get(_session, "unknown.txt", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "unknown.txt", new Dictionary<string, string>());
         Assert.Null(resource);
     }
 
     [Fact]
     public async Task Load_resource_icon_png()
     {
-        var resource = await _loader.Get(_session, "icon.png", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "icon.png", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("image/png", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -58,7 +59,7 @@ public sealed class ResourceLoaderTests : IDisposable
     [Fact]
     public async Task Load_resource_icon32_png()
     {
-        var resource = await _loader.Get(_session, "icon32.png", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "icon32.png", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("image/png", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -69,7 +70,7 @@ public sealed class ResourceLoaderTests : IDisposable
     [Fact]
     public async Task Load_resource_image_png()
     {
-        var resource = await _loader.Get(_session, "image.jpg", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "image.jpg", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("image/jpeg", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -80,13 +81,13 @@ public sealed class ResourceLoaderTests : IDisposable
     [Fact]
     public async Task Load_resource_test_html()
     {
-        var resource = await _loader.Get(_session, "test.html", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "test.html", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);
         Assert.StartsWith("<!DOCTYPE html>", resource.Text);
 
-        resource = await _loader.Get(_session, "TesT.HTML", new Dictionary<string, string>());
+        resource = await _loader.Get(_session, CancellationToken.None, "TesT.HTML", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);
@@ -96,7 +97,7 @@ public sealed class ResourceLoaderTests : IDisposable
     [Fact]
     public async Task Load_resource_testscript_js()
     {
-        var resource = await _loader.Get(_session, "lib/testscript.js", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "lib/testscript.js", new Dictionary<string, string>());
         Assert.NotNull(resource);
         Assert.Equal("text/javascript", resource.ContentType);
         Assert.False(resource.IsBinary);

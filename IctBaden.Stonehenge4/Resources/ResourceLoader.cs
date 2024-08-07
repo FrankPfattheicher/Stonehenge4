@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Client;
 using IctBaden.Stonehenge.Core;
@@ -124,7 +125,7 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
         .Replace("/", ".");
         
         
-    public Task<Resource?> Get(AppSession? session, string name, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string name, Dictionary<string, string> parameters)
     {
         if (name.StartsWith("Events/"))
         {

@@ -146,7 +146,6 @@ stonehengeViewModelName = function component() {
                     try {
                         if(response.status >= 200 && response.status < 400) {
                             let data = JSON.parse(response.bodyText);
-                            app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
                             app.stonehengeViewModelName.model.StonehengeIsDisconnected = false;
                             app.stonehengeViewModelName.model.StonehengePollFailures = 0;
                             app.stonehengeViewModelName.StonehengeSetViewModelData(data);
@@ -160,7 +159,9 @@ stonehengeViewModelName = function component() {
                         setTimeout(function () {
                             app.stonehengeReloadOnError(error);
                         }, 100);
-                    }
+                    } finally {
+						app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
+					}
                     if (continuePolling || app.stonehengeViewModelName.model.StonehengeContinuePolling) {
                         setTimeout(function () {
                             app.stonehengeViewModelName.StonehengePollEvents(false);

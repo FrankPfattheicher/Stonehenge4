@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
@@ -25,7 +26,7 @@ public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourc
     {
     }
 
-    public Task<Resource?> Get(AppSession? session, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
     {
         var fullFileName = Path.Combine(RootPath, resourceName);
         if(!File.Exists(fullFileName)) return Task.FromResult<Resource?>(null);
