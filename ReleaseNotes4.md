@@ -1,4 +1,5 @@
 
+* 8.0.9 - 28.08.2024 Improve ViewModelProvider error logs including name
 * 8.0.8 - 02.08.2024 CollectEvents with CancellationToken, handle X-Forwarded-Host header
 * 8.0.7 - 22.07.2024 Fixed _eventRelease handle CancellationTokenSource exception
 * 8.0.6 - 13.07.2024 Fixed nuget reference
