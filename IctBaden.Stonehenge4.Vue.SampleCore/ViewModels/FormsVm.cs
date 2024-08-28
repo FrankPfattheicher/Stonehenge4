@@ -36,6 +36,8 @@ public class FormsVm : ActiveViewModel
     public string DropEditValue2 { get; set; }
     public string[] DropEditValues { get; set; }
 
+    public TestModelClass Struct { get; set; } = new();
+
     public FormsVm(AppSession session)
         : base(session)
     {
