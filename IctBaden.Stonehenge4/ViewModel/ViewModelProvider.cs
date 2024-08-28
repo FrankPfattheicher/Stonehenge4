@@ -426,7 +426,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         catch (Exception ex)
         {
-            logger.LogError("ViewModelProvider.DeserializeStructValue: {Message}", ex.Message);
+            logger.LogError("ViewModelProvider.DeserializeStructValue({StructName}): {Message}", structType.Name, ex.Message);
             Debugger.Break();
         }
     }
@@ -445,7 +445,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError("ViewModelProvider.SetMembers: {Message}", ex.Message);
+                    logger.LogError("ViewModelProvider.SetMembers.SetValue({StructName}.{PropertyName}): {Message}", structType.Name, mProp.Name, ex.Message);
                 }
             }
         }
@@ -524,11 +524,11 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             if (vm is ActiveViewModel activeVm)
             {
                 var pi = activeVm.GetPropertyInfo(propName);
-                if ((pi == null) || !pi.CanWrite)
+                if (pi == null || !pi.CanWrite)
                     return;
 
                 if (pi.PropertyType is { IsValueType: true, IsPrimitive: false } &&
-                    (pi.PropertyType.Namespace != "System")) // struct
+                    pi.PropertyType.Namespace != "System") // struct
                 {
                     var structObj = activeVm.TryGetMember(propName);
                     if (structObj != null && !string.IsNullOrEmpty(newValue) && newValue.Trim().StartsWith("{"))
@@ -555,7 +555,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             else
             {
                 var pi = vm?.GetType().GetProperty(propName);
-                if ((pi == null) || !pi.CanWrite)
+                if (pi == null || !pi.CanWrite)
                     return;
 
                 var val = DeserializePropertyValue(logger, newValue, pi.PropertyType);
