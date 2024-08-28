@@ -1,4 +1,5 @@
 
+* 8.0.10 - 28.08.2024 ViewModelProvider use property name instead of type name
 * 8.0.9 - 28.08.2024 Improve ViewModelProvider error logs including name
 * 8.0.8 - 02.08.2024 CollectEvents with CancellationToken, handle X-Forwarded-Host header
 * 8.0.7 - 22.07.2024 Fixed _eventRelease handle CancellationTokenSource exception

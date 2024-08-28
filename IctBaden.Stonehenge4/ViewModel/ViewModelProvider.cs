@@ -369,7 +369,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static void DeserializeStructValue(ILogger logger, ref object? structObj, 
+    public static void DeserializeStructValue(ILogger logger, string propName, ref object? structObj,
         string? structValue, Type structType)
     {
         try
@@ -440,7 +440,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             {
                 try
                 {
-                    var val = DeserializePropertyValue(logger, member.Value.ToString(), mProp.PropertyType);
+                    var val = DeserializePropertyValue(logger, mProp.Name, member.Value.ToString(), mProp.PropertyType);
                     mProp.SetValue(structObj, val, null);
                 }
                 catch (Exception ex)
@@ -452,7 +452,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public static object? DeserializePropertyValue(ILogger logger, string? propValue, Type propType)
+    public static object? DeserializePropertyValue(ILogger logger, string propName, string? propValue, Type propType)
     {
         try
         {
@@ -497,7 +497,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 var structObj = Activator.CreateInstance(propType);
                 if (structObj != null)
                 {
-                    DeserializeStructValue(logger, ref structObj, propValue, propType);
+                    DeserializeStructValue(logger, propName, ref structObj, propValue, propType);
                 }
 
                 return structObj;
@@ -510,7 +510,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         }
         catch (Exception ex)
         {
-            logger.LogError("DeserializePropertyValue('{Value}'): {Message}", propValue, ex.Message);
+            logger.LogError("DeserializePropertyValue({Name}) = '{Value}': {Message}", propName, propValue, ex.Message);
             Debugger.Break();
         }
 
@@ -533,13 +533,13 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                     var structObj = activeVm.TryGetMember(propName);
                     if (structObj != null && !string.IsNullOrEmpty(newValue) && newValue.Trim().StartsWith("{"))
                     {
-                        DeserializeStructValue(logger, ref structObj, newValue, pi.PropertyType);
+                        DeserializeStructValue(logger, pi.Name, ref structObj, newValue, pi.PropertyType);
                         activeVm.TrySetMember(propName, structObj);
                     }
                 }
                 else if (pi.PropertyType.IsGenericType && pi.PropertyType.Name.StartsWith("Notify`"))
                 {
-                    var val = DeserializePropertyValue(logger, newValue, pi.PropertyType.GenericTypeArguments[0]);
+                    var val = DeserializePropertyValue(logger, pi.Name, newValue, pi.PropertyType.GenericTypeArguments[0]);
                     var type = typeof(Notify<>).MakeGenericType(pi.PropertyType.GenericTypeArguments[0]);
                     var notify = Activator.CreateInstance(type, new[] { activeVm, pi.Name, val });
                     var valueField = type.GetField("_value", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -548,7 +548,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 }
                 else
                 {
-                    var val = DeserializePropertyValue(logger, newValue, pi.PropertyType);
+                    var val = DeserializePropertyValue(logger, pi.Name, newValue, pi.PropertyType);
                     activeVm.TrySetMember(propName, val);
                 }
             }
@@ -558,7 +558,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 if (pi == null || !pi.CanWrite)
                     return;
 
-                var val = DeserializePropertyValue(logger, newValue, pi.PropertyType);
+                var val = DeserializePropertyValue(logger, pi.Name, newValue, pi.PropertyType);
                 pi.SetValue(vm, val, null);
             }
         }
