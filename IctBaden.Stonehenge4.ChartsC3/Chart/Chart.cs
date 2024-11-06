@@ -1,5 +1,6 @@
 using System.Drawing;
 using IctBaden.Stonehenge.Types;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 
@@ -57,6 +58,11 @@ public class Chart
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public ChartTitle? Title { get; set; }
 
+    /// <summary>
+    /// Sort order of chart series tooltip list
+    /// </summary>
+    public ChartSortOrder SortSeriesTooltips { get; set; } = ChartSortOrder.DescendValue;
+    
     private object[] Columns
     {
         get
