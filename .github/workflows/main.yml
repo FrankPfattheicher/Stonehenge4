@@ -84,7 +84,7 @@ jobs:
         cd artifacts
         nuget pack ../Stonehenge4.nuspec -BasePath . -Version ${{ env.AssemblyVersion }}
     
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: Stonehenge4_develop
         path: artifacts
