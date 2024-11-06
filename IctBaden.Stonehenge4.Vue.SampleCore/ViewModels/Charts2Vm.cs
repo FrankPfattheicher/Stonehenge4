@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using IctBaden.Framework.Types;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.Sankey;
@@ -24,6 +25,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     public int RangeMax { get; } = 100;
 
     public bool FullTimeRange { get; set; } = true;
+    public int SortSeriesTooltips { get; set; } = 0;
 
     public Chart? LineChart { get; private set; }
     public Sankey? SankeyChart { get; private set; }
@@ -33,19 +35,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
 
     public override void OnLoad()
     {
-        var time = DateTime.Now;
-        var timeStamps = Enumerable.Range(0, 60)
-            .Select(t => time + TimeSpan.FromMinutes(t))
-            .ToArray();
-
-        var timeSeriesAxis = new ChartCategoryTimeseriesAxis("%H:%M", 50, timeStamps);
-        
-        LineChart = new Chart
-        {
-            Title = new ChartTitle("Test"),
-            Series = [new ChartSeries("Sinus")],
-            CategoryAxis = timeSeriesAxis
-        };
+        CreateLineChart();
         SankeyChart = new Sankey
         {
             Nodes = new SankeyNode[]
@@ -74,15 +64,37 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
         SetUpdateTimer(Speed);
     }
 
+    private void CreateLineChart()
+    {
+        var time = DateTime.Now;
+        var timeStamps = Enumerable.Range(0, 60)
+            .Select(t => time + TimeSpan.FromMinutes(t))
+            .ToArray();
+
+        var timeSeriesAxis = new ChartCategoryTimeseriesAxis("%H:%M", 50, timeStamps);
+        
+        LineChart = new Chart
+        {
+            Title = new ChartTitle("Test"),
+            Series = [new ChartSeries("Sinus"), new ChartSeries("Half")],
+            CategoryAxis = timeSeriesAxis,
+            SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration 
+        };
+    }
+    
     private void UpdateData()
     {
         if(SankeyChart == null || LineChart == null) return;
         
-        var data = new object?[60];
+        var dataSinus = new object?[60];
+        var dataHalf = new object?[60];
         for (var ix = 0; ix < 60; ix++)
         {
-            data[ix] = FullTimeRange || ix >= 30
+            dataSinus[ix] = FullTimeRange || ix >= 30
                 ? (int)(Math.Sin((ix * 2 + _start) * Math.PI / 36) * 40) + 50
+                : null;
+            dataHalf[ix] = FullTimeRange || ix >= 30
+                ? 50
                 : null;
         }
 
@@ -91,7 +103,8 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
 
         _start++;
 
-        LineChart.SetSeriesData("Sinus", data);
+        LineChart.SetSeriesData("Sinus", dataSinus);
+        LineChart.SetSeriesData("Half", dataHalf);
     }
 
     public override void OnUpdateTimer()
@@ -110,7 +123,12 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     [ActionMethod]
     public void ChangeFullTimeRange()
     {
-            
+    }
+
+    [ActionMethod]
+    public void ChangeSortSeriesTooltips()
+    {
+        CreateLineChart();
     }
         
     [ActionMethod]

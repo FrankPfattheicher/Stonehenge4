@@ -14,6 +14,17 @@
             <input class="form-check-input" type="checkbox" v-model="FullTimeRange" @change="ChangeFullTimeRange">
             Show full time range
         </label>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <label>
+            Sort tooltips by
+            <select v-model="SortSeriesTooltips" @change="ChangeSortSeriesTooltips">
+                <option value="0">none</option>
+                <option value="1">descending values</option>
+                <option value="2">ascending values</option>
+                <option value="3">ascending series name</option>
+                <option value="4">descending series name</option>
+            </select>
+        </label>
     </p>
     
     <table style="fill: darkblue; font-size: 10pt; width: 100%; height: 50vh;">
