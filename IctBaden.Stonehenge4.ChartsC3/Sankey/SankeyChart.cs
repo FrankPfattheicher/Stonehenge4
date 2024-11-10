@@ -5,7 +5,7 @@ using IctBaden.Stonehenge.Types;
 
 namespace IctBaden.Stonehenge.Extension.Sankey;
 
-public class Sankey
+public class SankeyChart
 {
     /// <summary>
     /// Id of sankey chart element

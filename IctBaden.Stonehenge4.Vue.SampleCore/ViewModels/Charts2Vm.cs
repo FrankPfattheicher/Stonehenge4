@@ -28,7 +28,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     public int SortSeriesTooltips { get; set; } = 0;
 
     public Chart? LineChart { get; private set; }
-    public Sankey? SankeyChart { get; private set; }
+    public SankeyChart? SankeyChart { get; private set; }
 
     public int Speed { get; private set; } = 500;
     private int _start;
@@ -36,7 +36,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     public override void OnLoad()
     {
         CreateLineChart();
-        SankeyChart = new Sankey
+        SankeyChart = new SankeyChart
         {
             Nodes = new SankeyNode[]
             {
