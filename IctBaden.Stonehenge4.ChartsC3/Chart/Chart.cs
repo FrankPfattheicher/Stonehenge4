@@ -120,7 +120,7 @@ public class Chart
     {
         get
         {
-            var types = new Dictionary<string, object>();
+            var types = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var series in Series.Where(s => s.Type != ChartDataType.Line))
             {
                 types.Add(series.Label, series.Type.ToString().ToLower());

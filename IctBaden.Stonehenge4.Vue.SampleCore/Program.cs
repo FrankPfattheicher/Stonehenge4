@@ -70,7 +70,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(TreeView).Assembly);
         loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
-        loader.AddResourceAssembly(typeof(Forms).Assembly);
+        loader.AddResourceAssembly(typeof(FormControls).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             
