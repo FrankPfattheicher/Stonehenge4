@@ -25,7 +25,7 @@ public class ChartValueAxis : ChartAxis
     public ChartValueAxis(ValueAxisId id)
         : base(id.ToString())
     {
-        Label = "";
+        Label = string.Empty;
         Show = true;
         Min = 0;
         Max = 100;

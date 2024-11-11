@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace IctBaden.Stonehenge.Core;
 
-internal class SimpleUserAgentDecoder
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+internal partial class SimpleUserAgentDecoder
 {
     public string BrowserName = string.Empty;
     public string BrowserVersion = string.Empty;
@@ -30,7 +32,7 @@ internal class SimpleUserAgentDecoder
 
     private void DetectBrowser(string userAgent)
     {
-        var edge = new Regex(@"Edg/([0-9\.]+)")
+        var edge = RegexEdge()
             .Match(userAgent);
         if (edge.Success)
         {
@@ -39,7 +41,7 @@ internal class SimpleUserAgentDecoder
             return;
         }
 
-        var chrome = new Regex(@"Chrome/([0-9\\.]+)")
+        var chrome = RegexChrome()
             .Match(userAgent);
         if (chrome.Success)
         {
@@ -48,7 +50,7 @@ internal class SimpleUserAgentDecoder
             return;
         }
 
-        var firefox = new Regex(@"Firefox/([0-9\.]+)")
+        var firefox = RegexFirefox()
             .Match(userAgent);
         if (firefox.Success)
         {
@@ -62,7 +64,7 @@ internal class SimpleUserAgentDecoder
  
     private void DetectOperatingSystem(string userAgent)
     {
-        var windows = new Regex(@"Windows NT ([0-9\.]+)")
+        var windows = RegexWindows()
             .Match(userAgent);
         if (windows.Success)
         {
@@ -71,12 +73,12 @@ internal class SimpleUserAgentDecoder
             return;
         }
 
-        var linux = new Regex(@"(([a-zA-Z]+)|X11); Linux")
+        var linux = RegexLinux()
             .Match(userAgent);
         if (linux.Success)
         {
             ClientOsName = linux.Groups[1].Value;
-            if (ClientOsName == "X11")
+            if (string.Equals(ClientOsName, "X11", StringComparison.OrdinalIgnoreCase))
             {
                 ClientOsName = "Debian";
             }
@@ -90,5 +92,14 @@ internal class SimpleUserAgentDecoder
         ClientOsName = userAgent;
     }
 
-
+    [GeneratedRegex(@"Edg/([0-9\.]+)")]
+    private static partial Regex RegexEdge();
+    [GeneratedRegex(@"Chrome/([0-9\\.]+)")]
+    private static partial Regex RegexChrome();
+    [GeneratedRegex(@"Firefox/([0-9\.]+)")]
+    private static partial Regex RegexFirefox();
+    [GeneratedRegex(@"Windows NT ([0-9\.]+)")]
+    private static partial Regex RegexWindows();
+    [GeneratedRegex(@"(([a-zA-Z]+)|X11); Linux")]
+    private static partial Regex RegexLinux();
 }

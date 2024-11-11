@@ -20,7 +20,7 @@ public class SankeyLink
     public Color Color { get; set; } = Color.Silver;
     public string ColorRgb => $"#{Color.R:X2}{Color.G:X2}{Color.B:X2}";
 
-    public string Tooltip { get; set; } = "";
+    public string Tooltip { get; set; } = string.Empty;
 
     public SankeyLink(string source, string target)
     {

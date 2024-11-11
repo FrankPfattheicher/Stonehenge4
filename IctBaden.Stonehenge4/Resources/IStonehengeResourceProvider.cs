@@ -11,10 +11,10 @@ public interface IStonehengeResourceProvider : IDisposable
 {
     void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options);
        
-    List<ViewModelInfo> GetViewModelInfos();
+    IList<ViewModelInfo> GetViewModelInfos();
 
-    Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters);
-    Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData);
-    Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData);
-    Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData);
+    Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters);
+    Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData);
+    Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData);
+    Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData);
 }

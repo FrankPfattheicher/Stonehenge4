@@ -171,8 +171,8 @@ END:VCALENDAR
         return new Resource(resourceName, "Sample", ResourceType.Calendar, cal, Resource.Cache.None);
     }
 
-    public override Resource PostDataResource(string resourceName, Dictionary<string, string> parameters,
-        Dictionary<string, string> formData)
+    public override Resource PostDataResource(string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData)
     {
         var tempFileName = formData["uploadFile"];
         _text = File.ReadAllText(tempFileName);

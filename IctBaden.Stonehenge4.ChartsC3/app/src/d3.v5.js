@@ -1382,7 +1382,7 @@
     }
 
     function textRemove() {
-        this.textContent = "";
+        this.textContent = string.Empty;
     }
 
     function textConstant(value) {
@@ -1408,7 +1408,7 @@
     }
 
     function htmlRemove() {
-        this.innerHTML = "";
+        this.innerHTML = string.Empty;
     }
 
     function htmlConstant(value) {
@@ -3478,7 +3478,7 @@
     function transition_tween(name, value) {
         var id = this._id;
 
-        name += "";
+        name += string.Empty;
 
         if (arguments.length < 2) {
             var tween = get$1(this.node(), id).tween;
@@ -5067,7 +5067,7 @@
     function Path() {
         this._x0 = this._y0 = // start of current subpath
             this._x1 = this._y1 = null; // end of current subpath
-        this._ = "";
+        this._ = string.Empty;
     }
 
     function path() {
@@ -5425,7 +5425,7 @@
         constructor: Set,
         has: proto.has,
         add: function(value) {
-            value += "";
+            value += string.Empty;
             this[prefix + value] = value;
             return this;
         },
@@ -7444,7 +7444,7 @@
 
                 if (type === "c") {
                     valueSuffix = formatType(value) + valueSuffix;
-                    value = "";
+                    value = string.Empty;
                 } else {
                     value = +value;
 
@@ -7486,7 +7486,7 @@
                     padding = length < width ? new Array(width - length + 1).join(fill) : "";
 
                 // If the fill character is "0", grouping is applied after padding.
-                if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
+                if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = string.Empty;
 
                 // Reconstruct the final output based on the desired alignment.
                 switch (align) {

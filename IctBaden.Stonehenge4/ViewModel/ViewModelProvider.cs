@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.ViewModel;
 
 [SuppressMessage("Design", "MA0051:Method is too long")]
+[SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
 public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvider
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -39,18 +40,18 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => [];
+    public IList<ViewModelInfo> GetViewModelInfos() => [];
 
-    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters,
-        Dictionary<string, string> formData) =>
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData) =>
         Task.FromResult<Resource?>(null);
 
-    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters,
-        Dictionary<string, string> formData) =>
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData) =>
         Task.FromResult<Resource?>(null);
 
     public Task<Resource?> Post(AppSession? session, string resourceName,
-        Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         if (resourceName.StartsWith("Command/", StringComparison.OrdinalIgnoreCase))
         {
@@ -183,7 +184,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
     }
 
     public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName,
-        Dictionary<string, string> parameters)
+        IDictionary<string, string> parameters)
     {
         if (resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase))
         {
@@ -340,7 +341,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
     }
 
     private static Task<Resource?> GetDataResource(AppSession session, string resourceName,
-        Dictionary<string, string> parameters)
+        IDictionary<string, string> parameters)
     {
         var vm = session.ViewModel as ActiveViewModel;
         var method = vm?.GetType()
@@ -352,18 +353,18 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         Resource? data;
         if (method.GetParameters().Length == 2)
         {
-            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters });
+            data = (Resource?)method.Invoke(vm, [resourceName, parameters]);
         }
         else
         {
-            data = (Resource?)method.Invoke(vm, new object[] { resourceName });
+            data = (Resource?)method.Invoke(vm, [resourceName]);
         }
 
         return Task.FromResult(data);
     }
 
     private static Task<Resource?> PostDataResource(AppSession? session, string resourceName,
-        Dictionary<string, string> parameters, Dictionary<string, string> formData)
+        IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         var vm = session?.ViewModel as ActiveViewModel;
         var method = vm?.GetType()
@@ -375,15 +376,15 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         Resource? data;
         if (method.GetParameters().Length == 3)
         {
-            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters, formData });
+            data = (Resource?)method.Invoke(vm, [resourceName, parameters, formData]);
         }
         else if (method.GetParameters().Length == 2)
         {
-            data = (Resource?)method.Invoke(vm, new object[] { resourceName, parameters });
+            data = (Resource?)method.Invoke(vm, [resourceName, parameters]);
         }
         else
         {
-            data = (Resource?)method.Invoke(vm, new object[] { resourceName });
+            data = (Resource?)method.Invoke(vm, [resourceName]);
         }
 
         return Task.FromResult(data);
@@ -434,7 +435,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         SetMembers(logger, ref element, elementType, objMembers);
                     }
 
-                    addMethod.Invoke(structObj, new[] { element });
+                    addMethod.Invoke(structObj, [element]);
                 }
 
                 return;
@@ -605,7 +606,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         logger.LogDebug("ViewModelProvider: ViewModel={VmTypeName}", ty.Name);
 
         var data = new List<string>();
-        var context = "";
+        var context = string.Empty;
         try
         {
             // ensure view model data available before executing client scripts

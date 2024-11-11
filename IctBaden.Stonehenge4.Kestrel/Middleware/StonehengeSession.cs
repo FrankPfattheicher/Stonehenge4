@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,40 +21,14 @@ using Microsoft.Extensions.Primitives;
 
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
-internal static class HttpContextExtensions
-{
-    public static bool IsLocal(this HttpContext ctx)
-    {
-        var connection = ctx.Connection;
-        if (connection.RemoteIpAddress != null)
-        {
-            if (connection.LocalIpAddress != null)
-            {
-                return connection.RemoteIpAddress.Equals(connection.LocalIpAddress);
-            }
-            else
-            {
-                return IPAddress.IsLoopback(connection.RemoteIpAddress);
-            }
-        }
-
-        // for in memory TestServer or when dealing with default connection info
-        if (connection.RemoteIpAddress == null && connection.LocalIpAddress == null)
-        {
-            return true;
-        }
-
-        return false;
-    }
-}
-
 // ReSharper disable once ClassNeverInstantiated.Global
-public class StonehengeSession
+[SuppressMessage("Design", "MA0051:Method is too long")]
+[SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+[SuppressMessage("Performance", "MA0023:Add RegexOptions.ExplicitCapture")]
+public partial class StonehengeSession
 {
-#pragma warning disable SYSLIB1045
-    private static readonly Regex StonehengeIdRegex = new("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft | RegexOptions.Compiled);
-#pragma warning restore SYSLIB1045
-
+    private static readonly Regex StonehengeIdRegex = RegexStonehengeId();
     private readonly RequestDelegate _next;
 
     public StonehengeSession(RequestDelegate next)
@@ -64,7 +39,7 @@ public class StonehengeSession
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
     {
-        if (context.Items["stonehenge.Logger"] is not ILogger logger || 
+        if (context.Items["stonehenge.Logger"] is not ILogger logger ||
             context.Items["stonehenge.AppSessions"] is not AppSessions appSessions)
         {
             Debugger.Break();
@@ -76,10 +51,10 @@ public class StonehengeSession
 
         var path = context.Request.Path.ToString();
 
-        if (path.ToLower().Contains("/user/"))
+        if (path.ToLower(CultureInfo.InvariantCulture).Contains("/user/"))
         {
             logger.LogTrace("Kestrel Begin USER {Method} {Path}", context.Request.Method, path);
-            await _next.Invoke(context);
+            await _next.Invoke(context).ConfigureAwait(false);
             logger.LogTrace("Kestrel End USER {Method} {Path}", context.Request.Method, path);
             return;
         }
@@ -95,7 +70,7 @@ public class StonehengeSession
         if (string.IsNullOrEmpty(stonehengeId))
         {
             // see referer
-            var referer = context.Request.Headers["Referer"].FirstOrDefault() ?? "";
+            var referer = context.Request.Headers.Referer.FirstOrDefault() ?? string.Empty;
             stonehengeId = StonehengeIdRegex
                 .Matches(referer)
                 .Select(m => m.Groups[1].Value)
@@ -104,7 +79,8 @@ public class StonehengeSession
 
         if (string.IsNullOrEmpty(stonehengeId))
         {
-            var cookie = context.Request.Headers.FirstOrDefault(h => h.Key == "Cookie");
+            var cookie = context.Request.Headers
+                .FirstOrDefault(h => string.Equals(h.Key, "Cookie", StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrEmpty(cookie.Value.ToString()))
             {
                 // workaround for double stonehenge-id values in cookie - take the last one
@@ -118,12 +94,12 @@ public class StonehengeSession
 
                 if (ids.Length > 0)
                 {
-                    stonehengeId = ids.LastOrDefault(id =>  appSessions.GetAllSessions().Any(s => s.Id == id));
+                    stonehengeId = ids.LastOrDefault(id => appSessions.GetAllSessions().Any(s => string.Equals(s.Id, id, StringComparison.Ordinal)));
                 }
             }
         }
 
-        logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}", 
+        logger.LogTrace("Kestrel[{StonehengeId}] Begin {Method} {Path}{QueryString}",
             stonehengeId ?? "<none>", context.Request.Method, path, context.Request.QueryString);
 
         CleanupTimedOutSessions(logger, appSessions);
@@ -134,13 +110,14 @@ public class StonehengeSession
             var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
             var directoryName = Path.GetDirectoryName(path) ?? "/";
             var resource = resourceLoader != null
-                ? await resourceLoader.Get(null, CancellationToken.None, path.Substring(1).Replace("/", "."),
-                    new Dictionary<string, string>())
+                ? await resourceLoader.Get(null, CancellationToken.None, path.Substring(1).Replace('/', '.'),
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase))
+                    .ConfigureAwait(false)
                 : null;
             if (directoryName.Length > 1 && resource == null && stonehengeId != null)
             {
                 logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", 
-                    stonehengeId ?? "<none>", context.Request.Method, path, context.Request.QueryString);
+                    stonehengeId, context.Request.Method, path, context.Request.QueryString);
                 return;
             }
 
@@ -166,16 +143,19 @@ public class StonehengeSession
                 {
                     forwarded = $"(forwarded from {forwarded}) ";
                 }
+
                 var remotePort = context.Connection.RemotePort;
-                logger.LogTrace("Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}", 
+                logger.LogTrace(
+                    "Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}",
                     stonehengeId ?? "<none>", remoteHost, remotePort, forwarded, session.Id);
                 return;
             }
         }
 
         var etag = context.Request.Headers.IfNoneMatch.ToString();
-        if (context.Request.Method == "GET" && !string.IsNullOrEmpty(etag) &&
-            etag == AppSession.GetResourceETag(path))
+        if (string.Equals(context.Request.Method, "GET", StringComparison.OrdinalIgnoreCase) &&
+            !string.IsNullOrEmpty(etag) &&
+            string.Equals(etag, AppSession.GetResourceETag(path), StringComparison.Ordinal))
         {
             logger.LogTrace("ETag match");
             context.Response.StatusCode = (int)HttpStatusCode.NotModified;
@@ -183,20 +163,22 @@ public class StonehengeSession
         else
         {
             context.Items.Add("stonehenge.AppSession", session);
-            await _next.Invoke(context);
+            await _next.Invoke(context).ConfigureAwait(false);
         }
 
         timer.Stop();
 
         if (context.RequestAborted.IsCancellationRequested)
         {
-            logger.LogTrace("Kestrel[{StonehengeId}] Canceled {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms", 
-                stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
+            logger.LogTrace("Kestrel[{StonehengeId}] Canceled {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms",
+                stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path,
+                timer.ElapsedMilliseconds);
             throw new TaskCanceledException();
         }
 
         logger.LogTrace("Kestrel[{StonehengeId}] End {Method}={StatusCode} {Path}, {ElapsedMilliseconds}ms",
-            stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path, timer.ElapsedMilliseconds);
+            stonehengeId ?? "<none>", context.Request.Method, context.Response.StatusCode, path,
+            timer.ElapsedMilliseconds);
     }
 
     private static void CleanupTimedOutSessions(ILogger logger, AppSessions appSessions)
@@ -209,9 +191,9 @@ public class StonehengeSession
             vm?.Dispose();
 #pragma warning restore IDISP007
             session.ViewModel = null;
-            
+
             appSessions.RemoveSessionById(session.Id);
- 
+
             logger.LogInformation("Kestrel Session timed out {SessionId}", session.Id);
             session.Dispose();
         }
@@ -222,7 +204,8 @@ public class StonehengeSession
         }
     }
 
-    private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader, AppSessions appSessions)
+    private static AppSession NewSession(ILogger logger, HttpContext context, StonehengeResourceLoader? resourceLoader,
+        AppSessions appSessions)
     {
         var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
         var session = new AppSession(resourceLoader, options, appSessions);
@@ -251,7 +234,7 @@ public class StonehengeSession
 
         foreach (var language in languages.Split(';'))
         {
-            var realLanguage = Regex.Replace(language, "[;q=(0-9).]", "");
+            var realLanguage = RegexRealLanguage().Replace(language, "");
             var locale = realLanguage.Split(',').FirstOrDefault();
             //first one should be the used language that is set for a browser (if user did not change it their self).
             if (locale != null)
@@ -263,4 +246,8 @@ public class StonehengeSession
         return CultureInfo.CurrentCulture;
     }
 
+    [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft | RegexOptions.Compiled)]
+    private static partial Regex RegexStonehengeId();
+    [GeneratedRegex("[;q=(0-9).]", RegexOptions.Compiled)]
+    private static partial Regex RegexRealLanguage();
 }

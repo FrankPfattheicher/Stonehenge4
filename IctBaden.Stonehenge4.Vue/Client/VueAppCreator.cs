@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.Vue.Client;
 
 [SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
+[SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 internal class VueAppCreator
 {
     private readonly ILogger _logger;
@@ -49,7 +50,7 @@ internal class VueAppCreator
 
     private async Task<string> LoadResourceText(string resourceName)
     {
-        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName, new Dictionary<string, string>());
+        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName, new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(false);
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }
 
@@ -95,13 +96,13 @@ internal class VueAppCreator
             .ToList();
 
         var startPageName = _options.StartPage;
-        if (!contentPages.Any())
+        if (contentPages.Length == 0)
         {
             _logger.LogError("VueAppCreator: No content pages found");
         }
         else if (string.IsNullOrEmpty(startPageName))
         {
-            startPageName = contentPages.First(vmInfo => vmInfo.Visible).Route;
+            startPageName = contentPages.FirstOrDefault(vmInfo => vmInfo.Visible)?.Route ?? string.Empty;
         }
 
         if (string.IsNullOrEmpty(startPageName))
@@ -110,10 +111,10 @@ internal class VueAppCreator
         }
         else
         {
-            startPageName = startPageName.Replace("-", "_");
+            startPageName = startPageName.Replace('-', '_');
         }
 
-        var startPage = contentPages.FirstOrDefault(page => page.Route == startPageName);
+        var startPage = contentPages.FirstOrDefault(page => string.Equals(page.Route, startPageName, StringComparison.Ordinal));
         if (startPage != null)
         {
             pages.Insert(0, string.Format(pageTemplate, string.Empty, string.Empty, startPage.Title, startPage.Route, "false"));
@@ -152,7 +153,7 @@ internal class VueAppCreator
                     vmName, viewModel.Name);
 
                 var name = _appAssembly?.GetManifestResourceNames()
-                    .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js"));
+                    .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js", StringComparison.OrdinalIgnoreCase));
                 if (!string.IsNullOrEmpty(name) && _appAssembly != null)
                 {
                     var userJs = LoadResourceText(_appAssembly, name);
@@ -362,11 +363,11 @@ internal class VueAppCreator
                 var bindings = element.ViewModel?.Bindings.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
                 elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
 
-                var template = await LoadResourceText($"{source}.html");
+                var template = await LoadResourceText($"{source}.html").ConfigureAwait(false);
                 template = JsonSerializer.Serialize(template);
                 elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
 
-                var methods = await LoadResourceText($"{source}.js");
+                var methods = await LoadResourceText($"{source}.js").ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
                 elementJs = elementJs.Replace("//stonehengeElementMethods", methods);
 

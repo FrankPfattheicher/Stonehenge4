@@ -19,13 +19,13 @@ public class StonehengeRoot
     public async Task Invoke(HttpContext context)
     {
         var path = context.Request.Path.Value?.Replace("//", "/");
-        if (path == "/")
+        if (string.Equals(path, "/", System.StringComparison.Ordinal))
         {
             var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
             context.Response.Redirect($"/index.html?{query}");
             return;
         }
 
-        await _next.Invoke(context);
+        await _next.Invoke(context).ConfigureAwait(false);
     }
 }

@@ -5,7 +5,7 @@ namespace IctBaden.Stonehenge.Extension;
 public class ChartSeries
 {
     public string Label { get; set; }
-    public string Group { get; set; } = "";
+    public string Group { get; set; } = string.Empty;
     
     public ChartDataType Type { get; set; }
     

@@ -2261,7 +2261,7 @@ function selection_classed(name, value) {
 }
 
 function textRemove() {
-  this.textContent = "";
+  this.textContent = string.Empty;
 }
 
 function textConstant$1(value) {
@@ -2287,7 +2287,7 @@ function selection_text(value) {
 }
 
 function htmlRemove() {
-  this.innerHTML = "";
+  this.innerHTML = string.Empty;
 }
 
 function htmlConstant(value) {
@@ -4384,7 +4384,7 @@ function tweenFunction(id, name, value) {
 function transition_tween(name, value) {
   var id = this._id;
 
-  name += "";
+  name += string.Empty;
 
   if (arguments.length < 2) {
     var tween = get(this.node(), id).tween;
@@ -6031,7 +6031,7 @@ const pi$2 = Math.PI,
 function Path$1() {
   this._x0 = this._y0 = // start of current subpath
   this._x1 = this._y1 = null; // end of current subpath
-  this._ = "";
+  this._ = string.Empty;
 }
 
 function path() {
@@ -7428,7 +7428,7 @@ class Path {
   constructor() {
     this._x0 = this._y0 = // start of current subpath
     this._x1 = this._y1 = null; // end of current subpath
-    this._ = "";
+    this._ = string.Empty;
   }
   moveTo(x, y) {
     this._ += `M${this._x0 = this._x1 = +x},${this._y0 = this._y1 = +y}`;
@@ -9631,7 +9631,7 @@ function formatLocale$1(locale) {
 
       if (type === "c") {
         valueSuffix = formatType(value) + valueSuffix;
-        value = "";
+        value = string.Empty;
       } else {
         value = +value;
 
@@ -9673,7 +9673,7 @@ function formatLocale$1(locale) {
           padding = length < width ? new Array(width - length + 1).join(fill) : "";
 
       // If the fill character is "0", grouping is applied after padding.
-      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
+      if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = string.Empty;
 
       // Reconstruct the final output based on the desired alignment.
       switch (align) {

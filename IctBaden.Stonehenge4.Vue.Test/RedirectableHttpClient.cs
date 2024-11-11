@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.Web;
 
 namespace IctBaden.Stonehenge.Vue.Test;
 
+[SuppressMessage("Performance", "MA0023:Add RegexOptions.ExplicitCapture")]
 public partial class RedirectableHttpClient : HttpClient
 {
     // ReSharper disable once MemberCanBePrivate.Global
@@ -90,7 +92,7 @@ public partial class RedirectableHttpClient : HttpClient
     }
 
 #pragma warning disable MA0009
-    [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft | RegexOptions.ExplicitCapture)]
+    [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)]
 #pragma warning restore MA0009
     private static partial Regex StonehengeIdRegex();
 }

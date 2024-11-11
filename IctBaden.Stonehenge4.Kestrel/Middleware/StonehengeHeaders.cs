@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 [SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
+[SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
 public class StonehengeHeaders
 {
     private readonly RequestDelegate _next;
@@ -53,12 +54,12 @@ public class StonehengeHeaders
             logger.LogError("Error handling default headers: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             Debugger.Break();
         }
-        await _next.Invoke(context);
+        await _next.Invoke(context).ConfigureAwait(false);
     }
 
     private void LoadHeaders(ILogger logger)
     {
-        _headers = new Dictionary<string, string>();
+        _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         var path = StonehengeApplication.BaseDirectory;
         var headersFile = Path.Combine(path, "defaultheaders.txt");
@@ -69,9 +70,9 @@ public class StonehengeHeaders
         foreach (var header in headers)
         {
             if (string.IsNullOrEmpty(header)) continue;
-            if (header.StartsWith("#")) continue;
+            if (header.StartsWith('#')) continue;
 
-            var colon = header.IndexOf(':');
+            var colon = header.IndexOf(':', StringComparison.OrdinalIgnoreCase);
             if (colon < 1) continue;
             var key = header.Substring(0, colon).Trim();
             var value = header.Substring(colon + 1).Trim();

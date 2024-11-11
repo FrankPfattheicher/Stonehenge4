@@ -30,7 +30,7 @@ public class AppSessions
     {
         lock (_sessions)
         {
-            return _sessions.FirstOrDefault(s => s.Id == sessionId);
+            return _sessions.Find(s => string.Equals(s.Id, sessionId, System.StringComparison.Ordinal));
         }
     }
     
@@ -38,7 +38,7 @@ public class AppSessions
     {
         lock (_sessions)
         {
-            _sessions.RemoveAll(s => s.Id == sessionId);
+            _sessions.RemoveAll(s => string.Equals(s.Id, sessionId, System.StringComparison.Ordinal));
         }
     }
 

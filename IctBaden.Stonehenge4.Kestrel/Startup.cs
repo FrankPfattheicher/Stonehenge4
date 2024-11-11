@@ -76,7 +76,7 @@ public class Startup : IStartup
             {
                 var cmType = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(a => a.GetTypes())
-                    .FirstOrDefault(type => type.Name == cm);
+                    .FirstOrDefault(type => string.Equals(type.Name, cm, StringComparison.Ordinal));
                 if (cmType != null)
                 {
                     app.UseMiddleware(cmType);

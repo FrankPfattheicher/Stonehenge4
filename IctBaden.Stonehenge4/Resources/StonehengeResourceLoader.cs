@@ -18,12 +18,12 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Resources;
 
-public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeResourceProvider> loaders)
+public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeResourceProvider> loaders)
     : IStonehengeResourceProvider
 {
     public readonly ILogger Logger = logger;
         
-    public List<IStonehengeResourceProvider> Providers { get; } = loaders;
+    public IList<IStonehengeResourceProvider> Providers { get; } = loaders;
     public readonly ServiceContainer Services = new();
 
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
@@ -34,19 +34,22 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
         }
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => [];
+    public IList<ViewModelInfo> GetViewModelInfos() => [];
 
     public void Dispose()
     {
-        Providers.ForEach(l => l.Dispose());
+        foreach (var provider in Providers)
+        {
+            provider.Dispose();
+        }
         Providers.Clear();
     }
 
-    public async Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
+    public async Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
     {
         var disableCache = false;
 
-        if (resourceName.Contains("${") || resourceName.Contains("{{"))
+        if (resourceName.Contains("${", StringComparison.Ordinal) || resourceName.Contains("{{", StringComparison.Ordinal))
         {
             resourceName = ReplaceFields(session, resourceName);
             disableCache = true;
@@ -57,7 +60,9 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
         {
             try
             {
-                loadedResource = await loader.Get(session, requestAborted, resourceName, parameters);
+                loadedResource = await loader
+                    .Get(session, requestAborted, resourceName, parameters)
+                    .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -159,29 +164,29 @@ public sealed class StonehengeResourceLoader(ILogger logger, List<IStonehengeRes
         resourceLoader?.AddAssembly(assembly);
     }
 
-    public async Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Post(session, resourceName, parameters, formData);
+            var resource = await provider.Post(session, resourceName, parameters, formData).ConfigureAwait(false);
             if (resource != null) return resource;
         }
         return null;
     }
-    public async Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Put(session, resourceName, parameters, formData);
+            var resource = await provider.Put(session, resourceName, parameters, formData).ConfigureAwait(false);
             if (resource != null) return resource;
         }
         return null;
     }
-    public async Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public async Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Delete(session, resourceName, parameters, formData);
+            var resource = await provider.Delete(session, resourceName, parameters, formData).ConfigureAwait(false);
             if (resource != null) return resource;
         }
         return null;

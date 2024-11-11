@@ -15,13 +15,13 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => [];
+    public IList<ViewModelInfo> GetViewModelInfos() => [];
 
     public void Dispose()
     {
     }
 
-    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         var data = parameters;
         data.Add("method", "POST");
@@ -29,7 +29,7 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) 
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) 
     {
         var data = parameters;
         data.Add("method", "PUT");
@@ -37,7 +37,7 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData)
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData)
     {
         var data = parameters;
         data.Add("method", "DELETE");
@@ -45,7 +45,7 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.POST", ResourceType.Json, json, Resource.Cache.None));
     }
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
     {
         var resourceExtension = Path.GetExtension(resourceName);
         return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), content, Resource.Cache.None));

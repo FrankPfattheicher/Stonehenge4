@@ -12,6 +12,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>1701;1702;MA0026</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <NoWarn>1701;1702;MA0026</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="HttpMultipartParser" Version="8.4.0" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">

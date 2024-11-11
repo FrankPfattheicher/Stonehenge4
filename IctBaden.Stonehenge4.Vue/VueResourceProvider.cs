@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,10 +21,14 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue;
 
-public sealed class VueResourceProvider : IStonehengeResourceProvider
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+[SuppressMessage("Performance", "SYSLIB1045:In „GeneratedRegexAttribute“ konvertieren.")]
+[SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
+[SuppressMessage("Performance", "MA0023:Add RegexOptions.ExplicitCapture")]
+public sealed partial class VueResourceProvider : IStonehengeResourceProvider
 {
     private readonly ILogger _logger;
-    private readonly Dictionary<string, Resource> _vueContent = new();
+    private readonly Dictionary<string, Resource> _vueContent = new(StringComparer.Ordinal);
     private List<Assembly> _assemblies;
     private Assembly _appAssembly = Assembly.GetExecutingAssembly();
     private readonly List<ViewModelInfo> _viewModels;
@@ -50,7 +56,7 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
         if (loader.Providers
                 .FirstOrDefault(p => p is ResourceLoader) is ResourceLoader resourceLoader)
         {
-            _assemblies = resourceLoader.ResourceAssemblies;
+            _assemblies = resourceLoader.ResourceAssemblies.ToList();
             _appAssembly = resourceLoader.AppAssembly;
         }
 
@@ -71,23 +77,23 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
         appCreator.CreateComponents(loader);
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => _viewModels;
+    public IList<ViewModelInfo> GetViewModelInfos() => _viewModels;
 
     public void Dispose()
     {
         _vueContent.Clear();
     }
 
-    private static readonly Regex ExtractName = new("<!--ViewModel:(\\w+)-->");
-    private static readonly Regex ExtractElement = new("<!--CustomElement(:([\\w, ]+))?-->");
-    private static readonly Regex ExtractTitle = new("<!--Title:([^:]*)(:(-?\\d*))?-->");
+    private static readonly Regex ExtractName = RegexExtractName();
+    private static readonly Regex ExtractElement = RegexExtractElement();
+    private static readonly Regex ExtractTitle = RegexExtractTitle();
 
     private ViewModelInfo GetViewModelInfo(string route, string pageText)
     {
         route = string.IsNullOrEmpty(route)
             ? ""
-            : route.Substring(0, 1).ToUpper() + route.Substring(1);
-        var info = new ViewModelInfo(route.ToLower(), route + "Vm");
+            : route.Substring(0, 1).ToUpper(CultureInfo.InvariantCulture) + route.Substring(1);
+        var info = new ViewModelInfo(route.ToLower(CultureInfo.InvariantCulture), route + "Vm");
 
         var match = ExtractElement.Match(pageText);
         if (match.Success)
@@ -118,7 +124,7 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
                 info.Title = match.Groups[1].Value;
                 info.SortIndex = (string.IsNullOrEmpty(match.Groups[3].Value))
                     ? 0
-                    : int.Parse(match.Groups[3].Value);
+                    : int.Parse(match.Groups[3].Value, NumberStyles.Number, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -149,10 +155,10 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
             foreach (var appFile in appFiles)
             {
                 var resourceId = appFile.Substring(appFile.IndexOf(appPath, StringComparison.InvariantCulture) + 5)
-                    .Replace("@", "_")
-                    .Replace("-", "_")
+                    .Replace('@', '_')
+                    .Replace('-', '_')
                     .Replace('\\', '/');
-                var route = resourceId.Replace(".html", string.Empty);
+                var route = resourceId.Replace(".html", string.Empty, StringComparison.OrdinalIgnoreCase);
                 var pageText = File.ReadAllText(appFile);
 
                 var resource = new Resource(route, appFile, ResourceType.Html, pageText, Resource.Cache.OneDay)
@@ -168,13 +174,14 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
         {
             foreach (var resourceName in assembly.GetManifestResourceNames()
                          .Where(name =>
-                             (name.EndsWith(".html")) && !name.Contains("index.html") &&
-                             !name.Contains("src.app.html"))
-                         .OrderBy(name => name))
+                             name.EndsWith(".html", StringComparison.OrdinalIgnoreCase) && 
+                             !name.Contains("index.html", StringComparison.OrdinalIgnoreCase) &&
+                             !name.Contains("src.app.html", StringComparison.OrdinalIgnoreCase))
+                         .Order(StringComparer.Ordinal))
             {
                 var resourceId = ResourceLoader.GetShortResourceName(_appAssembly, ".app.", resourceName)
-                    .Replace("@", "_")
-                    .Replace("-", "_")
+                    .Replace('@', '_')
+                    .Replace('-', '_')
                     .Replace("._0", ".0")
                     .Replace("._1", ".1")
                     .Replace("._2", ".2")
@@ -191,8 +198,8 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
                     continue;
                 }
 
-                var route = resourceId.Replace(".html", string.Empty);
-                var pageText = "";
+                var route = resourceId.Replace(".html", string.Empty, StringComparison.OrdinalIgnoreCase);
+                var pageText = string.Empty;
                 using (var stream = assembly.GetManifestResourceStream(resourceName))
                 {
                     if (stream != null)
@@ -217,15 +224,25 @@ public sealed class VueResourceProvider : IStonehengeResourceProvider
     }
 
 
-    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
     {
-        resourceName = resourceName.Replace("/", ".").Replace("@", "_").Replace("-", "_");
+        resourceName = resourceName
+            .Replace('/', '.')
+            .Replace('@', '_')
+            .Replace('-', '_');
         return _vueContent.TryGetValue(resourceName, out var value) 
             ? Task.FromResult<Resource?>(value) 
             : Task.FromResult<Resource?>(null);
     }
+
+    [GeneratedRegex("<!--ViewModel:(\\w+)-->", RegexOptions.Compiled)]
+    private static partial Regex RegexExtractName();
+    [GeneratedRegex("<!--CustomElement(:([\\w, ]+))?-->", RegexOptions.Compiled)]
+    private static partial Regex RegexExtractElement();
+    [GeneratedRegex("<!--Title:([^:]*)(:(-?\\d*))?-->", RegexOptions.Compiled)]
+    private static partial Regex RegexExtractTitle();
 }
