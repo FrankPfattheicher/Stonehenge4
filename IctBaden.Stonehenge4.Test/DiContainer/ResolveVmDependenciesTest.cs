@@ -35,7 +35,7 @@ public sealed class ResolveVmDependenciesTest : IDisposable
     public async Task SimpleVmShouldGetReferenceToThisTest()
     {
         Id = Guid.NewGuid();
-        await _loader.Get(_session, CancellationToken.None, "ViewModel/" + nameof(TestSimpleVmWithDependency), new Dictionary<string, string>());
+        await _loader.Get(_session, CancellationToken.None, "ViewModel/" + nameof(TestSimpleVmWithDependency), new Dictionary<string, string>(StringComparer.Ordinal));
         var vm = _session.ViewModel as TestSimpleVmWithDependency;
         Assert.NotNull(vm);
         Assert.Equal(Id, vm.Test.Id);
@@ -45,7 +45,7 @@ public sealed class ResolveVmDependenciesTest : IDisposable
     public async Task ActiveVmShouldGetReferenceToThisTest()
     {
         Id = Guid.NewGuid();
-        await _loader.Get(_session, CancellationToken.None, "ViewModel/" + nameof(TestActiveVmWithDependency), new Dictionary<string, string>());
+        await _loader.Get(_session, CancellationToken.None, "ViewModel/" + nameof(TestActiveVmWithDependency), new Dictionary<string, string>(StringComparer.Ordinal));
         var vm = _session.ViewModel as TestActiveVmWithDependency;
         Assert.NotNull(vm);
         Assert.Equal(_session, vm.Session);

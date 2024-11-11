@@ -71,7 +71,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
             .Select(t => time + TimeSpan.FromMinutes(t))
             .ToArray();
 
-        var timeSeriesAxis = new ChartCategoryTimeseriesAxis("%H:%M", 50, timeStamps);
+        var timeSeriesAxis = new ChartCategoryTimeSeriesAxis("%H:%M", 50, timeStamps);
         
         LineChart = new Chart
         {

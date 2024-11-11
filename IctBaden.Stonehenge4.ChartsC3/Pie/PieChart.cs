@@ -1,5 +1,6 @@
 using System.Drawing;
 using IctBaden.Stonehenge.Types;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable UnusedMember.Global
 
@@ -13,7 +14,7 @@ public class PieChart
     public string Id { get; private set; } = Element.NewId();
 
     public IDictionary<string, object> Data =>
-        new(StringComparer.Ordinal)
+        new Dictionary<string, object>(StringComparer.Ordinal)
         {
             ["type"] = "pie",
             ["columns"] = Sectors

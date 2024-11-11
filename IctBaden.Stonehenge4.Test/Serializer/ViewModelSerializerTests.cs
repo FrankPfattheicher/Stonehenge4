@@ -39,27 +39,27 @@ public class ViewModelSerializerTests
         Assert.NotNull(obj);
 
         // public properties - not NULL
-        Assert.Contains("Integer", json);
-        Assert.Contains("7", json);
+        Assert.Contains("Integer", json, StringComparison.Ordinal);
+        Assert.Contains("7", json, StringComparison.Ordinal);
 
-        Assert.Contains("Boolean", json);
-        Assert.Contains("false", json);
+        Assert.Contains("Boolean", json, StringComparison.Ordinal);
+        Assert.Contains("false", json, StringComparison.Ordinal);
 
-        Assert.Contains("FloatingPoint", json);
-        Assert.Contains("1.23", json);
+        Assert.Contains("FloatingPoint", json, StringComparison.Ordinal);
+        Assert.Contains("1.23", json, StringComparison.Ordinal);
 
-        Assert.Contains("Text", json);
-        Assert.Contains("test", json);
+        Assert.Contains("Text", json, StringComparison.Ordinal);
+        Assert.Contains("test", json, StringComparison.Ordinal);
 
-        Assert.Contains("Timestamp", json);
-        Assert.Contains("2016-11-11T12:13:14Z", json);
+        Assert.Contains("Timestamp", json, StringComparison.Ordinal);
+        Assert.Contains("2016-11-11T12:13:14Z", json, StringComparison.Ordinal);
 
-        Assert.Contains("Wieviel", json);
-        Assert.Contains("5", json);
+        Assert.Contains("Wieviel", json, StringComparison.Ordinal);
+        Assert.Contains("5", json, StringComparison.Ordinal);
 
         // private fields
-        Assert.DoesNotContain("PrivateText", json);
-        Assert.DoesNotContain("invisible", json);
+        Assert.DoesNotContain("PrivateText", json, StringComparison.Ordinal);
+        Assert.DoesNotContain("invisible", json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -75,19 +75,19 @@ public class ViewModelSerializerTests
         var obj = JsonSerializer.Deserialize<object>(json);
         Assert.NotNull(obj);
 
-        Assert.Contains("\\n", json);
+        Assert.Contains("\\n", json, StringComparison.Ordinal);
     }
 
     [Fact]
     public void SerializerShouldRespectAttributes()
     {
-        //TODO   
+        // TODO   
     }
 
     [Fact]
     public void SerializerShouldRespectCustomSerializers()
     {
-        //TODO   
+        // TODO   
     }
 
     [Fact]
@@ -122,8 +122,8 @@ public class ViewModelSerializerTests
         var obj = JsonSerializer.Deserialize<SimpleClass>(json);
         Assert.NotNull(obj);
 
-        Assert.StartsWith("{", json);
-        Assert.EndsWith("}", json);
+        Assert.StartsWith("{", json, StringComparison.Ordinal);
+        Assert.EndsWith("}", json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -186,8 +186,8 @@ public class ViewModelSerializerTests
         var obj = JsonSerializer.Deserialize<object>(json);
         Assert.NotNull(obj);
 
-        Assert.StartsWith("{", json);
-        Assert.EndsWith("}", json);
+        Assert.StartsWith("{", json, StringComparison.Ordinal);
+        Assert.EndsWith("}", json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public class ViewModelSerializerTests
         var dt = new DateTime(2020, 02, 12, 17, 37, 44, DateTimeKind.Utc);
         var dto = new DateTimeOffset(2016, 11, 11, 12, 13, 14, TimeSpan.Zero);
 
-        var dict = new Dictionary<string, object>
+        var dict = new Dictionary<string, object>(StringComparer.Ordinal)
         {
             { "Integer", 7 },
             { "FloatingPoint", 1.23 },

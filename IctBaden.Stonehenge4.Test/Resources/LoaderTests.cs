@@ -57,23 +57,23 @@ public sealed class LoaderTests : IDisposable
     {
         var name = $"icon_{Guid.NewGuid():N}.png";
         _fileTest.CreateBinaryFile(name);
-        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("image/png", resource.ContentType);
         Assert.True(resource.IsBinary);
         Assert.Equal(16, resource.Data!.Length);
-        Assert.StartsWith("file://", resource.Source);
+        Assert.StartsWith("file://", resource.Source, StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task Load_from_resource_icon_png()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "image.jpg", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "image.jpg", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("image/jpeg", resource.ContentType);
         Assert.True(resource.IsBinary);
         Assert.Equal(1009, resource.Data!.Length);
-        Assert.StartsWith("res://", resource.Source);
+        Assert.StartsWith("res://", resource.Source, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -81,12 +81,12 @@ public sealed class LoaderTests : IDisposable
     {
         var name = $"index_{Guid.NewGuid():N}.html";
         _fileTest.CreateTextFile(name);
-        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);
-        Assert.StartsWith("<!DOCTYPE html>", resource.Text);
-        Assert.StartsWith("file://", resource.Source);
+        Assert.StartsWith("<!DOCTYPE html>", resource.Text, StringComparison.Ordinal);
+        Assert.StartsWith("file://", resource.Source, StringComparison.Ordinal);
     }
 
 

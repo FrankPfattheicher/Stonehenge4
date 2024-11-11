@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Globalization;
 using IctBaden.Stonehenge.Types;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -30,7 +31,7 @@ public class Chart
     /// <summary>
     /// Define the chart's category axis
     /// </summary>
-    public ChartCategoryTimeseriesAxis? CategoryAxis = null;
+    public ChartCategoryTimeSeriesAxis? CategoryAxis = null;
 
     /// <summary>
     /// Define the chart's values axes (maximum two)
@@ -93,10 +94,10 @@ public class Chart
             var groupNames = Series
                 .Select(s => s.Group)
                 .Where(n => !string.IsNullOrEmpty(n))
-                .Distinct();
+                .Distinct(StringComparer.Ordinal);
 
             var groups = groupNames
-                    .Select(n => Series.Where(s => s.Group == n).Select(s => s.Label).Cast<object>().ToArray());
+                    .Select(n => Series.Where(s => string.Equals(s.Group, n, StringComparison.Ordinal)).Select(s => s.Label).Cast<object>().ToArray());
 
             return groups.ToArray();
         }
@@ -106,7 +107,7 @@ public class Chart
     {
         get
         {
-            var colors = new Dictionary<string, object>();
+            var colors = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var series in Series.Where(s => s.Color != Color.Transparent))
             {
                 var c = series.Color;
@@ -123,7 +124,7 @@ public class Chart
             var types = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var series in Series.Where(s => s.Type != ChartDataType.Line))
             {
-                types.Add(series.Label, series.Type.ToString().ToLower());
+                types.Add(series.Label, series.Type.ToString().ToLower(CultureInfo.InvariantCulture));
             }
             return types;
         }
@@ -133,15 +134,15 @@ public class Chart
     {
         get
         {
-            var regions = new Dictionary<string, object>();
-            foreach (var region in DataRegions.GroupBy(r => r.Series))
+            var regions = new Dictionary<string, object>(StringComparer.Ordinal);
+            foreach (var region in DataRegions.GroupBy(r => r.Series, StringComparer.Ordinal))
             {
                 if (string.IsNullOrEmpty(region.Key)) continue;
 
                 var regionSpec = new List<object>();
                 foreach (var dataRegion in region)
                 {
-                    var dataSpec = new Dictionary<string, object>();
+                    var dataSpec = new Dictionary<string, object>(StringComparer.Ordinal);
                     if (dataRegion.StartValue != null) dataSpec.Add("start", dataRegion.StartValue);
                     if (dataRegion.EndValue != null) dataSpec.Add("end", dataRegion.EndValue);
                     if (dataRegion.Style != null) dataSpec.Add("style", dataRegion.Style);
@@ -153,21 +154,21 @@ public class Chart
         }
     }
 
-    public Dictionary<string, object> Point => new()
+    public IDictionary<string, object> Point => new Dictionary<string, object>(StringComparer.Ordinal)
     {
         { "show", ShowPoints }
     };
 
-    public Dictionary<string, object> Zoom => new()
+    public IDictionary<string, object> Zoom => new Dictionary<string, object>(StringComparer.Ordinal)
     {
         { "enabled", EnableZoom }
     };
 
-    public Dictionary<string, object> Axis
+    public IDictionary<string, object> Axis
     {
         get
         {
-            var axis = new Dictionary<string, object>();
+            var axis = new Dictionary<string, object>(StringComparer.Ordinal);
             if (CategoryAxis != null)
             {
                 axis[CategoryAxis.Id] = CategoryAxis;
@@ -182,22 +183,22 @@ public class Chart
         }
     }
 
-    public Dictionary<string, Dictionary<string, object>> Grid
+    public IDictionary<string, Dictionary<string, object>> Grid
     {
         get
         {
-            var gridLines = new Dictionary<string, Dictionary<string, object>>();
-            var options = new Dictionary<string, object>
+            var gridLines = new Dictionary<string, Dictionary<string, object>>(StringComparer.Ordinal);
+            var options = new Dictionary<string, object>(StringComparer.Ordinal)
             {
                 { "front", false }
             };
             gridLines.Add("lines", options);
 
-            var lines = new Dictionary<string, object>
+            var lines = new Dictionary<string, object>(StringComparer.Ordinal)
             {
                 { "lines", GridLines.ToArray() }
             };
-            gridLines.Add(ValueAxisId.y.ToString(), lines);
+            gridLines.Add(nameof(ValueAxisId.y), lines);
 
             return gridLines;
         }
@@ -207,25 +208,24 @@ public class Chart
     /// Use column name as key, axis id as object.
     /// By default all columns are mapped to axis 'y'
     /// </summary>
-    public Dictionary<string, object> Axes
+    public IDictionary<string, object> Axes
     {
         get
         {
-            var axes = new Dictionary<string, object>();
-            foreach (var serie in Series)
+            var axes = new Dictionary<string, object>(StringComparer.Ordinal);
+            foreach (var series in Series)
             {
-                axes[serie.Label] = serie.ValueAxis.ToString();
+                axes[series.Label] = series.ValueAxis.ToString();
             }
-
             return axes;
         }
     }
 
-    public Dictionary<string, object> Data
+    public IDictionary<string, object> Data
     {
         get
         {
-            var data = new Dictionary<string, object>();
+            var data = new Dictionary<string, object>(StringComparer.Ordinal);
             if (CategoryAxis != null)
             {
                 data[CategoryAxis.Id] = CategoryAxis.Id;
@@ -246,7 +246,10 @@ public class Chart
 
     public void SetSeriesData(string series, object?[] data)
     {
-        var serie = Series.FirstOrDefault(s => s.Label == series);
-        if (serie != null) serie.Data = data;
+        var chartSeries = Series.FirstOrDefault(s => string.Equals(s.Label, series, StringComparison.Ordinal));
+        if (chartSeries != null)
+        {
+            chartSeries.Data = data;
+        }
     }
 }

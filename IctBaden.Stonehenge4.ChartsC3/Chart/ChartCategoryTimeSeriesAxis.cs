@@ -4,11 +4,11 @@
 
 namespace IctBaden.Stonehenge.Extension;
 
-public class ChartCategoryTimeseriesAxis : ChartAxis
+public class ChartCategoryTimeSeriesAxis : ChartAxis
 {
     [JsonPropertyName("type")] public string Type { get; }
 
-    [JsonPropertyName("tick")] public Dictionary<string, object>? Tick { get; }
+    [JsonPropertyName("tick")] public IDictionary<string, object>? Tick { get; }
 
     /// <summary>
     /// Unix Time Milliseconds
@@ -47,13 +47,13 @@ public class ChartCategoryTimeseriesAxis : ChartAxis
     /// </param>
     /// <param name="count">The number of x axis ticks to show</param>
     /// <param name="values"></param>
-    public ChartCategoryTimeseriesAxis(string format, int count, DateTime[] values)
+    public ChartCategoryTimeSeriesAxis(string format, int count, DateTime[] values)
         : base("x")
     {
         // timeseries, category, indexed
         Type = "timeseries";
         // explicit values (category)
-        Tick = new Dictionary<string, object>
+        Tick = new Dictionary<string, object>(StringComparer.Ordinal)
         {
             ["format"] = format,
             ["count"] = count

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Vue.TestApp2.ViewModels;
@@ -7,6 +8,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Content;
 
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
 public sealed class IndexTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
@@ -25,13 +27,11 @@ public sealed class IndexTests : IDisposable
         var response = string.Empty;
 
         // app1 - no private index.html
+        using var client = new RedirectableHttpClient();
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                response = await client.DownloadStringWithSession(_app1.BaseUrl);
-            }
+            response = await client.DownloadStringWithSession(_app1.BaseUrl);
         }
         catch (Exception ex)
         {
@@ -39,8 +39,8 @@ public sealed class IndexTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("<!--IctBaden.Stonehenge.Vue.index.html-->", response);
-        Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response);
+        Assert.Contains("<!--IctBaden.Stonehenge.Vue.index.html-->", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -63,8 +63,8 @@ public sealed class IndexTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response);
-        Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.index.html-->", response);
+        Assert.Contains("<!--IctBaden.Stonehenge.Vue.TestApp2.index.html-->", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("<!--IctBaden.Stonehenge.Vue.index.html-->", response, StringComparison.Ordinal);
     }
 
 }

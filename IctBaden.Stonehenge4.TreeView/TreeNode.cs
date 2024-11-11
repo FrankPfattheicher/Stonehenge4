@@ -24,7 +24,7 @@ public class TreeNode
 
     public bool Checkbox { get; init; }
 
-    public List<TreeNode> Children { get; set; }
+    public IList<TreeNode> Children { get; set; }
 
     // ReSharper disable once UnusedMember.Global
     public bool IsVisible => Parent?.IsExpanded ?? true;

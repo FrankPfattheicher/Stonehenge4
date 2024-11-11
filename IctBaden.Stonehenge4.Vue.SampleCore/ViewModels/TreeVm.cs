@@ -14,7 +14,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 // ReSharper disable once UnusedType.Global
 public class TreeVm : ActiveViewModel
 {
-    public readonly List<Continent> Continents =
+    public readonly IList<Continent> Continents =
     [
         new() { Icon = "fa fa-flag", Name = "Asia", Area = 44579, Countries = 50, IsChild = true },
         new()
@@ -105,7 +105,7 @@ public class TreeVm : ActiveViewModel
             Name = continent.Name,
             Checkbox = true 
         };
-        node.SetChecked(continent.Name == "Eurasia");
+        node.SetChecked(string.Equals(continent.Name, "Eurasia", System.StringComparison.OrdinalIgnoreCase));
         node.Children = continent.Children
             .Select(c => new TreeNode(node, c) { Name = c.Name })
             .ToList();

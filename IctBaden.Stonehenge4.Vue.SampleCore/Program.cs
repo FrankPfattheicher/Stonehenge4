@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
@@ -23,6 +24,7 @@ internal static class Program
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     private static void Main()
     {
         Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());

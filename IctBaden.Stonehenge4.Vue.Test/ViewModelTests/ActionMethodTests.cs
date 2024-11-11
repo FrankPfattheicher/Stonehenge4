@@ -37,8 +37,8 @@ public sealed class ActionMethodTests : IDisposable
         {
             // ReSharper disable once ConvertToUsingDeclaration
             using var client = new RedirectableHttpClient();
-            startVm = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
-            response = await client.Post(_app.BaseUrl + "/ViewModel/StartVm/TestAction?parameter=" + parameterValue, string.Empty);
+            startVm = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm").ConfigureAwait(false);
+            response = await client.Post(_app.BaseUrl + "/ViewModel/StartVm/TestAction?parameter=" + parameterValue, string.Empty).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -48,7 +48,7 @@ public sealed class ActionMethodTests : IDisposable
         Assert.NotNull(startVm);
         Assert.NotNull(response);
         
-        Assert.Contains($"\"{parameterValue}\"", response);
+        Assert.Contains($"\"{parameterValue}\"", response, StringComparison.Ordinal);
     }
 
 }

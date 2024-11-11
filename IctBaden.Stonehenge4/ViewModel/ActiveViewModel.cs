@@ -150,8 +150,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region properties
 
-    private readonly Dictionary<string, List<string>> _dependencies = new();
-    private readonly Dictionary<string, object?> _dictionary = new();
+    private readonly Dictionary<string, List<string>> _dependencies = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, object?> _dictionary = new(StringComparer.Ordinal);
 
     [Browsable(false)] internal int Count => GetProperties().Count;
 
@@ -443,7 +443,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
 #if DEBUG
         //TODO: AppService.PropertyNameId
-        Debug.Assert(name.StartsWith("_stonehenge_")
+        Debug.Assert(name.StartsWith("_stonehenge_", StringComparison.Ordinal)
                      || (GetPropertyInfo(name) != null)
                      || _dictionary.ContainsKey(name)
             , "NotifyPropertyChanged for unknown property " + name);

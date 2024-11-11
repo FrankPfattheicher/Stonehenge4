@@ -16,7 +16,7 @@ public class StartVm : ActiveViewModel
 
     public int VmPropInteger { get; set; }
     public string VmPropText { get; set; } = string.Empty;
-    public List<string> VmPropList { get; set; } = new();
+    public IList<string> VmPropList { get; set; } = new List<string>();
     public Notify<string>? VmPropNotify { get; set; }
 
     private readonly VueTestData _data;
@@ -30,7 +30,7 @@ public class StartVm : ActiveViewModel
 
     private string OnDoAction(string action)
     {
-        if (action == "Notify")
+        if (string.Equals(action, "Notify", StringComparison.OrdinalIgnoreCase))
         {
             VmPropNotify?.Update(Guid.NewGuid().ToString());
         }

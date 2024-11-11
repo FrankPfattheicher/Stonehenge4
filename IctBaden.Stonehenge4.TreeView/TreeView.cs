@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using IctBaden.Stonehenge.Extensions;
 
@@ -15,19 +16,16 @@ namespace IctBaden.Stonehenge.Extension;
 
 // ReSharper disable once UnusedMember.Global
 // ReSharper disable once UnusedType.Global
+[SuppressMessage("Design", "MA0046:Use EventHandler<T> to declare events")]
 public class TreeView : IStonehengeExtension
 {
-    public List<TreeNode> RootNodes { get; set; }
+    public IList<TreeNode> RootNodes { get; set; } = new List<TreeNode>();
 
     public event Action<TreeNode>? SelectionChanged;
 
     public TreeNode? SelectedNode;
 
     // ReSharper disable once UnusedMember.Global
-    public TreeView()
-    {
-        RootNodes = new();
-    }
 
     public void SetRootNodes(IEnumerable<TreeNode> rootNodes, bool expandRootNodes = false)
     {
@@ -45,7 +43,7 @@ public class TreeView : IStonehengeExtension
         new TreeNode(null, null ) { Children = RootNodes }.AllNodes();
         
     public TreeNode? FindNodeById(string id) => AllNodes()
-        .FirstOrDefault(node => node.Id == id);
+        .FirstOrDefault(node => string.Equals(node.Id, id, StringComparison.Ordinal));
 
     public void TreeToggle(string nodeId)
     {

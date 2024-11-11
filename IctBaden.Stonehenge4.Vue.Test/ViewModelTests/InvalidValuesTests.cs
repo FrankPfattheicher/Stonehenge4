@@ -33,9 +33,8 @@ public sealed class InvalidValuesTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.DoesNotContain("ValueNotSupported", response);
-        Assert.DoesNotContain("Exception", response);
+        Assert.DoesNotContain("ValueNotSupported", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("Exception", response, StringComparison.Ordinal);
     }
-        
-        
+
 }

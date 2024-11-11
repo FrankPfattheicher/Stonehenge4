@@ -19,8 +19,10 @@ public class AppCommands(ILogger logger) : IStonehengeAppCommands
         
     public void WindowResized(AppSession session, int width, int height)
     {
-        var paramWidth = session.Parameters.FirstOrDefault(p => p.Key == "width").Value;
-        var paramHeight = session.Parameters.FirstOrDefault(p => p.Key == "height").Value;
+        var paramWidth = session.Parameters
+            .FirstOrDefault(p => string.Equals(p.Key, "width", System.StringComparison.OrdinalIgnoreCase)).Value;
+        var paramHeight = session.Parameters
+            .FirstOrDefault(p => string.Equals(p.Key, "height", System.StringComparison.OrdinalIgnoreCase)).Value;
             
         logger.LogTrace("AppCommands.WindowResized(URL): width={ParamWidth}, height={ParamHeight}", paramWidth, paramHeight);
         logger.LogTrace("AppCommands.WindowResized(binding): width={Width}, height={Height}", width, height);

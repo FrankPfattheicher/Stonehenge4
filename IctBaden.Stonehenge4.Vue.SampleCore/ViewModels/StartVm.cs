@@ -144,7 +144,7 @@ public class StartVm : ActiveViewModel
 
     public override Resource GetDataResource(string resourceName)
     {
-        if (!resourceName.EndsWith(".ics"))
+        if (!resourceName.EndsWith(".ics", StringComparison.OrdinalIgnoreCase))
         {
             return new Resource(resourceName, "Sample", ResourceType.Text, _text, Resource.Cache.None);
         }
