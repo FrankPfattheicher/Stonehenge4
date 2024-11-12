@@ -45,7 +45,10 @@ internal static class Program
         //     Realm = "liva-pms",
         //     AuthUrl = "https://auth.liva-cloud.com"
         // };
-
+        // ReSharper disable once RedundantAssignment
+        var cert = "stonehenge.pfx";
+        cert = string.Empty;
+        
         UserContentLinks.AddStyleSheet(string.Empty, "theme/theme{{theme}}.css");
             
         // select hosting options
@@ -60,7 +63,7 @@ internal static class Program
             UseClientLocale = true,
             UseNtlmAuthentication = false,
             UseKeycloakAuthentication = keycloak,
-            SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
+            SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, cert),
             SslCertificatePassword = "stonehenge"
         };
 
