@@ -9,8 +9,15 @@ using IctBaden.Stonehenge.Resources;
 
 namespace IctBaden.Stonehenge.Test.Tools;
 
-public sealed class TestResourceLoader(string content) : IStonehengeResourceProvider
+public sealed class TestResourceLoader : IStonehengeResourceProvider
 {
+    private readonly string _content;
+
+    public TestResourceLoader(string content)
+    {
+        _content = content;
+    }
+
     public void InitProvider(StonehengeResourceLoader loader, StonehengeHostOptions options)
     {
     }
@@ -48,6 +55,6 @@ public sealed class TestResourceLoader(string content) : IStonehengeResourceProv
     public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
     {
         var resourceExtension = Path.GetExtension(resourceName);
-        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), content, Resource.Cache.None));
+        return Task.FromResult<Resource?>(new Resource(resourceName, "test://TestResourceLoader.content", ResourceType.GetByExtension(resourceExtension), _content, Resource.Cache.None));
     }
 }

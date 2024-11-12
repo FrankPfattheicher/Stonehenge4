@@ -66,8 +66,8 @@ public class ResourceType
     public static ResourceType GetByExtension(string extension)
     {
         extension = extension.Replace(".", "", StringComparison.OrdinalIgnoreCase).ToLower(CultureInfo.InvariantCulture);
-        return KnownTypes.FirstOrDefault(rt => string.Equals(rt.Extension, extension, StringComparison.OrdinalIgnoreCase)) ??
-               new ResourceType(extension, "application/octet-stream", true);
+        return KnownTypes.FirstOrDefault(rt => string.Equals(rt.Extension, extension, StringComparison.OrdinalIgnoreCase)) 
+               ?? new ResourceType(extension, "application/octet-stream", true);
     }
         
 }

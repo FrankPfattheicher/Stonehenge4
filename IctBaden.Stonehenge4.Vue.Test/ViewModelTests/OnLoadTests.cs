@@ -25,11 +25,8 @@ public sealed class OnLoadTests : IDisposable
 
         try
         {
-            // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
-            }
+            using var client = new RedirectableHttpClient();
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
         }
         catch (Exception ex)
         {
@@ -40,6 +37,5 @@ public sealed class OnLoadTests : IDisposable
         Assert.Equal(1, _app.Data.StartVmOnLoadCalled);
         Assert.Single(_app.Data.StartVmParameters);
     }
-        
         
 }
