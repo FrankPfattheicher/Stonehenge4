@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,8 +6,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 
-[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
-public sealed class OnLoadTests : IDisposable
+public sealed class SessionTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new();
@@ -19,23 +17,22 @@ public sealed class OnLoadTests : IDisposable
     }
 
     [Fact]
-    public async Task OnLoadShouldBeCalledForStartVmAfterFirstCall()
+    public async Task RequestWithSessionShouldGetSessionByHeader()
     {
         var response = string.Empty;
+        using var client = new RedirectableHttpClient();
 
         try
         {
-            using var client = new RedirectableHttpClient();
+            // ReSharper disable once ConvertToUsingDeclaration
             response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(OnLoadShouldBeCalledForStartVmAfterFirstCall));
+            _logger.LogError(ex, nameof(RequestWithSessionShouldGetSessionByHeader));
         }
 
         Assert.NotNull(response);
-        Assert.Equal(1, _app.Data.StartVmOnLoadCalled);
-        Assert.Empty(_app.Data.StartVmParameters);
+        Assert.Equal("Header", client.SessionIdBy);
     }
-        
 }

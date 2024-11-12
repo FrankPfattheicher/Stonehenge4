@@ -121,7 +121,7 @@ public partial class StonehengeSession
                 return;
             }
 
-            if (directoryName.Length <= 1 || resource == null)
+            if (directoryName.Length <= 1 || resource == null || string.Equals(directoryName, "\\ViewModel", StringComparison.OrdinalIgnoreCase))
             {
                 // redirect to new session
 #pragma warning disable IDISP001

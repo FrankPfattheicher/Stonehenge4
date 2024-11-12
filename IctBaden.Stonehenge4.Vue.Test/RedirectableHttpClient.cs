@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace IctBaden.Stonehenge.Vue.Test;
 public partial class RedirectableHttpClient : HttpClient
 {
     // ReSharper disable once MemberCanBePrivate.Global
+    public string SessionIdBy { get; set; } = string.Empty;
     public string? SessionId { get; set; }
 
     public async Task<string> DownloadStringWithSession(string address)
@@ -43,11 +45,21 @@ public partial class RedirectableHttpClient : HttpClient
             }
             if (redirectAddr != null)
             {
-                var match = StonehengeIdRegex()
-                    .Match(redirectAddr);
-                if (match.Success)
+                var stonehengeId = response.Headers.GetValues("X-Stonehenge-Id").FirstOrDefault();
+                if (!string.IsNullOrEmpty(stonehengeId))
                 {
-                    SessionId = match.Groups[1].Value;
+                    SessionId = stonehengeId;
+                    SessionIdBy = "Header";
+                }
+                else
+                {
+                    var match = StonehengeIdRegex()
+                        .Match(redirectAddr);
+                    if (match.Success)
+                    {
+                        SessionId = match.Groups[1].Value;
+                        SessionIdBy = "Query";
+                    }
                 }
             }
 

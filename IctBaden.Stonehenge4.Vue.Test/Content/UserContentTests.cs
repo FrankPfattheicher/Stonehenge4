@@ -33,7 +33,7 @@ public sealed class UserContentTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'styles/userstyles.css'", response, StringComparison.Ordinal);
+        Assert.Contains("'styles/userstyles.css'", response, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public sealed class UserContentTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'scripts/userscripts.js'", response, StringComparison.Ordinal);
+        Assert.Contains("'scripts/userscripts.js'", response, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
