@@ -355,21 +355,21 @@ internal class VueAppCreator
         {
             try
             {
-                var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName);
+                var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName, StringComparison.Ordinal);
 
                 var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
-                elementJs = elementJs.Replace("stonehengeViewModelName", source);
+                elementJs = elementJs.Replace("stonehengeViewModelName", source, StringComparison.Ordinal);
 
                 var bindings = element.ViewModel?.Bindings.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
-                elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(",", bindings));
+                elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(',', bindings), StringComparison.Ordinal);
 
                 var template = await LoadResourceText($"{source}.html").ConfigureAwait(false);
                 template = JsonSerializer.Serialize(template);
-                elementJs = elementJs.Replace("'stonehengeElementTemplate'", template);
+                elementJs = elementJs.Replace("'stonehengeElementTemplate'", template, StringComparison.Ordinal);
 
                 var methods = await LoadResourceText($"{source}.js").ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
-                elementJs = elementJs.Replace("//stonehengeElementMethods", methods);
+                elementJs = elementJs.Replace("//stonehengeElementMethods", methods, StringComparison.Ordinal);
 
                 elements.Add(elementJs);
 

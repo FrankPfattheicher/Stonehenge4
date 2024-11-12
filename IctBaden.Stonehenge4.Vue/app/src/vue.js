@@ -10783,8 +10783,8 @@
       isNative
   ) {
     var prefix = isNative ? 'nativeOn:' : 'on:';
-    var staticHandlers = string.Empty;
-    var dynamicHandlers = string.Empty;
+    var staticHandlers = "";
+    var dynamicHandlers = "";
     for (var name in events) {
       var handlerCode = genHandler(events[name]);
       if (events[name] && events[name].dynamic) {
@@ -11433,8 +11433,8 @@
   }
 
   function genProps (props) {
-    var staticProps = string.Empty;
-    var dynamicProps = string.Empty;
+    var staticProps = "";
+    var dynamicProps = "";
     for (var i = 0; i < props.length; i++) {
       var prop = props[i];
       var value = transformSpecialNewlines(prop.value);
