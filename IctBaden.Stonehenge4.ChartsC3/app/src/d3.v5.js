@@ -5067,7 +5067,7 @@
     function Path() {
         this._x0 = this._y0 = // start of current subpath
             this._x1 = this._y1 = null; // end of current subpath
-        this._ = string.Empty;
+        this._ = "";
     }
 
     function path() {
@@ -7444,7 +7444,7 @@
 
                 if (type === "c") {
                     valueSuffix = formatType(value) + valueSuffix;
-                    value = string.Empty;
+                    value = "";
                 } else {
                     value = +value;
 
@@ -7486,7 +7486,7 @@
                     padding = length < width ? new Array(width - length + 1).join(fill) : "";
 
                 // If the fill character is "0", grouping is applied after padding.
-                if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = string.Empty;
+                if (comma && zero) value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = "";
 
                 // Reconstruct the final output based on the desired alignment.
                 switch (align) {
