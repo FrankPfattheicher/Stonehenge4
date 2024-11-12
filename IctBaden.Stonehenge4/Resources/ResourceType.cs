@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -29,7 +30,7 @@ public class ResourceType
     public static readonly ResourceType Calendar = new("ics", "text/calendar", false);
     public static readonly ResourceType Csv = new("csv", "text/csv", false);
     public static readonly ResourceType Xml = new("xml", "text/xml", false);
-        
+
     public static readonly ResourceType Pdf = new("pdf", "application/pdf", true);
     public static readonly ResourceType Json = new("json", "application/json; charset=utf-8", false);
 
@@ -46,7 +47,7 @@ public class ResourceType
     public static readonly ResourceType Woff = new("woff", "font/woff", true);
     public static readonly ResourceType Woff2 = new("woff2", "font/woff2", true);
 
-    public static readonly ResourceType[] KnownTypes = 
+    public static readonly ResourceType[] KnownTypes =
     [
         Text, TextUtf8,
         Htm, Html,
@@ -63,11 +64,33 @@ public class ResourceType
         Eot, Ttf, Woff, Woff2
     ];
 
+    private static readonly Type[] AllTypes = AppDomain.CurrentDomain.GetAssemblies()
+        .SelectMany(a => a.GetTypes())
+        .ToArray();
+
     public static ResourceType GetByExtension(string extension)
     {
-        extension = extension.Replace(".", "", StringComparison.OrdinalIgnoreCase).ToLower(CultureInfo.InvariantCulture);
-        return KnownTypes.FirstOrDefault(rt => string.Equals(rt.Extension, extension, StringComparison.OrdinalIgnoreCase)) 
-               ?? new ResourceType(extension, "application/octet-stream", true);
-    }
+        if (string.IsNullOrEmpty(extension))
+        {
+            return Json;
+        }
+
+        extension = extension.Replace(".", "", StringComparison.OrdinalIgnoreCase)
+            .ToLower(CultureInfo.InvariantCulture);
+
+        var resourceType = KnownTypes.FirstOrDefault(rt =>
+            string.Equals(rt.Extension, extension, StringComparison.OrdinalIgnoreCase));
+
+        if (resourceType != null)
+        {
+            return resourceType;
+        }
         
+        var vm = AllTypes
+            .FirstOrDefault(t => string.Equals(t.Name, extension, StringComparison.OrdinalIgnoreCase));
+        
+        return vm != null 
+            ? Json 
+            : new ResourceType(extension, "application/octet-stream", true);
+    }
 }
