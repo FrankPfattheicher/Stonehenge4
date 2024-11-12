@@ -29,7 +29,7 @@ public static partial class ContentDeliveryNetworkSupport
             {
                 _cdnLookup = (from line in File.ReadAllLines(CdnConfigurationFileName)
                     where !line.StartsWith('#')
-                    let elements = line.Split(['='], StringSplitOptions.RemoveEmptyEntries)
+                    let elements = line.Split('=', StringSplitOptions.RemoveEmptyEntries)
                     where elements.Length == 2
                     select elements).ToDictionary(e => e[0], e => e[1], StringComparer.OrdinalIgnoreCase);
             }
@@ -52,7 +52,7 @@ public static partial class ContentDeliveryNetworkSupport
         var script = RegexScript1();
 
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        var resultLines = from line in page.Split(['\n'], StringSplitOptions.RemoveEmptyEntries)
+        var resultLines = from line in page.Split('\n', StringSplitOptions.RemoveEmptyEntries)
             let isScriptSource = script.Match(line)
             let source = isScriptSource.Groups["c"].Value.Split('/')[^1]
             select isScriptSource.Success && CdnLookup.ContainsKey(source) ?
@@ -70,7 +70,7 @@ public static partial class ContentDeliveryNetworkSupport
         var script = RegexScript2();
 
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        var resultLines = from line in page.Split(['\n'], StringSplitOptions.RemoveEmptyEntries)
+        var resultLines = from line in page.Split('\n', StringSplitOptions.RemoveEmptyEntries)
             let isMapPath = script.Match(line)
             let source = isMapPath.Groups["path"].Value.Split('/').Last() + ".js"
             select isMapPath.Success && CdnLookup.ContainsKey(source) ?

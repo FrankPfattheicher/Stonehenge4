@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
@@ -58,9 +59,9 @@ internal static class Program
             CustomMiddleware = [nameof(StonehengeRawContent)],
             UseClientLocale = true,
             UseNtlmAuthentication = false,
-            UseKeycloakAuthentication = keycloak
-            // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
-            // SslCertificatePassword = "test"
+            UseKeycloakAuthentication = keycloak,
+            SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
+            SslCertificatePassword = "stonehenge"
         };
 
         // Select client framework
