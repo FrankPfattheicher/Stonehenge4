@@ -1,15 +1,15 @@
 ﻿
 // Stonehenge 4 application
-var stonehengeApp;
+var app;
 
 function stonehengeCancelRequests() {
 
-    if(typeof(stonehengeApp) == "undefined") return;
+    if(typeof(app) == "undefined") return;
     try {
-        stonehengeApp.activeRequests.forEach(rq => {
+        app.activeRequests.forEach(rq => {
             rq.abort();
         });
-        stonehengeApp.activeRequests.clear();
+        app.activeRequests.clear();
     } catch (error) {
         //debugger;
         if (console && console.log) console.log(error);
@@ -158,7 +158,7 @@ function AppCommand(cmdName) {
 //stonehengeElements
 
 // App
-stonehengeApp = new Vue({
+app = new Vue({
     data: {
         stonehengeReloadOnError: stonehengeReloadOnError,
         stonehengeCancelRequests: stonehengeCancelRequests,

@@ -689,6 +689,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             Parameters[parameter.Key] = parameter.Value;
         }
+        Parameters.Remove("stonehenge-id");
     }
 
     public void SetUser(string identityName, string identityId, string identityEMail)
@@ -714,8 +715,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         if (o == null) return;
 
         RequestLogin = true;
-        AuthorizeRedirectUrl =
-            $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+        AuthorizeRedirectUrl = $"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
             { "client_id", o.ClientId },
@@ -728,6 +728,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
     }
 
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
     public bool UserLogout()
     {
         if (HostOptions.UseKeycloakAuthentication == null) return false;
@@ -737,8 +738,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
 
         using var client = new HttpClient();
-        var data =
-            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
 
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");

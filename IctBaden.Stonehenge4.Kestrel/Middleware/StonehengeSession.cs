@@ -129,10 +129,11 @@ public partial class StonehengeSession
                 session = NewSession(logger, context, resourceLoader, appSessions);
 #pragma warning restore IDISP001
                 context.Response.Headers.Append("X-Stonehenge-id", new StringValues(session.Id));
+                context.Response.Headers.Append("Set-Cookie", new StringValues("stonehenge-id=" + session.Id));
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
-                query["stonehenge-id"] = session.Id;
+                //query["stonehenge-id"] = session.Id;
                 redirectUrl += $"?{query}";
 
                 context.Response.Redirect(redirectUrl);
@@ -145,8 +146,7 @@ public partial class StonehengeSession
                 }
 
                 var remotePort = context.Connection.RemotePort;
-                logger.LogTrace(
-                    "Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}",
+                logger.LogTrace("Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}",
                     stonehengeId ?? "<none>", remoteHost, remotePort, forwarded, session.Id);
                 return;
             }

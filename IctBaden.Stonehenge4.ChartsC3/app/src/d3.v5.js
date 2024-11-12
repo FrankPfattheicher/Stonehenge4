@@ -1382,7 +1382,7 @@
     }
 
     function textRemove() {
-        this.textContent = string.Empty;
+        this.textContent = "";
     }
 
     function textConstant(value) {
@@ -1408,7 +1408,7 @@
     }
 
     function htmlRemove() {
-        this.innerHTML = string.Empty;
+        this.innerHTML = "";
     }
 
     function htmlConstant(value) {
@@ -3478,7 +3478,7 @@
     function transition_tween(name, value) {
         var id = this._id;
 
-        name += string.Empty;
+        name += "";
 
         if (arguments.length < 2) {
             var tween = get$1(this.node(), id).tween;
@@ -5425,7 +5425,7 @@
         constructor: Set,
         has: proto.has,
         add: function(value) {
-            value += string.Empty;
+            value += "";
             this[prefix + value] = value;
             return this;
         },

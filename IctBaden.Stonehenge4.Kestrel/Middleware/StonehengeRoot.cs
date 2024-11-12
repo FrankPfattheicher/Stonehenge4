@@ -18,11 +18,13 @@ public class StonehengeRoot
     // ReSharper disable once UnusedMember.Global
     public async Task Invoke(HttpContext context)
     {
-        var path = context.Request.Path.Value?.Replace("//", "/");
+        var path = context.Request.Path.Value?.Replace("//", "/", System.StringComparison.OrdinalIgnoreCase);
         if (string.Equals(path, "/", System.StringComparison.Ordinal))
         {
             var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
-            context.Response.Redirect($"/index.html?{query}");
+            var uri = "/index.html";
+            if(query.Count > 0) uri += $"?{query}"; 
+            context.Response.Redirect(uri);
             return;
         }
 

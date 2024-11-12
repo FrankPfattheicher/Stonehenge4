@@ -152,17 +152,25 @@ public class StonehengeContent
                             var identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
                             var identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
                             appSession.SetUser(identityName, identityId, identityMail);
-                            (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
+
+                            appSession.Parameters.Remove("ts");
+                            appSession.Parameters.Remove("state");
+                            appSession.Parameters.Remove("session_state");
+                            appSession.Parameters.Remove("iss");
+                            appSession.Parameters.Remove("code");
+
+                            var uri = new Uri(appSession.AuthorizeRedirectUrl);
+                            var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
+                            var navigate = $"{uri.Scheme}://{uri.AbsolutePath}?{query}";
+                            (appSession.ViewModel as ActiveViewModel)?.NavigateTo(navigate);
                         }
                     }
 
                     logger.LogTrace("Auth result: {Result}", result);
                 }
-                
                 else
                 {
-                    var newSession =
-                        $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+                    var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
                     context.Response.Redirect(newSession);
                     return;
                 }

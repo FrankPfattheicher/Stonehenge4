@@ -2261,7 +2261,7 @@ function selection_classed(name, value) {
 }
 
 function textRemove() {
-  this.textContent = string.Empty;
+  this.textContent = "";
 }
 
 function textConstant$1(value) {
@@ -2287,7 +2287,7 @@ function selection_text(value) {
 }
 
 function htmlRemove() {
-  this.innerHTML = string.Empty;
+  this.innerHTML = "";
 }
 
 function htmlConstant(value) {
@@ -4384,7 +4384,7 @@ function tweenFunction(id, name, value) {
 function transition_tween(name, value) {
   var id = this._id;
 
-  name += string.Empty;
+  name += "";
 
   if (arguments.length < 2) {
     var tween = get(this.node(), id).tween;
