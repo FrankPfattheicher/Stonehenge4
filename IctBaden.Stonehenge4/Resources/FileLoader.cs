@@ -20,13 +20,13 @@ public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourc
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => [];
+    public IList<ViewModelInfo> GetViewModelInfos() => [];
 
     public void Dispose()
     {
     }
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, Dictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
     {
         var fullFileName = Path.Combine(RootPath, resourceName);
         if(!File.Exists(fullFileName)) return Task.FromResult<Resource?>(null);
@@ -40,7 +40,7 @@ public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourc
             : new Resource(resourceName, "file://" + fullFileName, resourceType, File.ReadAllText(fullFileName), Resource.Cache.OneDay));
     }
 
-    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 }

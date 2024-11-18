@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Content;
 
+[SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
 public sealed class UserContentTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
@@ -20,13 +22,10 @@ public sealed class UserContentTests : IDisposable
     public async Task IndexShouldContainUserStylesRef()
     {
         var response = string.Empty;
+        using var client = new RedirectableHttpClient();
         try
         {
-            // ReSharper disable once ConvertToUsingDeclaration
-            using (var client = new RedirectableHttpClient())
-            {
-                response = await client.DownloadStringWithSession(_app.BaseUrl);
-            }
+            response = await client.DownloadStringWithSession(_app.BaseUrl);
         }
         catch (Exception ex)
         {
@@ -34,7 +33,7 @@ public sealed class UserContentTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'styles/userstyles.css'", response);
+        Assert.Contains("'styles/userstyles.css'", response, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -55,7 +54,7 @@ public sealed class UserContentTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'scripts/userscripts.js'", response);
+        Assert.Contains("'scripts/userscripts.js'", response, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -76,7 +75,7 @@ public sealed class UserContentTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'start_user_InitialLoaded'", response);
+        Assert.Contains("'start_user_InitialLoaded'", response, StringComparison.Ordinal);
     }
 
 }

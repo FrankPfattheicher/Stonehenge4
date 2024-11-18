@@ -150,8 +150,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region properties
 
-    private readonly Dictionary<string, List<string>> _dependencies = new();
-    private readonly Dictionary<string, object?> _dictionary = new();
+    private readonly Dictionary<string, List<string>> _dependencies = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, object?> _dictionary = new(StringComparer.Ordinal);
 
     [Browsable(false)] internal int Count => GetProperties().Count;
 
@@ -184,14 +184,14 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         foreach (var prop in GetType().GetProperties())
         {
-            if (prop.PropertyType.IsGenericType && prop.PropertyType.Name.StartsWith("Notify`"))
+            if (prop.PropertyType.IsGenericType && prop.PropertyType.Name.StartsWith("Notify`", StringComparison.Ordinal))
             {
                 var type = typeof(Notify<>).MakeGenericType(prop.PropertyType.GenericTypeArguments[0]);
                 var property = prop.GetValue(this);
                 if (property != null) continue;
                 var ctor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
                     .First(c => c.GetParameters().Length == 2);
-                property = ctor.Invoke(new object[] { this, prop.Name });
+                property = ctor.Invoke([this, prop.Name]);
                 prop.SetValue(this, property);
             }
         }
@@ -443,7 +443,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
 #if DEBUG
         //TODO: AppService.PropertyNameId
-        Debug.Assert(name.StartsWith("_stonehenge_")
+        Debug.Assert(name.StartsWith("_stonehenge_", StringComparison.Ordinal)
                      || (GetPropertyInfo(name) != null)
                      || _dictionary.ContainsKey(name)
             , "NotifyPropertyChanged for unknown property " + name);
@@ -525,11 +525,11 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public void NavigateTo(string route)
     {
-        if (Session.CurrentRoute == route) return;
+        if (string.Equals(Session.CurrentRoute, route, StringComparison.OrdinalIgnoreCase)) return;
         Session.Logger.LogInformation("ActiveViewModel.NavigateTo: {Route}", route);
-        NavigateToRoute = route.StartsWith("http")
+        NavigateToRoute = route.StartsWith("http", StringComparison.OrdinalIgnoreCase)
             ? route
-            : route.Replace("-", "_");
+            : route.Replace('-', '_');
     }
     public void NavigateBack()
     {
@@ -540,7 +540,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             return;
         }
         Session.Logger.LogInformation("ActiveViewModel.NavigateBack: {Route}", route);
-        NavigateToRoute = route.Replace("-", "_");
+        NavigateToRoute = route.Replace('-', '_');
     }
 
     public void ReloadPage() => ExecuteClientScript("window.location.reload();");
@@ -554,7 +554,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public void ExecuteClientScript(string script)
     {
         script = script.Trim();
-        if (!script.EndsWith(";"))
+        if (!script.EndsWith(";", StringComparison.Ordinal))
         {
             script += "; ";
         }
@@ -575,7 +575,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public void CopyToClipboard(string text)
     {
         text = text
-            .Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\\", @"\\", StringComparison.Ordinal)
             .Replace("'", "\\'", StringComparison.Ordinal)
             .Replace("\r", "\\r", StringComparison.Ordinal)
             .Replace("\n", "\\n", StringComparison.Ordinal);
@@ -589,13 +589,13 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return null;
     }
 
-    public virtual Resource? GetDataResource(string resourceName, Dictionary<string, string> parameters)
+    public virtual Resource? GetDataResource(string resourceName, IDictionary<string, string> parameters)
     {
         return null;
     }
 
-    public virtual Resource? PostDataResource(string resourceName, Dictionary<string, string> parameters,
-        Dictionary<string, string> formData)
+    public virtual Resource? PostDataResource(string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData)
     {
         return null;
     }

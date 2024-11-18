@@ -14,7 +14,7 @@ public static class AppPages
     
     public static void EnableRoute(string route, bool enabled)
     {
-        var vmInfo = Pages.FirstOrDefault(p => p.Route == route);
+        var vmInfo = Pages.FirstOrDefault(p => string.Equals(p.Route, route, System.StringComparison.OrdinalIgnoreCase));
         if (vmInfo != null)
         {
             vmInfo.Visible = enabled;
@@ -23,7 +23,7 @@ public static class AppPages
     
     public static bool IsRouteEnabled(string route)
     {
-        var vmInfo = Pages.FirstOrDefault(p => p.Route == route);
+        var vmInfo = Pages.FirstOrDefault(p => string.Equals(p.Route, route, System.StringComparison.OrdinalIgnoreCase));
         return vmInfo is { Visible: true };
     }
     

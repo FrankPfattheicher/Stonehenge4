@@ -33,8 +33,8 @@ public sealed class SecondAppTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'secondapp'", response);
-        Assert.DoesNotContain("'start'", response);
+        Assert.Contains("'secondapp'", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("'start'", response, StringComparison.Ordinal);
     }
 
 }

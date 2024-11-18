@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.ViewModelTests;
 
-public sealed class InvalidValuesTests : IDisposable
+public sealed class SessionTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
     private readonly VueTestApp _app = new();
@@ -17,24 +17,22 @@ public sealed class InvalidValuesTests : IDisposable
     }
 
     [Fact]
-    public async Task SerializationOfInvalidViewModelShouldNotReturnError()
+    public async Task RequestWithSessionShouldGetSessionByHeader()
     {
         var response = string.Empty;
+        using var client = new RedirectableHttpClient();
 
         try
         {
             // ReSharper disable once ConvertToUsingDeclaration
-            using var client = new RedirectableHttpClient();
-            response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/InvalidVm");
+            response = await client.DownloadStringWithSession(_app.BaseUrl + "/ViewModel/StartVm");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, nameof(SerializationOfInvalidViewModelShouldNotReturnError));
+            _logger.LogError(ex, nameof(RequestWithSessionShouldGetSessionByHeader));
         }
 
         Assert.NotNull(response);
-        Assert.DoesNotContain("ValueNotSupported", response, StringComparison.Ordinal);
-        Assert.DoesNotContain("Exception", response, StringComparison.Ordinal);
+        Assert.Equal("Header", client.SessionIdBy);
     }
-
 }

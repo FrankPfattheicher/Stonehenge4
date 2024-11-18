@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,8 @@ using Microsoft.Net.Http.Headers;
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
 
 // ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("Design", "MA0051:Method is too long")]
+[SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
 public class StonehengeContent
 {
     private static readonly object LockViews = new();
@@ -80,12 +83,12 @@ public class StonehengeContent
             var appSession = context.Items["stonehenge.AppSession"] as AppSession;
             var requestVerb = context.Request.Method;
             var cookiesHeader = context.Request.Headers
-                .FirstOrDefault(h => h.Key == HeaderNames.Cookie).Value.ToString();
+                .FirstOrDefault(h => string.Equals(h.Key, HeaderNames.Cookie, StringComparison.Ordinal)).Value.ToString();
             var requestCookies = cookiesHeader
                 .Split(';')
                 .Select(s => s.Trim())
                 .Select(s => s.Split('='));
-            var cookies = new Dictionary<string, string>();
+            var cookies = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var cookie in requestCookies)
             {
                 if (!cookies.ContainsKey(cookie[0]) && (cookie.Length > 1))
@@ -97,7 +100,7 @@ public class StonehengeContent
             var queryString = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
             var parameters = queryString.AllKeys
                 .Where(k => !string.IsNullOrEmpty(k))
-                .ToDictionary(key => key!, key => queryString[key]!);
+                .ToDictionary(key => key!, key => queryString[key]!, StringComparer.Ordinal);
             
             Resource? content = null;
 
@@ -118,7 +121,7 @@ public class StonehengeContent
                     HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
 
                 var state = requestQuery["state"] ?? "";
-                if (state.StartsWith(appSession.Id))
+                if (state.StartsWith(appSession.Id, StringComparison.Ordinal))
                 {
                     var code = requestQuery["code"];
                     var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
@@ -128,8 +131,8 @@ public class StonehengeContent
 #pragma warning restore IDISP014
                     var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
                     using var authParams = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
-                    using var result = client.PostAsync(tokenUrl, authParams).Result;
-                    var json = result.Content.ReadAsStringAsync().Result;
+                    using var result = client.PostAsync(tokenUrl, authParams, context.RequestAborted).Result;
+                    var json = result.Content.ReadAsStringAsync(context.RequestAborted).Result;
                     var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                     if (authResponse != null)
                     {
@@ -149,17 +152,26 @@ public class StonehengeContent
                             var identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
                             var identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
                             appSession.SetUser(identityName, identityId, identityMail);
-                            (appSession.ViewModel as ActiveViewModel)?.NavigateTo(appSession.AuthorizeRedirectUrl);
+
+                            // remove login redirect parameters
+                            appSession.Parameters.Remove("ts");
+                            appSession.Parameters.Remove("state");
+                            appSession.Parameters.Remove("session_state");
+                            appSession.Parameters.Remove("iss");
+                            appSession.Parameters.Remove("code");
+
+                            var uri = new Uri(appSession.AuthorizeRedirectUrl);
+                            var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
+                            var navigate = $"{uri.Scheme}://{uri.AbsolutePath}?{query}";
+                            (appSession.ViewModel as ActiveViewModel)?.NavigateTo(navigate);
                         }
                     }
 
                     logger.LogTrace("Auth result: {Result}", result);
                 }
-                
                 else
                 {
-                    var newSession =
-                        $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+                    var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
                     context.Response.Redirect(newSession);
                     return;
                 }
@@ -182,7 +194,7 @@ public class StonehengeContent
                 case "GET":
                     appSession?.Accessed(cookies, false);
                     content = resourceLoader != null
-                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceName, parameters)
+                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceName, parameters).ConfigureAwait(false) 
                         : null;
                     var isIndex = resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase);
                     if (content == null && appSession != null && isIndex)
@@ -197,6 +209,25 @@ public class StonehengeContent
 
                     if (content != null && isIndex)
                     {
+                        if (appSession != null && context.Request.Query.ContainsKey("state"))
+                        {
+                            // remove login redirect parameters
+                            appSession.Parameters.Remove("ts");
+                            appSession.Parameters.Remove("state");
+                            appSession.Parameters.Remove("session_state");
+                            appSession.Parameters.Remove("iss");
+                            appSession.Parameters.Remove("code");
+
+                            var url = "/index.html";
+                            var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
+                            if (!string.IsNullOrEmpty(query))
+                            {
+                                url += "?" + query;
+                            }
+                            context.Response.Redirect(url);
+                            return;
+                        }
+
                         HandleIndexContent(context, content);
                     }
                     if (content != null && !isIndex)
@@ -213,11 +244,11 @@ public class StonehengeContent
 
                     try
                     {
-                        var formData = new Dictionary<string, string>();
+                        var formData = new Dictionary<string, string>(StringComparer.Ordinal);
                         context.Request.EnableBuffering();
                         using var bodyReader = new StreamReader(context.Request.Body); 
                         var body = bodyReader.ReadToEndAsync().Result;
-                        if (body.StartsWith("{"))
+                        if (body.StartsWith('{'))
                         {
                             try
                             {
@@ -236,7 +267,7 @@ public class StonehengeContent
                                 logger.LogWarning("Failed to parse post data as json");
                             }
                         }
-                        else if (context.Request.ContentType == "application/x-www-form-urlencoded")
+                        else if (string.Equals(context.Request.ContentType, "application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase))
                         {
                             var result = HttpUtility.ParseQueryString(body);
                             foreach (string key in result)
@@ -250,7 +281,7 @@ public class StonehengeContent
                             try
                             {
                                 context.Request.Body.Seek(0, SeekOrigin.Begin);
-                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body);
+                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body).ConfigureAwait(false);
                                 foreach (var p in parser.Parameters)
                                 {
                                     formData.Add(p.Name, p.Data);
@@ -260,12 +291,15 @@ public class StonehengeContent
                                 {
                                     // Save temp file
                                     var fileName = Path.GetTempFileName();
-                                    await using var file = File.OpenWrite(fileName);
-                                    await f.Data.CopyToAsync(file);
+                                    var file = File.OpenWrite(fileName);
+                                    await using (file.ConfigureAwait(false))
+                                    {
+                                        await f.Data.CopyToAsync(file, context.RequestAborted).ConfigureAwait(false);
                                     file.Close();
                                     formData.Add(f.Name, fileName);
                                     formData.Add(f.Name + ".SourceName", f.FileName);
                                     formData.Add(f.Name + ".ContentType", f.ContentType);
+                                    }
                                 }
                             }
                             catch (Exception)
@@ -280,13 +314,13 @@ public class StonehengeContent
                             {
                                 case "PUT":
                                 case "PATCH":
-                                    content = await resourceLoader.Put(appSession, resourceName, parameters, formData);
+                                    content = await resourceLoader.Put(appSession, resourceName, parameters, formData).ConfigureAwait(false);
                                     break;
                                 case "DELETE":
-                                    content = await resourceLoader.Delete(appSession, resourceName, parameters, formData);
+                                    content = await resourceLoader.Delete(appSession, resourceName, parameters, formData).ConfigureAwait(false);
                                     break;
                                 default: // POST
-                                    content = await resourceLoader.Post(appSession, resourceName, parameters, formData);
+                                    content = await resourceLoader.Post(appSession, resourceName, parameters, formData).ConfigureAwait(false);
                                     break;
                             }
                         }
@@ -296,7 +330,7 @@ public class StonehengeContent
                         if (ex.InnerException != null) ex = ex.InnerException;
                         logger.LogError("Request Exception {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
 
-                        var exResource = new Dictionary<string, string>
+                        var exResource = new Dictionary<string, string>(StringComparer.Ordinal)
                         {
                             { "Message", ex.Message },
                             { "StackTrace", ex.StackTrace ?? string.Empty }
@@ -312,7 +346,7 @@ public class StonehengeContent
 
             if (content == null)
             {
-                await _next.Invoke(context);
+                await _next.Invoke(context).ConfigureAwait(false);
                 return;
             }
 
@@ -355,13 +389,19 @@ public class StonehengeContent
             }
             else if (content.IsBinary)
             {
-                await using var writer = new StreamWriter(response);
-                await writer.BaseStream.WriteAsync(content.Data);
+                var writer = new StreamWriter(response);
+                await using (writer.ConfigureAwait(false))
+                {
+                    await writer.BaseStream.WriteAsync(content.Data, context.RequestAborted).ConfigureAwait(false);
+                }
             }
             else
             {
-                await using var writer = new StreamWriter(response);
-                await writer.WriteAsync(content.Text);
+                var writer = new StreamWriter(response);
+                await using (writer.ConfigureAwait(false))
+                {
+                    await writer.WriteAsync(content.Text).ConfigureAwait(false);
+                }
             }
         }
         catch (Exception ex)
@@ -379,16 +419,22 @@ public class StonehengeContent
 
     private bool CheckBasicAuthFromContext(AppSession appSession, HttpContext context)
     {
-        var auth = context.Request.Headers["Authorization"].FirstOrDefault();
+        var auth = context.Request.Headers.Authorization.FirstOrDefault();
         if (auth == null) return false;
 
         if (auth.StartsWith("Basic ", StringComparison.InvariantCultureIgnoreCase))
         {
-            if (auth == appSession.VerifiedBasicAuth) return true;
+            if (string.Equals(auth, appSession.VerifiedBasicAuth, StringComparison.Ordinal))
+            {
+                return true;
+            }
 
             var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
             var usrPwd = userPassword.Split(':');
-            if (usrPwd.Length != 2) return false;
+            if (usrPwd.Length != 2)
+            {
+                return false;
+            }
 
             var user = usrPwd[0];
             var pwd = usrPwd[1];
@@ -409,8 +455,8 @@ public class StonehengeContent
             return;
         }
 
-        var identityName = "";
-        var identityMail = "";
+        var identityName = string.Empty;
+        var identityMail = string.Empty;
 
         var auth = context.Request.Headers.Authorization.FirstOrDefault();
         if (auth != null)

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,9 @@ using Xunit;
 
 namespace IctBaden.Stonehenge.Vue.Test.Content;
 
+[SuppressMessage("Performance", "MA0110:Use the Regex source generator")]
+[SuppressMessage("Performance", "SYSLIB1045:In „GeneratedRegexAttribute“ konvertieren.")]
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
 public sealed class ContentPagesDetectionTests : IDisposable
 {
     private readonly ILogger _logger = StonehengeLogger.DefaultLogger;
@@ -54,7 +58,7 @@ public sealed class ContentPagesDetectionTests : IDisposable
         var hiddenPage = new Regex(@"\{ path: \'/hidden'.*\}").Match(_response);
         Assert.True(hiddenPage.Success);
         var route = hiddenPage.Groups[0].Value;
-        Assert.Contains("visible: false", route);
+        Assert.Contains("visible: false", route, StringComparison.OrdinalIgnoreCase);
     }
         
 }

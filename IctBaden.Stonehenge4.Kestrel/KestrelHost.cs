@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,6 +26,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Kestrel;
 
+[SuppressMessage("Design", "MA0051:Method is too long")]
 public sealed class KestrelHost : IStonehengeHost, IDisposable
 {
     public string BaseUrl { get; private set; } = string.Empty;
@@ -90,7 +92,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
         _cancel?.Dispose();
     }
 
-    public bool Start(string hostAddress, int hostPort)
+    public bool Start(string hostAddress, int hostPort = 0)
     {
         try
         {

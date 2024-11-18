@@ -34,9 +34,9 @@ public sealed class StonehengeResourceProviderTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("11", response);
-        Assert.Contains("22", response);
-        Assert.Contains("POST", response);
+        Assert.Contains("11", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("22", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("POST", response, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -55,9 +55,9 @@ public sealed class StonehengeResourceProviderTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("11", response);
-        Assert.Contains("22", response);
-        Assert.Contains("PUT", response);
+        Assert.Contains("11", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("22", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("PUT", response, StringComparison.OrdinalIgnoreCase);
     }
     
     [Fact]
@@ -76,9 +76,9 @@ public sealed class StonehengeResourceProviderTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("11", response);
-        Assert.Contains("22", response);
-        Assert.Contains("DELETE", response);
+        Assert.Contains("11", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("22", response, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("DELETE", response, StringComparison.OrdinalIgnoreCase);
     }
 
 }

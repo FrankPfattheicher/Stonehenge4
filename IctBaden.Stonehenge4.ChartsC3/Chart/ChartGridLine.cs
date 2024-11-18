@@ -12,6 +12,6 @@ public class ChartGridLine
     [JsonPropertyName("axis")] public string AxisName => Axis.ToString();  
     [JsonPropertyName("position")] public string Position { get; init; } = GridLineTextPosition.End;  
     [JsonPropertyName("value")] public double Value { get; init; }
-    [JsonPropertyName("text")] public string Text { get; init; } = "";
-    [JsonPropertyName("class")] public string Class { get; init; } = "";
+    [JsonPropertyName("text")] public string Text { get; init; } = string.Empty;
+    [JsonPropertyName("class")] public string Class { get; init; } = string.Empty;
 }

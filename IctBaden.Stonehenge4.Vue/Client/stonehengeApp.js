@@ -1,8 +1,10 @@
 ﻿
 // Stonehenge 4 application
+var app;
 
 function stonehengeCancelRequests() {
 
+    if(typeof(app) == "undefined") return;
     try {
         app.activeRequests.forEach(rq => {
             rq.abort();
@@ -156,7 +158,7 @@ function AppCommand(cmdName) {
 //stonehengeElements
 
 // App
-const app = new Vue({
+app = new Vue({
     data: {
         stonehengeReloadOnError: stonehengeReloadOnError,
         stonehengeCancelRequests: stonehengeCancelRequests,

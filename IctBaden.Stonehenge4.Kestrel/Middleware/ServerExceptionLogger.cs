@@ -26,7 +26,7 @@ public class ServerExceptionLogger
         var logger = context.Items["stonehenge.Logger"] as ILogger;
         try
         {
-            await _next.Invoke(context);
+            await _next.Invoke(context).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -44,7 +44,7 @@ public class ServerExceptionLogger
         if (context.Response.StatusCode == (int) HttpStatusCode.InternalServerError)
         {
             using var reader = new StreamReader(context.Response.Body);
-            var message = await reader.ReadToEndAsync();
+            var message = await reader.ReadToEndAsync().ConfigureAwait(false);
             logger?.LogError("ServerExceptionHandler: {Message}", message);
         }
     }

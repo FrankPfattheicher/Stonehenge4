@@ -38,39 +38,39 @@ public sealed class ControllerCreationTests : IDisposable
     [Fact]
     public void ProviderShouldGenerateStartComponent()
     {
-        var resource = _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>());
+        var resource = _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
     }
         
     [Fact]
     public async Task StartComponentShouldHaveExpectedMembers()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
-        Assert.Contains("VmPropInteger", resource.Text);
-        Assert.Contains("VmPropText", resource.Text);
-        Assert.Contains("VmPropList", resource.Text);
+        Assert.Contains("VmPropInteger", resource.Text, StringComparison.Ordinal);
+        Assert.Contains("VmPropText", resource.Text, StringComparison.Ordinal);
+        Assert.Contains("VmPropList", resource.Text, StringComparison.Ordinal);
             
-        Assert.DoesNotContain("//stonehengeProperties", resource.Text);
+        Assert.DoesNotContain("//stonehengeProperties", resource.Text, StringComparison.Ordinal);
     }
 
     [Fact]
     public async Task ProviderShouldGenerateDiComponent()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
     }
         
     [Fact]
     public async Task DiComponentShouldHaveExpectedMembers()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>());
+        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
-        Assert.Contains("VmPropInteger", resource.Text);
-        Assert.Contains("VmPropText", resource.Text);
-        Assert.Contains("VmPropList", resource.Text);
+        Assert.Contains("VmPropInteger", resource.Text, StringComparison.Ordinal);
+        Assert.Contains("VmPropText", resource.Text, StringComparison.Ordinal);
+        Assert.Contains("VmPropList", resource.Text, StringComparison.Ordinal);
             
-        Assert.DoesNotContain("//stonehengeProperties", resource.Text);
+        Assert.DoesNotContain("//stonehengeProperties", resource.Text, StringComparison.Ordinal);
     }
 
 }

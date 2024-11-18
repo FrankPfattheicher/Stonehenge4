@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
@@ -23,6 +25,7 @@ internal static class Program
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     private static void Main()
     {
         Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
@@ -36,13 +39,17 @@ internal static class Program
 
         // ReSharper disable once RedundantAssignment
         KeycloakAuthenticationOptions? keycloak = null;
-        // keycloak = new KeycloakAuthenticationOptions
-        // {
-        //     ClientId = "frontend",
-        //     Realm = "liva-pms",
-        //     AuthUrl = "https://auth.liva-cloud.com"
-        // };
-
+        keycloak = new KeycloakAuthenticationOptions
+        {
+            ClientId = "frontend",
+            Realm = "liva-pms",
+            AuthUrl = "https://auth.liva-cloud.com"
+        };
+        
+        // ReSharper disable once RedundantAssignment
+        var cert = "stonehenge.pfx";
+        cert = string.Empty;
+        
         UserContentLinks.AddStyleSheet(string.Empty, "theme/theme{{theme}}.css");
             
         // select hosting options
@@ -56,9 +63,9 @@ internal static class Program
             CustomMiddleware = [nameof(StonehengeRawContent)],
             UseClientLocale = true,
             UseNtlmAuthentication = false,
-            UseKeycloakAuthentication = keycloak
-            // SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, "stonehenge.pfx"),
-            // SslCertificatePassword = "test"
+            UseKeycloakAuthentication = keycloak,
+            SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, cert),
+            SslCertificatePassword = "stonehenge"
         };
 
         // Select client framework
@@ -70,7 +77,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(TreeView).Assembly);
         loader.AddResourceAssembly(typeof(ChartsC3).Assembly);
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
-        loader.AddResourceAssembly(typeof(Forms).Assembly);
+        loader.AddResourceAssembly(typeof(FormControls).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             

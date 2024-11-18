@@ -23,7 +23,7 @@ public class StonehengeAcme
         var logger = context.Items["stonehenge.Logger"] as ILogger;
             
         var path = context.Request.Path.Value;
-        if (path != null && path.StartsWith("/.well-known"))
+        if (path != null && path.StartsWith("/.well-known", System.StringComparison.OrdinalIgnoreCase))
         {
             var response = context.Response.Body;
 
@@ -33,17 +33,20 @@ public class StonehengeAcme
             {
                 context.Response.Headers.Append("Cache-Control", (string[]) ["no-cache"]);
 
-                var acmeData = await File.ReadAllBytesAsync(acmeFile);
-                await using var writer = new BinaryWriter(response);
-                writer.Write(acmeData);
+                var acmeData = await File.ReadAllBytesAsync(acmeFile).ConfigureAwait(false);
+                var writer = new BinaryWriter(response);
+                await using (writer.ConfigureAwait(false))
+                {
+                    writer.Write(acmeData);
 
                 return;
+                }
             }
 
             logger?.LogError("No ACME data found");
         }
 
-        await _next.Invoke(context);
+        await _next.Invoke(context).ConfigureAwait(false);
     }
 
 }

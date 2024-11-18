@@ -1,5 +1,6 @@
 using System.Drawing;
 using IctBaden.Stonehenge.Types;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable UnusedMember.Global
 
@@ -12,8 +13,8 @@ public class PieChart
     /// </summary>
     public string Id { get; private set; } = Element.NewId();
 
-    public Dictionary<string, object> Data =>
-        new()
+    public IDictionary<string, object> Data =>
+        new Dictionary<string, object>(StringComparer.Ordinal)
         {
             ["type"] = "pie",
             ["columns"] = Sectors
@@ -24,7 +25,7 @@ public class PieChart
 
     private Dictionary<string, string> GetSectorColors()
     {
-        var sc = new Dictionary<string, string>();
+        var sc = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var sector in Sectors)
         {
@@ -37,7 +38,7 @@ public class PieChart
 
     private string ColorRgb(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
 
-    public PieSector[] Sectors = Array.Empty<PieSector>();
+    public PieSector[] Sectors = [];
 
     
     public void UpdateId() => Id = Element.NewId();

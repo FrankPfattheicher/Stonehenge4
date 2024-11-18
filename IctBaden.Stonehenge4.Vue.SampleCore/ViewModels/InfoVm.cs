@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using IctBaden.Framework.AppUtils;
@@ -10,6 +11,7 @@ using IctBaden.Stonehenge.ViewModel;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
+[SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 public class InfoVm : ActiveViewModel
 {
     public string AppReleaseDate { get; private set; } = string.Empty;
@@ -22,10 +24,10 @@ public class InfoVm : ActiveViewModel
     {
     }
     
-    
     public override void OnLoad()
     {
-        AppReleaseDate = File.GetCreationTime(Environment.ProcessPath!).Date.ToString("d");
+        var directory = Environment.ProcessPath ?? Directory.GetCurrentDirectory();
+        AppReleaseDate = File.GetCreationTime(directory).Date.ToString("d");
 
         RuntimeDirectory = RuntimeEnvironment.GetRuntimeDirectory();
         IsSelfHosted = FrameworkInfo.IsSelfHosted;

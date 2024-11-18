@@ -38,8 +38,8 @@ public sealed class MultiAppTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'start'", response);
-        Assert.DoesNotContain("'secondapp'", response);
+        Assert.Contains("'start'", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("'secondapp'", response, StringComparison.Ordinal);
 
         // app2
         try
@@ -56,8 +56,8 @@ public sealed class MultiAppTests : IDisposable
         }
 
         Assert.NotNull(response);
-        Assert.Contains("'secondapp'", response);
-        Assert.DoesNotContain("'start'", response);
+        Assert.Contains("'secondapp'", response, StringComparison.Ordinal);
+        Assert.DoesNotContain("'start'", response, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -14,7 +14,21 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 // ReSharper disable once UnusedType.Global
 public class TreeVm : ActiveViewModel
 {
-    public readonly List<Continent> Continents;
+    public readonly IList<Continent> Continents =
+    [
+        new() { Icon = "fa fa-flag", Name = "Asia", Area = 44579, Countries = 50, IsChild = true },
+        new()
+        {
+            Icon = "fa fa-flag", Name = "Africa <i class=\"fa-solid fa-square-full\" style=\"color: blue;\"></i>",
+            Area = 30370, Countries = 54
+        },
+        new() { Icon = "fa fa-flag", Name = "North America", Area = 24709, Countries = 23, IsChild = true },
+        new() { Icon = "fa fa-flag", Name = "South America", Area = 17840, Countries = 12, IsChild = true },
+        new() { Icon = "fa fa-flag", Name = "Antarctica", Area = 14000, Countries = 0 },
+        new() { Icon = "fa fa-flag", Name = "Europe", Area = 10180, Countries = 51, IsChild = true },
+        new() { Icon = "fa fa-flag", Name = "Australia", Area = 8600, Countries = 14 }
+    ];
+    
     public readonly int TotalArea;
     public readonly int TotalCountries;
 
@@ -27,17 +41,6 @@ public class TreeVm : ActiveViewModel
     // ReSharper disable once UnusedMember.Global
     public TreeVm(AppSession session) : base (session)
     {
-        Continents = new List<Continent>
-        {
-            new() { Icon = "fa fa-flag", Name = "Asia", Area = 44579, Countries = 50, IsChild = true },
-            new() { Icon = "fa fa-flag", Name = "Africa <i class=\"fa-solid fa-square-full\" style=\"color: blue;\"></i>", Area = 30370, Countries = 54 },
-            new() { Icon = "fa fa-flag", Name = "North America", Area = 24709, Countries = 23, IsChild = true },
-            new() { Icon = "fa fa-flag", Name = "South America", Area = 17840, Countries = 12, IsChild = true },
-            new() { Icon = "fa fa-flag", Name = "Antarctica", Area = 14000, Countries = 0 },
-            new() { Icon = "fa fa-flag", Name = "Europe", Area = 10180, Countries = 51, IsChild = true },
-            new() { Icon = "fa fa-flag", Name = "Australia", Area = 8600, Countries = 14 }
-        };
-
         TotalArea = Continents.Select(c => c.Area).Sum();
         TotalCountries = Continents.Select(c => c.Countries).Sum();
 
@@ -102,7 +105,7 @@ public class TreeVm : ActiveViewModel
             Name = continent.Name,
             Checkbox = true 
         };
-        node.SetChecked(continent.Name == "Eurasia");
+        node.SetChecked(string.Equals(continent.Name, "Eurasia", System.StringComparison.OrdinalIgnoreCase));
         node.Children = continent.Children
             .Select(c => new TreeNode(node, c) { Name = c.Name })
             .ToList();

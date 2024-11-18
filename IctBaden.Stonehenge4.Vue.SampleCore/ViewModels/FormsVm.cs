@@ -1,14 +1,17 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
+[SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 public class FormsVm : ActiveViewModel
 {
     public string TimeStamp => DateTime.Now.ToLongTimeString();
@@ -155,7 +158,7 @@ public class FormsVm : ActiveViewModel
         switch (RangeDays)
         {
             case 1:
-                DateTime.TryParseExact(RangeValue, new[] { "yyyy-MM-dd" }, CultureInfo.CurrentCulture,
+                DateTime.TryParseExact(RangeValue, ["yyyy-MM-dd"], CultureInfo.CurrentCulture,
                     DateTimeStyles.AssumeLocal, out var day);
                 RangeStart = day.ToString("d");
                 RangeEnd = day.ToString("d");

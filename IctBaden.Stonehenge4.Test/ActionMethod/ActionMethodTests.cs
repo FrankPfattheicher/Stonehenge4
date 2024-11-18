@@ -65,17 +65,19 @@ public sealed class ActionMethodTests : IDisposable
 
     private async Task ExecuteTestAction(string parameterValue, string expectedValue)
     {
-        var formData = new Dictionary<string, string>();
+        var formData = new Dictionary<string, string>(StringComparer.Ordinal);
         var parameters = string.IsNullOrEmpty(parameterValue)
-            ? new Dictionary<string, string>()
-            : new Dictionary<string, string>
+            ? new Dictionary<string, string>(StringComparer.Ordinal)
+            : new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 { "parameter", parameterValue }
             };
         var viewModelType = _session.SetViewModelType("TestVm");
         Assert.NotNull(viewModelType);
 
-        var resource = await _loader.Post(_session, "ViewModel/TestVm/TestAction", parameters, formData);
+        var resource = await _loader
+            .Post(_session, "ViewModel/TestVm/TestAction", parameters, formData)
+            .ConfigureAwait(false);
         Assert.NotNull(resource);
 
         var vmData = JsonSerializer.Deserialize<TestVm>(resource.Text ?? "{}");

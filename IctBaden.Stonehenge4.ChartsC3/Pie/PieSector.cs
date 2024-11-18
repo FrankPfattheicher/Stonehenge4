@@ -9,7 +9,7 @@ public class PieSector
     /// <summary>
     /// Text to be used on sector
     /// </summary>
-    public string Label { get; set; } = "";
+    public string Label { get; set; } = string.Empty;
     /// <summary>
     /// Value for this sector
     /// All values in sum represents 360 degrees

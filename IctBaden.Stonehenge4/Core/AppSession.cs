@@ -19,21 +19,15 @@ using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
-
-// ReSharper disable TemplateIsNotCompileTimeConstantProblem
-
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable UnusedMember.Global
-// ReSharper disable EventNeverSubscribedTo.Global
-
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 [assembly: InternalsVisibleTo("IctBaden.Stonehenge.Test")]
 
 namespace IctBaden.Stonehenge.Core;
 
-[SuppressMessage("Usage", "CA2254:Vorlage muss ein statischer Ausdruck sein")]
+[SuppressMessage("Design", "MA0046:Use EventHandler<T> to declare events")]
+[SuppressMessage("Design", "MA0051:Method is too long")]
 public sealed class AppSession : INotifyPropertyChanged, IDisposable
 {
     public static string AppInstanceId { get; private set; } = Guid.NewGuid().ToString("N");
@@ -51,8 +45,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public int SessionCount => _appSessions.Count;
     public bool CookiesSupported { get; private set; }
     public bool StonehengeCookieSet { get; private set; }
-    public Dictionary<string, string> Cookies { get; private set; }
-    public Dictionary<string, string> Parameters { get; private set; }
+    public IDictionary<string, string> Cookies { get; }
+    public IDictionary<string, string> Parameters { get; }
 
     public DateTime ConnectedSince { get; private set; }
     public DateTime LastAccess { get; private set; }
@@ -131,7 +125,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             while (IsWaitingForEvents && !requestAborted.IsCancellationRequested)
             {
-                await Task.Delay(1000, requestAborted);
+                await Task.Delay(1000, requestAborted).ConfigureAwait(false);
             }
         }
         catch
@@ -139,7 +133,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             // ignore TaskCanceledException on request abort
         }
 
-        await WaitForEvents();
+        await WaitForEvents().ConfigureAwait(false);
 
         lock (_events)
         {
@@ -163,7 +157,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var max = _eventTimeoutMs / 100;
             while (!_forceUpdate && max > 0 && _eventRelease != null)
             {
-                await Wait(_eventRelease, 100);
+                await Wait(_eventRelease, 100).ConfigureAwait(false);
                 max--;
             }
 
@@ -173,7 +167,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 max = 50;
                 while (!_forceUpdate && max > 0 && _eventRelease != null)
                 {
-                    await Wait(_eventRelease, 10);
+                    await Wait(_eventRelease, 10).ConfigureAwait(false);
                     max--;
                 }
             }
@@ -266,7 +260,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var oldViewModel = ViewModel;
         if (oldViewModel != null)
         {
-            if ((oldViewModel.GetType().FullName == typeName))
+            if (string.Equals(oldViewModel.GetType().FullName, typeName, StringComparison.Ordinal))
             {
                 // no change
                 return oldViewModel;
@@ -287,7 +281,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         var newViewModelType = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(a => a.GetTypes())
-            .FirstOrDefault(type => type.FullName?.EndsWith($".{typeName}") ?? false);
+            .FirstOrDefault(type => type.FullName?.EndsWith($".{typeName}", StringComparison.Ordinal) ?? false);
 
         if (newViewModelType == null)
         {
@@ -300,7 +294,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         var viewModelInfo = _resourceLoader.Providers
             .SelectMany(p => p.GetViewModelInfos())
-            .FirstOrDefault(vmInfo => vmInfo.VmName == typeName);
+            .FirstOrDefault(vmInfo => string.Equals(vmInfo.VmName, typeName, StringComparison.Ordinal));
 
         var route = viewModelInfo?.Route ?? string.Empty;
         _history.Insert(0, route);
@@ -391,7 +385,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var parts = HostDomain.Split('.');
             if (parts.Length == 1) return string.Empty;
 
-            var isNumeric = int.TryParse(parts[0], out _);
+            var isNumeric = int.TryParse(parts[0], NumberStyles.Number, CultureInfo.InvariantCulture, out _);
             return isNumeric ? HostDomain : parts[0];
         }
     }
@@ -504,11 +498,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
 
         _resourceLoader = resourceLoader;
-        _userData = new Dictionary<string, object?>();
+        _userData = new Dictionary<string, object?>(StringComparer.Ordinal);
         _id = Guid.NewGuid();
         SessionTimeout = TimeSpan.FromSeconds(10); //options.SessionTimeout;
-        Cookies = new Dictionary<string, string>();
-        Parameters = new Dictionary<string, string>();
+        Cookies = new Dictionary<string, string>(StringComparer.Ordinal);
+        Parameters = new Dictionary<string, string>(StringComparer.Ordinal);
         LastAccess = DateTime.Now;
 
         UseBasicAuth = options.UseBasicAuth;
@@ -534,11 +528,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             if (!File.Exists(cfg)) return;
 
             var settings = File.ReadAllLines(cfg);
-            var secureCookies = settings.FirstOrDefault(s => s.Contains("SecureCookies"));
+            var secureCookies = settings.FirstOrDefault(s => s.Contains("SecureCookies", StringComparison.Ordinal));
             if (secureCookies == null) return;
 
             var set = secureCookies.Split('=');
-            SecureCookies = (set.Length > 1) && (set[1].Trim() == "1");
+            SecureCookies = set.Length > 1 && string.Equals(set[1].Trim(), "1", StringComparison.Ordinal);
         }
         catch
         {
@@ -656,7 +650,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         lock (_events)
         {
-            if (!_events.Contains(name))
+            if (!_events.Contains(name, StringComparer.Ordinal))
             {
                 _events.Add(name);
             }
@@ -672,7 +666,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    public static string GetResourceETag(string path) => AppInstanceId + path.GetHashCode().ToString("x8");
+    public static string GetResourceETag(string path) => AppInstanceId + StringComparer.Ordinal.GetHashCode(path).ToString("x8");
 
     public override string ToString()
     {
@@ -689,12 +683,13 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    public void SetParameters(Dictionary<string, string> parameters)
+    public void SetParameters(IDictionary<string, string> parameters)
     {
         foreach (var parameter in parameters)
         {
             Parameters[parameter.Key] = parameter.Value;
         }
+        Parameters.Remove("stonehenge-id");
     }
 
     public void SetUser(string identityName, string identityId, string identityEMail)
@@ -720,8 +715,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         if (o == null) return;
 
         RequestLogin = true;
-        AuthorizeRedirectUrl =
-            $"{HostUrl}/index.html?stonehenge-id={Id}&ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+        AuthorizeRedirectUrl = $"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
             { "client_id", o.ClientId },
@@ -734,6 +728,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         (ViewModel as ActiveViewModel)?.NavigateTo($"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/auth{query}");
     }
 
+    [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
     public bool UserLogout()
     {
         if (HostOptions.UseKeycloakAuthentication == null) return false;
@@ -743,8 +738,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
 
         using var client = new HttpClient();
-        var data =
-            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
 
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");

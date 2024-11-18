@@ -22,19 +22,22 @@ public class StonehengeRawContent
     {
         var path = context.Request.Path.Value ?? string.Empty;
 
-        if (path.StartsWith("/metrics"))
+        if (path.StartsWith("/metrics", System.StringComparison.InvariantCultureIgnoreCase))
         {
             var response = context.Response.Body;
 
             context.Response.Headers.CacheControl = new[] { "no-cache" };
             context.Response.Headers.ContentType = MediaTypeNames.Text.Plain;
 
-            await using var writer = new StreamWriter(response);
-            await writer.WriteAsync("test test test test test test");
+            var writer = new StreamWriter(response);
+            await using (writer.ConfigureAwait(false))
+            {
+                await writer.WriteAsync("test test test test test test").ConfigureAwait(false);
 
             return;
+            }
         }
 
-        await _next.Invoke(context);
+        await _next.Invoke(context).ConfigureAwait(false);
     }
 }

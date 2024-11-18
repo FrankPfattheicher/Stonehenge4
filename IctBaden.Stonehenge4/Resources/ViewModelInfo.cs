@@ -6,7 +6,7 @@ public class ViewModelInfo(string route, string name)
 {
     // CustomComponent
     public string ElementName { get; set; } = string.Empty;
-    public List<string> Bindings { get; set; } = [];
+    public IList<string> Bindings { get; set; } = [];
 
     // ViewModel
     public string Route { get; set; } = route;

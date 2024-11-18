@@ -12,3 +12,5 @@ nuget
 /IctBaden.Stonehenge3/app/Thumbs.db
 
 *.user
+*.key
+*.crt

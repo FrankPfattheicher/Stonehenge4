@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using IctBaden.Stonehenge.Extensions;
 using IctBaden.Stonehenge.Resources;
+// ReSharper disable ReplaceSubstringWithRangeIndexer
 
 namespace IctBaden.Stonehenge.Client;
 
@@ -17,7 +19,7 @@ public static class UserContentLinks
     private const string JsUserScriptsInsertPoint = "<!--stonehengeUserScripts-->";
     private const string JsLinkTemplate = "<script type='application/javascript' src='{0}'></script>";
 
-    private static readonly Dictionary<string, string> StyleSheets = new();
+    private static readonly Dictionary<string, string> StyleSheets = new(StringComparer.OrdinalIgnoreCase);
     private static readonly List<string> ThemeInitialized = [];
     private static readonly string AppPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
     private static string _userJs = string.Empty;
@@ -29,9 +31,12 @@ public static class UserContentLinks
         StyleSheets.TryAdd(theme, link);
     }
 
-    public static void InitializeUserContentLinks(Assembly appAssembly, List<Assembly> resourceAssemblies, string appFilesPath, string theme)
+    public static void InitializeUserContentLinks(Assembly appAssembly, IList<Assembly> resourceAssemblies, string appFilesPath, string theme)
     {
-        if (ThemeInitialized.Contains(theme)) return;
+        if (ThemeInitialized.Contains(theme, StringComparer.Ordinal))
+        {
+            return;
+        }
         CreateUserCssLinks(appAssembly, appFilesPath, theme);
         CreateUserJsLinks(appAssembly, appFilesPath);
         CreateExtensionLinks(resourceAssemblies);
@@ -54,7 +59,7 @@ public static class UserContentLinks
         if (Directory.Exists(path))
         {
             var links = Directory.GetFiles(path, "*.css", SearchOption.AllDirectories)
-                .Select(dir => string.Format(CssLinkTemplate,
+                .Select(dir => string.Format(CultureInfo.InvariantCulture, CssLinkTemplate,
                     dir.Substring(dir.IndexOf(AppPath, StringComparison.InvariantCulture) + 1).Replace('\\', '/')));
             styleSheets = string.Join(Environment.NewLine, links);
         }
@@ -63,10 +68,10 @@ public static class UserContentLinks
         const string baseNameStyles = resourceBaseName + "styles.";
         const string baseNameTheme = resourceBaseName + "themes.";
         var resourceNames = appAssembly.GetManifestResourceNames();
-        var cssResources = resourceNames.Where(name => name.EndsWith(".css")).ToList();
+        var cssResources = resourceNames.Where(name => name.EndsWith(".css", StringComparison.OrdinalIgnoreCase)).ToList();
         // styles first
         // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameStyles)))
+        foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameStyles, StringComparison.OrdinalIgnoreCase)))
         {
             var css = ResourceLoader.GetShortResourceName(appAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/").Replace("/css", ".css");
@@ -75,7 +80,7 @@ public static class UserContentLinks
 
         // then themes
         // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameTheme + theme)))
+        foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameTheme + theme, StringComparison.OrdinalIgnoreCase)))
         {
             var css = ResourceLoader.GetShortResourceName(appAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/").Replace("/css", ".css");
@@ -104,7 +109,7 @@ public static class UserContentLinks
         if (Directory.Exists(path))
         {
             var links = Directory.GetFiles(path, "*.js", SearchOption.AllDirectories)
-                .Select(dir => string.Format(JsLinkTemplate,
+                .Select(dir => string.Format(CultureInfo.InvariantCulture, JsLinkTemplate,
                     dir.Substring(dir.IndexOf(AppPath, StringComparison.InvariantCulture) + 1).Replace('\\', '/')));
             _userJs = string.Join(Environment.NewLine, links);
         }
@@ -112,9 +117,9 @@ public static class UserContentLinks
         const string resourceBaseName = ".app.";
         const string baseNameScripts = resourceBaseName + "scripts.";
         var resourceNames = userAssembly.GetManifestResourceNames();
-        var jsResources = resourceNames.Where(name => name.EndsWith(".js")).ToList();
+        var jsResources = resourceNames.Where(name => name.EndsWith(".js", StringComparison.OrdinalIgnoreCase)).ToList();
         // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (var resourceName in jsResources.Where(name => name.Contains(baseNameScripts)))
+        foreach (var resourceName in jsResources.Where(name => name.Contains(baseNameScripts, StringComparison.OrdinalIgnoreCase)))
         {
             var js = ResourceLoader.GetShortResourceName(userAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/")
@@ -123,7 +128,7 @@ public static class UserContentLinks
         }
     }
 
-    private static void CreateExtensionLinks(List<Assembly> assemblies)
+    private static void CreateExtensionLinks(IList<Assembly> assemblies)
     {
         const string resourceBaseName = ".app.";
         const string baseNameSrc = resourceBaseName + "src.";
@@ -135,24 +140,24 @@ public static class UserContentLinks
             var resources = assembly.GetManifestResourceNames();
 
             var jsResources = resources
-                .Where(name => name.EndsWith(".js") && !name.Contains(".min."))
+                .Where(name => name.EndsWith(".js", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var resourceName in jsResources.Where(name => name.Contains(baseNameSrc)))
+            foreach (var resourceName in jsResources.Where(name => name.Contains(baseNameSrc, StringComparison.OrdinalIgnoreCase)))
             {
                 var js = ResourceLoader.GetShortResourceName(assembly, resourceBaseName, resourceName)
-                    .Replace(".", "/")
-                    .Replace("/js", ".js");
-                if (resources.Contains(resourceName.Replace(".js", ".min.js")))
+                    .Replace('.', '/')
+                    .Replace("/js", ".js", StringComparison.OrdinalIgnoreCase);
+                if (resources.Contains(resourceName.Replace(".js", ".min.js"), StringComparer.OrdinalIgnoreCase))
                 {
-                    js = js.Replace(".js", "{.min}.js");
+                    js = js.Replace(".js", "{.min}.js", StringComparison.OrdinalIgnoreCase);
                 }
 
                 _extensions += Environment.NewLine + string.Format(JsLinkTemplate, js);
             }
 
             var cssResources = resources
-                .Where(name => name.EndsWith(".css") && !name.Contains(".min."))
+                .Where(name => name.EndsWith(".css", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameSrc)))
@@ -160,7 +165,7 @@ public static class UserContentLinks
                 var css = ResourceLoader.GetShortResourceName(assembly, resourceBaseName, resourceName)
                     .Replace(".", "/")
                     .Replace("/css", ".css");
-                if (resources.Contains(resourceName.Replace(".css", ".min.css")))
+                if (resources.Contains(resourceName.Replace(".css", ".min.css"), StringComparer.OrdinalIgnoreCase))
                 {
                     css = css.Replace(".css", "{.min}.css");
                 }

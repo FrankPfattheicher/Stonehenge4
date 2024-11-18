@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using IctBaden.Stonehenge.Core;
 
 namespace IctBaden.Stonehenge.Extension;
@@ -11,8 +12,8 @@ public class SessionStateProvider : IStateProvider
     {
         _session = session;
     }
-    public bool GetExpanded(string id) => (bool) Convert.ChangeType(_session[$"expanded-{id}"] ?? false, typeof(bool));
+    public bool GetExpanded(string id) => (bool) Convert.ChangeType(_session[$"expanded-{id}"] ?? false, typeof(bool), CultureInfo.InvariantCulture);
     public void SetExpanded(string id, bool expanded) => _session[$"expanded-{id}"] = expanded;
-    public bool GetChecked(string id) => (bool) Convert.ChangeType(_session[$"checked-{id}"] ?? false, typeof(bool));
+    public bool GetChecked(string id) => (bool) Convert.ChangeType(_session[$"checked-{id}"] ?? false, typeof(bool), CultureInfo.InvariantCulture);
     public void SetChecked(string id, bool expanded) => _session[$"checked-{id}"] = expanded;
 }

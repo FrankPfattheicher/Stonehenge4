@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,9 +19,12 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Resources;
 
-public sealed class ResourceLoader : IStonehengeResourceProvider
+[SuppressMessage("Design", "MA0051:Method is too long")]
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+[SuppressMessage("Performance", "MA0023:Add RegexOptions.ExplicitCapture")]
+public sealed partial class ResourceLoader : IStonehengeResourceProvider
 {
-    public readonly List<Assembly> ResourceAssemblies;
+    public readonly IList<Assembly> ResourceAssemblies;
     private readonly ILogger _logger;
 
     /// <summary>
@@ -44,7 +48,7 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
         _resources = new Lazy<Dictionary<string, AssemblyResource>>(
             () =>
             {
-                var dict = new Dictionary<string, AssemblyResource>();
+                var dict = new Dictionary<string, AssemblyResource>(StringComparer.Ordinal);
                 foreach (var assembly in ResourceAssemblies.Distinct())
                 {
                     AddAssemblyResources(assembly, dict);
@@ -57,7 +61,7 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
     {
     }
 
-    public List<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
+    public IList<ViewModelInfo> GetViewModelInfos() => new List<ViewModelInfo>();
 
     public static string GetShortResourceName(Assembly appAssembly, string baseName, string resourceName)
     {
@@ -68,7 +72,7 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
             : string.Empty;
     }
 
-    private static readonly Regex RscName = new Regex(@"\w+://(.*)", RegexOptions.Compiled | RegexOptions.Singleline);  
+    private static readonly Regex RscName = RegexRscName();  
     public static string RemoveResourceProtocol(string resourceName)
     {
         var match = RscName.Match(resourceName);
@@ -119,20 +123,20 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
         }
     }
 
-    private string GetAssemblyResourceName(string name) => name
-        .Replace("@", "_")
-        .Replace("-", "_")
-        .Replace("/", ".");
-        
-        
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string name, Dictionary<string, string> parameters)
+    private static string GetAssemblyResourceName(string name) => name
+        .Replace('@', '_')
+        .Replace('-', '_')
+        .Replace('/', '.');
+
+
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string name, IDictionary<string, string> parameters)
     {
-        if (name.StartsWith("Events/"))
+        if (name.StartsWith("Events/", StringComparison.OrdinalIgnoreCase))
         {
             return Task.FromResult<Resource?>(null);
         }
 
-        if (name.EndsWith(".js.map") || name.EndsWith(".css.map"))
+        if (name.EndsWith(".js.map", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".css.map", StringComparison.OrdinalIgnoreCase))
         {
             var map = new Resource(name, "auto", ResourceType.Json, "{}", Resource.Cache.OneDay);
             return Task.FromResult<Resource?>(map);
@@ -195,8 +199,10 @@ public sealed class ResourceLoader : IStonehengeResourceProvider
         return Task.FromResult<Resource?>(null);
     }
     
-    public Task<Resource?> Post(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Put(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Delete(AppSession? session, string resourceName, Dictionary<string, string> parameters, Dictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-
+    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    
+    [GeneratedRegex(@"\w+://(.*)", RegexOptions.Compiled | RegexOptions.Singleline)]
+    private static partial Regex RegexRscName();
 }

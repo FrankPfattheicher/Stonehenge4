@@ -27,7 +27,7 @@ public class Passwords
         {
             var userPw = line.Split(':');
             if (userPw.Length != 2) continue;
-            if (userPw[0] != user) continue;
+            if (!string.Equals(userPw[0], user, System.StringComparison.Ordinal)) continue;
 
             return Crypter.CheckPassword(password, userPw[1]);
         }
