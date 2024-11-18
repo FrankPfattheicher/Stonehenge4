@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using IctBaden.Stonehenge.Core;
@@ -133,7 +132,7 @@ public partial class StonehengeSession
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
-                //query["stonehenge-id"] = session.Id;
+                query.Remove("stonehenge-id");
                 redirectUrl += $"?{query}";
 
                 context.Response.Redirect(redirectUrl);
