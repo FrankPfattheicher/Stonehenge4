@@ -1,4 +1,6 @@
 
+* 8.1.0 - 18.11.2024 Do NOT use stonehenge id in URL, remove login redirect parameters
+
 * 8.0.11 - 06.11.2024 Added SortSeriesTooltips to Chart
 * 8.0.10 - 28.08.2024 ViewModelProvider use property name instead of type name
 * 8.0.9 - 28.08.2024 Improve ViewModelProvider error logs including name

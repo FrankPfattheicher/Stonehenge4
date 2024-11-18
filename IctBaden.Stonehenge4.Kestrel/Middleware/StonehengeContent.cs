@@ -153,6 +153,7 @@ public class StonehengeContent
                             var identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
                             appSession.SetUser(identityName, identityId, identityMail);
 
+                            // remove login redirect parameters
                             appSession.Parameters.Remove("ts");
                             appSession.Parameters.Remove("state");
                             appSession.Parameters.Remove("session_state");
@@ -208,6 +209,25 @@ public class StonehengeContent
 
                     if (content != null && isIndex)
                     {
+                        if (appSession != null && context.Request.Query.ContainsKey("state"))
+                        {
+                            // remove login redirect parameters
+                            appSession.Parameters.Remove("ts");
+                            appSession.Parameters.Remove("state");
+                            appSession.Parameters.Remove("session_state");
+                            appSession.Parameters.Remove("iss");
+                            appSession.Parameters.Remove("code");
+
+                            var url = "/index.html";
+                            var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
+                            if (!string.IsNullOrEmpty(query))
+                            {
+                                url += "?" + query;
+                            }
+                            context.Response.Redirect(url);
+                            return;
+                        }
+
                         HandleIndexContent(context, content);
                     }
                     if (content != null && !isIndex)
