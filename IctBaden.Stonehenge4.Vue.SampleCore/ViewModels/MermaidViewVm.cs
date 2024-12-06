@@ -46,6 +46,10 @@ public class MermaidViewVm : ActiveViewModel
                                     Alice->John: Yes... John, how are you?
                                 """;
                 break;
+            default:
+                MermaidGraph = string.Empty;
+                MermaidGraph2 = string.Empty;
+                break;
         }
     }
 }
