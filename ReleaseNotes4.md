@@ -1,4 +1,5 @@
 
+* 8.1.2 - 06.12.2024 Updated mermaid.js to v11.4.1, do not display parse errors
 * 8.1.1 - 18.11.2024 Remove stonehenge-id from query if session not found
 * 8.1.0 - 18.11.2024 Do NOT use stonehenge id in URL, remove login redirect parameters
 
