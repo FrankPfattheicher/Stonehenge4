@@ -72,6 +72,22 @@
     <None Remove="app\index.html" />
     <EmbeddedResource Include="app\mermaidview.html" />
     <None Remove="app\mermaidview.html" />
+    <EmbeddedResource Update="ViewModels\StartVm.Res.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StartVm.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ViewModels\StartVm.Res.es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StartVm.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ViewModels\StartVm.Res.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StartVm.Res.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ViewModels\StartVm.Res.it.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StartVm.Res.it.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />
@@ -106,5 +122,27 @@
     <Content Update="web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ViewModels\StartVm.Res.en.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartVm.Res.en.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ViewModels\StartVm.Res.es.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartVm.Res.es.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ViewModels\StartVm.Res.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartVm.Res.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ViewModels\StartVm.Res.it.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartVm.Res.it.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

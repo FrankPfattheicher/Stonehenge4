@@ -46,11 +46,15 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible1 { get; private set; }
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
-        
 
+
+    public string HelloText => StartVm_Res.Hello;
 
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
+
+    public string SessionCulture =>
+        string.Join(", ", Session.SessionCulture.ToString());
 
     public string? NotInitialized { get; set; }
 

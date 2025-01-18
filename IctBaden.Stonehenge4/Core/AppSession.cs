@@ -703,6 +703,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public void SetSessionCulture(CultureInfo culture)
     {
         SessionCulture = culture;
+        var avm = ViewModel as ActiveViewModel;
+        avm?.NotifyAllPropertiesChanged();
     }
 
 
