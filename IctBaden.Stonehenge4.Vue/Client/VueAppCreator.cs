@@ -266,6 +266,10 @@ internal class VueAppCreator
         {
             using var session = new AppSession(resourceLoader, _options, appSessions);
             var viewModel = session.CreateType("CreateViewModel", vmType);
+            if (viewModel == null)
+            {
+                _logger.LogCritical("Failed to create ViewModel '{VmTypeName}' : Missing public ctor?", vmType.Name);
+            }
             return viewModel;
         }
         catch (Exception ex)

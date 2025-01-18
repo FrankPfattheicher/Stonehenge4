@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>IctBaden.Stonehenge.Vue.TestVm</AssemblyName>
+        <RootNamespace>IctBaden.Stonehenge.Vue.TestVm</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="app\protected.html" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
+    </ItemGroup>
+
+</Project>

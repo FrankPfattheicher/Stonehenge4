@@ -4,6 +4,7 @@ using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.Test.Tools;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -17,24 +18,28 @@ public sealed class VueTestApp : IDisposable
     public readonly IStonehengeHost Server;
 
     public readonly VueTestData Data = new();
+    private readonly StonehengeResourceLoader _loader;
 
-    public VueTestApp(Assembly? appAssembly = null)
+    public VueTestApp(Assembly? appAssembly = null, ILogger? logger = null)
     {
-#pragma warning disable IDISP001
-        var vue = new VueResourceProvider(StonehengeLogger.DefaultLogger);
-        var loader = appAssembly != null
+        logger ??= StonehengeLogger.DefaultLogger;
+        var vue = new VueResourceProvider(logger);
+        _loader = appAssembly != null
             ? StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue, appAssembly)
             : StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue);
-#pragma warning restore IDISP001
-        loader.Providers.Add(new TestResourceLoader("none"));
-        loader.Services.AddService(typeof(VueTestData), Data);
-        Server = new KestrelHost(loader);
+
+        _loader.Providers.Add(new TestResourceLoader("none"));
+        _loader.Services.AddService(typeof(VueTestData), Data);
+        _loader.Services.AddService(typeof(ILogger), logger);
+        
+        Server = new KestrelHost(_loader);
         Server.Start("localhost");
     }
 
     public void Dispose()
     {
         Server.Terminate();
+        _loader.Dispose();
     }
-        
+
 }
