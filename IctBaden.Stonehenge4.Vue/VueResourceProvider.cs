@@ -135,7 +135,12 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
         info.Visible = info.SortIndex > 0;
         info.SortIndex = Math.Abs(info.SortIndex);
 
-        info.I18Names = I18nRegex().Matches(pageText).Select(m => m.Groups[1].Value).ToArray();  
+        info.I18Names = I18nRegex().Matches(pageText).Select(m => m.Groups[1].Value).ToList();
+        if (pageText.Contains("<app-message-box", StringComparison.OrdinalIgnoreCase) ||
+            pageText.Contains("<app-dialog", StringComparison.OrdinalIgnoreCase))
+        {
+            info.I18Names.AddRange(["BtnOK", "BtnClose", "BtnCancel"]);
+        }
 
         if (!string.IsNullOrEmpty(info.VmName))
         {

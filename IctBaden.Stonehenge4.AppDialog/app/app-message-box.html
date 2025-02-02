@@ -1,8 +1,8 @@
-<!--CustomElement:caption,messageText,okText-->
+<!--CustomElement:i18n,caption,messageText,okText-->
 <div class="app-dialog">
     <div class="app-dlg-caption">
         {{caption}}
-        <div class="app-dlg-close" @click="$emit('ok')" title="Schließen">
+        <div class="app-dlg-close" @click="$emit('ok')" :title="i18n.BtnClose">
             &nbsp;<i class="fa-solid fa-square-xmark"></i>&nbsp;
         </div>
     </div>
@@ -12,7 +12,7 @@
     </div>
     <div style="text-align: right;">
         <button class="btn btn-primary" @click="$emit('ok')" style="margin: 1em;">
-            &nbsp;&nbsp;{{okText ? okText : 'OK'}}&nbsp;&nbsp;
+            &nbsp;&nbsp;{{okText ? okText : i18n.BtnOK}}&nbsp;&nbsp;
         </button>
     </div>
 </div>

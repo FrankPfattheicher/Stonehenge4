@@ -31,6 +31,10 @@
     <EmbeddedResource Include="app\favicon.ico" />
     <EmbeddedResource Include="app\icon.png" />
     <EmbeddedResource Include="app\icon32.png" />
+    <EmbeddedResource Update="DialogButtonsI18n.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DialogButtons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +51,14 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DialogButtonsI18n.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DialogButtonsI18n.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

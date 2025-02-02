@@ -364,7 +364,11 @@ internal class VueAppCreator
                 var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
                 elementJs = elementJs.Replace("stonehengeViewModelName", source, StringComparison.Ordinal);
 
-                var bindings = element.ViewModel?.Bindings.Select(b => $"'{b}'") ?? new List<string>() { string.Empty };
+                var bindings = new List<string>();
+                if (element.ViewModel != null)
+                {
+                    bindings.AddRange(element.ViewModel.Bindings.Select(b => $"'{b}'"));
+                }
                 elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(',', bindings), StringComparison.Ordinal);
 
                 var template = await LoadResourceText($"{source}.html").ConfigureAwait(false);

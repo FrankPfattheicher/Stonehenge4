@@ -77,7 +77,12 @@ async function stonehengeLoadComponent(name) {
     let templateText;
     [templateText, srcText] = await Promise.all([templateRequest, srcRequest]);
 
-    src = eval(srcText)();
+    try {
+        src = eval(srcText)();
+    } catch (error) {
+        debugger;
+        if (console && console.log) console.log(error);
+    }
 
     return Vue.component('stonehenge_' + name, {
             template: templateText,
