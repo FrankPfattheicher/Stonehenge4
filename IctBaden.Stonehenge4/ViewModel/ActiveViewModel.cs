@@ -3,7 +3,7 @@
 // Author:
 //  Frank Pfattheicher <fpf@ict-baden.de>
 //
-// Copyright (C)2011-2024 ICT Baden GmbH
+// Copyright (C)2011-2025 ICT Baden GmbH
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -117,16 +118,16 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         public override Type PropertyType
             => _originalDescriptor == null ? typeof(object) : _originalDescriptor.PropertyType;
 
-        public override bool CanResetValue(object component) 
+        public override bool CanResetValue(object component)
             => _originalDescriptor != null && _originalDescriptor.CanResetValue(component);
 
         public override Type ComponentType
             => _originalDescriptor == null ? typeof(object) : _originalDescriptor.ComponentType;
 
-        public override void ResetValue(object component) 
+        public override void ResetValue(object component)
             => _originalDescriptor?.ResetValue(component);
 
-        public override bool ShouldSerializeValue(object component) 
+        public override bool ShouldSerializeValue(object component)
             => _originalDescriptor != null && _originalDescriptor.ShouldSerializeValue(component);
 
         private static PropertyDescriptor? FindOrigPropertyDescriptor(PropertyInfo? propertyInfo)
@@ -149,6 +150,16 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     #endregion
 
     #region properties
+
+    private static readonly Type[] I18Types = AppDomain.CurrentDomain.GetAssemblies()
+        .SelectMany(a => a.GetTypes())
+        .Where(type => type.Name.EndsWith("I18n", StringComparison.OrdinalIgnoreCase))
+        .ToArray();
+
+    public string[] I18Names = [];
+    // ReSharper disable once InconsistentNaming
+    public IDictionary<string, string> I18n { get; } =
+        new Dictionary<string, string>(StringComparer.Ordinal);
 
     private readonly Dictionary<string, List<string>> _dependencies = new(StringComparer.Ordinal);
     private readonly Dictionary<string, object?> _dictionary = new(StringComparer.Ordinal);
@@ -184,7 +195,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         foreach (var prop in GetType().GetProperties())
         {
-            if (prop.PropertyType.IsGenericType && prop.PropertyType.Name.StartsWith("Notify`", StringComparison.Ordinal))
+            if (prop.PropertyType.IsGenericType &&
+                prop.PropertyType.Name.StartsWith("Notify`", StringComparison.Ordinal))
             {
                 var type = typeof(Notify<>).MakeGenericType(prop.PropertyType.GenericTypeArguments[0]);
                 var property = prop.GetValue(this);
@@ -198,6 +210,32 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         GetProperties();
     }
+
+
+    public void UpdateI18n()
+    {
+        I18n.Clear();
+        foreach (var i18Type in I18Types)
+        {
+            var cult = i18Type
+                .GetProperties(BindingFlags.Static | BindingFlags.NonPublic)
+                .FirstOrDefault(property => property.PropertyType == typeof(CultureInfo));
+            cult?.SetValue(this, Session.SessionCulture);
+            
+            var texts = i18Type
+                .GetProperties(BindingFlags.Static | BindingFlags.NonPublic)
+                .Where(property => property.PropertyType == typeof(string))
+                .ToArray();
+
+            foreach (var propertyInfo in texts)
+            {
+                if(!I18Names.Contains(propertyInfo.Name, StringComparer.OrdinalIgnoreCase)) continue;
+                I18n.Add(propertyInfo.Name, propertyInfo.GetValue(null)?.ToString() ?? string.Empty);
+            }
+        }
+        NotifyPropertyChanged(nameof(I18n));
+    }
+    
 
     /// <summary>
     /// Called when application navigates to this view model.
@@ -476,7 +514,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public void NotifyAllPropertiesChanged()
     {
-        if(properties != null)
+        if (properties != null)
         {
             foreach (PropertyDescriptorEx prop in properties)
             {
@@ -514,7 +552,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         AppPages.EnableRoute(route, enabled);
         UpdateRoutes = true;
     }
-    public bool IsRouteEnabled(string route) => 
+
+    public bool IsRouteEnabled(string route) =>
         AppPages.IsRouteEnabled(route.Replace("-", "_"));
 
     #endregion
@@ -531,6 +570,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             ? route
             : route.Replace('-', '_');
     }
+
     public void NavigateBack()
     {
         var route = Session.GetBackRoute();
@@ -539,6 +579,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             Session.Logger.LogWarning("ActiveViewModel.NavigateBack: No back route");
             return;
         }
+
         Session.Logger.LogInformation("ActiveViewModel.NavigateBack: {Route}", route);
         NavigateToRoute = route.Replace('-', '_');
     }
@@ -619,7 +660,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     protected void StopUpdateTimer()
     {
         if (_updateTimer == null) return;
-            
+
         _updateTimer.Stop();
         _updateTimer.Dispose();
         _updateTimer = null;
@@ -631,7 +672,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         Thread.CurrentThread.CurrentUICulture = Session.SessionCulture;
         OnUpdateTimer();
     }
-        
+
     public virtual void OnUpdateTimer()
     {
     }
@@ -641,9 +682,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         StopUpdateTimer();
         OnDispose();
     }
-        
+
     public virtual void OnDispose()
     {
     }
-        
 }

@@ -38,17 +38,15 @@ public class StartVm : ActiveViewModel
 
     public string Culture { get; set; } = string.Empty;
     public string UploadFile { get; set; } = string.Empty;
-        
+
     public bool AppBoxVisible { get; private set; }
     public string AppBoxCaption { get; private set; } = string.Empty;
     public string AppBoxText { get; private set; } = string.Empty;
-        
+
     public bool AppDialogVisible1 { get; private set; }
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
-
-    public string HelloText => StartVm_Res.Hello;
 
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
@@ -69,7 +67,7 @@ public class StartVm : ActiveViewModel
 
     public override void OnLoad()
     {
-        Session.OnNavigate += route => Console.WriteLine("Session.OnNavigate " + route); 
+        Session.OnNavigate += route => Console.WriteLine(@"Session.OnNavigate " + route);
         Culture = Session.SessionCulture.ToString();
     }
 
@@ -79,7 +77,7 @@ public class StartVm : ActiveViewModel
         var c = Thread.CurrentThread.CurrentCulture;
         var ui = Thread.CurrentThread.CurrentUICulture;
         // ReSharper restore UnusedVariable
-            
+
         NotifyPropertyChanged(nameof(TimeStamp));
     }
 
@@ -140,6 +138,7 @@ public class StartVm : ActiveViewModel
     {
         Session.UserLogin();
     }
+
     [ActionMethod]
     public void UserLogout()
     {

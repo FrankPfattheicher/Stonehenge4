@@ -19,14 +19,15 @@ public sealed class VueTestApp : IDisposable
 
     public readonly VueTestData Data = new();
     private readonly StonehengeResourceLoader _loader;
+    private readonly VueResourceProvider _vue;
 
     public VueTestApp(Assembly? appAssembly = null, ILogger? logger = null)
     {
         logger ??= StonehengeLogger.DefaultLogger;
-        var vue = new VueResourceProvider(logger);
+        _vue = new VueResourceProvider(logger);
         _loader = appAssembly != null
-            ? StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue, appAssembly)
-            : StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, vue);
+            ? StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, _vue, appAssembly)
+            : StonehengeResourceLoader.CreateDefaultLoader(StonehengeLogger.DefaultLogger, _vue);
 
         _loader.Providers.Add(new TestResourceLoader("none"));
         _loader.Services.AddService(typeof(VueTestData), Data);
@@ -40,6 +41,7 @@ public sealed class VueTestApp : IDisposable
     {
         Server.Terminate();
         _loader.Dispose();
+        _vue.Dispose();
     }
 
 }

@@ -21,14 +21,14 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class StartVm_Res_it {
+    internal class StartI18n {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal StartVm_Res_it() {
+        internal StartI18n() {
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IctBaden.Stonehenge.Vue.SampleCore.ViewModels.StartVm.Res.it", typeof(StartVm_Res_it).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IctBaden.Stonehenge.Vue.SampleCore.ViewModels.StartI18n", typeof(StartI18n).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,11 +60,20 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ciao!.
+        ///   Looks up a localized string similar to Hallo!.
         /// </summary>
         internal static string Hello {
             get {
                 return ResourceManager.GetString("Hello", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to nicht verwendet.
+        /// </summary>
+        internal static string Unused {
+            get {
+                return ResourceManager.GetString("Unused", resourceCulture);
             }
         }
     }

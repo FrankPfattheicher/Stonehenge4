@@ -72,21 +72,9 @@
     <None Remove="app\index.html" />
     <EmbeddedResource Include="app\mermaidview.html" />
     <None Remove="app\mermaidview.html" />
-    <EmbeddedResource Update="ViewModels\StartVm.Res.en.resx">
+    <EmbeddedResource Update="ViewModels\StartI18n.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StartVm.en.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ViewModels\StartVm.Res.es.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StartVm.es.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ViewModels\StartVm.Res.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StartVm.Res.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ViewModels\StartVm.Res.it.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>StartVm.Res.it.Designer.cs</LastGenOutput>
+      <LastGenOutput>StartI18n.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -124,25 +112,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="ViewModels\StartVm.Res.en.Designer.cs">
+    <Compile Update="ViewModels\StartI18n.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>StartVm.Res.en.resx</DependentUpon>
+      <DependentUpon>StartI18n.resx</DependentUpon>
     </Compile>
-    <Compile Update="ViewModels\StartVm.Res.es.Designer.cs">
+    <Compile Update="ViewModels\StartI18n.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>StartVm.Res.es.resx</DependentUpon>
-    </Compile>
-    <Compile Update="ViewModels\StartVm.Res.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StartVm.Res.resx</DependentUpon>
-    </Compile>
-    <Compile Update="ViewModels\StartVm.Res.it.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StartVm.Res.it.resx</DependentUpon>
+      <DependentUpon>StartI18n.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>
