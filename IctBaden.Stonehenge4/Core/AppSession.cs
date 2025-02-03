@@ -291,6 +291,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
 
         ViewModel = CreateType($"ViewModel({typeName})", newViewModelType);
+        var info = _resourceLoader.GetViewModelInfos()
+            .FirstOrDefault(vmInfo => string.Equals(vmInfo.VmName, typeName, StringComparison.Ordinal));
+        if (info != null && ViewModel is ActiveViewModel avm)
+        {
+            avm.I18Names = info.I18Names.ToArray();
+        }
 
         var viewModelInfo = _resourceLoader.Providers
             .SelectMany(p => p.GetViewModelInfos())
@@ -703,6 +709,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public void SetSessionCulture(CultureInfo culture)
     {
         SessionCulture = culture;
+        if (ViewModel is ActiveViewModel avm)
+        {
+            avm.UpdateI18n();
+        }
     }
 
 

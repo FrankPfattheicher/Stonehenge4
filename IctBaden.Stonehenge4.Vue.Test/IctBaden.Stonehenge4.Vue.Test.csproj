@@ -31,22 +31,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="IctBaden.Framework" Version="4.0.1" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.182">
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.186">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Test\IctBaden.Stonehenge4.Test.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue.TestApp2\IctBaden.Stonehenge4.Vue.TestApp2.csproj" />
+    <ProjectReference Include="..\IctBaden.Stonehenge4.Vue.TestVm\IctBaden.Stonehenge4.Vue.TestVm.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue\IctBaden.Stonehenge4.Vue.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>

@@ -7,7 +7,7 @@
         <RootNamespace>IctBaden.Stonehenge.Extension</RootNamespace>
         <PackageVersion>1.0.1</PackageVersion>
         <Authors>Frank Pfattheicher</Authors>
-        <Copyright>©2022-2024 ICT Baden GmbH</Copyright>
+        <Copyright>©2022-2025 ICT Baden GmbH</Copyright>
         <AssemblyVersion>1.0.1</AssemblyVersion>
         <FileVersion>1.0.1</FileVersion>
         <IsPackable>false</IsPackable>
@@ -46,7 +46,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Meziantou.Analyzer" Version="2.0.182">
+      <PackageReference Include="Meziantou.Analyzer" Version="2.0.186">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

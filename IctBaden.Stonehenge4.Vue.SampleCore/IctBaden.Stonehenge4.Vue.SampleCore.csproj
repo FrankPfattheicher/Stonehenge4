@@ -72,6 +72,20 @@
     <None Remove="app\index.html" />
     <EmbeddedResource Include="app\mermaidview.html" />
     <None Remove="app\mermaidview.html" />
+    <EmbeddedResource Update="ViewModels\StartI18n.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>StartI18n.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Remove="app\images\france.png" />
+    <EmbeddedResource Include="app\images\france.png" />
+    <None Remove="app\images\germany.png" />
+    <EmbeddedResource Include="app\images\germany.png" />
+    <None Remove="app\images\greatbritain.png" />
+    <EmbeddedResource Include="app\images\greatbritain.png" />
+    <None Remove="app\images\italy.png" />
+    <EmbeddedResource Include="app\images\italy.png" />
+    <None Remove="app\images\spain.png" />
+    <EmbeddedResource Include="app\images\spain.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />
@@ -84,12 +98,12 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IctBaden.Units" Version="2.1.0" />
+    <PackageReference Include="IctBaden.Units" Version="2.2.2" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.182">
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.186">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -106,5 +120,17 @@
     <Content Update="web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ViewModels\StartI18n.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartI18n.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ViewModels\StartI18n.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StartI18n.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

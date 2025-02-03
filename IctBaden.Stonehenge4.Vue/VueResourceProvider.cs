@@ -135,6 +135,13 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
         info.Visible = info.SortIndex > 0;
         info.SortIndex = Math.Abs(info.SortIndex);
 
+        info.I18Names = I18nRegex().Matches(pageText).Select(m => m.Groups[1].Value).ToList();
+        if (pageText.Contains("<app-message-box", StringComparison.OrdinalIgnoreCase) ||
+            pageText.Contains("<app-dialog", StringComparison.OrdinalIgnoreCase))
+        {
+            info.I18Names.AddRange(["BtnOK", "BtnClose", "BtnCancel"]);
+        }
+
         if (!string.IsNullOrEmpty(info.VmName))
         {
             _viewModels.Add(info);
@@ -179,6 +186,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                              !name.Contains("src.app.html", StringComparison.OrdinalIgnoreCase))
                          .Order(StringComparer.Ordinal))
             {
+#pragma warning disable MA0001
                 var resourceId = ResourceLoader.GetShortResourceName(_appAssembly, ".app.", resourceName)
                     .Replace('@', '_')
                     .Replace('-', '_')
@@ -192,6 +200,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                     .Replace("._7", ".7")
                     .Replace("._8", ".8")
                     .Replace("._9", ".9");
+#pragma warning restore MA0001
                 if (_vueContent.ContainsKey(resourceId))
                 {
                     _logger.LogWarning("VueResourceProvider.AddResourceContent: Resource with id {ResourceId} already exits", resourceId);
@@ -245,4 +254,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
     private static partial Regex RegexExtractElement();
     [GeneratedRegex("<!--Title:([^:]*)(:(-?\\d*))?-->", RegexOptions.Compiled)]
     private static partial Regex RegexExtractTitle();
+    [GeneratedRegex("I18n\\.([a-zA-Z0-9]+)")]
+    // ReSharper disable once InconsistentNaming
+    private static partial Regex I18nRegex();
 }

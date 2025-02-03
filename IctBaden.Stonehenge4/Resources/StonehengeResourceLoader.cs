@@ -34,7 +34,8 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
         }
     }
 
-    public IList<ViewModelInfo> GetViewModelInfos() => [];
+    public IList<ViewModelInfo> GetViewModelInfos() => Providers
+        .SelectMany(p => p.GetViewModelInfos()).ToList();
 
     public void Dispose()
     {
