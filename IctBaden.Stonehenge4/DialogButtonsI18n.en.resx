@@ -20,4 +20,10 @@
     <data name="BtnClose" xml:space="preserve">
         <value>Close</value>
     </data>
+    <data name="BtnNo" xml:space="preserve">
+        <value>No</value>
+    </data>
+    <data name="BtnYes" xml:space="preserve">
+        <value>Yes</value>
+    </data>
 </root>

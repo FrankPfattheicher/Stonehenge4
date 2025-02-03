@@ -194,8 +194,12 @@ END:VCALENDAR
     }
 
     [ActionMethod]
-    public void ChangeCulture()
+    public void ChangeCulture(string newCulture)
     {
+        if (!string.IsNullOrEmpty(newCulture))
+        {
+            Culture = newCulture;
+        }
         if (string.IsNullOrEmpty(Culture))
         {
             Session.SetSessionCulture(CultureInfo.CurrentUICulture);

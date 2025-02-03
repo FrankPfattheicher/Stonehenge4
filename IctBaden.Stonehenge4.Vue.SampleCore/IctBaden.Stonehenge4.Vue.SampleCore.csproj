@@ -76,6 +76,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>StartI18n.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Remove="app\images\france.png" />
+    <EmbeddedResource Include="app\images\france.png" />
+    <None Remove="app\images\germany.png" />
+    <EmbeddedResource Include="app\images\germany.png" />
+    <None Remove="app\images\greatbritain.png" />
+    <EmbeddedResource Include="app\images\greatbritain.png" />
+    <None Remove="app\images\italy.png" />
+    <EmbeddedResource Include="app\images\italy.png" />
+    <None Remove="app\images\spain.png" />
+    <EmbeddedResource Include="app\images\spain.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />

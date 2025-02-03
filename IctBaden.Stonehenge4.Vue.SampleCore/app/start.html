@@ -100,15 +100,25 @@
         <div class="col-md-3" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
 
             <h4>
-                Culture
+                Culture / I18N
             </h4>
+            <p>
+                <img src="images/germany.png" height="20" @click="ChangeCulture('de-DE')" />
+                &nbsp;&nbsp;
+                <img src="images/france.png" height="20" @click="ChangeCulture('fr')" />
+                &nbsp;&nbsp;
+                <img src="images/italy.png" height="20" @click="ChangeCulture('it')" />
+                &nbsp;&nbsp;
+                <img src="images/spain.png" height="20" @click="ChangeCulture('es')" />
+                &nbsp;&nbsp;
+                <img src="images/greatbritain.png" height="20" @click="ChangeCulture('en')" />
             <p>
                 {{I18n.Hello}}
             </p>
             <p>
                 <input v-model="Culture" class="form-control" style="width: 8em;"/>
                 <br>
-                <button class="btn btn-sm btn-secondary" @click="ChangeCulture()">Set Culture</button>
+                <button class="btn btn-sm btn-secondary" @click="ChangeCulture('')">Set Culture</button>
             </p>
         </div>
 
@@ -192,15 +202,15 @@
 
     </div>
 
-    <app-message-box v-if="AppBoxVisible" :i18n="I18n" :caption="AppBoxCaption" @ok="CloseAppBox()" okText="Schließen">
+    <app-message-box v-if="AppBoxVisible" :caption="AppBoxCaption" @ok="CloseAppBox()" :okText="I18n.BtnClose">
         <p>Dies ist der <b>{{AppBoxText}}</b></p>
     </app-message-box>
 
-    <app-dialog v-if="AppDialogVisible1" :i18n="I18n" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()">
+    <app-dialog v-if="AppDialogVisible1" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()">
         <input v-model="Test" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>
-    <app-dialog v-if="AppDialogVisible2" :i18n="I18n" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()" enableOk="false" cancelText="Schließen">
+    <app-dialog v-if="AppDialogVisible2" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()" enableOk="false" :okText="I18n.BtnClose">
         <input v-model="Test" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>

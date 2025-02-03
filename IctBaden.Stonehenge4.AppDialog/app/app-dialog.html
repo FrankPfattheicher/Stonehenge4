@@ -1,8 +1,8 @@
-<!--CustomElement:i18n,caption,cancelText,okText,enableOk-->
+<!--CustomElement:caption,cancelText,okText,enableOk-->
 <div class="app-dialog">
     <div class="app-dlg-caption">
         {{caption}}
-        <div class="app-dlg-close" @click="$emit('cancel')" :title="i18n.BtnClose">
+        <div class="app-dlg-close" @click="$emit('cancel')" :title="I18n.BtnClose">
             &nbsp;<i class="fa-solid fa-square-xmark"></i>&nbsp;
         </div>
     </div>
@@ -11,11 +11,11 @@
     </div>
     <div style="text-align: right;">
         <button class="btn btn-primary" @click="$emit('cancel')" style="margin: 1em;">
-            &nbsp;&nbsp;{{cancelText ? cancelText : i18n.BtnCancel}}&nbsp;&nbsp;
+            &nbsp;&nbsp;{{cancelText ? cancelText : I18n.BtnCancel}}&nbsp;&nbsp;
         </button>
         &nbsp;&nbsp;
         <button v-if="enableOk != 'false'" class="btn btn-primary" @click="$emit('ok')" style="margin: 1em;">
-            &nbsp;&nbsp;{{okText ? okText : i18n.BtnOK}}&nbsp;&nbsp;
+            &nbsp;&nbsp;{{okText ? okText : I18n.BtnOK}}&nbsp;&nbsp;
         </button>
     </div>
 </div>

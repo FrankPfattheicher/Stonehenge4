@@ -1,4 +1,6 @@
 
+* 8.2.0 - 03.02.2025 Internationalization support added using RESX files
+
 * 8.1.4 - 18.01.2025 LogCritical "Failed to create ViewModel"
 * 8.1.3 - 18.12.2024 Fixed System.IdentityModel.Tokens.Jwt packet reference
 * 8.1.2 - 06.12.2024 Updated mermaid.js to v11.4.1, do not display parse errors

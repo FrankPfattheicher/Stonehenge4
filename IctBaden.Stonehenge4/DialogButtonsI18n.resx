@@ -27,4 +27,10 @@
     <data name="BtnOK" xml:space="preserve">
         <value>OK</value>
     </data>
+    <data name="BtnYes" xml:space="preserve">
+        <value>Ja</value>
+    </data>
+    <data name="BtnNo" xml:space="preserve">
+        <value>Nein</value>
+    </data>
 </root>
