@@ -86,6 +86,10 @@
     <EmbeddedResource Include="app\images\italy.png" />
     <None Remove="app\images\spain.png" />
     <EmbeddedResource Include="app\images\spain.png" />
+    <EmbeddedResource Update="SampleI18n.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SampleI18n.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />
@@ -131,6 +135,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>StartI18n.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SampleI18n.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SampleI18n.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

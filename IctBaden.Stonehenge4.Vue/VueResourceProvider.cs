@@ -90,9 +90,8 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
 
     private ViewModelInfo GetViewModelInfo(string route, string pageText)
     {
-        route = string.IsNullOrEmpty(route)
-            ? ""
-            : route.Substring(0, 1).ToUpper(CultureInfo.InvariantCulture) + route.Substring(1);
+        if(route.Length > 1)
+            route = string.Concat(char.ToUpper(route[0], CultureInfo.InvariantCulture).ToString(), route.AsSpan(1));
         var info = new ViewModelInfo(route.ToLower(CultureInfo.InvariantCulture), route + "Vm");
 
         var match = ExtractElement.Match(pageText);
@@ -122,7 +121,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
             if (match.Success)
             {
                 info.Title = match.Groups[1].Value;
-                info.SortIndex = (string.IsNullOrEmpty(match.Groups[3].Value))
+                info.SortIndex = string.IsNullOrEmpty(match.Groups[3].Value)
                     ? 0
                     : int.Parse(match.Groups[3].Value, NumberStyles.Number, CultureInfo.InvariantCulture);
             }
@@ -130,6 +129,8 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
             {
                 info.Title = route;
             }
+
+            info.TitleId = info.Title;
         }
 
         info.Visible = info.SortIndex > 0;

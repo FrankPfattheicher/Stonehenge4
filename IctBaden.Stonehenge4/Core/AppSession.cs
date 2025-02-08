@@ -230,21 +230,21 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             }
 
             _viewModel = value;
-            if (value is INotifyPropertyChanged notifyPropertyChanged)
+            if (value is not INotifyPropertyChanged notifyPropertyChanged) return;
+            
+            SetSessionCulture(SessionCulture);
+            notifyPropertyChanged.PropertyChanged += (sender, args) =>
             {
-                notifyPropertyChanged.PropertyChanged += (sender, args) =>
-                {
-                    if (sender is not ActiveViewModel activeViewModel) return;
+                if (sender is not ActiveViewModel activeViewModel) return;
 
-                    lock (activeViewModel.Session._events)
+                lock (activeViewModel.Session._events)
+                {
+                    if (!string.IsNullOrEmpty(args.PropertyName))
                     {
-                        if (!string.IsNullOrEmpty(args.PropertyName))
-                        {
-                            activeViewModel.Session.UpdateProperty(args.PropertyName);
-                        }
+                        activeViewModel.Session.UpdateProperty(args.PropertyName);
                     }
-                };
-            }
+                }
+            };
         }
     }
 
@@ -709,9 +709,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public void SetSessionCulture(CultureInfo culture)
     {
         SessionCulture = culture;
+        AppPages.UpdatePageTitles(this);
         if (ViewModel is ActiveViewModel avm)
         {
             avm.UpdateI18n();
+            avm.EnableRoute(string.Empty, false);
         }
     }
 
