@@ -118,11 +118,12 @@ function stonehengeCopyToClipboard(text) {
     textarea.remove()
 }
 
-function stonehengeEnableRoute(route, enabled) {
+function stonehengeEnableRoute(route, enabledTitle) {
     // { path: '/rrrr', name: 'rrrr', title: 'rrrr', component: () => Promise.resolve(stonehengeLoadComponent('rrrr')), visible: true }
     let found = routes.filter(function (item) { return item.name === route; })[0] || null;
     if(found) {
-        found.visible = enabled;
+        found.visible = enabledTitle[0];
+        found.title = enabledTitle[1];
     }
 }
 

@@ -1,4 +1,5 @@
 
+* 8.2.1 - 08.02.2025 Internationalization support added tor route titles
 * 8.2.0 - 03.02.2025 Internationalization support added using RESX files
 
 * 8.1.4 - 18.01.2025 LogCritical "Failed to create ViewModel"

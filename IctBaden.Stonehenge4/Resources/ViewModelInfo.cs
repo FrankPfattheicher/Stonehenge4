@@ -12,6 +12,7 @@ public class ViewModelInfo(string route, string name)
     public string Route { get; set; } = route;
     public string VmName { get; set; } = name;
     public string Title { get; set; } = string.Empty;
+    public string TitleId { get; set; } = string.Empty;
     public int SortIndex { get; set; } = 1; // ensure visible
     public bool Visible { get; set; }
     

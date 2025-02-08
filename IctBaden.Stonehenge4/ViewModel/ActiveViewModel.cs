@@ -151,15 +151,16 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     #region properties
 
-    private static readonly Type[] I18Types = AppDomain.CurrentDomain.GetAssemblies()
+    internal static readonly Type[] I18Types = AppDomain.CurrentDomain.GetAssemblies()
         .SelectMany(a => a.GetTypes())
         .Where(type => type.Name.EndsWith("I18n", StringComparison.OrdinalIgnoreCase))
         .ToArray();
 
     public string[] I18Names = [];
+
     // ReSharper disable once InconsistentNaming
-    public IDictionary<string, string> I18n { get; } =
-        new Dictionary<string, string>(StringComparer.Ordinal);
+    // ReSharper disable once CollectionNeverQueried.Global
+    public IDictionary<string, string> I18n { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     private readonly Dictionary<string, List<string>> _dependencies = new(StringComparer.Ordinal);
     private readonly Dictionary<string, object?> _dictionary = new(StringComparer.Ordinal);
@@ -482,7 +483,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 #if DEBUG
         //TODO: AppService.PropertyNameId
         Debug.Assert(name.StartsWith("_stonehenge_", StringComparison.Ordinal)
-                     || (GetPropertyInfo(name) != null)
+                     || GetPropertyInfo(name) != null
                      || _dictionary.ContainsKey(name)
             , "NotifyPropertyChanged for unknown property " + name);
 #endif

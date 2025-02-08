@@ -326,7 +326,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (activeVm.UpdateRoutes)
         {
             var routes = AppPages.Pages
-                .Select(page => $"\"{page.Route}\": {page.Visible.ToString().ToLower(CultureInfo.InvariantCulture)}")
+                .Select(page => $"\"{page.Route}\": [ {page.Visible.ToString().ToLower(CultureInfo.InvariantCulture)}, \"{page.Title}\"] ")
                 .ToArray();
             var json = "{ " + string.Join(", ", routes) + " }";
             data.Add($"\"StonehengeRoutes\":{json}");
