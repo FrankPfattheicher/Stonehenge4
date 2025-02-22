@@ -1,4 +1,5 @@
 
+* 8.2.2 - 22.02.2025 Allow mermaid diagrams in app dialogs
 * 8.2.1 - 08.02.2025 Internationalization support added tor route titles
 * 8.2.0 - 03.02.2025 Internationalization support added using RESX files
 
