@@ -1,0 +1,47 @@
+<!--ViewModel:Charts3Vm-->
+<!--Title:Charts-3:31-->
+<div style="margin: 2em;">
+
+    <h3>Chart With Regions</h3>
+
+    <p>
+        <b>C3 Chart</b> see <a href="https://c3js.org/gettingstarted.html" target="_blank">https://c3js.org/gettingstarted.html</a>
+        <br/>
+    </p>
+
+    <p>
+        <st-chart style="height: 70vh;" :chartdata="LineChart"></st-chart>
+    </p>
+    
+    <table>
+        <tr>
+            <th colspan="2" style="text-align: center; border-bottom: 1px solid black;">
+                Time Series Region
+            </th>
+            <th>
+                &nbsp;&nbsp;
+            </th>
+            <th colspan="2" style="text-align: center; border-bottom: 1px solid black;">
+                Data Series Region
+            </th>
+        </tr>
+        <tr style="border-top: .5em solid transparent;">
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="AddTimeSeriesRegions()">Add</button>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="RemoveTimeSeriesRegions()()">Remove</button>
+            </td>
+            <td>
+
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="AddDataSeriesRegions()">Add</button>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="RemoveDataSeriesRegions()()">Remove</button>
+            </td>
+        </tr>
+    </table>
+
+</div>

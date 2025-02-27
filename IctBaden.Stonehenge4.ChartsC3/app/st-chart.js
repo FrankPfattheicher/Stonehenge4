@@ -18,7 +18,7 @@
             },
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
-            regions: this.$props.chartdata.XRegions,
+            regions: this.$props.chartdata.Regions,
             zoom: this.$props.chartdata.Zoom,
             size: {
                 width: this.$el.clientWidth,
@@ -102,7 +102,7 @@ updated: function () {
             },
             axis: this.$props.chartdata.Axis,
             point: this.$props.chartdata.Point,
-            regions: this.$props.chartdata.XRegions,
+            regions: this.$props.chartdata.Regions,
             zoom: this.$props.chartdata.Zoom,
             size: {
                 width: this.$el.clientWidth,

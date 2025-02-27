@@ -19,7 +19,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 // ReSharper disable once UnusedType.Global
-public class Charts2Vm(AppSession session) : ActiveViewModel(session)
+public class Charts2Vm : ActiveViewModel
 {
     public int RangeMin { get; } = 0;
     public int RangeMax { get; } = 100;
@@ -32,6 +32,10 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
 
     public int Speed { get; private set; } = 500;
     private int _start;
+
+    public Charts2Vm(AppSession session) : base(session)
+    {
+    }
 
     public override void OnLoad()
     {
@@ -78,12 +82,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
             Title = new ChartTitle("Test"),
             Series = [new ChartSeries("Sinus"), new ChartSeries("Half")],
             CategoryAxis = timeSeriesAxis,
-            SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration,
-            TimeSeriesRegions =
-            [
-                new ChartTimeSeriesRegion(new DateTimeOffset(timeStamps[10]).ToUnixTimeMilliseconds(),
-                                          new DateTimeOffset(timeStamps[20]).ToUnixTimeMilliseconds())
-            ]
+            SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration
         };
     }
 
