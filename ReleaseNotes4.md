@@ -1,4 +1,5 @@
 
+* 8.2.5 - 27.02.2025 C3 chart destroy on new id
 * 8.2.4 - 27.02.2025 C3 chart Y regions, updating on change
 * 8.2.3 - 27.02.2025 C3 chart X axis regions
 * 8.2.2 - 22.02.2025 Allow mermaid diagrams in app dialogs

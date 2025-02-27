@@ -1,6 +1,11 @@
 ﻿
 mounted: function() {
     if(typeof(this.$props.piedata.Id) != "undefined") {
+
+        if(typeof (this.pie) != "undefined") {
+            this.pie.destroy();
+        }
+
         this.pie = c3.generate({
             bindto: this.$el,
             id: this.$props.piedata.Id,
@@ -12,7 +17,11 @@ mounted: function() {
 updated: function () {
 
     if(typeof(this.pie) == "undefined" || this.pieId != this.$props.piedata.Id) {
-                
+
+        if(typeof (this.pie) != "undefined") {
+            this.pie.destroy();
+        }
+
         this.pie = c3.generate({
             bindto: this.$el,
             size: {

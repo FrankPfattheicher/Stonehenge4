@@ -1,5 +1,10 @@
 ﻿mounted: function () {
     if (typeof (this.$props.chartdata.Id) != "undefined") {
+
+        if(typeof (this.chart) != "undefined") {
+            this.chart.destroy();
+        }
+
         this.chart = c3.generate({
             bindto: this.$el,
             id: this.$props.chartdata.Id,
@@ -76,7 +81,9 @@
             }
         });
     }
-    this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
+    if(typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
+        this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
+    }
     this.chartId = this.$props.chartdata.Id;
 }
 
@@ -84,6 +91,10 @@
 updated: function () {
 
     if (typeof (this.chart) == "undefined" || this.chartId != this.$props.chartdata.Id) {
+
+        if(typeof (this.chart) != "undefined") {
+            this.chart.destroy();
+        }
 
         this.chart = c3.generate({
             bindto: this.$el,
@@ -160,7 +171,9 @@ updated: function () {
             }
         });
 
-        this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
+        if(typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
+            this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
+        }
         this.chartId = this.$props.chartdata.Id;
     }
 
