@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Globalization;
 using IctBaden.Stonehenge.Types;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
@@ -17,12 +18,12 @@ public class Chart
     /// Id of chart element
     /// </summary>
     public string Id { get; private set; } = Element.NewId();
-    
+
     /// <summary>
     /// Show series points
     /// </summary>
     public bool ShowPoints = true;
-    
+
     /// <summary>
     /// Enable zooming of chart
     /// </summary>
@@ -53,6 +54,8 @@ public class Chart
     /// </summary>
     public ChartDataRegion[] DataRegions = [];
 
+    public ChartTimeSeriesRegion[] TimeSeriesRegions = []; 
+
     /// <summary>
     /// Define chart's title
     /// </summary>
@@ -63,7 +66,7 @@ public class Chart
     /// Sort order of chart series tooltip list
     /// </summary>
     public ChartSortOrder SortSeriesTooltips { get; set; } = ChartSortOrder.DescendValue;
-    
+
     private object[] Columns
     {
         get
@@ -86,7 +89,7 @@ public class Chart
             return columns.ToArray();
         }
     }
-    
+
     private object[][] Groups
     {
         get
@@ -97,7 +100,9 @@ public class Chart
                 .Distinct(StringComparer.Ordinal);
 
             var groups = groupNames
-                    .Select(n => Series.Where(s => string.Equals(s.Group, n, StringComparison.Ordinal)).Select(s => s.Label).Cast<object>().ToArray());
+                .Select(n =>
+                    Series.Where(s => string.Equals(s.Group, n, StringComparison.Ordinal)).Select(s => s.Label)
+                        .Cast<object>().ToArray());
 
             return groups.ToArray();
         }
@@ -113,6 +118,7 @@ public class Chart
                 var c = series.Color;
                 colors.Add(series.Label, $"#{c.R:X2}{c.G:X2}{c.B:X2}");
             }
+
             return colors;
         }
     }
@@ -126,19 +132,20 @@ public class Chart
             {
                 types.Add(series.Label, series.Type.ToString().ToLower(CultureInfo.InvariantCulture));
             }
+
             return types;
         }
     }
 
-    private Dictionary<string, object> Regions
+    public object[] XRegions
     {
         get
         {
-            var regions = new Dictionary<string, object>(StringComparer.Ordinal);
+            var dataRegions = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var region in DataRegions.GroupBy(r => r.Series, StringComparer.Ordinal))
             {
                 if (string.IsNullOrEmpty(region.Key)) continue;
-
+            
                 var regionSpec = new List<object>();
                 foreach (var dataRegion in region)
                 {
@@ -148,108 +155,120 @@ public class Chart
                     if (dataRegion.Style != null) dataSpec.Add("style", dataRegion.Style);
                     regionSpec.Add(dataSpec);
                 }
-                regions.Add(region.Key, regionSpec.ToArray());
+            
+                dataRegions.Add(region.Key, regionSpec.ToArray());
             }
-            return regions;
+
+            var tsRegions = new List<Dictionary<string, object>>();
+            foreach (var region in TimeSeriesRegions)
+            {
+                var tsRegion = new Dictionary<string, object>(StringComparer.Ordinal)
+                {
+                    { "start", region.StartValue },
+                    { "end", region.EndValue }
+                };
+                if (region.Class != null)
+                    tsRegion.Add("class", region.Class);
+                tsRegions.Add(tsRegion);
+            }
+
+            // ReSharper disable once CoVariantArrayConversion
+            return tsRegions.ToArray();
         }
     }
 
-    public IDictionary<string, object> Point => new Dictionary<string, object>(StringComparer.Ordinal)
+public IDictionary<string, object> Point => new Dictionary<string, object>(StringComparer.Ordinal)
+{
+    { "show", ShowPoints }
+};
+public IDictionary<string, object> Zoom => new Dictionary<string, object>(StringComparer.Ordinal)
+{
+    { "enabled", EnableZoom }
+};
+public IDictionary<string, object> Axis
+{
+get
+{
+    var axis = new Dictionary<string, object>(StringComparer.Ordinal);
+    if (CategoryAxis != null)
     {
-        { "show", ShowPoints }
+        axis[CategoryAxis.Id] = CategoryAxis;
+    }
+
+    foreach (var ax in ValueAxes)
+    {
+        axis[ax.Id] = ax;
+    }
+
+    return axis;
+}
+}
+public IDictionary<string, Dictionary<string, object>> Grid
+{
+get
+{
+    var gridLines = new Dictionary<string, Dictionary<string, object>>(StringComparer.Ordinal);
+    var options = new Dictionary<string, object>(StringComparer.Ordinal)
+    {
+        { "front", false }
     };
+    gridLines.Add("lines", options);
 
-    public IDictionary<string, object> Zoom => new Dictionary<string, object>(StringComparer.Ordinal)
+    var lines = new Dictionary<string, object>(StringComparer.Ordinal)
     {
-        { "enabled", EnableZoom }
+        { "lines", GridLines.ToArray() }
     };
+    gridLines.Add(nameof(ValueAxisId.y), lines);
 
-    public IDictionary<string, object> Axis
+    return gridLines;
+}
+}
+/// <summary>
+/// Use column name as key, axis id as object.
+/// By default all columns are mapped to axis 'y'
+/// </summary>
+public IDictionary<string, object> Axes
+{
+get
+{
+    var axes = new Dictionary<string, object>(StringComparer.Ordinal);
+    foreach (var series in Series)
     {
-        get
-        {
-            var axis = new Dictionary<string, object>(StringComparer.Ordinal);
-            if (CategoryAxis != null)
-            {
-                axis[CategoryAxis.Id] = CategoryAxis;
-            }
-
-            foreach (var ax in ValueAxes)
-            {
-                axis[ax.Id] = ax;
-            }
-
-            return axis;
-        }
+        axes[series.Label] = series.ValueAxis.ToString();
     }
 
-    public IDictionary<string, Dictionary<string, object>> Grid
+    return axes;
+}
+}
+public IDictionary<string, object> Data
+{
+get
+{
+    var data = new Dictionary<string, object>(StringComparer.Ordinal);
+    if (CategoryAxis != null)
     {
-        get
-        {
-            var gridLines = new Dictionary<string, Dictionary<string, object>>(StringComparer.Ordinal);
-            var options = new Dictionary<string, object>(StringComparer.Ordinal)
-            {
-                { "front", false }
-            };
-            gridLines.Add("lines", options);
-
-            var lines = new Dictionary<string, object>(StringComparer.Ordinal)
-            {
-                { "lines", GridLines.ToArray() }
-            };
-            gridLines.Add(nameof(ValueAxisId.y), lines);
-
-            return gridLines;
-        }
+        data[CategoryAxis.Id] = CategoryAxis.Id;
     }
 
-    /// <summary>
-    /// Use column name as key, axis id as object.
-    /// By default all columns are mapped to axis 'y'
-    /// </summary>
-    public IDictionary<string, object> Axes
+    //data["regions"] = Regions;
+    data["axes"] = Axes;
+    data["columns"] = Columns;
+    data["groups"] = Groups;
+    data["colors"] = Colors;
+    data["types"] = Types;
+
+    return data;
+}
+}
+public void UpdateId() => Id = Element.NewId();
+
+public void SetSeriesData(string series, object?[] data)
+{
+    var chartSeries = Series.FirstOrDefault(s => string.Equals(s.Label, series, StringComparison.Ordinal));
+    if (chartSeries != null)
     {
-        get
-        {
-            var axes = new Dictionary<string, object>(StringComparer.Ordinal);
-            foreach (var series in Series)
-            {
-                axes[series.Label] = series.ValueAxis.ToString();
-            }
-            return axes;
-        }
+        chartSeries.Data = data;
     }
+}
 
-    public IDictionary<string, object> Data
-    {
-        get
-        {
-            var data = new Dictionary<string, object>(StringComparer.Ordinal);
-            if (CategoryAxis != null)
-            {
-                data[CategoryAxis.Id] = CategoryAxis.Id;
-            }
-
-            data["regions"] = Regions;
-            data["axes"] = Axes;
-            data["columns"] = Columns;
-            data["groups"] = Groups;
-            data["colors"] = Colors;
-            data["types"] = Types;
-           
-            return data;
-        }
-    }
-
-    public void UpdateId() => Id = Element.NewId();
-
-    public void SetSeriesData(string series, object?[] data)
-    {
-        var chartSeries = Series.FirstOrDefault(s => string.Equals(s.Label, series, StringComparison.Ordinal));
-        if (chartSeries != null)
-        {
-            chartSeries.Data = data;
-        }
-    }
 }

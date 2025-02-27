@@ -58,7 +58,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
         {
             link.Tooltip = $"{link.Source} -> {link.Target}\n{link.Value} units";
         }
-            
+
         UpdateData();
 
         SetUpdateTimer(Speed);
@@ -72,20 +72,25 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
             .ToArray();
 
         var timeSeriesAxis = new ChartCategoryTimeSeriesAxis("%H:%M", 50, timeStamps);
-        
+
         LineChart = new Chart
         {
             Title = new ChartTitle("Test"),
             Series = [new ChartSeries("Sinus"), new ChartSeries("Half")],
             CategoryAxis = timeSeriesAxis,
-            SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration 
+            SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration,
+            TimeSeriesRegions =
+            [
+                new ChartTimeSeriesRegion(new DateTimeOffset(timeStamps[10]).ToUnixTimeMilliseconds(),
+                                          new DateTimeOffset(timeStamps[20]).ToUnixTimeMilliseconds())
+            ]
         };
     }
-    
+
     private void UpdateData()
     {
-        if(SankeyChart == null || LineChart == null) return;
-        
+        if (SankeyChart == null || LineChart == null) return;
+
         var dataSinus = new object?[60];
         var dataHalf = new object?[60];
         for (var ix = 0; ix < 60; ix++)
@@ -110,8 +115,8 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     public override void OnUpdateTimer()
     {
         UpdateData();
-            
-        NotifyPropertiesChanged(new []
+
+        NotifyPropertiesChanged(new[]
         {
             nameof(LineChart),
             nameof(SankeyChart)
@@ -130,7 +135,7 @@ public class Charts2Vm(AppSession session) : ActiveViewModel(session)
     {
         CreateLineChart();
     }
-        
+
     [ActionMethod]
     public void ToggleSpeed()
     {
