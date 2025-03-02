@@ -1,4 +1,5 @@
 
+* 8.2.6 - 02.03.2025 Fix deserialization of string and value type arrays in DeserializeStructValue
 * 8.2.5 - 27.02.2025 C3 chart destroy on new id
 * 8.2.4 - 27.02.2025 C3 chart Y regions, updating on change
 * 8.2.3 - 27.02.2025 C3 chart X axis regions

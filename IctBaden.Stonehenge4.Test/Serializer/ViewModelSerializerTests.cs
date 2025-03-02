@@ -79,6 +79,33 @@ public class ViewModelSerializerTests
     }
 
     [Fact]
+    public void DeserializationOfStringArraysShouldWork()
+    {
+        const string json = "[ \"+491706370193\", \"+4915253845003\", \"+4966246290\" ]";
+
+        var numbers = new object();
+        ViewModelProvider.DeserializeStructValue(_logger, "PhoneNumbers", ref numbers, json, typeof(string[]));
+        
+        Assert.NotNull(numbers);
+        Assert.IsType<string[]>(numbers);
+        Assert.Equal(3, ((string[])numbers).Length);
+    }
+
+    [Fact]
+    public void DeserializationOfNumericArraysShouldWork()
+    {
+        const string json = "[ 123, 456, 789 ]";
+
+        var numbers = new object();
+        ViewModelProvider.DeserializeStructValue(_logger, "Numbers", ref numbers, json, typeof(long[]));
+        
+        Assert.NotNull(numbers);
+        Assert.IsType<long[]>(numbers);
+        Assert.Equal(3, ((long[])numbers).Length);
+    }
+
+
+    [Fact]
     public void SerializerShouldRespectAttributes()
     {
         // TODO   
