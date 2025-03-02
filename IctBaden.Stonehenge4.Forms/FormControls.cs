@@ -1,6 +1,6 @@
 ﻿using IctBaden.Stonehenge.Extensions;
 
-namespace IctBaden.Stonehenge4.Forms;
+namespace IctBaden.Stonehenge.Forms;
 
 // ReSharper disable once UnusedType.Global
 public class FormControls : IStonehengeExtension;
