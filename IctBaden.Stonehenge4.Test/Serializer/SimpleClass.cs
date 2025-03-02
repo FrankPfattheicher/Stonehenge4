@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
@@ -6,6 +8,7 @@
 
 namespace IctBaden.Stonehenge.Test.Serializer;
 
+[SuppressMessage("Design", "MA0016:Prefer using collection abstraction instead of implementation")]
 public class SimpleClass
 {
     public int Integer { get; set; }
@@ -18,4 +21,6 @@ public class SimpleClass
     public TestEnum Wieviel { get; set; } = TestEnum.Fumpf;
 
     public string PrivateText = string.Empty;
+    
+    public List<string> PhoneNumbers { get; set; } = [];
 }

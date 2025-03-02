@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -405,15 +406,37 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
 
             if (structValue.StartsWith("[", StringComparison.Ordinal))
             {
-                var arrayObjects = JsonSerializer.Deserialize<JsonObject[]>(structValue);
-                if (arrayObjects == null)
+                var arrayElementType = structType.GetElementType();
+                if(structType.IsArray && arrayElementType != null && (arrayElementType.IsValueType || arrayElementType == typeof(string)))
+                {
+                    var values = JsonSerializer
+                        .Deserialize<JsonValue[]>(structValue)?
+                        .Select(st => Convert.ChangeType(st.ToString(), arrayElementType, CultureInfo.CurrentCulture))
+                        .ToArray();
+                    if (values == null)
+                    {
+                        structObj = null;
+                        return;
+                    }
+                    var typedArray = Array.CreateInstance(arrayElementType, values.Length);
+                    for (var ix = 0; ix < values.Length; ix++)
+                    {
+                        typedArray.SetValue(values[ix], ix);
+                    }
+                    structObj = typedArray;
+                    return;
+                }
+                   
+                var elementType = structType.GenericTypeArguments.FirstOrDefault();
+                if (elementType == null)
                 {
                     structObj = null;
                     return;
                 }
 
-                var elementType = structType.GenericTypeArguments.FirstOrDefault();
-                if (elementType == null)
+                var arrayObjects =  JsonSerializer.Deserialize<JsonObject[]>(structValue);
+                
+                if (arrayObjects == null)
                 {
                     structObj = null;
                     return;
