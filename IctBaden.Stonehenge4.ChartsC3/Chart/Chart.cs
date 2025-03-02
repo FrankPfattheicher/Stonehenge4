@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using IctBaden.Stonehenge.Types;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
@@ -11,18 +13,19 @@ using IctBaden.Stonehenge.Types;
 
 namespace IctBaden.Stonehenge.Extension;
 
+[SuppressMessage("Design", "MA0016:Prefer using collection abstraction instead of implementation")]
 public class Chart
 {
     /// <summary>
     /// Id of chart element
     /// </summary>
     public string Id { get; private set; } = Element.NewId();
-    
+
     /// <summary>
     /// Show series points
     /// </summary>
     public bool ShowPoints = true;
-    
+
     /// <summary>
     /// Enable zooming of chart
     /// </summary>
@@ -51,7 +54,31 @@ public class Chart
     /// <summary>
     /// Define chart's additionally axes and series regions
     /// </summary>
-    public ChartDataRegion[] DataRegions = [];
+    public ChartDataSeriesRegion[] DataRegions
+    {
+        get => _dataRegions;
+        set
+        {
+            _dataRegions = value;
+            UpdateId();
+        }
+    }
+
+    /// <summary>
+    /// Define chart's time series regions
+    /// </summary>
+    public ChartTimeSeriesRegion[] TimeSeriesRegions
+    {
+        get => _timeSeriesRegions;
+        set
+        {
+            _timeSeriesRegions = value;
+            UpdateId();
+        }
+    }
+
+    private ChartTimeSeriesRegion[] _timeSeriesRegions = [];
+    private ChartDataSeriesRegion[] _dataRegions = [];
 
     /// <summary>
     /// Define chart's title
@@ -63,7 +90,7 @@ public class Chart
     /// Sort order of chart series tooltip list
     /// </summary>
     public ChartSortOrder SortSeriesTooltips { get; set; } = ChartSortOrder.DescendValue;
-    
+
     private object[] Columns
     {
         get
@@ -86,7 +113,7 @@ public class Chart
             return columns.ToArray();
         }
     }
-    
+
     private object[][] Groups
     {
         get
@@ -97,7 +124,9 @@ public class Chart
                 .Distinct(StringComparer.Ordinal);
 
             var groups = groupNames
-                    .Select(n => Series.Where(s => string.Equals(s.Group, n, StringComparison.Ordinal)).Select(s => s.Label).Cast<object>().ToArray());
+                .Select(n =>
+                    Series.Where(s => string.Equals(s.Group, n, StringComparison.Ordinal)).Select(s => s.Label)
+                        .Cast<object>().ToArray());
 
             return groups.ToArray();
         }
@@ -113,6 +142,7 @@ public class Chart
                 var c = series.Color;
                 colors.Add(series.Label, $"#{c.R:X2}{c.G:X2}{c.B:X2}");
             }
+
             return colors;
         }
     }
@@ -126,31 +156,44 @@ public class Chart
             {
                 types.Add(series.Label, series.Type.ToString().ToLower(CultureInfo.InvariantCulture));
             }
+
             return types;
         }
     }
 
-    private Dictionary<string, object> Regions
+    public object[] Regions
     {
         get
         {
-            var regions = new Dictionary<string, object>(StringComparer.Ordinal);
-            foreach (var region in DataRegions.GroupBy(r => r.Series, StringComparer.Ordinal))
+            var regions = new List<Dictionary<string, object>>();
+            
+            foreach (var region in TimeSeriesRegions)
             {
-                if (string.IsNullOrEmpty(region.Key)) continue;
-
-                var regionSpec = new List<object>();
-                foreach (var dataRegion in region)
+                var tsRegion = new Dictionary<string, object>(StringComparer.Ordinal)
                 {
-                    var dataSpec = new Dictionary<string, object>(StringComparer.Ordinal);
-                    if (dataRegion.StartValue != null) dataSpec.Add("start", dataRegion.StartValue);
-                    if (dataRegion.EndValue != null) dataSpec.Add("end", dataRegion.EndValue);
-                    if (dataRegion.Style != null) dataSpec.Add("style", dataRegion.Style);
-                    regionSpec.Add(dataSpec);
-                }
-                regions.Add(region.Key, regionSpec.ToArray());
+                    { "start", region.StartValue },
+                    { "end", region.EndValue }
+                };
+                if (region.Class != null)
+                    tsRegion.Add("class", region.Class);
+                regions.Add(tsRegion);
             }
-            return regions;
+
+            foreach (var region in DataRegions)
+            {
+                var dataRegion = new Dictionary<string, object>(StringComparer.Ordinal)
+                {
+                    { "axis", region.Axis },
+                    { "start", region.StartValue },
+                    { "end", region.EndValue }
+                };
+                if (region.Class != null)
+                    dataRegion.Add("class", region.Class);
+                regions.Add(dataRegion);
+            }
+
+            // ReSharper disable once CoVariantArrayConversion
+            return regions.ToArray();
         }
     }
 
@@ -217,6 +260,7 @@ public class Chart
             {
                 axes[series.Label] = series.ValueAxis.ToString();
             }
+
             return axes;
         }
     }
@@ -231,13 +275,12 @@ public class Chart
                 data[CategoryAxis.Id] = CategoryAxis.Id;
             }
 
-            data["regions"] = Regions;
             data["axes"] = Axes;
             data["columns"] = Columns;
             data["groups"] = Groups;
             data["colors"] = Colors;
             data["types"] = Types;
-           
+
             return data;
         }
     }

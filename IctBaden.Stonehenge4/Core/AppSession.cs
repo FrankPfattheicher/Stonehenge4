@@ -229,10 +229,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 vm.Dispose();
             }
 
+            var previousViewModel = _viewModel;
             _viewModel = value;
             if (value is not INotifyPropertyChanged notifyPropertyChanged) return;
-            
-            SetSessionCulture(SessionCulture);
+
+            if (previousViewModel == null)
+            {
+                SetSessionCulture(SessionCulture);
+            }
             notifyPropertyChanged.PropertyChanged += (sender, args) =>
             {
                 if (sender is not ActiveViewModel activeViewModel) return;

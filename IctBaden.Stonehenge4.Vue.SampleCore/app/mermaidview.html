@@ -27,8 +27,15 @@
         <button class="btn btn-sm btn-secondary" @click="SetGraph(1)">Simple</button>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <button class="btn btn-sm btn-secondary" @click="SetGraph(2)">Complex</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn btn-sm btn-secondary" @click="ShowDlg()">Show in Dialog</button>
 
     </div>
 
+    <app-dialog v-if="ShowMermaidDlg" caption="Mermaid" style="width: 90%;" enableOk="false" cancelText="Close" @cancel="CloseDlg()">
+
+        <st-mermaid :graphData="MermaidGraph"></st-mermaid>
+        
+    </app-dialog>
 
 </div>

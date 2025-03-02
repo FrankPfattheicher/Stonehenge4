@@ -10,6 +10,8 @@ public class MermaidViewVm : ActiveViewModel
     public string MermaidGraph { get; private set; } = string.Empty;
     public string MermaidGraph2 { get; private set; } = string.Empty;
 
+    public bool ShowMermaidDlg { get; private set; }
+    
     public MermaidViewVm(AppSession session)
         : base(session)
     {
@@ -52,4 +54,17 @@ public class MermaidViewVm : ActiveViewModel
                 break;
         }
     }
+    
+    [ActionMethod]
+    public void ShowDlg()
+    {
+        ShowMermaidDlg = true;
+    }
+
+    [ActionMethod]
+    public void CloseDlg()
+    {
+        ShowMermaidDlg = false;
+    }
+
 }
