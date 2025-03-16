@@ -23,16 +23,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ViewModels\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="app\st-drop-edit.html" />
       <EmbeddedResource Include="app\st-drop-edit.html" />
       <None Remove="app\st-error-message.html" />
       <EmbeddedResource Include="app\st-error-message.html" />
       <None Remove="app\src\st-forms.css" />
       <EmbeddedResource Include="app\src\st-forms.css" />
+      <None Remove="app\st-date-picker.html" />
+      <EmbeddedResource Include="app\st-date-picker.html" />
     </ItemGroup>
 
     <ItemGroup>

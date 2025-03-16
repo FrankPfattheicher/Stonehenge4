@@ -49,3 +49,51 @@
     align-content: center;
     border-radius: 5px;}
 }
+
+.st-calendar-header {
+    font-size: 120%;
+    text-align: center;
+    color: black;
+    background: #999999;
+    height: 2.5em;
+}
+
+.st-calendar thead th {
+    text-align: center;
+    color: black;
+    background: #ABABAB;
+    height: 2.5em;
+}
+
+.st-calendar tbody th {
+    font-size: 80%;
+    text-align: center;
+    height: 2.5em;
+    width: 2.5em;
+    border: solid 1px lightgray;
+}
+
+.st-calendar td {
+    font-size: 80%;
+    text-align: center;
+    height: 2.5em;
+    width: 2.5em;
+    border: solid 1px lightgray;
+    cursor: default;
+}
+
+.st-calendar-holiday {
+    cursor: pointer;
+    border-radius: 2px;
+    background: cornflowerblue;
+    color: black;
+    font-weight: bold;
+}
+.st-calendar-today {
+    border: solid 2px red;
+    border-radius: 3px;
+}
+
+.st-calendar-selected {
+    background: lightblue;
+}

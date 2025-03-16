@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using IctBaden.Stonehenge.Core;
+using IctBaden.Stonehenge.Forms.ViewModels;
 using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable UnusedMember.Global
@@ -40,6 +41,9 @@ public class FormsVm : ActiveViewModel
     public string[] DropEditValues { get; set; }
 
     public TestModelClass Struct { get; set; } = new();
+    
+    public DatePicker DatePicker { get; private set; } = new();
+    
 
     public FormsVm(AppSession session)
         : base(session)
@@ -243,6 +247,23 @@ public class FormsVm : ActiveViewModel
     {
         ReceivedParameter = string.IsNullOrEmpty(parameter)
             ? "EMPTY" : parameter;
+    }
+
+    [ActionMethod]
+    public void PrevMonth()
+    {
+        DatePicker.PrevMonth();
+    }
+    [ActionMethod]
+    public void NextMonth()
+    {
+        DatePicker.NextMonth();
+    }
+    
+    [ActionMethod]
+    public void DaySelected(DateTime day)
+    {
+        DatePicker.SelectDay(day);
     }
     
 }

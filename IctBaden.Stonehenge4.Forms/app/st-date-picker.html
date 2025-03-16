@@ -1,0 +1,55 @@
+<!--CustomElement:picker-->
+<div class="dropdown show" style="display: inline-block;">
+
+    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+            style="width: 100%; text-align: left;"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        {{picker.RangeText}}
+    </button>
+
+    <div class="dropdown-menu">
+
+        <div class="st-calendar-header" style="width: 100%;">
+            {{picker.Year}}
+        </div>
+
+        <table class="st-calendar">
+            <thead>
+            <tr>
+                <th @click.stop="$emit('prevMonth')">
+                    <i class="fa-solid fa-caret-left"></i>
+                </th>
+                <th :colspan="picker.TotalColumns - 2" v-for="month in picker.Months">{{month.Name}}</th>
+                <th @click.stop="$emit('nextMonth')">
+                    <i class="fa-solid fa-caret-right"></i>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="month in picker.Months">
+                <tr>
+                    <th>Mo</th>
+                    <th>Di</th>
+                    <th>Mi</th>
+                    <th>Do</th>
+                    <th>Fr</th>
+                    <th>Sa</th>
+                    <th>So</th>
+                </tr>
+                <tr v-for="week in month.Weeks">
+                    <td v-for="day in week.Days" :class="day.Class">
+                        <span v-if="day.OtherMonth">{{day.Number}}</span>
+                        <span v-else
+                              :class="day.Class"
+                              @click="$emit('select', day.Date)"
+                              :title="day.Title">&nbsp;{{day.Number}}&nbsp;</span>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>

@@ -80,6 +80,7 @@ stonehengeViewModelName = function component() {
     
         StonehengePost: async function (urlWithParams) {
             this.StonehengeCancelVmRequests();
+            debugger;
 
             let w = 3;
             while (this.StonehengePostActive && w > 0) {
