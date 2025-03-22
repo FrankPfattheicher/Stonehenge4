@@ -63,12 +63,10 @@
                 Select Time Range (st-date-picker)
             </h4>
 
-            <st-date-picker :picker="DatePicker"
-                            style="display: inline-block; width: 20em;"
-                            @prevMonth="PrevMonth()"
-                            @nextMonth="NextMonth()"
-                            @select="DaySelected($event)" 
-                            >
+            <st-date-picker :model="DatePicker1" style="display: inline-block; width: 20em;" >
+            </st-date-picker>
+
+            <st-date-picker :model="DatePicker2" style="display: inline-block; width: 20em;" >
             </st-date-picker>
 
         </div>

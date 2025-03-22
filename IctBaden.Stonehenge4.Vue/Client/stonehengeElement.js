@@ -5,6 +5,7 @@
         data: function() {
             return { I18n: this.$parent.I18n }
         }
+        //stonehengeElementActions
         //stonehengeElementMethods
     });
 

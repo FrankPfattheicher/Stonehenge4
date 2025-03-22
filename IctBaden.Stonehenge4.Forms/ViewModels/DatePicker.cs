@@ -1,11 +1,12 @@
 using System.Globalization;
+using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Forms.ViewModels;
 
-public class DatePicker
+public class DatePicker : StonehengeComponent
 {
-    public int Year { get; private set; } = DateTime.Now.Year;
     public DatePickerMonth[] Months { get; private set; } = [];
     public string RangeText { get; private set; } = string.Empty;
 
@@ -67,6 +68,7 @@ public class DatePicker
     }
     
     
+    [ActionMethod]
     public void SelectDay(DateTime day)
     {
         var selected = GetDay(day);

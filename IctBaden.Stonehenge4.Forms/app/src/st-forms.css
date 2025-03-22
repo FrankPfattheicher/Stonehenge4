@@ -1,5 +1,4 @@
 
-
 .st-drop-edit input[type=text] {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -47,25 +46,17 @@
     padding-left: 1em;
     height: 2em;
     align-content: center;
-    border-radius: 5px;}
+    border-radius: 5px;
 }
 
-.st-calendar-header {
-    font-size: 120%;
-    text-align: center;
-    color: black;
-    background: #999999;
-    height: 2.5em;
-}
-
-.st-calendar thead th {
+.st-calendar-head {
     text-align: center;
     color: black;
     background: #ABABAB;
     height: 2.5em;
 }
 
-.st-calendar tbody th {
+.st-calendar th {
     font-size: 80%;
     text-align: center;
     height: 2.5em;
@@ -89,6 +80,11 @@
     color: black;
     font-weight: bold;
 }
+
+.st-calendar-other-month {
+    opacity: 0.3;
+}
+
 .st-calendar-today {
     border: solid 2px red;
     border-radius: 3px;

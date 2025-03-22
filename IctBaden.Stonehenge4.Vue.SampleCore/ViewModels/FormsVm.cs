@@ -42,7 +42,8 @@ public class FormsVm : ActiveViewModel
 
     public TestModelClass Struct { get; set; } = new();
     
-    public DatePicker DatePicker { get; private set; } = new();
+    public DatePicker DatePicker1 { get; private set; } = new();
+    public DatePicker DatePicker2 { get; private set; } = new();
     
 
     public FormsVm(AppSession session)
@@ -247,23 +248,6 @@ public class FormsVm : ActiveViewModel
     {
         ReceivedParameter = string.IsNullOrEmpty(parameter)
             ? "EMPTY" : parameter;
-    }
-
-    [ActionMethod]
-    public void PrevMonth()
-    {
-        DatePicker.PrevMonth();
-    }
-    [ActionMethod]
-    public void NextMonth()
-    {
-        DatePicker.NextMonth();
-    }
-    
-    [ActionMethod]
-    public void DaySelected(DateTime day)
-    {
-        DatePicker.SelectDay(day);
     }
     
 }

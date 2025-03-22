@@ -1,32 +1,37 @@
-<!--CustomElement:picker-->
+<!--CustomElement:model-->
+<!--ViewModel:DatePicker-->
 <div class="dropdown show" style="display: inline-block;">
 
     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
             style="width: 100%; text-align: left;"
             data-bs-toggle="dropdown" aria-expanded="false">
-        {{picker.RangeText}}
+        {{model.RangeText}}
     </button>
 
     <div class="dropdown-menu">
 
         <div class="st-calendar-header" style="width: 100%;">
-            {{picker.Year}}
+
         </div>
 
         <table class="st-calendar">
             <thead>
             <tr>
-                <th @click.stop="$emit('prevMonth')">
+                <th class="st-calendar-head" style="cursor: pointer;"
+                    @click.stop="PrevMonth()">
                     <i class="fa-solid fa-caret-left"></i>
                 </th>
-                <th :colspan="picker.TotalColumns - 2" v-for="month in picker.Months">{{month.Name}}</th>
-                <th @click.stop="$emit('nextMonth')">
+                <th class="st-calendar-head" :colspan="model.TotalColumns - 2" v-for="month in model.Months">
+                    {{month.Name}} {{month.Year}}
+                </th>
+                <th class="st-calendar-head" style="cursor: pointer;"
+                    @click.stop="NextMonth()">
                     <i class="fa-solid fa-caret-right"></i>
                 </th>
             </tr>
             </thead>
             <tbody>
-            <template v-for="month in picker.Months">
+            <template v-for="month in model.Months">
                 <tr>
                     <th>Mo</th>
                     <th>Di</th>
@@ -41,9 +46,10 @@
                         <span v-if="day.OtherMonth">{{day.Number}}</span>
                         <span v-else
                               :class="day.Class"
-                              @click="$emit('select', day.Date)"
+                              @click="SelectDay(day.Date)"
                               :title="day.Title">&nbsp;{{day.Number}}&nbsp;</span>
                     </td>
+                    <!--                              @click="$emit('select', day.Date)"-->
                 </tr>
             </template>
             </tbody>
