@@ -1,8 +1,13 @@
+using System.Globalization;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 namespace IctBaden.Stonehenge.Forms.ViewModels;
 
 public class DatePickerWeek
 {
-    public DatePickerDay[] Days { get; private set; }
+    public string WeekNumber { get; private set; }
+    public DatePickerDay[] Days { get; }
     
     public static bool SameDay(DateTime a, DateTime b)
     {
@@ -10,13 +15,12 @@ public class DatePickerWeek
                && a.Month == b.Month
                && a.Year == b.Year;
     }
-    public static bool OnThatDays(DateTime day, DateTime from, DateTime to)
-    {
-        return day.Date >= from.Date && day.Date <= to.Date;
-    }
 
     public DatePickerWeek(DateTime time, int month)
     {
+        WeekNumber = DatePicker.GetWeekNumber(time)
+            .ToString(CultureInfo.CurrentCulture);
+        
         var days = new List<DatePickerDay>();
         for(var day = 0; day < 7; day++)
         {
@@ -44,13 +48,8 @@ public class DatePickerWeek
         Days = days.ToArray();
     }
 
-    public DatePickerDay? GetDay(DateTime day)
+    internal IEnumerable<DatePickerDay> AllDays()
     {
-        foreach (var weekDay in Days)
-        {
-            if(SameDay(day, weekDay._date))
-                return weekDay;
-        }
-        return null;
+        return Days;
     }
 }

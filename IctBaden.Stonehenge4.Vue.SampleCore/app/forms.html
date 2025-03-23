@@ -23,7 +23,7 @@
                 <div class="dropdown show" style="display: inline-block;">
 
                     <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
-                            style="width: 8em; text-align: left;"
+                            style="width: 8em; text-align: right;"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         {{RangeText}}
                     </button>
@@ -59,14 +59,16 @@
 
             </div>
 
-            <h4>
+            <h4 style="margin-top: 1em;">
                 Select Time Range (st-date-picker)
             </h4>
 
-            <st-date-picker :model="DatePicker1" style="display: inline-block; width: 20em;" >
+            Select Day&nbsp;
+            <st-date-picker :model="DatePicker1" style="display: inline-block; width: 8em;" >
             </st-date-picker>
 
-            <st-date-picker :model="DatePicker2" style="display: inline-block; width: 20em;" >
+            &nbsp;&nbsp;Select Week&nbsp;
+            <st-date-picker :model="DatePicker2" style="display: inline-block; width: 12em;" >
             </st-date-picker>
 
         </div>

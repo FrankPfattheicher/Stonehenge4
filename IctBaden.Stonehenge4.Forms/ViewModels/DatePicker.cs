@@ -1,21 +1,28 @@
 using System.Globalization;
 using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 // ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Forms.ViewModels;
 
 public class DatePicker : StonehengeComponent
 {
+    public string[] WeekDays { get; private set; } = [];
     public DatePickerMonth[] Months { get; private set; } = [];
     public string RangeText { get; private set; } = string.Empty;
 
-    public int TotalColumns => Months.Length * 7;
+    public int TotalColumns => Months.Length * 7 + (ShowWeekNumbers ? 1 : 0);
 
     public DateTime Start = DateTime.MinValue;
     public DateTime End = DateTime.MinValue;
 
     private DateTime _first;
+
+    public bool ShowWeekNumbers { get; init; }
+    public bool SelectWeek { get; init; }
 
     public DatePicker()
     {
@@ -25,13 +32,15 @@ public class DatePicker : StonehengeComponent
 
     private void CreateCalendar()
     {
+        WeekDays = GetWeekDayNames();
+
         var month = new DatePickerMonth(_first);
         Months = [month];
-        
+
         var time = new DateTime(_first.Year, _first.Month, 1);
         var start = time - TimeSpan.FromDays(time.DayOfWeek - DayOfWeek.Monday);
         var firstMonth = time.Month - 1;
-        if(firstMonth == 0) firstMonth = 12;
+        if (firstMonth == 0) firstMonth = 12;
         var lastMonth = time.Month;
         var weeks = new List<DatePickerWeek>();
         while (start.Month == firstMonth || start.Month == lastMonth)
@@ -39,17 +48,33 @@ public class DatePicker : StonehengeComponent
             weeks.Add(new DatePickerWeek(start, time.Month));
             start += TimeSpan.FromDays(7);
         }
+
         month.Weeks = weeks.ToArray();
-        
+
         RangeChanged();
 
         SelectDay(Start);
     }
 
+    private static string[] GetWeekDayNames()
+    {
+        var weekDays = CultureInfo.CurrentUICulture.DateTimeFormat.AbbreviatedDayNames;
+        var weekDayNames = new List<string>();
+
+        var startIndex = Array.IndexOf(CultureInfo.InvariantCulture.DateTimeFormat.DayNames,
+            CultureInfo.CurrentUICulture.DateTimeFormat.FirstDayOfWeek.ToString());
+        for (var ix = 0; ix < 7; ix++)
+        {
+            weekDayNames.Add(weekDays[(startIndex + ix) % 7]);
+        }
+
+        return weekDayNames.ToArray();
+    }
+
     public void RangeChanged()
     {
         if (Start == DateTime.MinValue) return;
-        
+
         RangeText = Start.ToString("d", CultureInfo.CurrentCulture);
         if (!DatePickerWeek.SameDay(Start, End) && End > Start)
         {
@@ -57,24 +82,79 @@ public class DatePicker : StonehengeComponent
         }
     }
 
-    private DatePickerDay GetDay(DateTime day)
+    private IEnumerable<DatePickerDay> AllDays()
     {
         foreach (var month in Months)
         {
-            var selected = month.GetDay(day);
-            if (selected != null) return selected;
+            foreach (var day in month.AllDays())
+            {
+                yield return day;
+            }
         }
-        return DatePickerDay.None;
     }
-    
-    
-    [ActionMethod]
-    public void SelectDay(DateTime day)
+    private DatePickerDay GetDay(DateTime day)
     {
-        var selected = GetDay(day);
+        var selected = AllDays().FirstOrDefault(d => d.DateTime == day);
+        return selected ?? DatePickerDay.None;
+    }
+
+    internal static int GetWeekNumber(DateTime day)
+    {
+        var currentCulture = CultureInfo.CurrentUICulture;
+        var calendarWeekRule = currentCulture.DateTimeFormat.CalendarWeekRule;
+        return CultureInfo.CurrentUICulture.Calendar
+            .GetWeekOfYear(day, calendarWeekRule, currentCulture.DateTimeFormat.FirstDayOfWeek);
+    }
+
+    [ActionMethod]
+    public void SelectDay(DateTime selectedDay)
+    {
+        Start = DateTime.MinValue;
+        End = DateTime.MinValue;
+        foreach (var day in AllDays())
+        {
+            day.IsSelected = false;
+        }
+           
+        var selected = GetDay(selectedDay);
         selected.IsSelected = true;
-        Start = day;
+        
+        if (SelectWeek)
+        {
+            var week = GetWeekNumber(selectedDay);
+            for (var ix = -7; ix <= 7; ix++)
+            {
+                var day = GetDay(selectedDay + TimeSpan.FromDays(ix));
+                day.IsSelected = GetWeekNumber(day.DateTime) == week;
+                if (day.IsSelected)
+                {
+                    if (Start == DateTime.MinValue)
+                        Start = day.DateTime;
+                    else
+                        End = day.DateTime;
+                }
+            }
+        }
+        else
+        {
+            Start = selectedDay;
+        }
+        
         RangeChanged();
+    }
+
+    [ActionMethod]
+    public void PrevYear()
+    {
+        _first = new DateTime(_first.Year - 1, _first.Month, _first.Day);
+        CreateCalendar();
+    }
+
+    [ActionMethod]
+    public void NextYear()
+    {
+        _first = new DateTime(_first.Year + 1, _first.Month, _first.Day);
+        CreateCalendar();
     }
 
     [ActionMethod]
@@ -83,11 +163,11 @@ public class DatePicker : StonehengeComponent
         _first -= TimeSpan.FromDays(30);
         CreateCalendar();
     }
+
     [ActionMethod]
     public void NextMonth()
     {
         _first += TimeSpan.FromDays(30);
         CreateCalendar();
     }
-
 }

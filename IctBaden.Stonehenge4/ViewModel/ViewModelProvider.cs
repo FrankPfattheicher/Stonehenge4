@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -82,10 +81,6 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         "{ 'executed': true }",
                         Resource.Cache.None));
                 }
-
-                return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json,
-                    "{ 'executed': false }",
-                    Resource.Cache.None));
             }
 
             return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json,
@@ -101,8 +96,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase)) return Task.FromResult<Resource?>(null);
 
         var parts = resourceName.Split('/');
-        var vmTypeName = string.Empty;
-        var methodName = string.Empty;
+        string vmTypeName;
+        string methodName;
         var componentId = string.Empty;
         switch (parts.Length)
         {

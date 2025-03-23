@@ -43,7 +43,7 @@ public class FormsVm : ActiveViewModel
     public TestModelClass Struct { get; set; } = new();
     
     public DatePicker DatePicker1 { get; private set; } = new();
-    public DatePicker DatePicker2 { get; private set; } = new();
+    public DatePicker DatePicker2 { get; private set; } = new() { ShowWeekNumbers = true, SelectWeek = true };
     
 
     public FormsVm(AppSession session)

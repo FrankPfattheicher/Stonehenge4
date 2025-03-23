@@ -1,13 +1,17 @@
-using System.Globalization;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Forms.ViewModels;
 
 public class DatePickerDay
 {
-    internal readonly DateTime _date;
+    private readonly bool _today;
+    internal readonly DateTime DateTime;
+
     public string Date { get; private set; }
-    public bool Today { get; private set; }
-    public bool OtherMonth { get; private set; }
+    public bool OtherMonth { get; }
     public bool IsSelected { get; internal set; }
     public int Number { get; private set; }
     public string Title { get; private set; }
@@ -16,24 +20,25 @@ public class DatePickerDay
     {
         get
         {
-            var css = string.Empty;
-            if(OtherMonth) css = "st-calendar-other-month";
-            else if(Today) css = "st-calendar-today";
+            var css = "st-calendar-day";
+            if(OtherMonth) css += " st-calendar-other-month";
+            else if(_today) css += " st-calendar-today";
             if(IsSelected) css += " st-calendar-selected";
             return css;
         }
     }
 
-    public DatePickerDay(DateTime date, bool today, bool otherMonth, string title)
+    public DatePickerDay(DateTime dateTime, bool today, bool otherMonth, string title)
     {
-        _date = date;
-        Today = today;
+        DateTime = dateTime;
+        _today = today;
         OtherMonth = otherMonth;
         Title = title;
-        Date = date.ToString("O");
-        Number = date.Day;
+        Date = dateTime.ToString("O");
+        Number = dateTime.Day;
     }
     
-    public static readonly DatePickerDay None = new DatePickerDay(DateTime.MinValue, false, true, string.Empty);
+    public static readonly DatePickerDay None = 
+        new(DateTime.MinValue, today: false, otherMonth: true, string.Empty);
     
 }
