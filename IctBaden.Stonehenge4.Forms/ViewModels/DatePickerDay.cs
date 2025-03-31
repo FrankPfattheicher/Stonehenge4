@@ -9,12 +9,14 @@ public class DatePickerDay
 {
     private readonly bool _today;
     internal readonly DateTime DateTime;
+    internal bool IsNone;
 
     public string Date { get; private set; }
     public bool OtherMonth { get; }
     public bool IsSelected { get; internal set; }
     public int Number { get; private set; }
     public string Title { get; private set; }
+
 
     public string Class
     {
@@ -28,6 +30,7 @@ public class DatePickerDay
         }
     }
 
+    // ReSharper disable once ConvertToPrimaryConstructor
     public DatePickerDay(DateTime dateTime, bool today, bool otherMonth, string title)
     {
         DateTime = dateTime;
@@ -39,6 +42,6 @@ public class DatePickerDay
     }
     
     public static readonly DatePickerDay None = 
-        new(DateTime.MinValue, today: false, otherMonth: true, string.Empty);
+        new(DateTime.MinValue, today: false, otherMonth: true, string.Empty) { IsNone = true };
     
 }

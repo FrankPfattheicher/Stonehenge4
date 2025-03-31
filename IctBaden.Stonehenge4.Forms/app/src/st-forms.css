@@ -89,15 +89,18 @@
 .st-calendar-day:hover {
     background: lightblue;
 }
+.st-calendar-day span {
+    padding: 3px;
+}
 
 .st-calendar-other-month {
     opacity: 0.3;
     cursor: default;
-    background: transparent !important;
 }
 
-.st-calendar-today {
+.st-calendar-today span {
     border: solid 4px red;
+    border-radius: 9px;
 }
 
 .st-calendar-selected {

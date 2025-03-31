@@ -2,7 +2,7 @@
 <!--ViewModel:DatePicker-->
 <div class="dropdown show" style="display: inline-block;">
 
-    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+    <button class="btn btn-secondary dropdown-toggle" type="button"
             style="width: 100%; text-align: right;"
             data-bs-toggle="dropdown" aria-expanded="false">
         {{model.RangeText}}
@@ -52,11 +52,11 @@
                 <tr v-for="week in month.Weeks">
                     <td v-if="model.ShowWeekNumbers" class="st-calendar-week" >{{week.WeekNumber}}</td>
                     <template v-for="day in week.Days">
-                        <td v-if="day.OtherMonth" :class="day.Class">
-                            {{day.Number}}
+                        <td v-if="day.OtherMonth" :class="day.Class" @click.stop="">
+                            <span>{{day.Number}}</span>
                         </td>
                         <td v-else :class="day.Class" @click="SelectDay(day.Date)">
-                            {{day.Number}}
+                            <span>{{day.Number}}</span>
                         </td>
                     </template>
                 </tr>

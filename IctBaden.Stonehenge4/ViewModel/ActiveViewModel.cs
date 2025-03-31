@@ -37,6 +37,7 @@ using System.Threading;
 using System.Timers;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Types;
 using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
@@ -244,6 +245,15 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     /// </summary>
     public virtual void OnLoad()
     {
+        var componentProperties = GetType()
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(property => property.PropertyType.IsSubclassOf(typeof(StonehengeComponent)))
+            .ToArray();
+        foreach (var property in componentProperties)
+        {
+            var component = property.GetValue(this) as StonehengeComponent;
+            component?.OnLoad();
+        }
     }
 
     protected void SetParent(ActiveViewModel parent)
