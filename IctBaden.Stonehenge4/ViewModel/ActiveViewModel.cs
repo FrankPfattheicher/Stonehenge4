@@ -195,6 +195,13 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         SupportsEvents = (session != null);
         Session = session ?? new AppSession();
 
+        foreach (var component in GetComponents())
+        {
+            component.Session = Session;
+            component.SupportsEvents = SupportsEvents;
+            component.SetParent(this);
+        }
+
         foreach (var prop in GetType().GetProperties())
         {
             if (prop.PropertyType.IsGenericType &&
@@ -235,9 +242,31 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
                 I18n.Add(propertyInfo.Name, propertyInfo.GetValue(null)?.ToString() ?? string.Empty);
             }
         }
+        foreach (var component in GetComponents())
+        {
+            component.UpdateI18n();
+        }
+
         NotifyPropertyChanged(nameof(I18n));
     }
-    
+
+    internal StonehengeComponent[] GetComponents()
+    {
+        var componentProperties = GetType()
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(property => property.PropertyType.IsSubclassOf(typeof(StonehengeComponent)))
+            .ToArray();
+        
+        var components = new List<StonehengeComponent>();
+        foreach (var property in componentProperties)
+        {
+            if (property.GetValue(this) is StonehengeComponent component)
+            {
+                components.Add(component);
+            }
+        }
+        return components.ToArray();
+    }
 
     /// <summary>
     /// Called when application navigates to this view model.
@@ -245,14 +274,10 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     /// </summary>
     public virtual void OnLoad()
     {
-        var componentProperties = GetType()
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(property => property.PropertyType.IsSubclassOf(typeof(StonehengeComponent)))
-            .ToArray();
-        foreach (var property in componentProperties)
+        foreach (var component in GetComponents())
         {
-            var component = property.GetValue(this) as StonehengeComponent;
-            component?.OnLoad();
+            component.I18Names = component.GetI18Names();
+            component.OnLoad();
         }
     }
 

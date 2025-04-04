@@ -1,6 +1,7 @@
 using System.Globalization;
 using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -23,6 +24,7 @@ public class DatePicker : StonehengeComponent
     private DateTime _first = DateTime.Now;
 
     public string EmptyText { get; init; } = string.Empty;
+    public bool ShowTodayLink { get; init; }
     public bool ShowWeekNumbers { get; init; }
     public bool SelectWeek { get; init; }
 
@@ -102,6 +104,7 @@ public class DatePicker : StonehengeComponent
             }
         }
     }
+
     private DatePickerDay GetDay(DateTime day)
     {
         var selected = AllDays().FirstOrDefault(d => d.DateTime == day);
@@ -130,7 +133,7 @@ public class DatePicker : StonehengeComponent
             for (var ix = -7; ix <= 7; ix++)
             {
                 var day = GetDay(Start + TimeSpan.FromDays(ix));
-                if(day.IsNone) continue;
+                if (day.IsNone) continue;
                 day.IsSelected = GetWeekNumber(day.DateTime) == WeekNumber;
             }
         }
@@ -140,15 +143,15 @@ public class DatePicker : StonehengeComponent
             day.IsSelected = true;
         }
     }
-    
+
     [ActionMethod]
     public void SelectDay(DateTime selectedDay)
     {
         if (selectedDay == DateTime.MinValue) return;
-        
+
         var selected = GetDay(selectedDay);
         selected.IsSelected = true;
-        
+
         if (SelectWeek)
         {
             Start = DateTime.MinValue;
@@ -157,7 +160,7 @@ public class DatePicker : StonehengeComponent
             for (var ix = -7; ix <= 7; ix++)
             {
                 var day = GetDay(selectedDay + TimeSpan.FromDays(ix));
-                if(day.IsNone) continue;
+                if (day.IsNone) continue;
                 day.IsSelected = GetWeekNumber(day.DateTime) == WeekNumber;
                 if (day.IsSelected)
                 {
@@ -172,7 +175,7 @@ public class DatePicker : StonehengeComponent
         {
             Start = selectedDay;
         }
-        
+
         RangeChanged();
     }
 
@@ -198,6 +201,7 @@ public class DatePicker : StonehengeComponent
         {
             _first -= TimeSpan.FromDays(1);
         }
+
         CreateCalendar();
     }
 
@@ -209,6 +213,14 @@ public class DatePicker : StonehengeComponent
         {
             _first += TimeSpan.FromDays(1);
         }
+
+        CreateCalendar();
+    }
+
+    [ActionMethod]
+    public void GotoToday()
+    {
+        _first = DateTime.Now;
         CreateCalendar();
     }
 }

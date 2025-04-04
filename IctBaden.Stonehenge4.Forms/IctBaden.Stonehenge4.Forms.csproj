@@ -31,6 +31,10 @@
       <EmbeddedResource Include="app\src\st-forms.css" />
       <None Remove="app\st-date-picker.html" />
       <EmbeddedResource Include="app\st-date-picker.html" />
+      <EmbeddedResource Update="DatePickerI18n.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>DatePicker.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -42,6 +46,14 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="DatePickerI18n.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>DatePickerI18n.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

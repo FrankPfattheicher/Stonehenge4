@@ -8,11 +8,7 @@
         {{model.RangeText}}
     </button>
 
-    <div class="dropdown-menu" style="width: 20em;">
-
-        <div class="st-calendar-header" style="width: 100%;">
-
-        </div>
+    <div class="dropdown-menu" style="width: max-content;">
 
         <table class="st-calendar">
             <thead>
@@ -46,11 +42,11 @@
             <tbody>
             <template v-for="month in model.Months">
                 <tr>
-                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week" >KW</td>
+                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week">KW</td>
                     <th v-for="wd in model.WeekDays">{{wd}}</th>
                 </tr>
                 <tr v-for="week in month.Weeks">
-                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week" >{{week.WeekNumber}}</td>
+                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week">{{week.WeekNumber}}</td>
                     <template v-for="day in week.Days">
                         <td v-if="day.OtherMonth" :class="day.Class" @click.stop="">
                             <span>{{day.Number}}</span>
@@ -61,6 +57,11 @@
                     </template>
                 </tr>
             </template>
+            <tr v-if="model.ShowTodayLink">
+                <td :colspan="model.TotalColumns">
+                    &nbsp;&nbsp;<a href="#" @click.stop="GotoToday()" >{{model.I18n.DatePickerToday}}</a>
+                </td>
+            </tr>
             </tbody>
         </table>
 
