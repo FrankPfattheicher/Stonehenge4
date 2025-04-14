@@ -107,6 +107,12 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
             }
 
             info.VmName = string.Empty;
+            match = ExtractName.Match(pageText);
+            if (match.Success)
+            {
+                info.VmName = match.Groups[1].Value;
+            }
+
             info.SortIndex = 0;
         }
         else

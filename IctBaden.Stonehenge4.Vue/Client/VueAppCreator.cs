@@ -134,7 +134,7 @@ internal class VueAppCreator
     public void CreateComponents(StonehengeResourceLoader resourceLoader)
     {
         var viewModels = _vueContent
-            .Where(res => res.Value.ViewModel?.VmName != null)
+            .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName) && res.Value.ViewModel?.VmName != null)
             .Select(res => res.Value)
             .Distinct()
             .ToList();
@@ -379,6 +379,16 @@ internal class VueAppCreator
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
                 elementJs = elementJs.Replace("//stonehengeElementMethods", methods, StringComparison.Ordinal);
 
+                if (!string.IsNullOrEmpty(element.ViewModel?.VmName))
+                {
+                    var actionMethods = GetActionMethods(element.ViewModel.VmName);
+                    if (!string.IsNullOrEmpty(actionMethods))
+                    {
+                        methods = ", methods: {" + actionMethods + "}";
+                        elementJs = elementJs.Replace("//stonehengeElementActions", methods, StringComparison.Ordinal);
+                    }
+                }
+                
                 elements.Add(elementJs);
 
                 var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs,
@@ -395,4 +405,34 @@ internal class VueAppCreator
 
         return elements;
     }
+    
+    private static string GetActionMethods(string vmName)
+    {
+        var vmType = GetVmType(vmName);
+        if (vmType == null) return string.Empty;
+ 
+        const string methodTemplate =
+            "stonehengeMethodName: function({paramNames}) { app[app['activeViewModelName']]\n.StonehengePost('ViewModel/' + app['activeViewModelName'] + '/' + this.model.ComponentId + '/stonehengeMethodName{paramValues}'); }";
+
+        var actionMethods = new List<string>();
+        foreach (var methodInfo in vmType.GetMethods().Where(methodInfo =>
+                     methodInfo.GetCustomAttributes(false).OfType<ActionMethodAttribute>().Any()))
+        {
+            var paramNames = methodInfo.GetParameters().Select(p => p.Name).ToArray();
+            var paramValues = paramNames.Any()
+                ? "?" + string.Join("&", paramNames.Select(n => string.Format("{0}='+encodeURIComponent({0})+'", n)))
+                : string.Empty;
+
+            var method = methodTemplate
+                .Replace("stonehengeMethodName", methodInfo.Name)
+                .Replace("{paramNames}", string.Join(",", paramNames))
+                .Replace("{paramValues}", paramValues)
+                .Replace("+''", string.Empty);
+
+            actionMethods.Add(method);
+        }
+       
+        return string.Join(", ", actionMethods);
+    }
+    
 }

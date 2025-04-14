@@ -38,14 +38,18 @@ public class Resource
         : this(name, source, type, cacheMode)
     {
         if (type.IsBinary)
-            throw new ArgumentException("Resource " + name + " is expected as text", nameof(text));
+        {
+            throw new ArgumentException(@"Resource " + name + @" is expected as text", nameof(text));
+        }
         Text = text;
     }
     public Resource(string name, string source, ResourceType type, byte[] data, Cache cacheMode)
         : this(name, source, type, cacheMode)
     {
-        if(!type.IsBinary)
-            throw new ArgumentException("Resource " + name + " is expected as binary", nameof(data));
+        if (!type.IsBinary)
+        {
+            throw new ArgumentException(@"Resource " + name + @" is expected as binary", nameof(data));
+        }
         Data = data;
     }
 

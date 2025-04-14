@@ -1,5 +1,4 @@
 
-
 .st-drop-edit input[type=text] {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -47,5 +46,63 @@
     padding-left: 1em;
     height: 2em;
     align-content: center;
-    border-radius: 5px;}
+    border-radius: 5px;
+}
+
+.st-calendar {
+    cursor: default;
+}
+
+.st-calendar-head {
+    text-align: center;
+    color: black;
+    background: #ABABAB;
+    font-size: 80%;
+    height: 2.5em;
+    width: 2.5em;
+    border: solid 1px lightgray;
+}
+
+.st-calendar-week {
+    text-align: center;
+    color: black;
+    background: #CCCCCC;
+    height: 2.5em;
+}
+
+.st-calendar-holiday {
+    cursor: pointer;
+    border-radius: 2px;
+    background: cornflowerblue;
+    color: black;
+    font-weight: bold;
+}
+
+.st-calendar-day {
+    font-size: 80%;
+    text-align: center;
+    height: 2.5em;
+    width: 2.5em;
+    border: solid 1px lightgray;
+    cursor: pointer;
+}
+.st-calendar-day:hover {
+    background: lightblue;
+}
+.st-calendar-day span {
+    padding: 3px;
+}
+
+.st-calendar-other-month {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.st-calendar-today span {
+    border: solid 4px red;
+    border-radius: 9px;
+}
+
+.st-calendar-selected {
+    background: lightblue;
 }

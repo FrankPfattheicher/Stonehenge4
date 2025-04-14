@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -17,6 +16,7 @@ using System.Web;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Types;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -81,10 +81,6 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         "{ 'executed': true }",
                         Resource.Cache.None));
                 }
-
-                return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json,
-                    "{ 'executed': false }",
-                    Resource.Cache.None));
             }
 
             return Task.FromResult<Resource?>(new Resource(commandName, "Command", ResourceType.Json,
@@ -100,11 +96,24 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase)) return Task.FromResult<Resource?>(null);
 
         var parts = resourceName.Split('/');
-        if (parts.Length != 3) return Task.FromResult<Resource?>(null);
-
-        var vmTypeName = parts[1];
-        var methodName = parts[2];
-
+        string vmTypeName;
+        string methodName;
+        var componentId = string.Empty;
+        switch (parts.Length)
+        {
+            case 3:
+                vmTypeName = parts[1];
+                methodName = parts[2];
+                break;
+            case 4:
+                vmTypeName = parts[1];
+                componentId = parts[2];
+                methodName = parts[3];
+                break;
+            default:
+                return Task.FromResult<Resource?>(null);
+        }
+        
         if (session?.ViewModel == null)
         {
             logger.LogWarning("ViewModelProvider: Set VM={VmTypeName}, no current VM", vmTypeName);
@@ -126,7 +135,30 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
         }
 
-        var method = vmType?.GetMethod(methodName);
+        var targetType = vmType;
+        var targetObject = session?.ViewModel;
+        
+        if (vmType != null && !string.IsNullOrEmpty(componentId))
+        {
+            var vmProperties = vmType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            
+            foreach (var prop in vmProperties)
+            {
+                if(!prop.PropertyType.IsSubclassOf(typeof(StonehengeComponent))) continue;
+                var component = (StonehengeComponent)prop.GetValue(session?.ViewModel)!;
+                if (!string.Equals(component.ComponentId, componentId, StringComparison.OrdinalIgnoreCase)) continue;
+                targetType = prop.PropertyType;
+                targetObject = component; 
+                break;
+            }
+            if (targetType == null)
+            {
+                logger.LogWarning("ViewModelProvider: Component with ComponentId={ComponentId} not found in VM={VmTypeName}", componentId, vmTypeName);
+                return Task.FromResult<Resource?>(null);
+            }
+        }
+        
+        var method = targetType?.GetMethod(methodName);
         if (method == null)
         {
             logger.LogWarning("ViewModelProvider: ActionMethod {MethodName} not found", methodName);
@@ -150,14 +182,14 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 .ToArray();
             if (executeAsync)
             {
-                var task = Task.Run(() => method.Invoke(session?.ViewModel, methodParams));
+                var task = Task.Run(() => method.Invoke(targetObject, methodParams));
 #pragma warning disable MA0042
                 task.Wait(1000);
 #pragma warning restore MA0042
                 return GetEvents(session, CancellationToken.None, resourceName);
             }
 
-            method.Invoke(session?.ViewModel, methodParams);
+            method.Invoke(targetObject, methodParams);
         }
         catch (Exception ex)
         {

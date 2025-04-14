@@ -20,7 +20,7 @@ internal static class Program
 
     // ReSharper disable once MemberCanBePrivate.Global
     public static readonly ILoggerFactory LoggerFactory = 
-        Logger.CreateConsoleAndTronFactory(Logger.GetLogConfiguration(LogLevel.Trace));
+        Logger.CreateConsoleAndTronFactory(Logger.GetLogConfiguration(LogLevel.Debug));
 
     /// <summary>
     /// The main entry point for the application.

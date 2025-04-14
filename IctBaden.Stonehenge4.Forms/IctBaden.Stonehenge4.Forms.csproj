@@ -23,16 +23,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ViewModels\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="app\st-drop-edit.html" />
       <EmbeddedResource Include="app\st-drop-edit.html" />
       <None Remove="app\st-error-message.html" />
       <EmbeddedResource Include="app\st-error-message.html" />
       <None Remove="app\src\st-forms.css" />
       <EmbeddedResource Include="app\src\st-forms.css" />
+      <None Remove="app\st-date-picker.html" />
+      <EmbeddedResource Include="app\st-date-picker.html" />
+      <EmbeddedResource Update="DatePickerI18n.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>DatePicker.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -40,10 +42,18 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Meziantou.Analyzer" Version="2.0.186">
+      <PackageReference Include="Meziantou.Analyzer" Version="2.0.189">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="DatePickerI18n.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>DatePickerI18n.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
