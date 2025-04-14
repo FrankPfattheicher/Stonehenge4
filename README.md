@@ -1,10 +1,12 @@
 # Stonehenge 4
-An open source .NET Framework to use Web UI technologies for desktop and/or web applications.
+An open source .NET Framework to use Web UI technologies for desktop and/or web applications based on the MVVM pattern.
 
-See a (very) short [getting started introduction here](docs/GettingStarted.md).
+* See a (very) short [getting started introduction here](docs/GettingStarted.md).
+* Creating [reusable components](docs/ReusableComponents.md)
+
 
 ## Version 4
-This version is based on .NET 6. 
+This version is based on .NET 8. 
 
 **Attention:** Microsoft.NET.Sdk.Web is required!
 
@@ -21,6 +23,10 @@ Used technology
 
 Read the release history: [ReleaseNotes](ReleaseNotes3.md)
 
+## Other Projects supporting the same technology stack
+
+* [DotVVM - Interactive web apps with just C# and HTML](https://www.dotvvm.com/) 
+
 ## Still there
 * v3.x - Net Core 3.1 based
 * v3.6 - Aurelia client framework (deprecated, included up to v3.6 only)
@@ -29,7 +35,7 @@ Read the release history: [ReleaseNotes](ReleaseNotes3.md)
 
 
 **SampleFull with target framework V4.7.1**    
-The application is able to use netstandard 2.0 libraries adding the following lines to lines to the csproj file.
+The application is able to use netstandard 2.0 libraries adding the following lines to the csproj file.
 
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   	<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>

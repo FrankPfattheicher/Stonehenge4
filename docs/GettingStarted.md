@@ -8,11 +8,11 @@
 
     Under project properties choose .NET Core 2.1 or 2.2 as target framework
 
-**JetBrains Rider 2021**
+**JetBrains Rider 2021..2025**
 
     File - New... - .NET Core - Console Application
 
-    Select Framework .NET App v6.0 as target framework
+    Select Framework .NET App v8.0 as target framework
 
 ## Add Stonehenge 4 Nuget package
 
