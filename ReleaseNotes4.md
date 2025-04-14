@@ -1,5 +1,5 @@
 
-* 8.3.0 - 31.03.2025 Font Awesome v6.7.2, Bootstrap v5.3.3
+* 8.3.0 - 14.04.2025 Font Awesome v6.7.2, Bootstrap v5.3.3, introduced StonehengeComponent
 
 * 8.2.6 - 02.03.2025 Fix deserialization of string and value type arrays in DeserializeStructValue
 * 8.2.5 - 27.02.2025 C3 chart destroy on new id
