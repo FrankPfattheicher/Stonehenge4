@@ -1,4 +1,5 @@
 
+* 8.3.1 - 15.04.2025 Fixed nuget dependencies
 * 8.3.0 - 14.04.2025 Font Awesome v6.7.2, Bootstrap v5.3.3, introduced StonehengeComponent
 
 * 8.2.6 - 02.03.2025 Fix deserialization of string and value type arrays in DeserializeStructValue

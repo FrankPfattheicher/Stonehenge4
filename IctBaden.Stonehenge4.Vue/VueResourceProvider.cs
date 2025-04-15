@@ -64,7 +64,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
 
         AddFileSystemContent(options.AppFilesPath);
         AddResourceContent();
-        
+
         var contentPages = _vueContent
             .Where(res => string.IsNullOrEmpty(res.Value.ViewModel?.ElementName))
             .Select(res => res.Value.ViewModel)
@@ -88,9 +88,10 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
     private static readonly Regex ExtractElement = RegexExtractElement();
     private static readonly Regex ExtractTitle = RegexExtractTitle();
 
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     private ViewModelInfo GetViewModelInfo(string route, string pageText)
     {
-        if(route.Length > 1)
+        if (route.Length > 1)
             route = string.Concat(char.ToUpper(route[0], CultureInfo.InvariantCulture).ToString(), route.AsSpan(1));
         var info = new ViewModelInfo(route.ToLower(CultureInfo.InvariantCulture), route + "Vm");
 
@@ -106,13 +107,10 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                     .ToList();
             }
 
-            info.VmName = string.Empty;
             match = ExtractName.Match(pageText);
-            if (match.Success)
-            {
-                info.VmName = match.Groups[1].Value;
-            }
-
+            info.VmName = match.Success
+                ? match.Groups[1].Value
+                : string.Empty;
             info.SortIndex = 0;
         }
         else
@@ -188,7 +186,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
         {
             foreach (var resourceName in assembly.GetManifestResourceNames()
                          .Where(name =>
-                             name.EndsWith(".html", StringComparison.OrdinalIgnoreCase) && 
+                             name.EndsWith(".html", StringComparison.OrdinalIgnoreCase) &&
                              !name.Contains("index.html", StringComparison.OrdinalIgnoreCase) &&
                              !name.Contains("src.app.html", StringComparison.OrdinalIgnoreCase))
                          .Order(StringComparer.Ordinal))
@@ -210,7 +208,9 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
 #pragma warning restore MA0001
                 if (_vueContent.ContainsKey(resourceId))
                 {
-                    _logger.LogWarning("VueResourceProvider.AddResourceContent: Resource with id {ResourceId} already exits", resourceId);
+                    _logger.LogWarning(
+                        "VueResourceProvider.AddResourceContent: Resource with id {ResourceId} already exits",
+                        resourceId);
                     continue;
                 }
 
@@ -240,27 +240,36 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
     }
 
 
-    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
-    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters, IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+    public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
+    public Task<Resource?> Put(AppSession? session, string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+
+    public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters,
+        IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
+
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName,
+        IDictionary<string, string> parameters)
     {
         resourceName = resourceName
             .Replace('/', '.')
             .Replace('@', '_')
             .Replace('-', '_');
-        return _vueContent.TryGetValue(resourceName, out var value) 
-            ? Task.FromResult<Resource?>(value) 
+        return _vueContent.TryGetValue(resourceName, out var value)
+            ? Task.FromResult<Resource?>(value)
             : Task.FromResult<Resource?>(null);
     }
 
     [GeneratedRegex("<!--ViewModel:(\\w+)-->", RegexOptions.Compiled)]
     private static partial Regex RegexExtractName();
+
     [GeneratedRegex("<!--CustomElement(:([\\w, ]+))?-->", RegexOptions.Compiled)]
     private static partial Regex RegexExtractElement();
+
     [GeneratedRegex("<!--Title:([^:]*)(:(-?\\d*))?-->", RegexOptions.Compiled)]
     private static partial Regex RegexExtractTitle();
+
     [GeneratedRegex("I18n\\.([a-zA-Z0-9]+)")]
     // ReSharper disable once InconsistentNaming
     private static partial Regex I18nRegex();
