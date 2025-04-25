@@ -9,22 +9,22 @@ public class DatePickerWeek
     public string WeekNumber { get; private set; }
     public DatePickerDay[] Days { get; }
     
-    public static bool SameDay(DateTime a, DateTime b)
+    public static bool SameDay(DateOnly a, DateOnly b)
     {
         return a.Day == b.Day
                && a.Month == b.Month
                && a.Year == b.Year;
     }
 
-    public DatePickerWeek(DateTime time, int month)
+    public DatePickerWeek(DateOnly date, int month)
     {
-        WeekNumber = DatePicker.GetWeekNumber(time)
+        WeekNumber = DatePicker.GetWeekNumber(date)
             .ToString(CultureInfo.CurrentCulture);
         
         var days = new List<DatePickerDay>();
         for(var day = 0; day < 7; day++)
         {
-            var today = SameDay(time, DateTime.Now);
+            var today = SameDay(date, DateOnly.FromDateTime(DateTime.Now));
             // var appointments = dates.Where(d => OnThatDays(time, d.TimeFrom, d.TimeTo)).ToList();
             var tipText = string.Empty; 
             // var tipText = appointments.Count > 0
@@ -42,8 +42,8 @@ public class DatePickerWeek
                 }
             }
 
-            days.Add(new DatePickerDay(time, today, time.Month != month, tipText));
-            time += TimeSpan.FromDays(1);
+            days.Add(new DatePickerDay(date, today, date.Month != month, tipText));
+            date = date.AddDays(1);
         }
         Days = days.ToArray();
     }

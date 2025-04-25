@@ -43,7 +43,21 @@ public class FormsVm : ActiveViewModel
     public TestModelClass Struct { get; set; } = new();
     
     public DatePicker DatePicker1 { get; private set; } = new() { EmptyText = "-none-" };
-    public DatePicker DatePicker2 { get; private set; } = new() { EmptyText = "-no week-", ShowWeekNumbers = true, SelectWeek = true, ShowTodayLink = true };
+    public DatePicker DatePicker2 { get; private set; } = new()
+    {
+        EmptyText = "-select week-", 
+        ShowWeekNumbers = true, 
+        Selection = DatePickerSelection.Week, 
+        ShowTodayLink = true
+    };
+    public DatePicker DatePicker3 { get; private set; } = new()
+    {
+        EmptyText = "-select range-", 
+        ShowWeekNumbers = true, 
+        ShowTodayLink = true,
+        Selection = DatePickerSelection.Range, 
+        ShowMonthsCount = 2
+    };
     
 
     public FormsVm(AppSession session)
