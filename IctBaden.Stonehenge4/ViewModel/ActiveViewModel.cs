@@ -631,7 +631,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public void ExecuteClientScript(string script)
     {
         script = script.Trim();
-        if (!script.EndsWith(";", StringComparison.Ordinal))
+        if (!script.EndsWith(';'))
         {
             script += "; ";
         }

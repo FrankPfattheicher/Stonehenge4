@@ -1,4 +1,6 @@
 
+* 8.3.3 - 26.04.2025 DatePicker MinDate, fixed week numbers, allow single day range
+* 8.3.2 - 25.04.2025 Added DatePicker control
 * 8.3.1 - 15.04.2025 Fixed nuget dependencies
 * 8.3.0 - 14.04.2025 Font Awesome v6.7.2, Bootstrap v5.3.3, introduced StonehengeComponent
 

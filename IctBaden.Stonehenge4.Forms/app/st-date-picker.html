@@ -8,7 +8,7 @@
         {{model.RangeText}}
     </button>
 
-    <div class="dropdown-menu" style="width: max-content;">
+    <div :id="model.ComponentId" class="dropdown-menu" style="width: max-content;" @click="SelectDay('1.1.1000')">
 
         <table class="st-calendar">
             <thead>
@@ -17,55 +17,61 @@
                     @click.stop="PrevYear()">
                     <i class="fa-solid fa-backward"></i>
                 </th>
-                <th class="st-calendar-head" :colspan="model.TotalColumns - 2" v-for="month in model.Months">
-                    {{month.Year}}
+                <th class="st-calendar-head" style="cursor: pointer;"
+                    @click.stop="PrevMonth()">
+                    <i class="fa-solid fa-caret-left"></i>
+                </th>
+                <th class="st-calendar-head" v-for="month in model.Months">
+                    {{month.Name}} {{month.Year}}
+                </th>
+                <th class="st-calendar-head" style="cursor: pointer;"
+                    @click.stop="NextMonth()">
+                    <i class="fa-solid fa-caret-right"></i>
                 </th>
                 <th class="st-calendar-head" style="cursor: pointer;"
                     @click.stop="NextYear()">
                     <i class="fa-solid fa-forward"></i>
                 </th>
             </tr>
-            <tr>
-                <th class="st-calendar-head" style="cursor: pointer;"
-                    @click.stop="PrevMonth()">
-                    <i class="fa-solid fa-caret-left"></i>
-                </th>
-                <th class="st-calendar-head" :colspan="model.TotalColumns - 2" v-for="month in model.Months">
-                    {{month.Name}}
-                </th>
-                <th class="st-calendar-head" style="cursor: pointer;"
-                    @click.stop="NextMonth()">
-                    <i class="fa-solid fa-caret-right"></i>
-                </th>
-            </tr>
             </thead>
             <tbody>
-            <template v-for="month in model.Months">
-                <tr>
-                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week">KW</td>
-                    <th v-for="wd in model.WeekDays">{{wd}}</th>
-                </tr>
-                <tr v-for="week in month.Weeks">
-                    <td v-if="model.ShowWeekNumbers" class="st-calendar-week">{{week.WeekNumber}}</td>
-                    <template v-for="day in week.Days">
-                        <td v-if="day.OtherMonth" :class="day.Class" @click.stop="">
-                            <span>{{day.Number}}</span>
-                        </td>
-                        <td v-else :class="day.Class" @click="SelectDay(day.Date)">
-                            <span>{{day.Number}}</span>
-                        </td>
-                    </template>
-                </tr>
-            </template>
+            <tr>
+                <td></td>
+                <td></td>
+                <template v-for="month in model.Months">
+                    <td style="vertical-align: top;">
+                        <table>
+                            <tr>
+                                <td v-if="model.ShowWeekNumbers" class="st-calendar-week">KW</td>
+                                <th v-for="wd in model.WeekDays">{{wd}}</th>
+                            </tr>
+                            <tr v-for="week in month.Weeks">
+                                <td v-if="model.ShowWeekNumbers" class="st-calendar-week">{{week.WeekNumber}}</td>
+                                <template v-for="day in week.Days">
+                                    <td v-if="day.OtherMonth" :class="day.Class" @click.stop="">
+                                        <span>{{day.Number}}</span>
+                                    </td>
+                                    <td v-else :class="day.Class" @click.stop="SelectDay(day.Day)">
+                                        <span>{{day.Number}}</span>
+                                    </td>
+                                </template>
+                            </tr>
+                        </table>
+                    </td>
+                </template>
+                <td></td>
+                <td></td>
+            </tr>
             <tr v-if="model.ShowTodayLink">
-                <td :colspan="model.TotalColumns">
-                    &nbsp;&nbsp;<a href="#" @click.stop="GotoToday()" >{{model.I18n.DatePickerToday}}</a>
+                <td></td>
+                <td></td>
+                <td colspan="7">
+                    &nbsp;&nbsp;<a href="#" @click.stop="GotoToday()">{{model.I18n.DatePickerToday}}</a>
                 </td>
             </tr>
             </tbody>
         </table>
 
     </div>
-
 
 </div>
