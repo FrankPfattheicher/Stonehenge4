@@ -16,7 +16,7 @@ public class DatePickerWeek
                && a.Year == b.Year;
     }
 
-    public DatePickerWeek(DateOnly date, int month)
+    public DatePickerWeek(DateOnly date, int month, DateOnly minDate)
     {
         WeekNumber = DatePicker.GetWeekNumber(date)
             .ToString(CultureInfo.CurrentCulture);
@@ -42,7 +42,7 @@ public class DatePickerWeek
                 }
             }
 
-            days.Add(new DatePickerDay(date, today, date.Month != month, tipText));
+            days.Add(new DatePickerDay(date, today, date.Month != month || date < minDate, tipText));
             date = date.AddDays(1);
         }
         Days = days.ToArray();

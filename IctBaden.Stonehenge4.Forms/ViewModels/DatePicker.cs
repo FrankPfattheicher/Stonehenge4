@@ -14,21 +14,22 @@ public class DatePicker : StonehengeComponent
     public string[] WeekDays { get; private set; } = [];
     public DatePickerMonth[] Months { get; private set; } = [];
     public string RangeText { get; private set; } = string.Empty;
-
-    public int TotalColumns => Months.Length * (1 + (ShowWeekNumbers ? 1 : 0));
-
-    public DateOnly Start = DateOnly.MinValue;
-    public DateOnly End = DateOnly.MinValue;
-    public int WeekNumber;
-
-    private DateOnly _first = DateOnly.FromDateTime(DateTime.Now);
-
+    public bool ShowWeekNumbers { get; init; }
     public bool ShowTodayLink { get; init; }
+
 
     public string EmptyText = string.Empty;
     public ushort ShowMonthsCount = 1;
-    public bool ShowWeekNumbers;
     public DatePickerSelection Selection = DatePickerSelection.Day;
+    public DateOnly MinDate = DateOnly.MinValue;
+    
+
+    public DateOnly Start = DateOnly.MinValue;
+    public DateOnly End = DateOnly.MinValue;
+    public int TotalColumns => Months.Length * (1 + (ShowWeekNumbers ? 1 : 0));
+    public int WeekNumber;
+
+    private DateOnly _first = DateOnly.FromDateTime(DateTime.Now);
 
     public override void OnLoad()
     {
@@ -59,7 +60,7 @@ public class DatePicker : StonehengeComponent
             var weeks = new List<DatePickerWeek>();
             while (start.Month == firstMonth || start.Month == lastMonth)
             {
-                weeks.Add(new DatePickerWeek(start, time.Month));
+                weeks.Add(new DatePickerWeek(start, time.Month, MinDate));
                 start = start.AddDays(7);
             }
 
@@ -181,7 +182,7 @@ public class DatePicker : StonehengeComponent
                 }
                 else
                 {
-                    while(day != End)
+                    while(day <= End)
                     {
                         SetDaySelection(day);
                         day = day.AddDays(1);
@@ -238,11 +239,11 @@ public class DatePicker : StonehengeComponent
                     Start = DateOnly.MinValue;
                     End = DateOnly.MinValue;
                 }
-                if (Start == DateOnly.MinValue || selectedDay <= Start)
+                if (Start == DateOnly.MinValue || selectedDay < Start)
                 {
                     Start = selectedDay;
                 }
-                else if(selectedDay > Start)
+                else if(selectedDay >= Start)
                 {
                     End = selectedDay;
                     CloseDropdown();

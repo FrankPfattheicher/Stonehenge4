@@ -56,7 +56,8 @@ public class FormsVm : ActiveViewModel
         ShowWeekNumbers = true, 
         ShowTodayLink = true,
         Selection = DatePickerSelection.Range, 
-        ShowMonthsCount = 2
+        ShowMonthsCount = 2,
+        MinDate = DateOnly.FromDateTime(DateTime.Now)
     };
     
 
