@@ -191,21 +191,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                              !name.Contains("src.app.html", StringComparison.OrdinalIgnoreCase))
                          .Order(StringComparer.Ordinal))
             {
-#pragma warning disable MA0001
-                var resourceId = ResourceLoader.GetShortResourceName(_appAssembly, ".app.", resourceName)
-                    .Replace('@', '_')
-                    .Replace('-', '_')
-                    .Replace("._0", ".0")
-                    .Replace("._1", ".1")
-                    .Replace("._2", ".2")
-                    .Replace("._3", ".3")
-                    .Replace("._4", ".4")
-                    .Replace("._5", ".5")
-                    .Replace("._6", ".6")
-                    .Replace("._7", ".7")
-                    .Replace("._8", ".8")
-                    .Replace("._9", ".9");
-#pragma warning restore MA0001
+                var resourceId = GetResourceId(resourceName);
                 if (_vueContent.ContainsKey(resourceId))
                 {
                     _logger.LogWarning(
@@ -228,16 +214,43 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                     }
                 }
 
-                var resource = new Resource(route, "res://" + resourceName, ResourceType.Html, pageText,
-                    Resource.Cache.Revalidate)
+                try
                 {
-                    ViewModel = GetViewModelInfo(route, pageText)
-                };
-                var key = "src." + resourceId;
-                _vueContent.TryAdd(key, resource);
+                    var resource = new Resource(route, "res://" + resourceName, ResourceType.Html, pageText,
+                        Resource.Cache.Revalidate)
+                    {
+                        ViewModel = GetViewModelInfo(route, pageText)
+                    };
+                    var key = "src." + resourceId;
+                    _vueContent.TryAdd(key, resource);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex, "VueResourceProvider.AddResourceContent: {ResourceName} EXCEPTION", resourceName);
+                    var innerException = ex.InnerException;
+                    if (innerException != null)
+                    {
+                        _logger.LogError("VueResourceProvider.AddResourceContent: {Message}", innerException.Message);
+                    }
+                }
             }
         }
     }
+
+    private string GetResourceId(string resourceName) =>
+        ResourceLoader.GetShortResourceName(_appAssembly, ".app.", resourceName)
+            .Replace('@', '_')
+            .Replace('-', '_')
+            .Replace("._0", ".0")
+            .Replace("._1", ".1")
+            .Replace("._2", ".2")
+            .Replace("._3", ".3")
+            .Replace("._4", ".4")
+            .Replace("._5", ".5")
+            .Replace("._6", ".6")
+            .Replace("._7", ".7")
+            .Replace("._8", ".8")
+            .Replace("._9", ".9", StringComparison.Ordinal);
 
 
     public Task<Resource?> Post(AppSession? session, string resourceName, IDictionary<string, string> parameters,
