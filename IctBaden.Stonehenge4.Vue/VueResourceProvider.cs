@@ -226,12 +226,13 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical(ex, "VueResourceProvider.AddResourceContent: {ResourceName} EXCEPTION", resourceName);
-                    var innerException = ex.InnerException;
-                    if (innerException != null)
+                    var message = ex.Message;
+                    if (ex.InnerException != null)
                     {
-                        _logger.LogError("VueResourceProvider.AddResourceContent: {Message}", innerException.Message);
+                        message += Environment.NewLine + ex.InnerException.Message;
                     }
+                    _logger.LogCritical(ex, "VueResourceProvider.AddResourceContent: Failed to add {ResourceName}: {Message}", 
+                        resourceName, message);
                 }
             }
         }
