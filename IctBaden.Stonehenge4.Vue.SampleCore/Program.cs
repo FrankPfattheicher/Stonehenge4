@@ -33,7 +33,7 @@ internal static class Program
         var logger = LoggerFactory.CreateLogger("stonehenge");
 
         Console.WriteLine();
-        Console.WriteLine("Stonehenge 4 Sample");
+        Console.WriteLine(@"Stonehenge 4 Sample");
         Console.WriteLine();
         logger.LogInformation("Vue.SampleCore started");
 
