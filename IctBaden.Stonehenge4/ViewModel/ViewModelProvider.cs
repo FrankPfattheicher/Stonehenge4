@@ -225,6 +225,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             {
                 if (session.ViewModel is ActiveViewModel activeViewModel)
                 {
+                    activeViewModel.ActiveViewModelOnLoad();
                     activeViewModel.OnLoad();
                     activeViewModel.UpdateI18n();
                 }

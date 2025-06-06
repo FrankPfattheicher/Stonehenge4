@@ -26,8 +26,6 @@ public class Charts3Vm : ActiveViewModel
 
     public override void OnLoad()
     {
-        base.OnLoad();
-
         CreateLineChart();
     }
 

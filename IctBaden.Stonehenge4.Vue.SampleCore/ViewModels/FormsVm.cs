@@ -88,8 +88,6 @@ public class FormsVm : ActiveViewModel
 
     public override void OnLoad()
     {
-        base.OnLoad();
-        
         Test = Session.Parameters.TryGetValue("test", out var test)
             ? test
             : "0-0";
