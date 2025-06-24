@@ -137,6 +137,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         lock (_events)
         {
+            if (ViewModel is ActiveViewModel { SupportsEvents: false })
+            {
+                _events.Clear();
+            }
             var events = _events.ToArray();
             _events.Clear();
             return events;

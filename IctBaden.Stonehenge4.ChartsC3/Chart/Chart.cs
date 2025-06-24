@@ -237,11 +237,23 @@ public class Chart
             };
             gridLines.Add("lines", options);
 
+            var xGridLines = GridLines
+                .Where(gl => gl.Axis == AxisId.x)
+                .ToArray();
             var lines = new Dictionary<string, object>(StringComparer.Ordinal)
             {
-                { "lines", GridLines.ToArray() }
+                { "lines", xGridLines }
             };
-            gridLines.Add(nameof(ValueAxisId.y), lines);
+            gridLines.Add(nameof(AxisId.x), lines);
+            
+            var yGridLines = GridLines
+                .Where(gl => gl.Axis != AxisId.x)
+                .ToArray();
+            lines = new Dictionary<string, object>(StringComparer.Ordinal)
+            {
+                { "lines", yGridLines }
+            };
+            gridLines.Add(nameof(AxisId.y), lines);
 
             return gridLines;
         }

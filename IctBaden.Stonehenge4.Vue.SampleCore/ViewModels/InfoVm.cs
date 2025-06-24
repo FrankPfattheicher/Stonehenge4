@@ -14,6 +14,8 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 [SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 public class InfoVm : ActiveViewModel
 {
+    public string TestValue { get; set; } = string.Empty;
+
     public string AppReleaseDate { get; private set; } = string.Empty;
 
     public string RuntimeDirectory { get; private set; } = string.Empty;
@@ -22,6 +24,7 @@ public class InfoVm : ActiveViewModel
     
     public InfoVm(AppSession session) : base(session)
     {
+        SupportsEvents = false;
     }
     
     public override void OnLoad()

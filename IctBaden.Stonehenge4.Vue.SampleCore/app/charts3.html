@@ -2,7 +2,7 @@
 <!--Title:Charts-3:31-->
 <div style="margin: 2em;">
 
-    <h3>Chart With Regions</h3>
+    <h3>Chart With Regions and Lines</h3>
 
     <p>
         <b>C3 Chart</b> see <a href="https://c3js.org/gettingstarted.html" target="_blank">https://c3js.org/gettingstarted.html</a>
@@ -15,31 +15,37 @@
     
     <table>
         <tr>
-            <th colspan="2" style="text-align: center; border-bottom: 1px solid black;">
-                Time Series Region
-            </th>
-            <th>
-                &nbsp;&nbsp;
-            </th>
-            <th colspan="2" style="text-align: center; border-bottom: 1px solid black;">
-                Data Series Region
-            </th>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="AddTimeSeriesRegions()">Add Time Series Region</button>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="RemoveTimeSeriesRegions()">Remove Time Series Region</button>
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="AddTimeSeriesLines()">Add Time Series Lines</button>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="RemoveTimeSeriesLines()">Remove Time Series Lines</button>
+            </td>
         </tr>
-        <tr style="border-top: .5em solid transparent;">
+        <tr>
             <td>
-                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="AddTimeSeriesRegions()">Add</button>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="AddDataSeriesRegions()">Add Data Series Region</button>
             </td>
             <td>
-                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="RemoveTimeSeriesRegions()">Remove</button>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="RemoveDataSeriesRegions()">Remove Data Series Region</button>
             </td>
             <td>
-
+                &nbsp;&nbsp;&nbsp;&nbsp;
             </td>
             <td>
-                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="AddDataSeriesRegions()">Add</button>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="AddDataSeriesLines()">Add Data Series Lines</button>
             </td>
             <td>
-                <button class="btn btn-sm btn-secondary" style="width: 10em;" @click="RemoveDataSeriesRegions()">Remove</button>
+                <button class="btn btn-sm btn-secondary" style="width: 16em;" @click="RemoveDataSeriesLines()">Remove Data Series Lines</button>
             </td>
         </tr>
     </table>

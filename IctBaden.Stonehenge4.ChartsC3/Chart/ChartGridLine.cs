@@ -7,7 +7,7 @@ namespace IctBaden.Stonehenge.Extension;
 
 public class ChartGridLine
 {
-    [JsonIgnore] public ValueAxisId Axis { get; init; } = ValueAxisId.y;
+    [JsonIgnore] public AxisId Axis { get; init; } = AxisId.y;
 
     [JsonPropertyName("axis")] public string AxisName => Axis.ToString();  
     [JsonPropertyName("position")] public string Position { get; init; } = GridLineTextPosition.End;  

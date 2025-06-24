@@ -268,17 +268,26 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return components.ToArray();
     }
 
+    internal void ActiveViewModelOnLoad()
+    {
+        if (!SupportsEvents)
+        {
+            Session.EventsClear(forceEnd: true);
+        }
+        
+        foreach (var component in GetComponents())
+        {
+            component.I18Names = component.GetI18Names();
+            component.OnLoad();
+        }
+    }
+    
     /// <summary>
     /// Called when application navigates to this view model.
     /// This is an equivalent to a client site onload event.
     /// </summary>
     public virtual void OnLoad()
     {
-        foreach (var component in GetComponents())
-        {
-            component.I18Names = component.GetI18Names();
-            component.OnLoad();
-        }
     }
 
     protected void SetParent(ActiveViewModel parent)
