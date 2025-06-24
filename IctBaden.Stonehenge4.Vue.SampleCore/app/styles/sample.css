@@ -11,6 +11,12 @@
 .chart-pos {
     fill: red;
 }
+.chart-pos line {
+    stroke: red;
+}
 .chart-neg {
     fill: blue;
+}
+.chart-neg line {
+    stroke: blue;
 }

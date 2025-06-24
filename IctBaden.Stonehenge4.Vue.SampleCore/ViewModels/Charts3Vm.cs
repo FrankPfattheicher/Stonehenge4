@@ -49,6 +49,7 @@ public class Charts3Vm : ActiveViewModel
         LineChart.SetSeriesData("Sinus", dataSinus);
     }
 
+    // ====== Regions ======
     [ActionMethod]
     public void AddTimeSeriesRegions()
     {
@@ -57,12 +58,12 @@ public class Charts3Vm : ActiveViewModel
         LineChart.TimeSeriesRegions =
         [
             new ChartTimeSeriesRegion(
-                new DateTimeOffset(_timeStamps[9]).ToUnixTimeMilliseconds(),
-                new DateTimeOffset(_timeStamps[18]).ToUnixTimeMilliseconds())
+                    new DateTimeOffset(_timeStamps[9]).ToUnixTimeMilliseconds(),
+                    new DateTimeOffset(_timeStamps[18]).ToUnixTimeMilliseconds())
                 { Class = "chart-pos" },
             new ChartTimeSeriesRegion(
-                new DateTimeOffset(_timeStamps[27]).ToUnixTimeMilliseconds(),
-                new DateTimeOffset(_timeStamps[36]).ToUnixTimeMilliseconds())
+                    new DateTimeOffset(_timeStamps[27]).ToUnixTimeMilliseconds(),
+                    new DateTimeOffset(_timeStamps[36]).ToUnixTimeMilliseconds())
                 { Class = "chart-neg" }
         ];
     }
@@ -93,5 +94,78 @@ public class Charts3Vm : ActiveViewModel
         if (LineChart == null) return;
 
         LineChart.DataRegions = [];
+    }
+
+    // ====== Lines ======
+    [ActionMethod]
+    public void AddTimeSeriesLines()
+    {
+        if (LineChart == null) return;
+
+        RemoveTimeSeriesLines();
+        LineChart.GridLines = LineChart.GridLines
+            .Concat(
+            [
+                new ChartGridLine
+                {
+                    Axis = AxisId.x, Class = "chart-pos",
+                    Value = new DateTimeOffset(_timeStamps[20]).ToUnixTimeMilliseconds(),
+                    Text = "pos 20"
+                },
+                new ChartGridLine
+                {
+                    Axis = AxisId.x, Class = "chart-neg",
+                    Value = new DateTimeOffset(_timeStamps[40]).ToUnixTimeMilliseconds(),
+                    Text = "pos 40"
+                }
+            ]).ToArray();
+        LineChart.UpdateId();
+    }
+
+    [ActionMethod]
+    public void RemoveTimeSeriesLines()
+    {
+        if (LineChart == null) return;
+
+        LineChart.GridLines = LineChart.GridLines
+            .Where(gl => gl.Axis != AxisId.x)
+            .ToArray();
+        LineChart.UpdateId();
+    }
+
+    [ActionMethod]
+    public void AddDataSeriesLines()
+    {
+        if (LineChart == null) return;
+
+        RemoveDataSeriesLines();
+        LineChart.GridLines = LineChart.GridLines
+            .Concat(
+            [
+                new ChartGridLine
+                {
+                    Axis = AxisId.y, Class = "chart-pos",
+                    Value = 75,
+                    Text = "pos 75"
+                },
+                new ChartGridLine
+                {
+                    Axis = AxisId.y, Class = "chart-neg",
+                    Value = 25,
+                    Text = "pos 25"
+                }
+            ]).ToArray();
+        LineChart.UpdateId();
+    }
+
+    [ActionMethod]
+    public void RemoveDataSeriesLines()
+    {
+        if (LineChart == null) return;
+
+        LineChart.GridLines = LineChart.GridLines
+            .Where(gl => gl.Axis == AxisId.x)
+            .ToArray();
+        LineChart.UpdateId();
     }
 }

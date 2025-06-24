@@ -24,7 +24,7 @@ public class InfoVm : ActiveViewModel
     
     public InfoVm(AppSession session) : base(session)
     {
-        //SupportsEvents = false;
+        SupportsEvents = false;
     }
     
     public override void OnLoad()
