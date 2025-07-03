@@ -541,35 +541,56 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 return propValue;
             if (propType == typeof(bool) && !string.IsNullOrEmpty(propValue))
                 return bool.Parse(propValue);
-            if (propType == typeof(float))
+            
+            if (propType == typeof(int))
             {
-                if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var fVal))
-                    return fVal;
-                if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out fVal))
-                    return fVal;
+                if (int.TryParse(propValue, NumberStyles.Integer, CultureInfo.CurrentCulture, out var iVal) || 
+                    int.TryParse(propValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out iVal))
+                    return iVal;
+            }
+            if (propType == typeof(uint))
+            {
+                if (uint.TryParse(propValue, NumberStyles.Integer, CultureInfo.CurrentCulture, out var iVal) || 
+                    uint.TryParse(propValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out iVal))
+                    return iVal;
+            }
+            if (propType == typeof(long))
+            {
+                if (long.TryParse(propValue, NumberStyles.Integer, CultureInfo.CurrentCulture, out var lVal) || 
+                    long.TryParse(propValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out lVal))
+                    return lVal;
+            }
+            if (propType == typeof(ulong))
+            {
+                if (ulong.TryParse(propValue, NumberStyles.Integer, CultureInfo.CurrentCulture, out var lVal) || 
+                    ulong.TryParse(propValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out lVal))
+                    return lVal;
             }
 
+            if (propType == typeof(float))
+            {
+                if (float.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var fVal) || 
+                    float.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out fVal))
+                    return fVal;
+            }
             if (propType == typeof(double))
             {
-                if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var dVal))
-                    return dVal;
-                if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out dVal))
+                if (double.TryParse(propValue, NumberStyles.Float, CultureInfo.CurrentCulture, out var dVal) || 
+                    double.TryParse(propValue, NumberStyles.Float, CultureInfo.InvariantCulture, out dVal))
                     return dVal;
             }
 
             if (propType == typeof(DateTime))
             {
-                if (DateTime.TryParse(propValue, CultureInfo.CurrentUICulture, out var dt))
-                    return dt;
-                if (DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                if (DateTime.TryParse(propValue, CultureInfo.CurrentUICulture, out var dt) || 
+                    DateTime.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                     return dt;
             }
 
             if (propType == typeof(DateTimeOffset))
             {
-                if (DateTimeOffset.TryParse(propValue, CultureInfo.CurrentUICulture, out var dt))
-                    return dt;
-                if (DateTimeOffset.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+                if (DateTimeOffset.TryParse(propValue, CultureInfo.CurrentUICulture, out var dt) || 
+                    DateTimeOffset.TryParse(propValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
                     return dt;
             }
 

@@ -1,4 +1,5 @@
 
+* 8.4.1 - 03.07.2025 Improved DeserializePropertyValue
 * 8.4.0 - 24.06.2025 Allow x and y ChartGridLines
 * 8.3.4 - 29.04.2025 Handle AddResourceContent exceptions
 * 8.3.3 - 26.04.2025 DatePicker MinDate, fixed week numbers, allow single day range
