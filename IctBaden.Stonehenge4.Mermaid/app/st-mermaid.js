@@ -5,9 +5,9 @@ mounted: async function() {
         startOnLoad: false,
         suppressErrors: true
     });
-    
-    const ts = new Date().getTime();
-    const id = 'id' + ts;
+
+    const ts = new Date().getMilliseconds();
+    const id = 'id' + ts + Math.floor(Math.random() * 100);
     const graphData = this.$props.graphData;
     try {
         if (await mermaid.parse(graphData)) {
@@ -16,14 +16,18 @@ mounted: async function() {
                     this.$el.innerHTML = svg;
                 });
         }
-    } catch {
+    } catch(ex) {
+        if(graphData !== '') {
+            console.log("Mermaid: " + ex)
+            //debugger;
+        }
         this.$el.innerHTML = '';
     }
 },
 updated: async function () {
-    
-    const ts = new Date().getTime();
-    const id = 'id' + ts;
+
+    const ts = new Date().getMilliseconds();
+    const id = 'id' + ts + Math.floor(Math.random() * 100);
     const graphData = this.$props.graphData;
     try {
         if (await mermaid.parse(graphData)) {
@@ -32,7 +36,11 @@ updated: async function () {
                     this.$el.innerHTML = svg;
                 });
         }
-    } catch {
+    } catch(ex) {
+        if(graphData !== '') {
+            console.log("Mermaid: " + ex)
+            //debugger;
+        }
         this.$el.innerHTML = '';
     }
 

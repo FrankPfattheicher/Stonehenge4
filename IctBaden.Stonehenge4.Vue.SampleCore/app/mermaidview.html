@@ -2,26 +2,31 @@
 <!--ViewModel:MermaidViewVm-->
 <div class="row" style="margin: 2em;">
 
-    <div class="col-md-12" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+    <div class="col-md-6" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
         <h4 style="float: left;">
             Mermaid Diagram 1
         </h4>
 
-        <st-mermaid :graphData="MermaidGraph"></st-mermaid>
-
+        <st-mermaid :graphData="MermaidGraph" style=" scale: 75%;"></st-mermaid>
     </div>
 
-    <div class="col-md-12" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+    <div class="col-md-6" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
         <h4 style="float: left;">
             Mermaid Diagram 2
         </h4>
 
-        <st-mermaid :graphData="MermaidGraph2"></st-mermaid>
+        <st-mermaid :graphData="MermaidGraph2" style=" scale: 75%;"></st-mermaid>
+    </div>
 
+    <div class="col-md-6" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
+        <h4 style="float: left;">
+            Mermaid Diagram 3
+        </h4>
+
+        <st-mermaid :graphData="MermaidGraph3" style=" scale: 75%;"></st-mermaid>
     </div>
 
     <div>
-
         <button class="btn btn-sm btn-secondary" @click="SetGraph(0)">Empty</button>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <button class="btn btn-sm btn-secondary" @click="SetGraph(1)">Simple</button>
@@ -34,7 +39,7 @@
 
     <app-dialog v-if="ShowMermaidDlg" caption="Mermaid" style="width: 90%;" enableOk="false" cancelText="Close" @cancel="CloseDlg()">
 
-        <st-mermaid :graphData="MermaidGraph"></st-mermaid>
+        <st-mermaid :graphData="MermaidGraph3"></st-mermaid>
         
     </app-dialog>
 

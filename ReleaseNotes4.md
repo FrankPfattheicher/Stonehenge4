@@ -1,4 +1,5 @@
 
+* 8.4.2 - 20.07.2025 Updated mermaid to v11.9
 * 8.4.1 - 03.07.2025 Improved DeserializePropertyValue
 * 8.4.0 - 24.06.2025 Allow x and y ChartGridLines
 * 8.3.4 - 29.04.2025 Handle AddResourceContent exceptions
