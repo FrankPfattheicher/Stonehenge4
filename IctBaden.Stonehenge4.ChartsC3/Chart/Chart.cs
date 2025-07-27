@@ -298,6 +298,7 @@ public class Chart
     }
 
     public void UpdateId() => Id = Element.NewId();
+    public void Regenerate() => Id = Element.NewId();
 
     public void SetSeriesData(string series, object?[] data)
     {

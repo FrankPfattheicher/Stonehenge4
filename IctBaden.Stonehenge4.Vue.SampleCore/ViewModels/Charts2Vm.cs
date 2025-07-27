@@ -42,21 +42,21 @@ public class Charts2Vm : ActiveViewModel
         CreateLineChart();
         SankeyChart = new SankeyChart
         {
-            Nodes = new SankeyNode[]
-            {
+            Nodes =
+            [
                 new("Alice"),
                 new("Bert"),
                 new("Bob") { Color = Color.Coral },
                 new("Carol"),
                 new("Doris")
-            },
-            Links = new SankeyLink[]
-            {
+            ],
+            Links =
+            [
                 new("Alice", "Bob") { Value = 10 },
                 new("Bert", "Bob") { Value = 5 },
                 new("Bob", "Carol") { Value = 95 },
                 new("Bob", "Doris") { Value = 5 }
-            }
+            ]
         };
         foreach (var link in SankeyChart.Links)
         {
@@ -142,4 +142,10 @@ public class Charts2Vm : ActiveViewModel
 
         SetUpdateTimer(Speed);
     }
+    
+    public override void OnWindowResized(int width, int height)
+    {
+        LineChart?.Regenerate();
+    }
+
 }

@@ -57,6 +57,29 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (resourceName.StartsWith("Command/", StringComparison.OrdinalIgnoreCase))
         {
             var commandName = resourceName.Substring(8);
+
+            if (session?.ViewModel is ActiveViewModel activeVm)
+            {
+                if (string.Equals(commandName, "WindowResized", StringComparison.Ordinal))
+                {
+                    var pWidth = parameters.FirstOrDefault(kv =>
+                        string.Equals(kv.Key, "width", StringComparison.OrdinalIgnoreCase)).Value ?? "0";
+                    var pHeight = parameters.FirstOrDefault(kv =>
+                        string.Equals(kv.Key, "height", StringComparison.OrdinalIgnoreCase)).Value ?? "0";
+
+#pragma warning disable MA0011
+                    var width = int.Parse(pWidth, NumberStyles.Integer);
+                    var height = int.Parse(pHeight, NumberStyles.Integer);
+#pragma warning restore MA0011
+                    
+                    activeVm.OnWindowResized(width, height);
+                    foreach (var component in activeVm.GetComponents())
+                    {
+                        component.OnWindowResized(width, height);
+                    }
+                }
+            }
+            
             var appCommandsType = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
                 .FirstOrDefault(type => type.GetInterfaces().Contains(typeof(IStonehengeAppCommands)));

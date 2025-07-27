@@ -2,7 +2,6 @@
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.ViewModel;
-using IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;
@@ -27,8 +26,9 @@ public class AppCommands(ILogger logger) : IStonehengeAppCommands
         logger.LogTrace("AppCommands.WindowResized(URL): width={ParamWidth}, height={ParamHeight}", paramWidth, paramHeight);
         logger.LogTrace("AppCommands.WindowResized(binding): width={Width}, height={Height}", width, height);
 
-        var chartVm = session.ViewModel as Charts1Vm;
-        chartVm?.ChangeShowStacked();
+        // Obsolete - use OnWindowResized
+        // var chartVm = session.ViewModel as Charts1Vm;
+        // chartVm?.ChangeShowStacked();
     }
         
 }

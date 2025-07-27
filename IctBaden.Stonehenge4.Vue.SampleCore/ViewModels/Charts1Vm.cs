@@ -52,20 +52,20 @@ public class Charts1Vm : ActiveViewModel
     {
         TrendChart = new Chart
         {
-            ValueAxes = new[]
-            {
+            ValueAxes =
+            [
                 new ChartValueAxis(ValueAxisId.y)
                 {
                     Label = "°C",
                     Min = 0,
                     Max = 70
                 }
-            },
-            Series = new[]
-            {
+            ],
+            Series =
+            [
                 new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" },
                 new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" }
-            },
+            ],
             EnableZoom = true
         };
     }
@@ -76,12 +76,12 @@ public class Charts1Vm : ActiveViewModel
         if (TrendChart == null) return;
             
         var newData = new object[] { 10, 12, 15, 14, 13, 20, 22, 25 }
-            .Concat(new object[] { Range })
+            .Concat([Range])
             .ToArray();
         TrendChart.SetSeriesData("Temperature1", newData);
             
         newData = new object[] { 13, 20, 22, 25, 10, 12, 15, 14 }
-            .Concat(new object[] { 60 - Range })
+            .Concat([60 - Range])
             .ToArray();
         TrendChart.SetSeriesData("Temperature2", newData);
 
@@ -89,6 +89,11 @@ public class Charts1Vm : ActiveViewModel
         {
             PieChart.Sectors[0].Value = Range;
         }
+    }
+
+    public override void OnWindowResized(int width, int height)
+    {
+        ChangeShowStacked();
     }
 
     [ActionMethod]
