@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using IctBaden.Stonehenge.Types;
+// ReSharper disable ConvertToConstant.Global
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -30,6 +31,12 @@ public class Chart
     /// Enable zooming of chart
     /// </summary>
     public bool EnableZoom = false;
+
+    /// <summary>
+    /// Add labels to data points
+    /// </summary>
+    public bool Labels = false;
+
 
     /// <summary>
     /// Define the chart's category axis
@@ -292,6 +299,7 @@ public class Chart
             data["groups"] = Groups;
             data["colors"] = Colors;
             data["types"] = Types;
+            data["labels"] = Labels;
 
             return data;
         }
