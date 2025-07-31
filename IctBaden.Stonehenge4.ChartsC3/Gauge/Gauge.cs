@@ -29,5 +29,6 @@ public class Gauge
     public string? Units { get; set; }
 
     public void UpdateId() => Id = Element.NewId();
+    public void Regenerate() => Id = Element.NewId();
 
 }

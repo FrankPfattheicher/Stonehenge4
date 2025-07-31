@@ -9,8 +9,12 @@
 
     <p>
         <label>
-            <input class="form-check-input" type="checkbox" v-model="ShowStacked" @change="ChangeShowStacked">
+            <input class="form-check-input" type="checkbox" v-model="ShowStacked" @change="ChangeShowStacked()">
             Show bars stacked
+        </label>
+        <label>
+            <input class="form-check-input" type="checkbox" v-model="ShowLabels" @change="ChangeShowLabels()">
+            Show labels
         </label>
     </p>
 

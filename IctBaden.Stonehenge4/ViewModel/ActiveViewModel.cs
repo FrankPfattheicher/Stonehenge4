@@ -731,4 +731,9 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public virtual void OnDispose()
     {
     }
+    
+    public virtual void OnWindowResized(int width, int height)
+    {
+    }
+
 }

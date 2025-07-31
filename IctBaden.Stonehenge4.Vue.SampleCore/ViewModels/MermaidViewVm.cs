@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable MemberCanBePrivate.Global
@@ -20,6 +21,7 @@ public class MermaidViewVm : ActiveViewModel
     }
 
     [ActionMethod]
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     public void SetGraph(int graph)
     {
         switch (graph)

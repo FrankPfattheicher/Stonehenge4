@@ -20,5 +20,6 @@ public class SankeyChart
     
     
     public void UpdateId() => Id = Element.NewId();
+    public void Regenerate() => Id = Element.NewId();
 
 }

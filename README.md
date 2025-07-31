@@ -2,6 +2,7 @@
 An open source .NET Framework to use Web UI technologies for desktop and/or web applications based on the MVVM pattern.
 
 * See a (very) short [getting started introduction here](docs/GettingStarted.md).
+* Core functionality [active view models](docs/active-vm.md)
 * Creating [reusable components](docs/ReusableComponents.md)
 
 

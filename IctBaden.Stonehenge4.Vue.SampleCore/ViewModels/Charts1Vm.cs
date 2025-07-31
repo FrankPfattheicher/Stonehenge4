@@ -19,11 +19,12 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 public class Charts1Vm : ActiveViewModel
 {
     public bool ShowStacked { get; set; }
+    public bool ShowLabels { get; set; }
     public int Range { get; set; }
     public int RangeMin { get; } = 0;
     public int RangeMax { get; } = 40;
 
-        
+
     public Chart? TrendChart { get; private set; }
     public PieChart? PieChart { get; private set; }
 
@@ -43,29 +44,29 @@ public class Charts1Vm : ActiveViewModel
             Sectors =
             [
                 new PieSector { Label = "Wert", Value = 100 },
-                new PieSector { Label = "Sonst", Value = 100, Color = Color.Black}
+                new PieSector { Label = "Sonst", Value = 100, Color = Color.Black }
             ]
         };
     }
-        
+
     private void CreateTrendChart()
     {
         TrendChart = new Chart
         {
-            ValueAxes = new[]
-            {
+            ValueAxes =
+            [
                 new ChartValueAxis(ValueAxisId.y)
                 {
                     Label = "°C",
                     Min = 0,
                     Max = 70
                 }
-            },
-            Series = new[]
-            {
+            ],
+            Series =
+            [
                 new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" },
                 new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" }
-            },
+            ],
             EnableZoom = true
         };
     }
@@ -74,21 +75,27 @@ public class Charts1Vm : ActiveViewModel
     public void RangeChanged()
     {
         if (TrendChart == null) return;
-            
+
         var newData = new object[] { 10, 12, 15, 14, 13, 20, 22, 25 }
-            .Concat(new object[] { Range })
+            .Concat([Range])
             .ToArray();
         TrendChart.SetSeriesData("Temperature1", newData);
-            
+
         newData = new object[] { 13, 20, 22, 25, 10, 12, 15, 14 }
-            .Concat(new object[] { 60 - Range })
+            .Concat([60 - Range])
             .ToArray();
         TrendChart.SetSeriesData("Temperature2", newData);
+        TrendChart.Labels = ShowLabels;
 
         if (PieChart != null)
         {
             PieChart.Sectors[0].Value = Range;
         }
+    }
+
+    public override void OnWindowResized(int width, int height)
+    {
+        ChangeShowStacked();
     }
 
     [ActionMethod]
@@ -101,9 +108,14 @@ public class Charts1Vm : ActiveViewModel
     }
 
     [ActionMethod]
+    public void ChangeShowLabels()
+    {
+        CreateTrendChart();
+        RangeChanged();
+    }
+
+    [ActionMethod]
     public void ClickData(int dataIndex)
     {
     }
-        
-        
 }

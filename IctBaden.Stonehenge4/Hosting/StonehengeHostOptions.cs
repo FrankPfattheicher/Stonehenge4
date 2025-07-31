@@ -16,41 +16,41 @@ public class StonehengeHostOptions
     /// Title to be shown in the Title bar.
     /// Default is the entry assembly name.
     /// </summary>
-    public string Title { get; set; } = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+    public string Title { get; init; } = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
 
     /// <summary>
     /// Initial page to be activated.
     /// By default the first page (by sort index) is used. 
     /// </summary>
-    public string StartPage { get; set; } = string.Empty;
+    public string StartPage { get; init; } = string.Empty;
 
     /// <summary>
     /// Path to the file based content.
     /// </summary>
-    public string AppFilesPath { get; set; } = Path.Combine(StonehengeApplication.BaseDirectory, "app");
+    public string AppFilesPath { get; init; } = Path.Combine(StonehengeApplication.BaseDirectory, "app");
 
     /// <summary>
     /// Method to use for server initiated data transfer to the client.
     /// </summary>
-    public ServerPushModes ServerPushMode { get; set; } = ServerPushModes.Automatic;
+    public ServerPushModes ServerPushMode { get; init; } = ServerPushModes.Automatic;
         
     /// <summary>
     /// Interval for client site polling modes.
     /// [Seconds]
     /// Set to 0 to use system default.
     /// </summary>
-    public int PollIntervalSec { get; set; }
+    public int PollIntervalSec { get; init; }
 
     /// <summary>
     /// Count of event poll retries before setting StonehengeIsDisconnected 
     /// </summary>
-    public int PollRetries { get; set; } = 1;
+    public int PollRetries { get; init; } = 1;
 
     /// <summary>
     /// Forth NTLM authentication using HttpSys.
     /// (Windows host only)
     /// </summary>
-    public bool UseNtlmAuthentication { get; set; }
+    public bool UseNtlmAuthentication { get; init; }
         
     /// <summary>
     /// Internally check basic Authentication.
@@ -58,25 +58,25 @@ public class StonehengeHostOptions
     /// Encoding apache specific salted MD5 (insecure but common).
     /// htpasswd -nbm myName myPassword
     /// </summary>
-    public bool UseBasicAuth { get; set; }
+    public bool UseBasicAuth { get; init; }
 
     /// <summary>
     /// If not null, contains all options
     /// to handle Keycloak user authentication
     /// </summary>
-    public KeycloakAuthenticationOptions? UseKeycloakAuthentication { get; set; }
+    public KeycloakAuthenticationOptions? UseKeycloakAuthentication { get; init; }
 
     /// <summary>
     /// Path of the pfx certificate to be used with Kestrel.
     /// (not used with HttpSys, you need to "netsh http add sslcert ..." for the the p12 certificate in that case)
     /// On Windows it is better to use IIS as reverse proxy.
     /// </summary>
-    public string SslCertificatePath { get; set; } = string.Empty;
+    public string SslCertificatePath { get; init; } = string.Empty;
     /// <summary>
     /// Password of the pfx certificate to be used with Kestrel.
     /// (not used with HttpSys)
     /// </summary>
-    public string SslCertificatePassword { get; set; } = string.Empty;
+    public string SslCertificatePassword { get; init; } = string.Empty;
 
     /// <summary>
     /// Host is using the following headers to disable clients
@@ -85,29 +85,29 @@ public class StonehengeHostOptions
     ///     Pragma: no-cache
     ///     Expires: 0 
     /// </summary>
-    public bool DisableClientCache { get; set; }
+    public bool DisableClientCache { get; init; }
 
     /// <summary>
     /// Allow custom middleware (by type name) to be inserted
     /// before StonehengeContent is called
     /// </summary>
-    public string[] CustomMiddleware { get; set; } = Array.Empty<string>();
+    public string[] CustomMiddleware { get; init; } = [];
         
     /// <summary>
     /// Enable firing WindowResized AppCommand  
     /// </summary>
-    public bool HandleWindowResized { get; set; }
+    public bool HandleWindowResized { get; init; }
         
     /// <summary>
     /// Enable detecting client locale (Accept-Language header)
     /// to set session locale
     /// </summary>
-    public bool UseClientLocale { get; set; }
+    public bool UseClientLocale { get; init; }
 
     /// <summary>
     /// Timeout a session will be terminated without further access.
     /// </summary>
-    public TimeSpan SessionTimeout { get; set; } = TimeSpan.FromMinutes(15);
+    public TimeSpan SessionTimeout { get; init; } = TimeSpan.FromMinutes(15);
         
     /// <summary>
     /// Delay [ms] the client should wait for new poll.

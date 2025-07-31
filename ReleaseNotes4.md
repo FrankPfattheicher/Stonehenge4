@@ -1,4 +1,6 @@
 
+* 8.4.4 - 31.07.2025 Added chart option labels
+* 8.4.3 - 26.07.2025 Added ActiveViewModel virtual OnWindowResized
 * 8.4.2 - 20.07.2025 Updated mermaid to v11.9
 * 8.4.1 - 03.07.2025 Improved DeserializePropertyValue
 * 8.4.0 - 24.06.2025 Allow x and y ChartGridLines
