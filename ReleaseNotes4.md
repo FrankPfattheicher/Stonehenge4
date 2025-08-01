@@ -1,4 +1,5 @@
 
+* 8.4.6 - 01.08.2025 Make ChartSeries properties non init only
 * 8.4.5 - 01.08.2025 Allow chart series label formats
 * 8.4.4 - 31.07.2025 Added chart option labels
 * 8.4.3 - 26.07.2025 Added ActiveViewModel virtual OnWindowResized

@@ -6,9 +6,9 @@ namespace IctBaden.Stonehenge.Extension;
 public class ChartSeries
 {
     public string Label { get; set; }
-    public string Group { get; init; } = string.Empty;
+    public string Group { get; set; } = string.Empty;
     
-    public ChartDataType Type { get; init; }
+    public ChartDataType Type { get; set; }
     
     public ValueAxisId ValueAxis { get; set; }
 
