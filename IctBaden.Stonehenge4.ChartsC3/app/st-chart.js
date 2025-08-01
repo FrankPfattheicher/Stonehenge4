@@ -5,6 +5,15 @@
             this.chart.destroy();
         }
 
+        const formats = this.$props.chartdata.Data.formats;
+        app['ChartFormats' + this.$props.chartdata.Id] = function (value, ratio, id) {
+            try {
+                const format = formats[ratio] ?? '';
+                return d3.format(format)(value);
+            } catch {
+                return d3.format('')(value);
+            }
+        }
         this.chart = c3.generate({
             bindto: this.$el,
             id: this.$props.chartdata.Id,
@@ -19,6 +28,9 @@
                     });
                     element.dispatchEvent(event);
                 },
+                labels: {
+                    format:  app['ChartFormats' + this.$props.chartdata.Id]
+                },
                 ...this.$props.chartdata.Data
             },
             axis: this.$props.chartdata.Axis,
@@ -31,10 +43,7 @@
             },
             tooltip: {
                 format: {
-                    value: function (value, ratio, id) {
-                        //debugger;
-                        return d3.format('')(value);
-                    }
+                    value: app['ChartFormats' + this.$props.chartdata.Id]
                 },
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     let $$ = this, config = $$.config,
@@ -96,6 +105,15 @@ updated: function () {
             this.chart.destroy();
         }
 
+        const formats = this.$props.chartdata.Data.formats;
+        app['ChartFormats' + this.$props.chartdata.Id] = function (value, ratio, id) {
+            try {
+                const format = formats[ratio] ?? '';
+                return d3.format(format)(value);
+            } catch {
+                return d3.format('')(value);
+            }
+        }
         this.chart = c3.generate({
             bindto: this.$el,
             title: this.$props.chartdata.Title,
@@ -109,6 +127,9 @@ updated: function () {
                     });
                     element.dispatchEvent(event);
                 },
+                labels: {
+                    format: app['ChartFormats' + this.$props.chartdata.Id]
+                },
                 ...this.$props.chartdata.Data
             },
             axis: this.$props.chartdata.Axis,
@@ -121,10 +142,7 @@ updated: function () {
             },
             tooltip: {
                 format: {
-                    value: function (value, ratio, id) {
-                        //debugger;
-                        return d3.format('')(value);
-                    }
+                    value: app['ChartFormats' + this.$props.chartdata.Id]
                 },
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     let $$ = this, config = $$.config,

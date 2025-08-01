@@ -28,14 +28,14 @@ public class Chart
     public bool ShowPoints = true;
 
     /// <summary>
+    /// Show labels at the data points
+    /// </summary>
+    public bool ShowLabels = false;
+
+    /// <summary>
     /// Enable zooming of chart
     /// </summary>
     public bool EnableZoom = false;
-
-    /// <summary>
-    /// Add labels to data points
-    /// </summary>
-    public bool Labels = false;
 
 
     /// <summary>
@@ -151,6 +151,20 @@ public class Chart
             }
 
             return colors;
+        }
+    }
+
+    private object Formats
+    {
+        get
+        {
+            var formats = new Dictionary<string, object>(StringComparer.Ordinal);
+            foreach (var series in Series)
+            {
+                formats.Add(series.Label, series.Format);
+            }
+
+            return formats;
         }
     }
 
@@ -299,7 +313,15 @@ public class Chart
             data["groups"] = Groups;
             data["colors"] = Colors;
             data["types"] = Types;
-            data["labels"] = Labels;
+
+            if (ShowLabels)
+            {
+                data["formats"] = Formats;
+            }
+            else
+            {
+                data["labels"] = ShowLabels;
+            }
 
             return data;
         }

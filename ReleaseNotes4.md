@@ -1,4 +1,5 @@
 
+* 8.4.5 - 01.08.2025 Allow chart series label formats
 * 8.4.4 - 31.07.2025 Added chart option labels
 * 8.4.3 - 26.07.2025 Added ActiveViewModel virtual OnWindowResized
 * 8.4.2 - 20.07.2025 Updated mermaid to v11.9
