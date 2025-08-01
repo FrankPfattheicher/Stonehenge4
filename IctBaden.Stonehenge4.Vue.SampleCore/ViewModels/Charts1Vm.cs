@@ -64,8 +64,17 @@ public class Charts1Vm : ActiveViewModel
             ],
             Series =
             [
-                new ChartSeries("Temperature1") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" },
-                new ChartSeries("Temperature2") { Type = ChartDataType.Bar, Group = ShowStacked ? "Temps" : "" }
+                new ChartSeries("Temperature1")
+                {
+                    Type = ChartDataType.Bar, 
+                    Group = ShowStacked ? "Temps" : string.Empty,
+                    Format = ".2f"
+                },
+                new ChartSeries("Temperature2")
+                {
+                    Type = ChartDataType.Bar, 
+                    Group = ShowStacked ? "Temps" : string.Empty
+                }
             ],
             EnableZoom = true
         };
@@ -85,7 +94,7 @@ public class Charts1Vm : ActiveViewModel
             .Concat([60 - Range])
             .ToArray();
         TrendChart.SetSeriesData("Temperature2", newData);
-        TrendChart.Labels = ShowLabels;
+        TrendChart.ShowLabels = ShowLabels;
 
         if (PieChart != null)
         {
