@@ -59,6 +59,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
+    /// Respond with 401 to complete unauthorization 
+    public bool UnauthorizeRedirect;
 
     /// Access token given from authorization 
     public string AccessToken = string.Empty;
@@ -87,7 +89,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public string PermanentSessionId { get; private set; } = string.Empty;
 
-    public readonly bool UseBasicAuth;
+    public bool UseBasicAuth;
     public readonly Passwords Passwords = new(string.Empty);
     public string VerifiedBasicAuth = string.Empty;
 
@@ -520,17 +522,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         LastAccess = DateTime.Now;
 
         UseBasicAuth = options.UseBasicAuth;
-        if (UseBasicAuth)
+        var htpasswd = Path.Combine(StonehengeApplication.BaseDirectory, ".htpasswd");
+        if (File.Exists(htpasswd))
         {
-            var htpasswd = Path.Combine(StonehengeApplication.BaseDirectory, ".htpasswd");
-            if (File.Exists(htpasswd))
-            {
-                Passwords = new Passwords(htpasswd);
-            }
-            else
-            {
-                Logger.LogError("Option UseBasicAuth requires .htpasswd file {Htpasswd}", htpasswd);
-            }
+            Passwords = new Passwords(htpasswd);
+        }
+        else if (UseBasicAuth)
+        {
+            Logger.LogError("Option UseBasicAuth requires .htpasswd file {Htpasswd}", htpasswd);
         }
 
         _eventTimeoutMs = options.GetEventTimeoutMs();
@@ -725,11 +724,16 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-
-    public void UserLogin()
+    public void UserLogin(bool useBasicAuth = false)
     {
         SetUser(string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
+
+        if (useBasicAuth)
+        {
+            UseBasicAuth = true;
+            return;
+        }
 
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
@@ -751,6 +755,18 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP014:Use a single instance of HttpClient")]
     public bool UserLogout()
     {
+        if (HostOptions.UseBasicAuth || UseBasicAuth)
+        {
+            UseBasicAuth = HostOptions.UseBasicAuth;
+            SetUser(string.Empty, string.Empty, string.Empty);
+            if (ViewModel is ActiveViewModel avm)
+            {
+                UnauthorizeRedirect = true;
+                avm.ExecuteClientScript("");
+            }
+            return true;
+        }
+        
         if (HostOptions.UseKeycloakAuthentication == null) return false;
 
         if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;

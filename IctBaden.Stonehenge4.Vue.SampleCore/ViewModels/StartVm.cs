@@ -134,9 +134,9 @@ public class StartVm : ActiveViewModel
     }
 
     [ActionMethod]
-    public void UserLogin()
+    public void UserLogin(bool local)
     {
-        Session.UserLogin();
+        Session.UserLogin(local);
     }
 
     [ActionMethod]

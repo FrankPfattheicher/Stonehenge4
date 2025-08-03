@@ -76,14 +76,14 @@ public class FormsVm : ActiveViewModel
 
         DropEditValue1 = "test";
         DropEditValue2 = "test-2";
-        DropEditValues = new[]
-        {
+        DropEditValues =
+        [
             "unknown",
             "test",
             "test-2",
             "test-3",
             "last"
-        };
+        ];
     }
 
     public override void OnLoad()
@@ -92,7 +92,7 @@ public class FormsVm : ActiveViewModel
             ? test
             : "0-0";
 
-        ExecuteClientScript("");
+        ExecuteClientScript(string.Empty);
     }
 
     // This presumes that weeks start with Monday.

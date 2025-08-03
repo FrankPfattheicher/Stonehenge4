@@ -21,6 +21,8 @@ public class Passwords
     {
         if (string.IsNullOrEmpty(password)) return false;
 
+        if(!File.Exists(_fileName)) return false;
+        
         var lines = File.ReadAllLines(_fileName);
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var line in lines)

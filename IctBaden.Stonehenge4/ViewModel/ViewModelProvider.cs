@@ -235,6 +235,12 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 Resource.Cache.None));
         }
 
+        if (session?.UnauthorizeRedirect ?? false)
+        {
+            session.UnauthorizeRedirect = false;
+            return Task.FromResult<Resource?>(new Resource(resourceName, "Unauthorize", ResourceType.Text, "Unauthorize", Resource.Cache.None));
+        }
+
         return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
             GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }

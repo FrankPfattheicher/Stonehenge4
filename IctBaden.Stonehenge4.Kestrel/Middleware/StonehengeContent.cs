@@ -111,6 +111,7 @@ public class StonehengeContent
                 context.Response.Headers.Append("WWW-Authenticate", "Basic");
                 return;
             }
+            context.Response.Headers.Remove("WWW-Authenticate");
 
             if (appSession?.HostOptions.UseKeycloakAuthentication != null
                 && appSession.RequestLogin
@@ -344,6 +345,12 @@ public class StonehengeContent
                     break;
             }
 
+            if (string.Equals(content?.Text, "Unauthorize", StringComparison.OrdinalIgnoreCase))
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return;
+            }
+
             if (content == null)
             {
                 await _next.Invoke(context).ConfigureAwait(false);
@@ -416,7 +423,6 @@ public class StonehengeContent
         }
     }
 
-
     private bool CheckBasicAuthFromContext(AppSession appSession, HttpContext context)
     {
         var auth = context.Request.Headers.Authorization.FirstOrDefault();
@@ -429,6 +435,8 @@ public class StonehengeContent
                 return true;
             }
 
+            appSession.VerifiedBasicAuth = string.Empty;
+
             var userPassword = Encoding.ASCII.GetString(Convert.FromBase64String(auth.Substring(6)));
             var usrPwd = userPassword.Split(':');
             if (usrPwd.Length != 2)
@@ -439,7 +447,11 @@ public class StonehengeContent
             var user = usrPwd[0];
             var pwd = usrPwd[1];
             var isValid = appSession.Passwords.IsValid(user, pwd);
-            appSession.VerifiedBasicAuth = isValid ? auth : string.Empty;
+            if (!isValid) return isValid;
+            
+            appSession.VerifiedBasicAuth = auth;
+            appSession.SetUser(user, user, string.Empty);
+            appSession.UpdateProperty(nameof(appSession.UserIdentity));
             return isValid;
         }
 
