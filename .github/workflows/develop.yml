@@ -73,6 +73,10 @@ jobs:
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Mermaid/IctBaden.Stonehenge4.Mermaid.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4.Mermaid/bin/Release/net8.0/IctBaden.Stonehenge4.Mermaid.dll artifacts/lib
+    - name: Build st-passwd
+      run: |
+        dotnet build --configuration Release ./st-passwd/st-passwd.csproj -p:PublishSingleFile=true -p:PublishTrimmed=true -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
+        cp st-passwd/bin/Release/net8.0/st-passwd.exe artifacts/tools
         
     - name: Test with dotnet
       env: 
