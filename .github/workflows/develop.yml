@@ -26,6 +26,7 @@ jobs:
         mkdir artifacts
         mkdir artifacts/lib
         mkdir artifacts/images
+        mkdir artifacts/tools
         cp IctBaden.Stonehenge4/icon64.png artifacts/images
         
     - name: Get Version Info
