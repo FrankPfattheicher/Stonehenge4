@@ -76,7 +76,7 @@ jobs:
     - name: Build st-passwd
       run: |
         dotnet build --configuration Release ./st-passwd/st-passwd.csproj -p:PublishSingleFile=true -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp st-passwd/bin/Release/net8.0/st-passwd.exe artifacts/tools
+        cp st-passwd/bin/Release/net8.0/* -r artifacts/tools
 
     - name: Test with dotnet
       env:

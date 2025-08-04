@@ -22,7 +22,7 @@ public static class StonehengeApplication
     {
         get
         {
-            var path = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+            var path = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
             if (IsRunningInUnitTest)
             {
                 return path;
