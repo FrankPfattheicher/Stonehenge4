@@ -17,7 +17,7 @@ internal static class Program
             Environment.Exit(0);
         }
 
-        var appBasePath = AppContext.BaseDirectory.BaseDirectory;
+        var appBasePath = AppContext.BaseDirectory;
         var pwdFileName = Path.Combine(appBasePath, ".htpasswd");
         if (!File.Exists(pwdFileName))
         {
