@@ -126,6 +126,10 @@
     <Content Update="web.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Remove=".htpasswd" />
+    <Content Include=".htpasswd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ViewModels\StartI18n.Designer.cs">

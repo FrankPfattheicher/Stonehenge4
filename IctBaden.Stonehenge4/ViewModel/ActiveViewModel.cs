@@ -192,7 +192,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public ActiveViewModel(AppSession? session)
     {
-        SupportsEvents = (session != null);
+        SupportsEvents = session != null;
         Session = session ?? new AppSession();
 
         foreach (var component in GetComponents())

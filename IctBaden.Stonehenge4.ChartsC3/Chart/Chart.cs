@@ -161,7 +161,7 @@ public class Chart
             var formats = new Dictionary<string, object>(StringComparer.Ordinal);
             foreach (var series in Series)
             {
-                formats.Add(series.Label, series.Format);
+                formats.Add(series.Label, series.Format ?? string.Empty);
             }
 
             return formats;

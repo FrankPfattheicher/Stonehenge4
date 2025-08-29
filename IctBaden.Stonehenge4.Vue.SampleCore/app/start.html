@@ -175,7 +175,9 @@
                 Current User <b>{{UserIdentity}}</b> 
             </p>
             <p>
-                <button class="btn btn-sm btn-secondary" @click="UserLogin()">Login</button>
+                <button class="btn btn-sm btn-secondary" @click="UserLogin(false)">Login (Default Auth)</button>
+                &nbsp;&nbsp;
+                <button class="btn btn-sm btn-secondary" @click="UserLogin(true)">Login (Basic Auth)</button>
             </p>
             <p>
                 <button class="btn btn-sm btn-secondary" @click="UserLogout()">Logout</button>

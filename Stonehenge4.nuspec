@@ -15,7 +15,6 @@
         <copyright>Copyright ICT Baden GmbH 2013-2025</copyright>
         <tags>.NET HTML MVVM CSS Kestrel Vue</tags>
         <dependencies>
-            <dependency id="CryptSharpStandard" version="1.0.0" />
             <dependency id="HttpMultipartParser" version="8.4.0" />
             <dependency id="Microsoft.Extensions.Configuration" version="8.0.0"/>
             <dependency id="Microsoft.Extensions.Http" version="8.0.0"/>
@@ -40,5 +39,6 @@
     <files>
         <file src="../icon64.png" target="images"/>
         <file src="lib/*.dll" target="lib/net8.0"/>
+        <file src="tools/*.exe" target="tools" />
     </files>
 </package>

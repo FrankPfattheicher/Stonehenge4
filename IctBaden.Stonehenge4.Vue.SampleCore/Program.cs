@@ -64,6 +64,7 @@ internal static class Program
             UseClientLocale = true,
             UseNtlmAuthentication = false,
             UseKeycloakAuthentication = keycloak,
+            UseBasicAuth = false,
             SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, cert),
             SslCertificatePassword = "stonehenge"
         };
