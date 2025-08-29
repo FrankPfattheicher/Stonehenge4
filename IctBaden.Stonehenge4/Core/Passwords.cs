@@ -47,7 +47,7 @@ public class Passwords
             if (userPw.Length != 2) continue;
             if (!string.Equals(userPw[0], user, StringComparison.Ordinal)) continue;
 
-            var pw = userPw[1].Split(['$'], StringSplitOptions.RemoveEmptyEntries);
+            var pw = userPw[1].Split("$", StringSplitOptions.RemoveEmptyEntries);
             if (pw.Length != 3) continue;
 
             var method = pw[0];

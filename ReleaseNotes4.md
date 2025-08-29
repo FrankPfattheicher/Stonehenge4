@@ -1,4 +1,5 @@
 
+* 8.5.2 - 29.08.2025 Handle 502 responses
 * 8.5.1 - 04.08.2025 Added st-passwd tool
 * 8.5.0 - 03.08.2025 Added option useBasicAuth to UserLogin()
 

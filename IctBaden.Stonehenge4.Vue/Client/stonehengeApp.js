@@ -29,6 +29,8 @@ function stonehengeMakeRequest(method, url, data) {
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 400) {
                 resolve(xhr.responseText);
+            } else if (this.status === 502) {
+                stonehengeReloadOnError("Bad Gateway");
             } else {
                 reject({
                     status: this.status,
