@@ -178,6 +178,14 @@ stonehengeViewModelName = function component() {
                             app.stonehengeViewModelName.model.StonehengeIsDisconnected = true;
                         }
                     }
+                    if(error.status === 502) {
+                        // behind a proxy
+                        app.stonehengeViewModelName.model.StonehengePollEventsActive = null;
+                        setTimeout(function () {
+                            app.stonehengeViewModelName.StonehengePollEvents()
+                        }, 10000);
+                        return;
+                    }
                     if (error.status >= 400) {
                         setTimeout(function (app) {
                             app.stonehengeReloadOnError(error);
