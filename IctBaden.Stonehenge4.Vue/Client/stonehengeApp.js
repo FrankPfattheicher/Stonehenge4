@@ -30,7 +30,7 @@ function stonehengeMakeRequest(method, url, data) {
             if (this.status >= 200 && this.status < 400) {
                 resolve(xhr.responseText);
             } else if (this.status === 502) {
-                stonehengeReloadOnError("Bad Gateway");
+                app.stonehengeReloadOnError("Bad Gateway");
             } else {
                 reject({
                     status: this.status,
@@ -43,6 +43,7 @@ function stonehengeMakeRequest(method, url, data) {
                 status: this.status,
                 statusText: xhr.statusText
             });
+            app.stonehengeReloadOnError(xhr.statusText);
         };
         xhr.send(data);
     });
