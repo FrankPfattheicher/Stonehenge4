@@ -357,9 +357,8 @@ public sealed class HostWindow : IDisposable
 
         try
         {
-            const string cmd = "safari.exe";
-            var parameter =
-                $"-url {_startUrl}/?title={HttpUtility.UrlEncode(_title)} -width {_windowSize.X} -height {_windowSize.Y}";
+            const string cmd = "open";
+            var parameter = $"-a Safari {_startUrl}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
             if ((_ui == null) || _ui.HasExited)

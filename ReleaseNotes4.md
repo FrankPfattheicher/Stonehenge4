@@ -1,4 +1,5 @@
 
+* 8.5.6 - 05.09.2025 ShowWindowSafari
 * 8.5.5 - 01.09.2025 Updated Bootstrap to v5.3.8, include map files
 * 8.5.4 - 01.09.2025 Retry StonehengePollEvents in case of 502 proxy response
 * 8.5.3 - 29.08.2025 Use app.stonehengeReloadOnError
