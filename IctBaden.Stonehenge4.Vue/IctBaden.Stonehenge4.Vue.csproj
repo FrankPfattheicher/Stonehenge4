@@ -105,7 +105,6 @@
         <None Remove="app\src\bootstrap-vue.css" />
         <None Remove="app\src\bootstrap-vue.js" />
         <None Remove="app\src\bootstrap-ext.css" />
-        <EmbeddedResource Include="app\src\bootstrap-ext.css" />
         <None Remove="app\webfonts\fa-v4compatibility.ttf" />
         <EmbeddedResource Include="app\webfonts\fa-v4compatibility.ttf" />
         <None Remove="app\webfonts\fa-v4compatibility.woff2" />
@@ -149,6 +148,7 @@
       <EmbeddedResource Include="app\src\bootstrap-vue.min.js" />
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="app\src\bootstrap-ext.css" />
       <Content Include="app\src\bootstrap-grid.css" />
       <Content Include="app\src\bootstrap-grid.css.map" />
       <Content Include="app\src\bootstrap-grid.min.css.map" />
