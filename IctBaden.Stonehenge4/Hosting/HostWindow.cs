@@ -52,6 +52,7 @@ public sealed class HostWindow : IDisposable
         : this(StonehengeLogger.DefaultLogger, "http://localhost", "", DefaultWindowSize)
     {
     }
+
     public HostWindow(ILogger logger)
         : this(logger, "http://localhost", "", DefaultWindowSize)
     {
@@ -96,7 +97,7 @@ public sealed class HostWindow : IDisposable
         _logger.LogInformation("AppHost [{Name}] created at {DateTime}, listening on {StartUrl}",
             name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
     }
-    
+
     /// <summary>
     /// Open a UI window using an installed browser 
     /// in kino mode - if possible.
@@ -352,7 +353,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        if (Environment.OSVersion.Platform != PlatformID.MacOSX)
             return false;
 
         try
@@ -377,4 +378,5 @@ public sealed class HostWindow : IDisposable
             return false;
         }
     }
+    
 }

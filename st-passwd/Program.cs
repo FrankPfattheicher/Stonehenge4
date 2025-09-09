@@ -1,5 +1,5 @@
-﻿using IctBaden.Framework.AppUtils;
-using IctBaden.Stonehenge.Core;
+﻿using IctBaden.Stonehenge.Core;
+
 // ReSharper disable ReplaceSubstringWithRangeIndexer
 
 namespace st_passwd;
@@ -107,7 +107,7 @@ internal static class Program
             if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
             {
                 pass += key.KeyChar;
-                Console.Write("*");
+                Console.Write(@"*");
             }
             else
             {
