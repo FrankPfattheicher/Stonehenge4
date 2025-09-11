@@ -15,6 +15,3 @@ nuget
 *.key
 *.crt
 
-
-!.idea/.idea.Stonehenge4/.idea/inspectionProfiles/Project_Default.xml
-
