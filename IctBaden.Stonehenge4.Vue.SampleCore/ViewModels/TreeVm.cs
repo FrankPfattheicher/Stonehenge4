@@ -71,7 +71,7 @@ public class TreeVm : ActiveViewModel
         };
         var worldNode = new TreeNode(null, world, new SessionStateProvider(session)); 
             
-        WorldTree.SetRootNodes(new []{ worldNode }, true);
+        WorldTree.SetRootNodes([worldNode], true);
         WorldTree.SelectionChanged += WorldTreeOnSelectionChanged;
 
         foreach (var continent in Continents.Where(c => !c.IsChild))
@@ -128,7 +128,7 @@ public class TreeVm : ActiveViewModel
 
     private void WorldTreeOnSelectionChanged(TreeNode node)
     {
-        SelectedContinent = node.Name;
+        SelectedContinent = node.Name.Split('<').First();
 
         if (node.Item is Continent continent)
         {
@@ -141,12 +141,11 @@ public class TreeVm : ActiveViewModel
             Countries.Value = TotalCountries;
         }
 
-        NotifyPropertiesChanged(new []
-        {
+        NotifyPropertiesChanged([
             nameof(SelectedContinent),
             nameof(Area),
             nameof(Countries)
-        });
+        ]);
     }
 
 }
