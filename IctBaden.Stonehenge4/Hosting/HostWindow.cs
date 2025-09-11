@@ -52,6 +52,7 @@ public sealed class HostWindow : IDisposable
         : this(StonehengeLogger.DefaultLogger, "http://localhost", "", DefaultWindowSize)
     {
     }
+
     public HostWindow(ILogger logger)
         : this(logger, "http://localhost", "", DefaultWindowSize)
     {
@@ -96,7 +97,7 @@ public sealed class HostWindow : IDisposable
         _logger.LogInformation("AppHost [{Name}] created at {DateTime}, listening on {StartUrl}",
             name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
     }
-    
+
     /// <summary>
     /// Open a UI window using an installed browser 
     /// in kino mode - if possible.
@@ -352,14 +353,13 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        if (Environment.OSVersion.Platform != PlatformID.MacOSX)
             return false;
 
         try
         {
-            const string cmd = "safari.exe";
-            var parameter =
-                $"-url {_startUrl}/?title={HttpUtility.UrlEncode(_title)} -width {_windowSize.X} -height {_windowSize.Y}";
+            const string cmd = "open";
+            var parameter = $"-a Safari {_startUrl}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
             if ((_ui == null) || _ui.HasExited)
@@ -378,4 +378,5 @@ public sealed class HostWindow : IDisposable
             return false;
         }
     }
+    
 }
