@@ -9,8 +9,12 @@ nuget
 /tests
 /artifacts
 /xunit.html
-/IctBaden.Stonehenge3/app/Thumbs.db
+/IctBaden.Stonehenge4/app/Thumbs.db
 
 *.user
 *.key
 *.crt
+
+
+!.idea/.idea.Stonehenge4/.idea/inspectionProfiles/Project_Default.xml
+

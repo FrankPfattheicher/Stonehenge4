@@ -141,12 +141,11 @@ public class TreeVm : ActiveViewModel
             Countries.Value = TotalCountries;
         }
 
-        NotifyPropertiesChanged(new []
-        {
+        NotifyPropertiesChanged([
             nameof(SelectedContinent),
             nameof(Area),
             nameof(Countries)
-        });
+        ]);
     }
 
 }
