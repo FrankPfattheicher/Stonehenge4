@@ -118,9 +118,9 @@ public sealed class HostWindow : IDisposable
         var opened = false;
         if (!opened && !Environment.Is64BitOperatingSystem) opened = ShowWindowMidori();
         if (!opened) opened = ShowWindowEpiphany();
-        if (!opened) opened = ShowWindowBrave(path);
         if (!opened) opened = ShowWindowGoogleChrome(path);
         if (!opened) opened = ShowWindowChromium(path);
+        if (!opened) opened = ShowWindowBrave(path);
         if (!opened) opened = ShowWindowEdge(path);
         if (!opened) opened = ShowWindowSafari();
         if (!opened) opened = ShowWindowFirefox();
