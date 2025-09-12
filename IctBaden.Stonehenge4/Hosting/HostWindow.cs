@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.Extensions.Logging;
 
@@ -20,6 +21,8 @@ public sealed class HostWindow : IDisposable
     private readonly ILogger _logger;
     private readonly string _startUrl;
     private Process? _ui;
+
+    public string Browser = string.Empty;
 
     // ReSharper disable once MemberCanBePrivate.Global
     public string LastError = string.Empty;
@@ -94,6 +97,7 @@ public sealed class HostWindow : IDisposable
 
     private void LogStart(string name)
     {
+        Browser = name;
         _logger.LogInformation("AppHost [{Name}] created at {DateTime}, listening on {StartUrl}",
             name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
     }
@@ -111,16 +115,17 @@ public sealed class HostWindow : IDisposable
         var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var dir = Directory.CreateDirectory(path);
 
-        var opened = ShowWindowMidori();
+        var opened = false;
+        if (!opened && !Environment.Is64BitOperatingSystem) opened = ShowWindowMidori();
         if (!opened) opened = ShowWindowEpiphany();
         if (!opened) opened = ShowWindowBrave(path);
         if (!opened) opened = ShowWindowGoogleChrome(path);
         if (!opened) opened = ShowWindowChromium(path);
         if (!opened) opened = ShowWindowEdge(path);
-        if (!opened) opened = ShowWindowFirefox();
         if (!opened) opened = ShowWindowSafari();
+        if (!opened) opened = ShowWindowFirefox();
         if (!opened) opened = ShowWindowInternetExplorer();
-        
+
         if (!opened)
         {
             _logger.LogError("Could not create main window on platform {Platform}", Environment.OSVersion);
@@ -245,7 +250,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            _logger.LogError(ex, "Failed {Message}", ex.Message); 
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -294,6 +299,7 @@ public sealed class HostWindow : IDisposable
             var parameter = $"-e Navigationbar -a {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
+            Task.Delay(5000).Wait();
             if (_ui == null || _ui.HasExited)
             {
                 return false;
@@ -348,15 +354,14 @@ public sealed class HostWindow : IDisposable
             _logger.LogInformation("Trying Firefox");
 
             var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "firefox" : "firefox.exe";
-            var parameter =
-                $"-new-instance --createprofile -url {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
+            //var parameter = $"-new-instance --createprofile -url {_startUrl} --profile {path} -width {_windowSize.X} -height {_windowSize.Y}";
+            var parameter = $"-no-remote -new-window {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
             if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
-
             LogStart(cmd);
             _ui.WaitForExit();
             return true;
@@ -398,7 +403,7 @@ public sealed class HostWindow : IDisposable
             return false;
         }
     }
- 
+
     private bool ShowWindowBrave(string path)
     {
         try
@@ -407,10 +412,13 @@ public sealed class HostWindow : IDisposable
 
             var pi = new ProcessStartInfo
             {
-                FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "brave" : @"%programfiles%\BraveSoftware\Brave-Browser\Application\brave.exe",
+                FileName = Environment.OSVersion.Platform == PlatformID.Unix
+                    ? "brave-browser"
+                    : @"%programfiles%\BraveSoftware\Brave-Browser\Application\brave.exe",
                 CreateNoWindow = true,
-                Arguments = "--disable-translate --new-window --no-default-browser-check --no-first-run "
-                            + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"",
+                Arguments =
+                    "--disable-translate --new-window --no-default-browser-check --no-first-run --disable_brave_extension --disable-features=P3A "
+                    + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"",
                 UseShellExecute = Environment.OSVersion.Platform != PlatformID.Unix
             };
             if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -437,5 +445,4 @@ public sealed class HostWindow : IDisposable
             return false;
         }
     }
-
 }
