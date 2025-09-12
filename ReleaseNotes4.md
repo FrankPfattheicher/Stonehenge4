@@ -1,4 +1,5 @@
 
+* 8.5.9 - 12.09.2025 Start firefox with option --createprofile, use Safari on other OS, added Brave
 * 8.5.8 - 11.09.2025 Fixed C3 gauge value update
 * 8.5.7 - 09.09.2025 Use ShowWindowSafari only on MacOS
 * 8.5.6 - 05.09.2025 ShowWindowSafari

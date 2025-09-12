@@ -111,20 +111,21 @@ public sealed class HostWindow : IDisposable
 
         var opened = ShowWindowMidori() ||
                      ShowWindowEpiphany() ||
-                     ShowWindowChrome1(path) ||
-                     ShowWindowChrome2(path) ||
+                     ShowWindowBrave(path) ||
+                     ShowWindowGoogleChrome(path) ||
+                     ShowWindowChromium(path) ||
                      ShowWindowEdge(path) ||
                      ShowWindowFirefox() ||
                      ShowWindowSafari() ||
                      ShowWindowInternetExplorer();
         if (!opened)
         {
-            Trace.TraceError("Could not create main window");
+            Trace.TraceError($"Could not create main window on platform {Environment.OSVersion.Platform}");
         }
 
         try
         {
-            dir.Delete(true);
+            dir.Delete(recursive: true);
         }
         catch
         {
@@ -134,7 +135,7 @@ public sealed class HostWindow : IDisposable
         return opened;
     }
 
-    private bool ShowWindowChrome1(string path)
+    private bool ShowWindowGoogleChrome(string path)
     {
         try
         {
@@ -154,7 +155,7 @@ public sealed class HostWindow : IDisposable
             _ui?.Dispose();
             _ui = Process.Start(pi);
             Thread.Sleep(100); // unexpected exit on linux
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -171,7 +172,7 @@ public sealed class HostWindow : IDisposable
         }
     }
 
-    private bool ShowWindowChrome2(string path)
+    private bool ShowWindowChromium(string path)
     {
         try
         {
@@ -185,7 +186,7 @@ public sealed class HostWindow : IDisposable
 
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -252,7 +253,7 @@ public sealed class HostWindow : IDisposable
             var parameter = $"{_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -308,7 +309,7 @@ public sealed class HostWindow : IDisposable
             var parameter = $"-private {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -331,10 +332,10 @@ public sealed class HostWindow : IDisposable
         {
             var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "firefox" : "firefox.exe";
             var parameter =
-                $"-new-instance -url {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
+                $"-new-instance --createprofile -url {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -353,7 +354,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (Environment.OSVersion.Platform != PlatformID.MacOSX)
+        if (Environment.OSVersion.Platform != PlatformID.MacOSX && Environment.OSVersion.Platform != PlatformID.Other)
             return false;
 
         try
@@ -362,7 +363,7 @@ public sealed class HostWindow : IDisposable
             var parameter = $"-a Safari {_startUrl}";
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
-            if ((_ui == null) || _ui.HasExited)
+            if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
@@ -378,5 +379,42 @@ public sealed class HostWindow : IDisposable
             return false;
         }
     }
-    
+ 
+    private bool ShowWindowBrave(string path)
+    {
+        try
+        {
+            var pi = new ProcessStartInfo
+            {
+                FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "brave" : @"%programfiles%\BraveSoftware\Brave-Browser\Application\brave.exe",
+                CreateNoWindow = true,
+                Arguments = "--disable-translate --new-window --no-default-browser-check --no-first-run "
+                            + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"",
+                UseShellExecute = Environment.OSVersion.Platform != PlatformID.Unix
+            };
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                pi.Arguments += " --disable-gpu";
+            }
+
+            _ui?.Dispose();
+            _ui = Process.Start(pi);
+            Thread.Sleep(100); // unexpected exit on linux
+            if (_ui == null || _ui.HasExited)
+            {
+                return false;
+            }
+
+            LogStart(pi.FileName);
+            _ui.WaitForExit();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+            Debugger.Break();
+            return false;
+        }
+    }
+
 }
