@@ -106,21 +106,24 @@ public sealed class HostWindow : IDisposable
     /// <returns></returns>
     public bool Open()
     {
+        _logger.LogInformation("Open main window on platform {Platform}", Environment.OSVersion.Platform);
+
         var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var dir = Directory.CreateDirectory(path);
 
-        var opened = ShowWindowMidori() ||
-                     ShowWindowEpiphany() ||
-                     ShowWindowBrave(path) ||
-                     ShowWindowGoogleChrome(path) ||
-                     ShowWindowChromium(path) ||
-                     ShowWindowEdge(path) ||
-                     ShowWindowFirefox() ||
-                     ShowWindowSafari() ||
-                     ShowWindowInternetExplorer();
+        var opened = ShowWindowMidori();
+        if (!opened) opened = ShowWindowEpiphany();
+        if (!opened) opened = ShowWindowBrave(path);
+        if (!opened) opened = ShowWindowGoogleChrome(path);
+        if (!opened) opened = ShowWindowChromium(path);
+        if (!opened) opened = ShowWindowEdge(path);
+        if (!opened) opened = ShowWindowFirefox();
+        if (!opened) opened = ShowWindowSafari();
+        if (!opened) opened = ShowWindowInternetExplorer();
+        
         if (!opened)
         {
-            Trace.TraceError($"Could not create main window on platform {Environment.OSVersion.Platform}");
+            _logger.LogError("Could not create main window on platform {Platform}", Environment.OSVersion);
         }
 
         try
@@ -139,6 +142,8 @@ public sealed class HostWindow : IDisposable
     {
         try
         {
+            _logger.LogInformation("Trying Google Chrome");
+
             var pi = new ProcessStartInfo
             {
                 FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "google-chrome" : "chrome",
@@ -167,7 +172,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -176,6 +181,8 @@ public sealed class HostWindow : IDisposable
     {
         try
         {
+            _logger.LogInformation("Trying Chromium");
+
             var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "chromium-browser" : "chrome.exe";
             var parameter = "--disable-translate --new-window --no-default-browser-check --no-first-run "
                             + $"--app={_startUrl}/?title={HttpUtility.UrlEncode(_title)} --window-size={_windowSize.X},{_windowSize.Y} --user-data-dir=\"{path}\"";
@@ -198,7 +205,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -208,6 +215,8 @@ public sealed class HostWindow : IDisposable
     {
         try
         {
+            _logger.LogInformation("Trying Microsoft Edge");
+
             var pi = new ProcessStartInfo
             {
                 FileName = "msedge",
@@ -236,7 +245,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message); 
             return false;
         }
     }
@@ -249,6 +258,8 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            _logger.LogInformation("Trying Epiphany");
+
             var cmd = "epiphany";
             var parameter = $"{_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
@@ -265,7 +276,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -277,6 +288,8 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            _logger.LogInformation("Trying Midori");
+
             var cmd = "midori";
             var parameter = $"-e Navigationbar -a {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
@@ -293,7 +306,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -305,6 +318,8 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            _logger.LogInformation("Trying Internet Explorer");
+
             const string cmd = "iexplore.exe";
             var parameter = $"-private {_startUrl}/?title={HttpUtility.UrlEncode(_title)}";
             _ui?.Dispose();
@@ -321,7 +336,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -330,6 +345,8 @@ public sealed class HostWindow : IDisposable
     {
         try
         {
+            _logger.LogInformation("Trying Firefox");
+
             var cmd = Environment.OSVersion.Platform == PlatformID.Unix ? "firefox" : "firefox.exe";
             var parameter =
                 $"-new-instance --createprofile -url {_startUrl} -width {_windowSize.X} -height {_windowSize.Y}";
@@ -347,7 +364,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -359,6 +376,8 @@ public sealed class HostWindow : IDisposable
 
         try
         {
+            _logger.LogInformation("Trying Safari");
+
             const string cmd = "open";
             var parameter = $"-a Safari {_startUrl}";
             _ui?.Dispose();
@@ -375,7 +394,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
@@ -384,6 +403,8 @@ public sealed class HostWindow : IDisposable
     {
         try
         {
+            _logger.LogInformation("Trying Brave");
+
             var pi = new ProcessStartInfo
             {
                 FileName = Environment.OSVersion.Platform == PlatformID.Unix ? "brave" : @"%programfiles%\BraveSoftware\Brave-Browser\Application\brave.exe",
@@ -412,7 +433,7 @@ public sealed class HostWindow : IDisposable
         catch (Exception ex)
         {
             LastError = ex.Message;
-            Debugger.Break();
+            _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
     }
