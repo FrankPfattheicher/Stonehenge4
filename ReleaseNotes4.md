@@ -1,4 +1,5 @@
 
+* 8.5.11 - 21.09.2025 Allow multiple DependsOn attributes, Added SessionVariable attribute
 * 8.5.10 - 12.09.2025 Reorder used browsers, fix firefox, add brave
 * 8.5.9 - 12.09.2025 Start firefox with option --createprofile, use Safari on other OS, added Brave
 * 8.5.8 - 11.09.2025 Fixed C3 gauge value update
