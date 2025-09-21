@@ -47,9 +47,15 @@
         <div class="col-md-3" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
 
             <h4>
+                Session Variable
+            </h4>
+            <p>
+                <input v-model="SessionVariable" class="form-control" @change="InputChanged()" />
+            </p>
+
+            <h4>
                 Data Inserted
             </h4>
-
             <p>
                 <button class="btn btn-sm btn-secondary" @click="ExecJavaScript()">Execute JavaScript Code</button>
             </p>

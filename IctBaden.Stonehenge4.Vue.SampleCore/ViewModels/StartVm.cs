@@ -47,7 +47,10 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
+    [SessionVariable]
+    public string SessionVariable { get; set; } = string.Empty;
 
+    
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
 
@@ -215,4 +218,10 @@ END:VCALENDAR
     {
         EnableRoute("cookie", !ShowCookies);
     }
+
+    [ActionMethod]
+    public void InputChanged()
+    {
+    }
+    
 }
