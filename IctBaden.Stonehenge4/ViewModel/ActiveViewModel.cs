@@ -274,6 +274,14 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         {
             Session.EventsClear(forceEnd: true);
         }
+
+        foreach (PropertyDescriptorEx sp in sessionProperties)
+        {
+            var sv = Session.Get<object?>(sp.Name);
+            if(sv == null) continue;
+
+            sp.SetValue(this, sv); 
+        }
         
         foreach (var component in GetComponents())
         {
@@ -429,6 +437,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     }
 
     private PropertyDescriptorCollection? properties;
+    private readonly PropertyDescriptorCollection sessionProperties = new PropertyDescriptorCollection([]);
 
     public PropertyDescriptorCollection GetProperties()
     {
@@ -441,6 +450,11 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var pi = GetType().GetProperty(prop.Name);
             var desc = new PropertyDescriptorEx(prop.Name, pi, false);
             properties.Add(desc);
+
+            if (prop.Attributes.Contains(new SessionVariableAttribute()))
+            {
+                sessionProperties.Add(desc);
+            }
         }
 
         foreach (var elem in _dictionary)
@@ -724,6 +738,12 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public virtual void Dispose()
     {
+        foreach (PropertyDescriptorEx sp in sessionProperties)
+        {
+            var sv = sp.GetValue(this); 
+            Session.Set(sp.Name, sv);
+        }
+
         StopUpdateTimer();
         OnDispose();
     }

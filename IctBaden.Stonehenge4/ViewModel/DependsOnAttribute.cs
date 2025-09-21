@@ -4,9 +4,9 @@ namespace IctBaden.Stonehenge.ViewModel;
 
 /// <summary>
 /// Replacement for System.Windows.Markup.DependsOnAttribute
-/// for non windows systems
+/// for non Windows systems
 /// </summary>
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class DependsOnAttribute : Attribute
 {
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local

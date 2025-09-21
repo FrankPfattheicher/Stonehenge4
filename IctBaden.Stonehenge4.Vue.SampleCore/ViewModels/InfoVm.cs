@@ -22,6 +22,10 @@ public class InfoVm : ActiveViewModel
     public bool IsSelfHosted { get; private set; }
     public string ClrVersion { get; private set; } = string.Empty;
     
+    
+    [SessionVariable]
+    public string SessionVariable { get; set; } = string.Empty;
+
     public InfoVm(AppSession session) : base(session)
     {
         SupportsEvents = false;
@@ -36,4 +40,10 @@ public class InfoVm : ActiveViewModel
         IsSelfHosted = FrameworkInfo.IsSelfHosted;
         ClrVersion = RuntimeEnvironment.GetSystemVersion();
     }
+    
+    [ActionMethod]
+    public void InputChanged()
+    {
+    }
+
 }
