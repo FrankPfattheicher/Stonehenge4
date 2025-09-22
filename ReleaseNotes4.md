@@ -1,4 +1,5 @@
 
+* 8.5.12 - 22.09.2025 ChartValueAxis optional TickCount and TickValues
 * 8.5.11 - 21.09.2025 Allow multiple DependsOn attributes, Added SessionVariable attribute
 * 8.5.10 - 12.09.2025 Reorder used browsers, fix firefox, add brave
 * 8.5.9 - 12.09.2025 Start firefox with option --createprofile, use Safari on other OS, added Brave
