@@ -59,7 +59,8 @@ public class Charts1Vm : ActiveViewModel
                 {
                     Label = "°C",
                     Min = 0,
-                    Max = 70
+                    Max = 80,
+                    TickValues = [ 0, 25, 50, 75 ]
                 }
             ],
             Series =

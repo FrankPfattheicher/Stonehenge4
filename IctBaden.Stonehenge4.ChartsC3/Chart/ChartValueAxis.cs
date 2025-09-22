@@ -21,6 +21,32 @@ public class ChartValueAxis : ChartAxis
     
     [JsonPropertyName("max")]
     public double Max { get; set; }
+    
+    [JsonPropertyName("tick")]
+    [JsonInclude]
+    private Dictionary<string, object>? Tick { get; set; }
+
+    [JsonIgnore]
+    public int TickCount
+    {
+        get => Tick == null || !Tick.TryGetValue("count", out var count) ? 0: (int)count;
+        set
+        {
+            Tick ??= new Dictionary<string, object>(StringComparer.Ordinal);
+            Tick.Add("count", value);
+        }
+    }
+    [JsonIgnore]
+    public double[] TickValues
+    {
+        get => Tick == null || !Tick.TryGetValue("values", out var values) ? [] : (double[])values;
+        set
+        {
+            Tick ??= new Dictionary<string, object>(StringComparer.Ordinal);
+            Tick.Add("values", value);
+        }
+    }
+
 
     public ChartValueAxis(ValueAxisId id)
         : base(id.ToString())

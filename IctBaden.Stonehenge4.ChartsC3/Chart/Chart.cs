@@ -46,7 +46,7 @@ public class Chart
     /// <summary>
     /// Define the chart's values axes (maximum two)
     /// </summary>
-    public ChartValueAxis[] ValueAxes = [new ChartValueAxis(ValueAxisId.y)];
+    public ChartValueAxis[] ValueAxes = [new(ValueAxisId.y)];
 
     /// <summary>
     /// The chart's data series
