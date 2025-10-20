@@ -204,9 +204,10 @@ updated: function () {
         },
         done: function() {
             // Nach dem Update den alten Zoom wiederherstellen
-            if (self.temp_domain) {
-                self.temp_chart.zoom(self.temp_domain);
-            }
+            // Not working if new data is added
+            // if (self.temp_domain) {
+            //     self.temp_chart.zoom(self.temp_domain);
+            // }
         }
     });
 
