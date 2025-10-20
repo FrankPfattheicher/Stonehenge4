@@ -68,7 +68,8 @@ public class Charts2Vm : ActiveViewModel
         SetUpdateTimer(Speed);
     }
 
-    private void CreateLineChart()
+    private void 
+        CreateLineChart()
     {
         var time = DateTime.Now;
         var timeStamps = Enumerable.Range(0, 60)
@@ -82,6 +83,7 @@ public class Charts2Vm : ActiveViewModel
             Title = new ChartTitle("Test"),
             Series = [new ChartSeries("Sinus"), new ChartSeries("Half")],
             CategoryAxis = timeSeriesAxis,
+            EnableZoom = true,
             SortSeriesTooltips = new ValidatedEnum<ChartSortOrder>(SortSeriesTooltips).Enumeration
         };
     }

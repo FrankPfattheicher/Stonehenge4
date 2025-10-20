@@ -195,12 +195,19 @@ updated: function () {
         this.chartId = this.$props.chartdata.Id;
     }
 
+    self.temp_domain = this.chart.zoom() ? this.chart.internal.x.orgDomain() : null;
+    self.temp_chart = this.chart;
     this.chart.load({
         columns: this.$props.chartdata.Data.columns,
         onclick: function (d, element) {
             emit('clickData', d, element);
+        },
+        done: function() {
+            // Nach dem Update den alten Zoom wiederherstellen
+            if (self.temp_domain) {
+                self.temp_chart.zoom(self.temp_domain);
+            }
         }
-
     });
 
 }

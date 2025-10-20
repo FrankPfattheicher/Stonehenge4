@@ -1,4 +1,5 @@
 
+* 8.5.13 - 20.10.2025 Save chart zoom on data update, added IsRunningOnMac()
 * 8.5.12 - 22.09.2025 ChartValueAxis optional TickCount and TickValues
 * 8.5.11 - 21.09.2025 Allow multiple DependsOn attributes, Added SessionVariable attribute
 * 8.5.10 - 12.09.2025 Reorder used browsers, fix firefox, add brave
