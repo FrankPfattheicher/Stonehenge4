@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -102,22 +103,6 @@ public sealed class HostWindow : IDisposable
             name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
     }
     
-    private static bool IsRunningOnMac()
-    {
-        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        switch (Environment.OSVersion.Platform)
-        {
-            case PlatformID.Unix:
-            case (PlatformID)128:   // Framework (1.0 and 1.1) didn't include any PlatformID value for Unix, so Mono used value 128.
-            {
-                var osName = Environment.OSVersion.VersionString;
-                return osName.Contains("darwin", StringComparison.OrdinalIgnoreCase);
-            }
-            default:
-                return Environment.OSVersion.Platform == PlatformID.MacOSX;
-        }
-    }
-
     /// <summary>
     /// Open a UI window using an installed browser 
     /// in kino mode - if possible.
@@ -274,7 +259,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowEpiphany()
     {
-        if (Environment.OSVersion.Platform != PlatformID.Unix)
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -304,7 +289,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowMidori()
     {
-        if (Environment.OSVersion.Platform != PlatformID.Unix)
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -335,7 +320,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowInternetExplorer()
     {
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -392,7 +377,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (!IsRunningOnMac())
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             return false;
 
         try
