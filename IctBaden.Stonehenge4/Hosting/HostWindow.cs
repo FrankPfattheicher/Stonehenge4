@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.RuntimeInformation;
 
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable UnusedMember.Global
@@ -259,7 +260,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowEpiphany()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -289,7 +290,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowMidori()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -320,7 +321,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowInternetExplorer()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -377,23 +378,38 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (!IsOSPlatform(OSPlatform.OSX))
             return false;
 
         try
         {
             _logger.LogInformation("Trying Safari");
 
-            const string cmd = "/Applications/Safari.app/Contents/MacOS/Safari";
-            var parameter = _startUrl;
+            var appleScript = $$"""
+                                tell application "Safari"
+                                    activate
+                                    set newDoc to make new document with properties {URL:"{{_startUrl}}"}
+                                    tell window of newDoc
+                                        set bounds to {100, 100, {{100 + _windowSize.X}}, {{100 + _windowSize.Y}}}
+                                    end tell
+                                end tell
+                                """;
+            
+            var pi = new ProcessStartInfo
+            {
+                FileName = "osascript",
+                Arguments = $"-e '{appleScript.Replace("'", "\\'")}'",
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             _ui?.Dispose();
-            _ui = Process.Start(cmd, parameter);
+            _ui = Process.Start(pi);
             if (_ui == null || _ui.HasExited)
             {
                 return false;
             }
 
-            LogStart(cmd);
+            LogStart("Safari");
             _ui.WaitForExit();
             return true;
         }
