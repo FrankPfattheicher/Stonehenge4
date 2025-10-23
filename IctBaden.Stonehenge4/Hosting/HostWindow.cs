@@ -384,8 +384,8 @@ public sealed class HostWindow : IDisposable
         {
             _logger.LogInformation("Trying Safari");
 
-            const string cmd = "open";
-            var parameter = $"-a Safari {_startUrl}";
+            const string cmd = "/Applications/Safari.app/Contents/MacOS/Safari";
+            var parameter = _startUrl;
             _ui?.Dispose();
             _ui = Process.Start(cmd, parameter);
             if (_ui == null || _ui.HasExited)
