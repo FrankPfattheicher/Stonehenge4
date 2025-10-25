@@ -1,4 +1,5 @@
 
+* 8.5.18 - 25.10.2025 Fixed Safari start and monitoring exit
 * 8.5.17 - 23.10.2025 Safari start mit AppleScript
 * 8.5.16 - 23.10.2025 Direkter Start der Safari-Binärdatei verwenden
 * 8.5.15 - 22.10.2025 Detect MacOS using RuntimeInformation

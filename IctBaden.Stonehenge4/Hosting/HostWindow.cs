@@ -103,7 +103,7 @@ public sealed class HostWindow : IDisposable
         _logger.LogInformation("AppHost [{Name}] created at {DateTime}, listening on {StartUrl}",
             name, DateTime.Now, _startUrl.Replace("0.0.0.0", "127.0.0.1"));
     }
-    
+
     /// <summary>
     /// Open a UI window using an installed browser 
     /// in kino mode - if possible.
@@ -364,6 +364,7 @@ public sealed class HostWindow : IDisposable
             {
                 return false;
             }
+
             LogStart(cmd);
             _ui.WaitForExit();
             return true;
@@ -385,6 +386,9 @@ public sealed class HostWindow : IDisposable
         {
             _logger.LogInformation("Trying Safari");
 
+            var path = Path.GetTempPath();
+            var tmp = Path.Combine(path, Guid.NewGuid().ToString("N") + ".applescript");
+
             var startScript = $$"""
                                 tell application "Safari"
                                    activate
@@ -396,11 +400,8 @@ public sealed class HostWindow : IDisposable
                                 end tell
 
                                 """;
-             
-             var path = Path.GetTempPath();
-             var tmp = Path.Combine(path, Guid.NewGuid().ToString("N") + ".applescript");
-             File.WriteAllText(tmp, startScript);
-            
+            File.WriteAllText(tmp, startScript);
+
             var pi = new ProcessStartInfo
             {
                 FileName = "osascript",
@@ -411,11 +412,10 @@ public sealed class HostWindow : IDisposable
             };
             _ui?.Dispose();
             _ui = Process.Start(pi);
-            
-            var windowId = _ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty;
 
+            var windowId = _ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty;
             LogStart("Safari");
-            
+
             var checkScript = $$"""
                                 tell application "Safari"
                                    return exists (window id {{windowId}})
@@ -429,7 +429,7 @@ public sealed class HostWindow : IDisposable
                 Task.Delay(1000).Wait();
                 _ui?.Dispose();
                 _ui = Process.Start(pi);
-            
+
                 bool.TryParse(_ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty, out var exists);
                 if (!exists) break;
             }
