@@ -385,32 +385,55 @@ public sealed class HostWindow : IDisposable
         {
             _logger.LogInformation("Trying Safari");
 
-            var appleScript = $$"""
+            var startScript = $$"""
                                 tell application "Safari"
-                                    activate
-                                    set newDoc to make new document with properties {URL:"{{_startUrl}}"}
-                                    tell window of newDoc
-                                        set bounds to {100, 100, {{100 + _windowSize.X}}, {{100 + _windowSize.Y}}}
-                                    end tell
+                                   activate
+                                   set newDoc to make new document with properties {URL: "{{_startUrl}}"}
+                                   delay 0.1
+                                   set theWindow to front window
+                                   set bounds of theWindow to {100, 100, 100+{{_windowSize.X}}, 100+{{_windowSize.Y}}}
+                                   return id of theWindow
                                 end tell
+
                                 """;
+             
+             var path = Path.GetTempPath();
+             var tmp = Path.Combine(path, Guid.NewGuid().ToString("N") + ".applescript");
+             File.WriteAllText(tmp, startScript);
             
             var pi = new ProcessStartInfo
             {
                 FileName = "osascript",
-                Arguments = $"-e '{appleScript.Replace("'", "\\'")}'",
+                Arguments = tmp,
                 UseShellExecute = false,
+                RedirectStandardOutput = true,
                 CreateNoWindow = true
             };
             _ui?.Dispose();
             _ui = Process.Start(pi);
-            if (_ui == null || _ui.HasExited)
-            {
-                return false;
-            }
+            
+            var windowId = _ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty;
 
             LogStart("Safari");
-            _ui.WaitForExit();
+            
+            var checkScript = $$"""
+                                tell application "Safari"
+                                   return exists (window id {{windowId}})
+                                end tell
+
+                                """;
+            File.WriteAllText(tmp, checkScript);
+
+            while (true)
+            {
+                Task.Delay(1000).Wait();
+                _ui?.Dispose();
+                _ui = Process.Start(pi);
+            
+                bool.TryParse(_ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty, out var exists);
+                if (!exists) break;
+            }
+
             return true;
         }
         catch (Exception ex)
