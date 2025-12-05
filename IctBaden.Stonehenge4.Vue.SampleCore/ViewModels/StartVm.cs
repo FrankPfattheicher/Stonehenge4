@@ -33,6 +33,7 @@ public class StartVm : ActiveViewModel
     public string UserIdentityId => Session.UserIdentityId;
     public string UserIdentityEMail => Session.UserIdentityEMail;
     public int SessionCount => Session.SessionCount;
+    public string SessionId => Session.Id;
 
     public bool ShowCookies => IsRouteEnabled("cookie");
 

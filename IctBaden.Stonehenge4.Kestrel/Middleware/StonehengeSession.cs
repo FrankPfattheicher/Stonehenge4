@@ -105,6 +105,12 @@ public partial class StonehengeSession
         var session = appSessions.GetSessionById(stonehengeId);
         if (session == null)
         {
+            var stonehengeNonce = context.Request.Query["stonehenge-nonce"].FirstOrDefault();
+            session = appSessions.GetSessionByNonce(stonehengeNonce);
+        }
+        
+        if (session == null && path.StartsWith("/ViewModel", StringComparison.OrdinalIgnoreCase))
+        {
             // session not found
             var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
             var directoryName = Path.GetDirectoryName(path) ?? "/";
@@ -128,10 +134,14 @@ public partial class StonehengeSession
                 session = NewSession(logger, context, resourceLoader, appSessions);
 #pragma warning restore IDISP001
                 context.Response.Headers.Append("X-Stonehenge-id", new StringValues(session.Id));
-                context.Response.Headers.Append("Set-Cookie", new StringValues("stonehenge-id=" + session.Id));
+                // context.Response.Headers.Append("Set-Cookie", new StringValues("stonehenge-id=" + session.Id));
+                
+                session.Nonce = Guid.NewGuid().ToString();
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
+                query.Remove("stonehenge-nonce");
+                query.Add("stonehenge-nonce", session.Nonce);
                 query.Remove("stonehenge-id");
                 redirectUrl += $"?{query}";
 

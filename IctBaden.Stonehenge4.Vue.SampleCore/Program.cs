@@ -5,11 +5,11 @@ using System.IO;
 using System.Threading;
 using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
+using IctBaden.Stonehenge.Extension;
+using IctBaden.Stonehenge.Forms;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
-using IctBaden.Stonehenge.Extension;
-using IctBaden.Stonehenge.Forms;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;
@@ -61,7 +61,8 @@ internal static class Program
             PollIntervalSec = 10,
             HandleWindowResized = true,
             CustomMiddleware = [nameof(StonehengeRawContent)],
-            UseClientLocale = true,
+            UseClientLocale = false,
+            //DefaultLocale = "en-US",
             UseNtlmAuthentication = false,
             UseKeycloakAuthentication = keycloak,
             UseBasicAuth = false,

@@ -90,7 +90,7 @@
             }
         });
     }
-    if(typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
+    if(this.chart && typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
         this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
     }
     this.chartId = this.$props.chartdata.Id;
@@ -189,7 +189,7 @@ updated: function () {
             }
         });
 
-        if(typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
+        if(this.chart && typeof (this.chart.internal.sortSeriesTooltips) != "undefined") {
             this.chart.internal.sortSeriesTooltips = this.$props.chartdata.SortSeriesTooltips;
         }
         this.chartId = this.$props.chartdata.Id;

@@ -26,6 +26,9 @@ function stonehengeMakeRequest(method, url, data) {
 
         const xhr = new XMLHttpRequest();
         xhr.open(method, url);
+        if (app) {
+            xhr.setRequestHeader('X-Stonehenge-Id', app.stonehengeSession);
+        }
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 400) {
                 resolve(xhr.responseText);
@@ -81,6 +84,9 @@ async function stonehengeLoadComponent(name) {
     [templateText, srcText] = await Promise.all([templateRequest, srcRequest]);
 
     try {
+        if(srcText === '') {
+            debugger;
+        }
         src = eval(srcText)();
     } catch (error) {
         debugger;
@@ -172,6 +178,7 @@ app = new Vue({
         stonehengeReloadOnError: stonehengeReloadOnError,
         stonehengeCancelRequests: stonehengeCancelRequests,
         stonehengeMakeRequest: stonehengeMakeGetRequest,
+        stonehengeSession: '',
         routes: routes,
         title: 'stonehengeAppTitle',
         activeViewModelName: '',

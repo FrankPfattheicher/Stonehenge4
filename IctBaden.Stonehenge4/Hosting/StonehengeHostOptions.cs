@@ -1,6 +1,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -103,6 +104,11 @@ public class StonehengeHostOptions
     /// to set session locale
     /// </summary>
     public bool UseClientLocale { get; init; }
+    
+    /// <summary>
+    /// Default locale to be used if no Accept-Language header is present.
+    /// </summary>
+    public string DefaultLocale { get; init; } = CultureInfo.CurrentUICulture.Name;
 
     /// <summary>
     /// Timeout a session will be terminated without further access.
