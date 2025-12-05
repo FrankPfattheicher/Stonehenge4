@@ -152,7 +152,7 @@ public class StonehengeContent
                             var identityId = jwtToken?.Subject ?? string.Empty;
                             var identityName = jwtToken?.Payload["name"]?.ToString() ?? string.Empty;
                             var identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
-                            appSession.SetUser(identityName, identityId, identityMail);
+                            appSession.SetUser(jwtToken, identityName, identityId, identityMail);
 
                             // remove login redirect parameters
                             appSession.Parameters.Remove("ts");
@@ -450,7 +450,7 @@ public class StonehengeContent
             if (!isValid) return isValid;
             
             appSession.VerifiedBasicAuth = auth;
-            appSession.SetUser(user, user, string.Empty);
+            appSession.SetUser(null, user, user, string.Empty);
             appSession.UpdateProperty(nameof(appSession.UserIdentity));
             return isValid;
         }
@@ -463,7 +463,7 @@ public class StonehengeContent
         var identityId = context.User.Identity?.Name ?? string.Empty;
         if (!string.IsNullOrEmpty(identityId))
         {
-            appSession.SetUser(identityId, identityId, "");
+            appSession.SetUser(null, identityId, identityId, "");
             return;
         }
 
@@ -488,7 +488,7 @@ public class StonehengeContent
                 identityMail = jwtToken?.Payload["email"]?.ToString() ?? string.Empty;
             }
 
-            appSession.SetUser(identityName, identityId, identityMail);
+            appSession.SetUser(null, identityName, identityId, identityMail);
         }
 
         var isLocal = context.IsLocal();
@@ -498,7 +498,7 @@ public class StonehengeContent
         if (explorers.Length == 1)
         {
             identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            appSession.SetUser(identityId, "", "");
+            appSession.SetUser(null, identityId, "", "");
         }
 
         // RDP with more than one session: How to find app and session using request's client IP port

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -69,12 +70,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string RefreshToken = string.Empty;
 
 
+    /// Security token issued on login (only if provided by identity provider) 
+    public JwtSecurityToken? SecurityToken { get; private set; } 
     /// Name of user identity 
     public string UserIdentity { get; private set; } = string.Empty;
-
     /// Name of user identity 
     public string UserIdentityId { get; private set; } = string.Empty;
-
     /// Name of user identity 
     public string UserIdentityEMail { get; private set; } = string.Empty;
 
@@ -705,8 +706,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         Parameters.Remove("stonehenge-id");
     }
 
-    public void SetUser(string identityName, string identityId, string identityEMail)
+    public void SetUser(JwtSecurityToken? jwtToken, string identityName, string identityId, string identityEMail)
     {
+        SecurityToken = jwtToken;
         UserIdentity = identityName;
         UserIdentityId = identityId;
         UserIdentityEMail = identityEMail;
@@ -726,7 +728,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public void UserLogin(bool useBasicAuth = false)
     {
-        SetUser(string.Empty, string.Empty, string.Empty);
+        SetUser(null, string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
 
         if (useBasicAuth)
@@ -758,7 +760,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         if (HostOptions.UseBasicAuth || UseBasicAuth)
         {
             UseBasicAuth = HostOptions.UseBasicAuth;
-            SetUser(string.Empty, string.Empty, string.Empty);
+            SetUser(null, string.Empty, string.Empty, string.Empty);
             if (ViewModel is ActiveViewModel avm)
             {
                 UnauthorizeRedirect = true;
@@ -783,7 +785,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");
 
-        SetUser(string.Empty, string.Empty, string.Empty);
+        SetUser(null, string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
 
         return result.StatusCode == HttpStatusCode.NoContent;

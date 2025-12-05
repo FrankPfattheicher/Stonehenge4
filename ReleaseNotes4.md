@@ -1,4 +1,12 @@
 
+* 8.6.0 - 19.11.2025 Added SecurityToken to session if provided by identity provider on login
+
+* 8.5.18 - 25.10.2025 Fixed Safari start and monitoring exit
+* 8.5.17 - 23.10.2025 Safari start mit AppleScript
+* 8.5.16 - 23.10.2025 Direkter Start der Safari-Binärdatei verwenden
+* 8.5.15 - 22.10.2025 Detect MacOS using RuntimeInformation
+* 8.5.14 - 20.10.2025 Removed chart zoom due to problems with new data
+* 8.5.13 - 20.10.2025 Save chart zoom on data update, added IsRunningOnMac()
 * 8.5.12 - 22.09.2025 ChartValueAxis optional TickCount and TickValues
 * 8.5.11 - 21.09.2025 Allow multiple DependsOn attributes, Added SessionVariable attribute
 * 8.5.10 - 12.09.2025 Reorder used browsers, fix firefox, add brave

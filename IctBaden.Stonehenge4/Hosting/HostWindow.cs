@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.RuntimeInformation;
 
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable UnusedMember.Global
@@ -258,7 +260,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowEpiphany()
     {
-        if (Environment.OSVersion.Platform != PlatformID.Unix)
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -288,7 +290,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowMidori()
     {
-        if (Environment.OSVersion.Platform != PlatformID.Unix)
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -319,7 +321,7 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowInternetExplorer()
     {
-        if (Environment.OSVersion.Platform == PlatformID.Unix)
+        if (!IsOSPlatform(OSPlatform.Linux))
             return false;
 
         try
@@ -362,6 +364,7 @@ public sealed class HostWindow : IDisposable
             {
                 return false;
             }
+
             LogStart(cmd);
             _ui.WaitForExit();
             return true;
@@ -376,24 +379,61 @@ public sealed class HostWindow : IDisposable
 
     private bool ShowWindowSafari()
     {
-        if (Environment.OSVersion.Platform != PlatformID.MacOSX && Environment.OSVersion.Platform != PlatformID.Other)
+        if (!IsOSPlatform(OSPlatform.OSX))
             return false;
 
         try
         {
             _logger.LogInformation("Trying Safari");
 
-            const string cmd = "open";
-            var parameter = $"-a Safari {_startUrl}";
-            _ui?.Dispose();
-            _ui = Process.Start(cmd, parameter);
-            if (_ui == null || _ui.HasExited)
+            var path = Path.GetTempPath();
+            var tmp = Path.Combine(path, Guid.NewGuid().ToString("N") + ".applescript");
+
+            var startScript = $$"""
+                                tell application "Safari"
+                                   activate
+                                   set newDoc to make new document with properties {URL: "{{_startUrl}}"}
+                                   delay 0.1
+                                   set theWindow to front window
+                                   set bounds of theWindow to {100, 100, 100+{{_windowSize.X}}, 100+{{_windowSize.Y}}}
+                                   return id of theWindow
+                                end tell
+
+                                """;
+            File.WriteAllText(tmp, startScript);
+
+            var pi = new ProcessStartInfo
             {
-                return false;
+                FileName = "osascript",
+                Arguments = tmp,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+            _ui?.Dispose();
+            _ui = Process.Start(pi);
+
+            var windowId = _ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty;
+            LogStart("Safari");
+
+            var checkScript = $$"""
+                                tell application "Safari"
+                                   return exists (window id {{windowId}})
+                                end tell
+
+                                """;
+            File.WriteAllText(tmp, checkScript);
+
+            while (true)
+            {
+                Task.Delay(1000).Wait();
+                _ui?.Dispose();
+                _ui = Process.Start(pi);
+
+                bool.TryParse(_ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty, out var exists);
+                if (!exists) break;
             }
 
-            LogStart(cmd);
-            _ui.WaitForExit();
             return true;
         }
         catch (Exception ex)
