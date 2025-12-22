@@ -1,4 +1,5 @@
 
+* 8.6.1 - 22.12.2025 Added ComponentType to session variables
 * 8.6.0 - 19.11.2025 Added SecurityToken to session if provided by identity provider on login
 
 * 8.5.18 - 25.10.2025 Fixed Safari start and monitoring exit
