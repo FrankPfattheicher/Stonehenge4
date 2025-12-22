@@ -1,4 +1,5 @@
 
+* 8.6.3 - 22.12.2025 Allow SessionVariable attribute on fields
 * 8.6.2 - 22.12.2025 Added ComponentType to session variables
 * 8.6.1 - 14.12.2025 Updated mermaid to v11-12-2
 * 8.6.0 - 19.11.2025 Added SecurityToken to session if provided by identity provider on login
