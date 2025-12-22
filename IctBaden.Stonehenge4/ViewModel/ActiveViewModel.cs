@@ -280,6 +280,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sv = Session.Get<object?>(sp.Name);
             if(sv == null) continue;
 
+            var name = sp.ComponentType.Name + "." + sp.Name;
+            Session.Logger.LogDebug("Restore session property {Name} = {Value}", name, sv);
             sp.SetValue(this, sv); 
         }
         
@@ -437,7 +439,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     }
 
     private PropertyDescriptorCollection? properties;
-    private readonly PropertyDescriptorCollection sessionProperties = new PropertyDescriptorCollection([]);
+    private readonly PropertyDescriptorCollection sessionProperties = new ([]);
 
     public PropertyDescriptorCollection GetProperties()
     {
@@ -453,6 +455,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
             if (prop.Attributes.Contains(new SessionVariableAttribute()))
             {
+                var name = prop.ComponentType.Name + "." + prop.Name;
+                Session.Logger.LogDebug("Adding session property {Name}", name);
                 sessionProperties.Add(desc);
             }
         }
@@ -740,6 +744,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
+            var name = sp.ComponentType.Name + "." + sp.Name;
+            Session.Logger.LogDebug("Save session property {Name} = {Value}", name, sp.GetValue(this));
             var sv = sp.GetValue(this); 
             Session.Set(sp.Name, sv);
         }
