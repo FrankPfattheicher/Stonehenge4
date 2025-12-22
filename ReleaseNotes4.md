@@ -1,4 +1,5 @@
 
+* 8.6.4 - 22.12.2025 Fix restoring SessionVariable fields
 * 8.6.3 - 22.12.2025 Allow SessionVariable attribute on fields
 * 8.6.2 - 22.12.2025 Added ComponentType to session variables
 * 8.6.1 - 14.12.2025 Updated mermaid to v11-12-2

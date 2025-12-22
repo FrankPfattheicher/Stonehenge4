@@ -277,18 +277,20 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
-            var sv = Session.Get<object?>(sp.Name);
+            var name = sp.ComponentType.Name + "." + sp.Name;
+            var sv = Session.Get<object?>(name);
             if(sv == null) continue;
 
-            var name = sp.ComponentType.Name + "." + sp.Name;
             Session.Logger.LogDebug("Restore session property {Name} = {Value}", name, sv);
             sp.SetValue(this, sv); 
         }
         foreach (var sf in sessionFields)
         {
             var name = sf.DeclaringType?.Name + "." + sf.Name;
+            var sv = Session.Get<object?>(name);
+            if(sv == null) continue;
+
             Session.Logger.LogDebug("Restore session field {Name} = {Value}", name, sf.GetValue(this));
-            var sv = sf.GetValue(this); 
             sf.SetValue(this, sv);
         }
         
