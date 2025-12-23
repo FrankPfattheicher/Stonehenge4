@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -16,6 +17,7 @@ using static System.Runtime.InteropServices.RuntimeInformation;
 
 namespace IctBaden.Stonehenge.Hosting;
 
+[SuppressMessage("Performance", "MA0144:Use System.OperatingSystem to check the current OS")]
 public sealed class HostWindow : IDisposable
 {
     private readonly string _title;
@@ -389,18 +391,8 @@ public sealed class HostWindow : IDisposable
             var path = Path.GetTempPath();
             var tmp = Path.Combine(path, Guid.NewGuid().ToString("N") + ".applescript");
 
-            var startScript = $$"""
-                                tell application "Safari"
-                                   activate
-                                   set newDoc to make new document with properties {URL: "{{_startUrl}}"}
-                                   delay 0.1
-                                   set theWindow to front window
-                                   set bounds of theWindow to {100, 100, 100+{{_windowSize.X}}, 100+{{_windowSize.Y}}}
-                                   return id of theWindow
-                                end tell
-
-                                """;
-            File.WriteAllText(tmp, startScript);
+            var startSafariScript = GetStartSafariScript();
+            File.WriteAllText(tmp, startSafariScript);
 
             var pi = new ProcessStartInfo
             {
@@ -416,13 +408,8 @@ public sealed class HostWindow : IDisposable
             var windowId = _ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty;
             LogStart("Safari");
 
-            var checkScript = $$"""
-                                tell application "Safari"
-                                   return exists (window id {{windowId}})
-                                end tell
-
-                                """;
-            File.WriteAllText(tmp, checkScript);
+            var checkSafariScript = GetCheckSafariScript(windowId);
+            File.WriteAllText(tmp, checkSafariScript);
 
             while (true)
             {
@@ -442,6 +429,33 @@ public sealed class HostWindow : IDisposable
             _logger.LogError(ex, "Failed {Message}", ex.Message);
             return false;
         }
+    }
+
+    private static string GetCheckSafariScript(string windowId)
+    {
+        var checkSafariScript = $$"""
+                                  tell application "Safari"
+                                     return exists (window id {{windowId}})
+                                  end tell
+
+                                  """;
+        return checkSafariScript;
+    }
+
+    private string GetStartSafariScript()
+    {
+        var startSafariScript = $$"""
+                                  tell application "Safari"
+                                     activate
+                                     set newDoc to make new document with properties {URL: "{{_startUrl}}"}
+                                     delay 0.1
+                                     set theWindow to front window
+                                     set bounds of theWindow to {100, 100, 100+{{_windowSize.X}}, 100+{{_windowSize.Y}}}
+                                     return id of theWindow
+                                  end tell
+
+                                  """;
+        return startSafariScript;
     }
 
     private bool ShowWindowBrave(string path)

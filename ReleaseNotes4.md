@@ -1,4 +1,5 @@
 
+* 8.6.5 - 23.12.2025 Fix SessionVariable private fields of base class
 * 8.6.4 - 22.12.2025 Fix restoring SessionVariable fields
 * 8.6.3 - 22.12.2025 Allow SessionVariable attribute on fields
 * 8.6.2 - 22.12.2025 Added ComponentType to session variables
