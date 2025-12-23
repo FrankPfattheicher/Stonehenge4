@@ -278,7 +278,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
             var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name;
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name.Replace("<T>", GetType().Name);
             var sv = Session.Get<object?>(name);
             if(sv == null) continue;
 
@@ -295,7 +295,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         foreach (var sf in sessionFields)
         {
             var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name;
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name.Replace("<T>", GetType().Name);
             var sv = Session.Get<object?>(name);
             if(sv == null) continue;
 
@@ -481,7 +481,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sessionVariableAttribute = prop.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? prop.Name : sessionVariableAttribute.Name;
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? prop.Name : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
                 Session.Logger.LogDebug("Adding session property {VarName} ({PropName}) from {ViewModel}", name, prop.Name, GetType().Name);
                 sessionProperties.Add(desc);
             }
@@ -491,7 +491,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sessionVariableAttribute = field.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? field.Name : sessionVariableAttribute.Name;
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? field.Name : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
                 Session.Logger.LogDebug("Adding session field {Name} ({FieldName}) from {ViewModel}", name, field.Name, GetType().Name);
                 sessionFields.Add(field);
             }
@@ -797,7 +797,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
             var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name;
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name.Replace("<T>", GetType().Name);
             var sv = sp.GetValue(this);
             try
             {
@@ -812,7 +812,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         foreach (var sf in sessionFields)
         {
             var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name;
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name.Replace("<T>", GetType().Name);
             var sv = sf.GetValue(this); 
             try
             {
