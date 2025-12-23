@@ -23,7 +23,7 @@ public class InfoVm : BaseVm
     public bool IsSelfHosted { get; private set; }
     public string ClrVersion { get; private set; } = string.Empty;
     
-    [SessionVariable]
+    [SessionVariable("MySessionVar")]
     public string SessionVar { get; set; } = string.Empty;
 
     public InfoVm(AppSession session) : base(session)

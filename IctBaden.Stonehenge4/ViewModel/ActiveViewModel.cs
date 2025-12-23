@@ -277,21 +277,37 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
-            var name = sp.Name;
+            var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name;
             var sv = Session.Get<object?>(name);
             if(sv == null) continue;
 
-            Session.Logger.LogDebug("Restore session property {Name} = {Value}", name, sv);
-            sp.SetValue(this, sv); 
+            try
+            {
+                sp.SetValue(this, sv); 
+                Session.Logger.LogDebug("Restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}", name, sp.Name, sv, GetType().Name);
+            }
+            catch (Exception ex)
+            {
+                Session.Logger.LogError(ex, "Failed to restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}", name, sp.Name, sv, GetType().Name);
+            }
         }
         foreach (var sf in sessionFields)
         {
-            var name = sf.Name;
+            var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name;
             var sv = Session.Get<object?>(name);
             if(sv == null) continue;
 
-            Session.Logger.LogDebug("Restore session field {Name} = {Value}", name, sv);
-            sf.SetValue(this, sv);
+            try
+            {
+                sf.SetValue(this, sv);
+                Session.Logger.LogDebug("Restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}", name, sf.Name, sv, GetType().Name);
+            }
+            catch (Exception ex)
+            {
+                Session.Logger.LogError(ex, "Failed to restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}", name, sf.Name, sv, GetType().Name);
+            }
         }
         
         foreach (var component in GetComponents())
@@ -465,7 +481,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sessionVariableAttribute = prop.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                Session.Logger.LogDebug("Adding session property {Name}", prop.Name);
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? prop.Name : sessionVariableAttribute.Name;
+                Session.Logger.LogDebug("Adding session property {VarName} ({PropName}) from {ViewModel}", name, prop.Name, GetType().Name);
                 sessionProperties.Add(desc);
             }
         }
@@ -474,7 +491,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sessionVariableAttribute = field.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                Session.Logger.LogDebug("Adding session field {Name}", field.Name);
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? field.Name : sessionVariableAttribute.Name;
+                Session.Logger.LogDebug("Adding session field {Name} ({FieldName}) from {ViewModel}", name, field.Name, GetType().Name);
                 sessionFields.Add(field);
             }
         }
@@ -778,30 +796,32 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
-            var name = sp.Name;
-            var sv = sp.GetValue(this); 
+            var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name;
+            var sv = sp.GetValue(this);
             try
             {
                 Session.Set(name, sv);
-                Session.Logger.LogDebug("Save session property {Name} = {Value}", name, sv);
+                Session.Logger.LogDebug("Save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}", name, sp.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to save session property {Name} = {Value}", name, sv);
+                Session.Logger.LogError(ex, "Failed to save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}", name, sp.Name, sv, GetType().Name);
             }
         }
         foreach (var sf in sessionFields)
         {
-            var name = sf.Name;
+            var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
+            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name;
             var sv = sf.GetValue(this); 
             try
             {
                 Session.Set(name, sv);
-                Session.Logger.LogDebug("Save session field {Name} = {Value}", name, sv);
+                Session.Logger.LogDebug("Save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name, sf.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to save session field {Name} = {Value}", name, sv);
+                Session.Logger.LogError(ex, "Failed to save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name, sf.Name, sv, GetType().Name);
             }
         }
         
