@@ -4,7 +4,7 @@ An open source .NET Framework to use Web UI technologies for desktop and/or web 
 * See a (very) short [getting started introduction here](docs/GettingStarted.md).
 * Core functionality [active view models](docs/active-vm.md)
 * Creating [reusable components](docs/ReusableComponents.md)
-
+* Using Session Variables [SessionVariable Attribute](docs/SessionVariable.md)
 
 ## Version 4
 This version is based on .NET 8. 
