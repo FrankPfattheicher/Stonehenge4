@@ -32,6 +32,7 @@ ProjectSection(SolutionItems) = preProject
 	ReleaseNotes4.md = ReleaseNotes4.md
 	docs\ReusableComponents.md = docs\ReusableComponents.md
 	docs\active-vm.md = docs\active-vm.md
+	docs\SessionVariable.md = docs\SessionVariable.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IctBaden.Stonehenge4.Vue.TestApp2", "IctBaden.Stonehenge4.Vue.TestApp2\IctBaden.Stonehenge4.Vue.TestApp2.csproj", "{EC4663D2-6DF5-40AA-9FF9-191307D6D918}"

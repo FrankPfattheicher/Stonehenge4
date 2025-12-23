@@ -48,8 +48,8 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
-    [SessionVariable]
-    public string SessionVariable { get; set; } = string.Empty;
+    [SessionVariable("MySessionVar")]
+    public string SessionVar { get; set; } = string.Empty;
 
     
     public string Parameters =>

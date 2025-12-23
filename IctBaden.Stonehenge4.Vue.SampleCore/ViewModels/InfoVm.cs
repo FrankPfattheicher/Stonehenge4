@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using IctBaden.Framework.AppUtils;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -12,7 +13,7 @@ using IctBaden.Stonehenge.ViewModel;
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 [SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
-public class InfoVm : ActiveViewModel
+public class InfoVm : BaseVm
 {
     public string TestValue { get; set; } = string.Empty;
 
@@ -22,13 +23,13 @@ public class InfoVm : ActiveViewModel
     public bool IsSelfHosted { get; private set; }
     public string ClrVersion { get; private set; } = string.Empty;
     
-    
-    [SessionVariable]
-    public string SessionVariable { get; set; } = string.Empty;
+    [SessionVariable("MySessionVar")]
+    public string SessionVar { get; set; } = string.Empty;
 
     public InfoVm(AppSession session) : base(session)
     {
         SupportsEvents = false;
+        SessionTitle = "Info";
     }
     
     public override void OnLoad()

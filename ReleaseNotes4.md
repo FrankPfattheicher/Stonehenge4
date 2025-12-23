@@ -1,4 +1,11 @@
 
+* 8.6.7 - 23.12.2025 Allow SessionVariable <T> placeholder in custom name replaced by type name using attribute
+* 8.6.6 - 23.12.2025 Allow SessionVariable custom name in session
+* 8.6.5 - 23.12.2025 Fix SessionVariable private fields of base class
+* 8.6.4 - 22.12.2025 Fix restoring SessionVariable fields
+* 8.6.3 - 22.12.2025 Allow SessionVariable attribute on fields
+* 8.6.2 - 22.12.2025 Added ComponentType to session variables
+* 8.6.1 - 14.12.2025 Updated mermaid to v11-12-2
 * 8.6.0 - 19.11.2025 Added SecurityToken to session if provided by identity provider on login
 
 * 8.5.18 - 25.10.2025 Fixed Safari start and monitoring exit
