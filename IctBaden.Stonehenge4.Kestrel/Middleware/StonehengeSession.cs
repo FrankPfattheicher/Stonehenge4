@@ -134,6 +134,7 @@ public partial class StonehengeSession
                 session = NewSession(logger, context, resourceLoader, appSessions);
 #pragma warning restore IDISP001
                 context.Response.Headers.Append("X-Stonehenge-id", new StringValues(session.Id));
+                // ******** DO NOT USE COOKIES !!! ********
                 // context.Response.Headers.Append("Set-Cookie", new StringValues("stonehenge-id=" + session.Id));
                 
                 session.Nonce = Guid.NewGuid().ToString();

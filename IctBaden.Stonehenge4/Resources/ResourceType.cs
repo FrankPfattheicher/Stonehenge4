@@ -26,6 +26,7 @@ public class ResourceType
     public static readonly ResourceType Html = new("html", "text/html", false);
     public static readonly ResourceType Css = new("css", "text/css", false);
     public static readonly ResourceType Js = new("js", "text/javascript", false);
+    public static readonly ResourceType JsModule = new("mjs", "text/javascript; charset=utf-8", false);
     public static readonly ResourceType Calendar = new("ics", "text/calendar", false);
     public static readonly ResourceType Csv = new("csv", "text/csv", false);
     public static readonly ResourceType Xml = new("xml", "text/xml", false);
@@ -52,12 +53,14 @@ public class ResourceType
         Htm, Html,
         Css,
         Js,
+        JsModule,
         Calendar,
         Csv,
         Pdf,
         Json,
         Png, Gif, Jpg, Jpeg,
         Wav,
+        Xml,
         Ico,
         Svg,
         Eot, Ttf, Woff, Woff2

@@ -1,4 +1,6 @@
 
+* 8.7.0 - 23.11.2025 Operating completly without cookies. Added support for esm modules.
+
 * 8.6.7 - 23.12.2025 Allow SessionVariable <T> placeholder in custom name replaced by type name using attribute
 * 8.6.6 - 23.12.2025 Allow SessionVariable custom name in session
 * 8.6.5 - 23.12.2025 Fix SessionVariable private fields of base class

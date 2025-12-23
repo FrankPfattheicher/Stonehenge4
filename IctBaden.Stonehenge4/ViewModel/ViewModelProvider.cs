@@ -344,7 +344,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                 }
 
-                AddStonehengeInternalProperties(data, activeVm);
+                // ******** DO NOT FOR EVENTS ********
+                // AddStonehengeInternalProperties(data, activeVm);
             }
             catch
             {

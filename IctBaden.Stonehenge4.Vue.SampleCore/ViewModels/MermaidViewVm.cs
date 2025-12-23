@@ -52,8 +52,15 @@ public class MermaidViewVm : ActiveViewModel
                                     Alice->John: Yes... John, how are you?
                                 """;
                 MermaidGraph3 = """
-                               flowchart TD        
-                               
+                               ---
+                               config:
+                                   layout: elk
+                                   elk:
+                                       mergeEdges: true
+                                       nodePlacementStrategy: NETWORK_SIMPLEX
+                               ---
+                               flowchart TD
+                                   
                                Solar((&nbsp;☀️ Solar &nbsp;))
                                Battery[(🔋 Battery<br>32%)]
                                Home[🏠 Haus]
