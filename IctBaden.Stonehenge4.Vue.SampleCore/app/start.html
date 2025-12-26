@@ -135,8 +135,7 @@
             </h4>
             <p>
                 <button class="btn btn-sm btn-secondary" @click="ShowMessageBox()">Browser MessageBox</button>
-            </p>
-            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-sm btn-secondary" @click="ShowAppBox()">App MessageBox</button>
             </p>
 
@@ -145,9 +144,15 @@
             </h4>
             <p>
                 <button class="btn btn-sm btn-secondary" @click="ShowAppDialog1()">App Dialog</button>
-            </p>
-            <p>
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 <button class="btn btn-sm btn-secondary" @click="ShowAppDialog2()">Disabled OK</button>
+            </p>
+
+            <h4>
+                Dialog Box As Component
+            </h4>
+            <p>
+                <button class="btn btn-sm btn-secondary" @click="ShowComponentDlg()">Component Dialog</button>
             </p>
 
         </div>
@@ -222,5 +227,8 @@
         <input v-model="SessionVar" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>
+
+    <component-box :model="ComponentDlg"></component-box>
+
 
 </div>

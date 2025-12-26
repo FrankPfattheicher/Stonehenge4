@@ -92,6 +92,8 @@
     </EmbeddedResource>
     <None Remove="app\charts3.html" />
     <EmbeddedResource Include="app\charts3.html" />
+    <None Remove="app\component-box.html" />
+    <EmbeddedResource Include="app\component-box.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />

@@ -1,0 +1,42 @@
+<!--CustomElement:model-->
+<!--ViewModel:ComponentDlg-->
+<div class="app-dialog" v-if="model.Visible" style="overflow: unset;"
+     tabindex="-1" @keyup.esc="Cancel()">
+
+    <div class="app-dlg-caption">
+        Component Dialog
+        <div class="app-dlg-close" @click="Cancel()">
+            &nbsp;🗙&nbsp;
+        </div>
+    </div>
+
+    <div style="margin: 2em;">
+
+        <table class="prop-table">
+
+            <tr>
+                <td style="width: 10em;">
+                    ComponentVar
+                </td>
+                <td>
+                    <label>
+                        <input class="form-control" v-model="model.ComponentVar" style="width: 30em;" @change="InputChanged()">
+                    </label>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div style="text-align: right;">
+        <button class="btn btn-primary" @click="Cancel()" style="margin: 1em;">
+            &nbsp;&nbsp;Cancel&nbsp;&nbsp;
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-primary" @click="Ok()" style="margin: 1em;">
+            &nbsp;&nbsp;OK&nbsp;&nbsp;
+        </button>
+    </div>
+
+</div>

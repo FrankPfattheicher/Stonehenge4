@@ -48,10 +48,11 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
-    [SessionVariable("MySessionVar")]
-    public string SessionVar { get; set; } = string.Empty;
+    public ComponentDlg ComponentDlg { get; private set; } = new();
 
-    
+    [SessionVariable("MySessionVar")] public string SessionVar { get; set; } = string.Empty;
+
+
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
 
@@ -204,6 +205,7 @@ END:VCALENDAR
         {
             Culture = newCulture;
         }
+
         if (string.IsNullOrEmpty(Culture))
         {
             Session.SetSessionCulture(CultureInfo.CurrentUICulture);
@@ -230,5 +232,10 @@ END:VCALENDAR
     {
         SessionVar = $"{pre}{SessionVar}{post}";
     }
-    
+
+    [ActionMethod]
+    public void ShowComponentDlg()
+    {
+        ComponentDlg.Show();
+    }
 }
