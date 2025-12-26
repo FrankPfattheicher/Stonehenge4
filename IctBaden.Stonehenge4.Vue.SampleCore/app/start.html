@@ -215,11 +215,11 @@
     </app-message-box>
 
     <app-dialog v-if="AppDialogVisible1" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()">
-        <input v-model="Test" v-select/>
+        <input v-model="SessionVar" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>
     <app-dialog v-if="AppDialogVisible2" :caption="AppDialogCaption" @ok="CloseAppBox()" @cancel="CloseAppBox()" enableOk="false" :okText="I18n.BtnClose">
-        <input v-model="Test" v-select/>
+        <input v-model="SessionVar" v-select/>
         <button class="btn btn-sm btn-secondary" @click="Save(1,2)">Prefix with "1", append "2"</button>
     </app-dialog>
 

@@ -224,5 +224,11 @@ END:VCALENDAR
     public void InputChanged()
     {
     }
+
+    [ActionMethod]
+    public void Save(int pre, int post)
+    {
+        SessionVar = $"{pre}{SessionVar}{post}";
+    }
     
 }
