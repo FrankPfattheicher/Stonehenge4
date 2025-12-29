@@ -78,7 +78,7 @@ stonehengeViewModelName = function component() {
             return new Promise(resolve => setTimeout(resolve, milliseconds));
         },
     
-        StonehengePost: async function (urlWithParams) {
+        StonehengePost: async function (urlWithParams, model, props) {
             this.StonehengeCancelVmRequests();
 
             let w = 3;
@@ -86,10 +86,12 @@ stonehengeViewModelName = function component() {
                 await this.StonehengeSleep(100);
             }
 
-            let props = ['propNames'];
+            model ??= app.stonehengeViewModelName.model;
+            props ??= ['propNames'];
+
             let formData = {};
             props.forEach(function (prop) {
-                formData[prop] = app.stonehengeViewModelName.model[prop];
+                formData[prop] = model[prop];
             });
             this.StonehengePostActive = true;
             Vue.http.post(urlWithParams, JSON.stringify(formData),

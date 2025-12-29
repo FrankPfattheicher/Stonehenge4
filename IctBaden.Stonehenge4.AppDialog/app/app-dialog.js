@@ -1,6 +1,6 @@
 
 mounted: function() {
-    console.log('app-dialog created');
+    console.log('app-dialog mounted');
 
     function dragElement(elmnt) {
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;

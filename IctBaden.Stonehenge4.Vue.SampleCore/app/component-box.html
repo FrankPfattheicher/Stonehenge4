@@ -1,14 +1,8 @@
 <!--CustomElement:model-->
 <!--ViewModel:ComponentDlg-->
-<div class="app-dialog" v-if="model.Visible" style="overflow: unset;"
-     tabindex="-1" @keyup.esc="Cancel()">
-
-    <div class="app-dlg-caption">
-        Component Dialog
-        <div class="app-dlg-close" @click="Cancel()">
-            &nbsp;🗙&nbsp;
-        </div>
-    </div>
+<app-dialog v-if="model.Visible" 
+            :caption="model.Caption" :okText="model.I18n.BtnOK" :cancelText="model.I18n.BtnCancel"
+            @ok="Ok()" @cancel="Cancel()">
 
     <div style="margin: 2em;">
 
@@ -16,7 +10,7 @@
 
             <tr>
                 <td style="width: 10em;">
-                    ComponentVar
+                    ComponentVar - optional set Session Variable
                 </td>
                 <td>
                     <label>
@@ -29,14 +23,4 @@
 
     </div>
 
-    <div style="text-align: right;">
-        <button class="btn btn-primary" @click="Cancel()" style="margin: 1em;">
-            &nbsp;&nbsp;Cancel&nbsp;&nbsp;
-        </button>
-        &nbsp;&nbsp;
-        <button class="btn btn-primary" @click="Ok()" style="margin: 1em;">
-            &nbsp;&nbsp;OK&nbsp;&nbsp;
-        </button>
-    </div>
-
-</div>
+</app-dialog>

@@ -57,6 +57,8 @@ namespace IctBaden.Stonehenge.ViewModel;
 
 public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged, IDisposable
 {
+    public const string StonehengePropertyNameId = "_stonehenge_";
+    
     #region helper classes
 
     class GetMemberBinderEx(string name) : GetMemberBinder(name, false)
@@ -312,7 +314,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         
         foreach (var component in GetComponents())
         {
-            component.I18Names = component.GetI18Names();
+            component.I18Names = component.GetI18Names(this);
             component.OnLoad();
         }
     }
@@ -595,11 +597,20 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     protected internal void NotifyPropertyChanged(string name)
     {
 #if DEBUG
-        //TODO: AppService.PropertyNameId
-        Debug.Assert(name.StartsWith("_stonehenge_", StringComparison.Ordinal)
-                     || GetPropertyInfo(name) != null
-                     || _dictionary.ContainsKey(name)
+        foreach (var component in GetComponents())
+        {
+            if (component.GetProperties().Cast<PropertyDescriptorEx>().Any(p => string.Equals(p.Name, name, StringComparison.Ordinal)))
+            {
+                name = component.GetType().Name;
+            }
+        }
+        if(!string.Equals(name, GetType().Name, StringComparison.Ordinal))
+        {
+            Debug.Assert(name.StartsWith(StonehengePropertyNameId, StringComparison.Ordinal)
+                      || GetPropertyInfo(name) != null
+                      || _dictionary.ContainsKey(name)
             , "NotifyPropertyChanged for unknown property " + name);
+        }
 #endif
         var handler = PropertyChanged;
         if (handler != null)
@@ -651,7 +662,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         MessageBoxTitle = title;
         MessageBoxText = text;
-        NotifyPropertyChanged("_stonehenge_StonehengeEval");
+        NotifyPropertyChanged( StonehengePropertyNameId + "StonehengeEval");
     }
 
     #endregion

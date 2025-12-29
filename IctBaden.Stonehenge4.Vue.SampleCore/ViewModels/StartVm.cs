@@ -48,7 +48,7 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
-    public ComponentDlg ComponentDlg { get; private set; } = new();
+    public ComponentDlg ComponentDlg { get; private set; } = new("Component Dialog");
 
     [SessionVariable("MySessionVar")] public string SessionVar { get; set; } = string.Empty;
 
@@ -237,5 +237,12 @@ END:VCALENDAR
     public void ShowComponentDlg()
     {
         ComponentDlg.Show();
+        ComponentDlg.Closed = ok =>
+            {
+                if (ok)
+                {
+                    SessionVar = ComponentDlg.ComponentVar;
+                }
+            };
     }
 }
