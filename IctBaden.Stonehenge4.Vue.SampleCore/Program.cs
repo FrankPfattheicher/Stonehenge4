@@ -10,6 +10,7 @@ using IctBaden.Stonehenge.Forms;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge4.Syntaxhighlight;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;
@@ -81,6 +82,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
         loader.AddResourceAssembly(typeof(FormControls).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
+        loader.AddResourceAssembly(typeof(SyntaxHighlight).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology

@@ -19,6 +19,8 @@ namespace IctBaden.Stonehenge.Extension;
 [SuppressMessage("Design", "MA0046:Use EventHandler<T> to declare events")]
 public class TreeView : IStonehengeExtension
 {
+    public string Version => "1.00";
+
     public IList<TreeNode> RootNodes { get; set; } = new List<TreeNode>();
 
     public event Action<TreeNode>? SelectionChanged;

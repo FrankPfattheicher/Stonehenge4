@@ -94,6 +94,8 @@
     <EmbeddedResource Include="app\charts3.html" />
     <None Remove="app\component-box.html" />
     <EmbeddedResource Include="app\component-box.html" />
+    <None Remove="app\syntax-highlight.html" />
+    <EmbeddedResource Include="app\syntax.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IctBaden.Stonehenge4.AppDialog\IctBaden.Stonehenge4.AppDialog.csproj" />
@@ -101,6 +103,7 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4.Forms\IctBaden.Stonehenge4.Forms.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Kestrel\IctBaden.Stonehenge4.Kestrel.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Mermaid\IctBaden.Stonehenge4.Mermaid.csproj" />
+    <ProjectReference Include="..\IctBaden.Stonehenge4.SyntaxHighlight\IctBaden.Stonehenge4.SyntaxHighlight.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.TreeView\IctBaden.Stonehenge4.TreeView.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4.Vue\IctBaden.Stonehenge4.Vue.csproj" />
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
