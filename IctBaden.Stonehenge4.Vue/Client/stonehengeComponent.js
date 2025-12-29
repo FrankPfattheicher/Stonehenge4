@@ -1,4 +1,4 @@
-// TODO: Reload on HTTP 502
+
 stonehengeViewModelName = function component() {
 
 

@@ -14,7 +14,6 @@
 
     <ItemGroup>
       <None Remove="app\src\mermaid.min.js" />
-      <EmbeddedResource Include="app\src\mermaid.min.js" />
       <None Remove="app\st-mermaid.html" />
       <EmbeddedResource Include="app\st-mermaid.html" />
       <None Remove="app\st-mermaid.js" />
