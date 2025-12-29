@@ -158,7 +158,7 @@ public static class UserContentLinks
                 _extensions += Environment.NewLine + string.Format(JsLinkTemplate, js);
             }
             var mjsResources = resources
-                .Where(name => name.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase))
+                .Where(name => name.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase) && !name.Contains(".chunks.", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var resourceName in mjsResources.Where(name => name.Contains(baseNameSrc, StringComparison.OrdinalIgnoreCase)))

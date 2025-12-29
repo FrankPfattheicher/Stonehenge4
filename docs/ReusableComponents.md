@@ -39,7 +39,7 @@ Properties of the view model can be accessed using the **model** element.
 ## Components Use
 The component is published as html-tag with the name of the component's view file name.
 
-The model property has to be bound to the view model instance.
+The **model** property has to be bound to the component's view model instance.
 
 ```html
 <div>
@@ -47,7 +47,7 @@ The model property has to be bound to the view model instance.
 </div>
 ```
 
-The corresponding view model property is of type of the component. 
+The corresponding view model property is of the type of the component. 
 
 ``` csharp
 public ComputerInfo Info { get; private set; } = new();

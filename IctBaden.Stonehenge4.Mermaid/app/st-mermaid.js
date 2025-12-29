@@ -1,6 +1,12 @@
 
 mounted: async function() {
-    
+
+    const mermaidModule = await import("./src/mermaid.esm.mjs");
+    const elkLayoutsModule = await import("./src/mermaid-layout-elk.esm.mjs");
+    const mermaid = mermaidModule.default;
+    const elkLayouts = elkLayoutsModule.default;
+
+    mermaid.registerLayoutLoaders(elkLayouts);
     mermaid.initialize({
         startOnLoad: false,
         suppressErrors: true
@@ -25,6 +31,9 @@ mounted: async function() {
     }
 },
 updated: async function () {
+
+    const mermaidModule = await import("./src/mermaid.esm.mjs");
+    const mermaid = mermaidModule.default;
 
     const ts = new Date().getMilliseconds();
     const id = 'id' + ts + Math.floor(Math.random() * 100);

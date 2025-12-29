@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Copyright>Copyright ©2013-2025 ICT Baden GmbH</Copyright>
+        <Copyright>Copyright ©2013-2026 ICT Baden GmbH</Copyright>
         <Company>ICT Baden GmbH</Company>
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
