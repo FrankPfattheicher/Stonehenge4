@@ -660,14 +660,27 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         Converters = { new DoubleConverter() }
     };
 
+    public bool SendingPropertiesChanged() => _serverSentContext != null; 
+    public async Task CancelPropertiesChanged()
+    {
+        if (_serverSentCancel is { IsCancellationRequested: false })
+        {
+            await _serverSentCancel.CancelAsync().ConfigureAwait(false);
+        }
+        _serverSentContext = null;
+        _serverSentCancel?.Dispose();
+        _serverSentCancel = null;
+    }
+
     public async Task SendPropertiesChanged(HttpContext context)
     {
         _serverSentContext = context;
         _serverSentCancel?.Dispose();
-        _serverSentCancel = new CancellationTokenSource();
+        _serverSentCancel = new CancellationTokenSource(); 
         await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(false);
     }
-    private async Task SendPropertyChanged(string name)
+
+    internal async Task SendPropertyChanged(string name)
     {
         if (_serverSentContext == null) return;
         
@@ -833,6 +846,10 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         // Do NOT abort this
         // _serverSentContext?.Abort();
+        if (_serverSentCancel is { IsCancellationRequested: false })
+        {
+            _serverSentCancel?.Cancel();
+        }
         _serverSentContext = null;
         
         foreach (PropertyDescriptorEx sp in sessionProperties)
@@ -866,7 +883,6 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             }
         }
 
-        _serverSentCancel?.Dispose();
         StopUpdateTimer();
         OnDispose();
     }

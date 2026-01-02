@@ -137,7 +137,7 @@ public partial class StonehengeSession
                 // ******** DO NOT USE COOKIES !!! ********
                 // context.Response.Headers.Append("Set-Cookie", new StringValues("stonehenge-id=" + session.Id));
                 
-                session.Nonce = Guid.NewGuid().ToString();
+                session.Nonce = Guid.NewGuid().ToString("N");
 
                 var redirectUrl = "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());

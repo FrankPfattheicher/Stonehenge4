@@ -30,6 +30,7 @@ public class Charts2Vm : ActiveViewModel
     public Chart? LineChart { get; private set; }
     public SankeyChart? SankeyChart { get; private set; }
 
+    [SessionVariable]
     public int Speed { get; private set; } = 500;
     private int _start;
 

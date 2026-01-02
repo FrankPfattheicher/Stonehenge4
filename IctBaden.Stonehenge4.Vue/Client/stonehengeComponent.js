@@ -135,6 +135,7 @@ stonehengeViewModelName = function component() {
 
             if (!app || app.stonehengeSession === '') return;
             if(!app.stonehengeViewModelName.model.StonehengeActive) return;
+            if(app.activeViewModelName !== 'stonehengeViewModelName') return;
             //if (app.stonehengeViewModelName.model.StonehengePollEventsActive || app.stonehengeViewModelName.model.StonehengeEventSource) return;
             
             if(app.stonehengeViewModelName.model.StonehengeEventSource && app.stonehengeViewModelName.model.StonehengeEventAbort) {
@@ -143,47 +144,50 @@ stonehengeViewModelName = function component() {
                 app.stonehengeViewModelName.model.StonehengeEventSource = null;
             }
             
-            if (!app.stonehengeViewModelName.model.StonehengeEventSource) {
-                
-                if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) start request');
+            try {
+                if (!app.stonehengeViewModelName.model.StonehengeEventSource) {
 
-                const module = await import("./src/fetch-event-source.js");
-                app.stonehengeViewModelName.model.StonehengeEventAbort = new AbortController();
-                app.stonehengeViewModelName.model.StonehengeEventSource = module.fetchEventSource('EventSource/stonehengeViewModelName', {
-                    signal: app.stonehengeViewModelName.model.StonehengeEventAbort.signal,
-                    headers: { 'X-Stonehenge-Id': app.stonehengeSession },
-                    onmessage: function (message) {
-                        try {
-                            let data = JSON.parse(message.data);
-                            if (stonehengeDebugBuild) console.log(data)
-                            app.stonehengeViewModelName.StonehengeSetViewModelData(data);
-                            const continuePolling = data.StonehengeContinuePolling ?? true;
-                            if (!continuePolling) {
-                                if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) stop');
-                                app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
+                    if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) start request');
+
+                    const module = await import("./src/fetch-event-source.js");
+                    app.stonehengeViewModelName.model.StonehengeEventAbort = new AbortController();
+                    app.stonehengeViewModelName.model.StonehengeEventSource = module.fetchEventSource('EventSource/stonehengeViewModelName', {
+                        signal: app.stonehengeViewModelName.model.StonehengeEventAbort.signal,
+                        headers: { 'X-Stonehenge-Id': app.stonehengeSession },
+                        onmessage(message) {
+                            try {
+                                let data = JSON.parse(message.data);
+                                if (stonehengeDebugBuild) console.log(data)
+                                app.stonehengeViewModelName.StonehengeSetViewModelData(data);
+                                const continuePolling = data.StonehengeContinuePolling ?? true;
+                                if (!continuePolling) {
+                                    if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) stop');
+                                    app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
+                                    app.stonehengeViewModelName.model.StonehengeEventSource = null;
+                                }
+                            } catch (e) {
+                                console.log("RequestStonehengeEvents(stonehengeViewModelName) EX: " + e)
+                                if (stonehengeDebugBuild) debugger;
                                 app.stonehengeViewModelName.model.StonehengeEventSource = null;
+                                app.stonehengeViewModelName.RequestStonehengeEvents(continuePolling);
                             }
-                        } catch (e) {
-                            console.log("RequestStonehengeEvents(stonehengeViewModelName) EX: " + e)
-                            if (stonehengeDebugBuild) debugger;
+
+                            if (app.stonehengeViewModelName.model.StonehengeEventSource) return;
+
+                            setTimeout(function () {
+                                if (stonehengeDebugBuild) console.log('RequestStonehengeEvents(stonehengeViewModelName) request(timeout)');
+                                app.stonehengeViewModelName.StonehengePollEvents(continuePolling);
+                            }, app.stonehengeViewModelName.model.StonehengePollDelay);
+                        },
+                        onerror(message) {
+                            console.log("ServerSentEvents(stonehengeViewModelName).OnError: " + message)
                             app.stonehengeViewModelName.model.StonehengeEventSource = null;
-                            app.stonehengeViewModelName.RequestStonehengeEvents(continuePolling);
+                            throw new Error("DO NOT RETRY");
                         }
-
-                        if (app.stonehengeViewModelName.model.StonehengeEventSource) return;
-
-                        setTimeout(function () {
-                            if (stonehengeDebugBuild) console.log('RequestStonehengeEvents(stonehengeViewModelName) request(timeout)');
-                            app.stonehengeViewModelName.StonehengePollEvents(continuePolling);
-                        }, app.stonehengeViewModelName.model.StonehengePollDelay);
-                    },
-                    onerror: function (message) {
-                        if(!app.stonehengeViewModelName.model.StonehengeEventSource) return;
-                        console.log("ServerSentEvents(stonehengeViewModelName).OnError: " + message)
-                        app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
-                        app.stonehengeViewModelName.model.StonehengeEventSource = null;
-                    }
-                });
+                    });
+                }
+            } catch (e) {
+                console.log(e)
             }
 
         },

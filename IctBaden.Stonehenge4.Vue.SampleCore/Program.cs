@@ -58,7 +58,7 @@ internal static class Program
         {
             Title = "VueSample",
 
-            //ServerPushMode = ServerPushModes.ServerSentEvents,
+            ServerPushMode = ServerPushModes.ServerSentEvents,
             PollIntervalSec = 10,
             HandleWindowResized = true,
             CustomMiddleware = [nameof(StonehengeRawContent)],
