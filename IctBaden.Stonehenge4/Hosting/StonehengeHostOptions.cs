@@ -1,6 +1,7 @@
 // ReSharper disable MemberCanBePrivate.Global
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -103,11 +104,22 @@ public class StonehengeHostOptions
     /// to set session locale
     /// </summary>
     public bool UseClientLocale { get; init; }
+    
+    /// <summary>
+    /// Default locale to be used if no Accept-Language header is present.
+    /// </summary>
+    public string DefaultLocale { get; init; } = CultureInfo.CurrentUICulture.Name;
 
     /// <summary>
     /// Timeout a session will be terminated without further access.
     /// </summary>
     public TimeSpan SessionTimeout { get; init; } = TimeSpan.FromMinutes(15);
+        
+    /// <summary>
+    /// Enables ServerSentEvent requests from client
+    /// </summary>
+    //public bool UseServerSentEvents => ServerPushMode is ServerPushModes.Automatic or ServerPushModes.ServerSentEvents;
+    public bool UseServerSentEvents => ServerPushMode is ServerPushModes.ServerSentEvents;
         
     /// <summary>
     /// Delay [ms] the client should wait for new poll.
@@ -117,6 +129,7 @@ public class StonehengeHostOptions
     {
         return ServerPushMode switch
         {
+            ServerPushModes.Automatic => 100,
             ServerPushModes.LongPolling => 100,
             ServerPushModes.ShortPolling when PollIntervalSec > 1 => (PollIntervalSec * 1000) + 100,
             _ => 5000
@@ -129,7 +142,10 @@ public class StonehengeHostOptions
     /// <returns></returns>
     public int GetEventTimeoutMs()
     {
-        if (ServerPushMode != ServerPushModes.LongPolling) return 100;
+        if (ServerPushMode is not ServerPushModes.LongPolling and not ServerPushModes.Automatic)
+        {
+            return 100;
+        }
         if(PollIntervalSec > 1) return (PollIntervalSec * 1000) + 100;
         return 10000;
     }

@@ -143,12 +143,6 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             session?.SetViewModelType(vmTypeName);
         }
 
-        foreach (var (key, value) in formData)
-        {
-            logger.LogDebug("ViewModelProvider: Set {Key}={Value}", key, value);
-            SetPropertyValue(logger, session?.ViewModel, key, value);
-        }
-
         var vmType = session?.ViewModel?.GetType();
         if (!string.Equals(vmType?.Name, vmTypeName, StringComparison.Ordinal))
         {
@@ -181,6 +175,12 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             }
         }
         
+        foreach (var (key, value) in formData)
+        {
+            logger.LogDebug("ViewModelProvider: Set({Type}) {Key}={Value}", targetType?.Name ?? "<unknown>", key, value);
+            SetPropertyValue(logger, targetObject, key, value);
+        }
+
         var method = targetType?.GetMethod(methodName);
         if (method == null)
         {
@@ -344,7 +344,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                 }
 
-                AddStonehengeInternalProperties(data, activeVm);
+                // ******** DO NOT FOR EVENTS ********
+                // AddStonehengeInternalProperties(data, activeVm);
             }
             catch
             {

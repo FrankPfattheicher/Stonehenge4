@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
+using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
 using Microsoft.Extensions.Logging;
 
@@ -50,7 +51,8 @@ internal class VueAppCreator
 
     private async Task<string> LoadResourceText(string resourceName)
     {
-        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName, new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(false);
+        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName,
+            new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(false);
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }
 
@@ -114,10 +116,12 @@ internal class VueAppCreator
             startPageName = startPageName.Replace('-', '_');
         }
 
-        var startPage = contentPages.FirstOrDefault(page => string.Equals(page.Route, startPageName, StringComparison.Ordinal));
+        var startPage =
+            contentPages.FirstOrDefault(page => string.Equals(page.Route, startPageName, StringComparison.Ordinal));
         if (startPage != null)
         {
-            pages.Insert(0, string.Format(pageTemplate, string.Empty, string.Empty, startPage.Title, startPage.Route, "false"));
+            pages.Insert(0,
+                string.Format(pageTemplate, string.Empty, string.Empty, startPage.Title, startPage.Route, "false"));
         }
 
         var routes = string.Join("," + Environment.NewLine, pages);
@@ -143,17 +147,18 @@ internal class VueAppCreator
         {
             var vmName = viewModel.ViewModel?.VmName;
             if (string.IsNullOrEmpty(vmName)) continue;
-            
+
             var controllerJs = GetController(vmName, resourceLoader);
             if (string.IsNullOrEmpty(controllerJs)) continue;
-            
+
             try
             {
                 _logger.LogInformation("VueAppCreator.CreateComponents: {VmName} => src.{ViewModelName}.js",
                     vmName, viewModel.Name);
 
                 var name = _appAssembly?.GetManifestResourceNames()
-                    .FirstOrDefault(rn => rn.EndsWith($".app.{viewModel.Name}_user.js", StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(rn =>
+                        rn.EndsWith($".app.{viewModel.Name}_user.js", StringComparison.OrdinalIgnoreCase));
                 if (!string.IsNullOrEmpty(name) && _appAssembly != null)
                 {
                     var userJs = LoadResourceText(_appAssembly, name);
@@ -211,6 +216,7 @@ internal class VueAppCreator
 
         var text = _controllerTemplate
             .Replace("stonehengeDebugBuild", DebugBuild ? "true" : "false")
+            .Replace("stonehengeUseServerSentEvents", _options.UseServerSentEvents ? "true" : "false")
             .Replace("stonehengeViewModelName", vmName)
             .Replace("stonehengePollDelay", _options.GetPollDelayMs().ToString())
             .Replace("stonehengePollRetries", _options.PollRetries.ToString());
@@ -270,11 +276,12 @@ internal class VueAppCreator
             {
                 _logger.LogCritical("Failed to create ViewModel '{VmTypeName}' : Missing public ctor?", vmType.Name);
             }
+
             return viewModel;
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to create ViewModel '{VmTypeName}' : {Message}", 
+            _logger.LogError("Failed to create ViewModel '{VmTypeName}' : {Message}",
                 vmType.Name, ex.Message);
             Debugger.Break();
             return null;
@@ -291,6 +298,10 @@ internal class VueAppCreator
         if (viewModel is ActiveViewModel activeVm)
         {
             vmProps.AddRange(from PropertyDescriptor prop in activeVm.GetProperties() select prop);
+        }
+        else if (viewModel is StonehengeComponent component)
+        {
+            vmProps.AddRange(from PropertyDescriptor prop in component.GetProperties() select prop);
         }
         else
         {
@@ -359,7 +370,8 @@ internal class VueAppCreator
         {
             try
             {
-                var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName, StringComparison.Ordinal);
+                var elementJs = _elementTemplate.Replace("stonehengeCustomElementName", element.ViewModel!.ElementName,
+                    StringComparison.Ordinal);
 
                 var source = Path.GetFileNameWithoutExtension(ResourceLoader.RemoveResourceProtocol(element.Source));
                 elementJs = elementJs.Replace("stonehengeViewModelName", source, StringComparison.Ordinal);
@@ -369,7 +381,9 @@ internal class VueAppCreator
                 {
                     bindings.AddRange(element.ViewModel.Bindings.Select(b => $"'{b}'"));
                 }
-                elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(',', bindings), StringComparison.Ordinal);
+
+                elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(',', bindings),
+                    StringComparison.Ordinal);
 
                 var template = await LoadResourceText($"{source}.html").ConfigureAwait(false);
                 template = JsonSerializer.Serialize(template);
@@ -378,6 +392,7 @@ internal class VueAppCreator
                 var methods = await LoadResourceText($"{source}.js").ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
                 elementJs = elementJs.Replace("//stonehengeElementMethods", methods, StringComparison.Ordinal);
+
 
                 if (!string.IsNullOrEmpty(element.ViewModel?.VmName))
                 {
@@ -388,7 +403,7 @@ internal class VueAppCreator
                         elementJs = elementJs.Replace("//stonehengeElementActions", methods, StringComparison.Ordinal);
                     }
                 }
-                
+
                 elements.Add(elementJs);
 
                 var resource = new Resource($"{element.Name}.js", "VueResourceProvider", ResourceType.Js, elementJs,
@@ -402,17 +417,26 @@ internal class VueAppCreator
                 Debugger.Break();
             }
         }
-
         return elements;
     }
-    
-    private static string GetActionMethods(string vmName)
+
+    private string GetActionMethods(string vmName)
     {
         var vmType = GetVmType(vmName);
         if (vmType == null) return string.Empty;
- 
-        const string methodTemplate =
-            "stonehengeMethodName: function({paramNames}) { app[app['activeViewModelName']]\n.StonehengePost('ViewModel/' + app['activeViewModelName'] + '/' + this.model.ComponentId + '/stonehengeMethodName{paramValues}'); }";
+
+        var elementInst = CreateViewModel(vmType, _loader, new AppSessions());
+        var propertyNames = GetPropNames(elementInst);
+        var postBackPropNames = GetPostBackPropNames(elementInst, propertyNames)
+            .Select(name => "'" + name + "'");
+        var propNames = "[" + string.Join(',', postBackPropNames) + "]";
+
+        var methodTemplate =
+            """
+            stonehengeMethodName: function({paramNames}) { app[app['activeViewModelName']]
+            .StonehengePost('ViewModel/' + app['activeViewModelName'] + '/' + this.model.ComponentId + '/stonehengeMethodName{paramValues}', this.model, propNames); }
+            """
+            .Replace("propNames", propNames, StringComparison.Ordinal);
 
         var actionMethods = new List<string>();
         foreach (var methodInfo in vmType.GetMethods().Where(methodInfo =>
@@ -431,8 +455,7 @@ internal class VueAppCreator
 
             actionMethods.Add(method);
         }
-       
+
         return string.Join(", ", actionMethods);
     }
-    
 }

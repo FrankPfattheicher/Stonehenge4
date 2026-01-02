@@ -80,13 +80,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string UserIdentityEMail { get; private set; } = string.Empty;
 
 
-    public CultureInfo SessionCulture { get; private set; } = CultureInfo.CurrentUICulture;
+    public CultureInfo SessionCulture { get; private set; }
 
 
     public DateTime LastUserAction { get; private set; }
 
     private readonly Guid _id;
     public string Id => $"{_id:N}";
+    public string Nonce { get; set; } = string.Empty;
 
     public string PermanentSessionId { get; private set; } = string.Empty;
 
@@ -521,6 +522,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         Cookies = new Dictionary<string, string>(StringComparer.Ordinal);
         Parameters = new Dictionary<string, string>(StringComparer.Ordinal);
         LastAccess = DateTime.Now;
+        SessionCulture = new CultureInfo(options.DefaultLocale);
 
         UseBasicAuth = options.UseBasicAuth;
         var htpasswd = Path.Combine(StonehengeApplication.BaseDirectory, ".htpasswd");
@@ -704,6 +706,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             Parameters[parameter.Key] = parameter.Value;
         }
         Parameters.Remove("stonehenge-id");
+        Parameters.Remove("stonehenge-nonce");
     }
 
     public void SetUser(JwtSecurityToken? jwtToken, string identityName, string identityId, string identityEMail)

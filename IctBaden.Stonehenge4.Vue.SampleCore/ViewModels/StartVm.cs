@@ -29,10 +29,12 @@ public class StartVm : ActiveViewModel
     public string Browser => Session.Browser;
     public string Platform => Session.Platform;
     public string ClientAddress => Session.ClientAddress;
+    public string ServerPushMode => Session.HostOptions.ServerPushMode.ToString();
     public string UserIdentity => string.IsNullOrEmpty(Session.UserIdentity) ? "<none>" : Session.UserIdentity;
     public string UserIdentityId => Session.UserIdentityId;
     public string UserIdentityEMail => Session.UserIdentityEMail;
     public int SessionCount => Session.SessionCount;
+    public string SessionId => Session.Id;
 
     public bool ShowCookies => IsRouteEnabled("cookie");
 
@@ -47,10 +49,11 @@ public class StartVm : ActiveViewModel
     public bool AppDialogVisible2 { get; private set; }
     public string AppDialogCaption { get; private set; } = string.Empty;
 
-    [SessionVariable("MySessionVar")]
-    public string SessionVar { get; set; } = string.Empty;
+    public ComponentDlg ComponentDlg { get; private set; } = new("Component Dialog");
 
-    
+    [SessionVariable("MySessionVar")] public string SessionVar { get; set; } = string.Empty;
+
+
     public string Parameters =>
         string.Join(", ", Session.Parameters.Select(p => $"{p.Key}={p.Value}"));
 
@@ -203,6 +206,7 @@ END:VCALENDAR
         {
             Culture = newCulture;
         }
+
         if (string.IsNullOrEmpty(Culture))
         {
             Session.SetSessionCulture(CultureInfo.CurrentUICulture);
@@ -223,5 +227,23 @@ END:VCALENDAR
     public void InputChanged()
     {
     }
-    
+
+    [ActionMethod]
+    public void Save(int pre, int post)
+    {
+        SessionVar = $"{pre}{SessionVar}{post}";
+    }
+
+    [ActionMethod]
+    public void ShowComponentDlg()
+    {
+        ComponentDlg.Show();
+        ComponentDlg.Closed = ok =>
+            {
+                if (ok)
+                {
+                    SessionVar = ComponentDlg.ComponentVar;
+                }
+            };
+    }
 }

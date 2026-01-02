@@ -88,6 +88,8 @@ public class Startup : IStartup
         app.UseMiddleware<StonehengeSession>();
         app.UseMiddleware<StonehengeHeaders>();
         app.UseMiddleware<StonehengeRoot>();
+        
+        app.UseMiddleware<ServerSentEvents>();
         app.UseMiddleware<StonehengeContent>();
     }
 }

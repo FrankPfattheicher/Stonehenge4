@@ -1,0 +1,26 @@
+<!--CustomElement:model-->
+<!--ViewModel:ComponentDlg-->
+<app-dialog v-if="model.Visible" 
+            :caption="model.Caption" :okText="model.I18n.BtnOK" :cancelText="model.I18n.BtnCancel"
+            @ok="Ok()" @cancel="Cancel()">
+
+    <div style="margin: 2em;">
+
+        <table class="prop-table">
+
+            <tr>
+                <td style="width: 10em;">
+                    ComponentVar - optional set Session Variable
+                </td>
+                <td>
+                    <label>
+                        <input class="form-control" v-model="model.ComponentVar" style="width: 30em;" @change="InputChanged()">
+                    </label>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</app-dialog>

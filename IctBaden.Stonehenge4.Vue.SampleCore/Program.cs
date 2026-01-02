@@ -5,11 +5,12 @@ using System.IO;
 using System.Threading;
 using IctBaden.Framework.Logging;
 using IctBaden.Stonehenge.Client;
+using IctBaden.Stonehenge.Extension;
+using IctBaden.Stonehenge.Forms;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
-using IctBaden.Stonehenge.Extension;
-using IctBaden.Stonehenge.Forms;
+using IctBaden.Stonehenge4.Syntaxhighlight;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;
@@ -57,11 +58,12 @@ internal static class Program
         {
             Title = "VueSample",
 
-            ServerPushMode = ServerPushModes.LongPolling,
+            ServerPushMode = ServerPushModes.ServerSentEvents,
             PollIntervalSec = 10,
             HandleWindowResized = true,
             CustomMiddleware = [nameof(StonehengeRawContent)],
-            UseClientLocale = true,
+            UseClientLocale = false,
+            //DefaultLocale = "en-US",
             UseNtlmAuthentication = false,
             UseKeycloakAuthentication = keycloak,
             UseBasicAuth = false,
@@ -80,6 +82,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
         loader.AddResourceAssembly(typeof(FormControls).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
+        loader.AddResourceAssembly(typeof(SyntaxHighlight).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology

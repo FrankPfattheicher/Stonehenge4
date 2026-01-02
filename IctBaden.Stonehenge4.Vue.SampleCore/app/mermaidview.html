@@ -21,9 +21,16 @@
     <div class="col-md-6" style="padding: .5em; margin: .5em; border: 1px solid var(--fore-color);">
         <h4 style="float: left;">
             Mermaid Diagram 3
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label style="font-size: 80%;">
+                <input class="form-check-input" type="checkbox" :checked="UseElkLayout" @click="ToggleLayout()">
+                Use ELK Layout
+            </label>
         </h4>
 
-        <st-mermaid :graphData="MermaidGraph3" style=" scale: 75%;"></st-mermaid>
+        <p>
+            <st-mermaid :graphData="MermaidGraph3" style=" scale: 75%;"></st-mermaid>
+        </p>
     </div>
 
     <div>

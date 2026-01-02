@@ -45,7 +45,7 @@ public sealed class UserContentTests : IDisposable
             // ReSharper disable once ConvertToUsingDeclaration
             using (var client = new RedirectableHttpClient())
             {
-                response = await client.DownloadString(_app.BaseUrl);
+                response = await client.DownloadStringWithSession(_app.BaseUrl);
             }
         }
         catch (Exception ex)

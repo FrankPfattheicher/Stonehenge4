@@ -34,6 +34,16 @@ public class AppSessions
         }
     }
     
+    public AppSession? GetSessionByNonce(string? nonce)
+    {
+        lock (_sessions)
+        {
+            var appSession = _sessions.Find(s => string.Equals(s.Nonce, nonce, System.StringComparison.Ordinal));
+            if(appSession != null) appSession.Nonce = string.Empty;
+            return appSession;
+        }
+    }
+    
     public void RemoveSessionById(string sessionId)
     {
         lock (_sessions)

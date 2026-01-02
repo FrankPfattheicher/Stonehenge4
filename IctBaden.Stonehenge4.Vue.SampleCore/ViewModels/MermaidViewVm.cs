@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -12,8 +13,10 @@ public class MermaidViewVm : ActiveViewModel
     public string MermaidGraph2 { get; private set; } = string.Empty;
     public string MermaidGraph3 { get; private set; } = string.Empty;
 
+    public bool UseElkLayout { get; private set; }
+
     public bool ShowMermaidDlg { get; private set; }
-    
+
     public MermaidViewVm(AppSession session)
         : base(session)
     {
@@ -47,36 +50,43 @@ public class MermaidViewVm : ActiveViewModel
                                     Bob--x Alice: I am good thanks!
                                     Bob-x John: I am good thanks!
                                     Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
-                                
+
                                     Bob-->Alice: Checking with John...
                                     Alice->John: Yes... John, how are you?
                                 """;
                 MermaidGraph3 = """
-                               flowchart TD        
-                               
-                               Solar((&nbsp;☀️ Solar &nbsp;))
-                               Battery[(🔋 Battery<br>32%)]
-                               Home[🏠 Haus]
-                               Car[(🚗 Auto)]
-                               
-                               net{" "}
-                               
-                               Grid[⚡ Netz]
-                               
-                               Solar animated@-->|&nbsp;5330W&nbsp;| net
-                               net -->|&nbsp;330W&nbsp;| Home
-                               Battery -->|&nbsp;4000W&nbsp;| net
-                               net -.- Car
-                               net ----- Grid
-                               
-                               style Solar stroke:#ffff00,stroke-width:2px
-                               style Grid stroke:#000000,stroke-width:2px
-                               style Battery stroke:#8080ff,stroke-width:2px
-                               style Home stroke:#228b22,stroke-width:2px
-                               style Car stroke:#ff0000,stroke-width:2px
-                               
-                               animated@{ animate: true }
-                               """;
+                                ---
+                                config:
+                                    layout: elk
+                                    elk:
+                                        mergeEdges: true
+                                        nodePlacementStrategy: NETWORK_SIMPLEX
+                                ---
+                                flowchart TD
+                                    
+                                Solar((&nbsp;☀️ Solar &nbsp;))
+                                Battery[(🔋 Battery<br>32%)]
+                                Home[🏠 Haus]
+                                Car[(🚗 Auto)]
+
+                                net{" "}
+
+                                Grid[⚡ Netz]
+
+                                Solar animated@-->|&nbsp;5330W&nbsp;| net
+                                net -->|&nbsp;330W&nbsp;| Home
+                                Battery -->|&nbsp;4000W&nbsp;| net
+                                net -.- Car
+                                net ----- Grid
+
+                                style Solar stroke:#ffff00,stroke-width:2px
+                                style Grid stroke:#000000,stroke-width:2px
+                                style Battery stroke:#8080ff,stroke-width:2px
+                                style Home stroke:#228b22,stroke-width:2px
+                                style Car stroke:#ff0000,stroke-width:2px
+
+                                animated@{ animate: true }
+                                """;
                 break;
             default:
                 MermaidGraph = string.Empty;
@@ -84,8 +94,19 @@ public class MermaidViewVm : ActiveViewModel
                 MermaidGraph3 = string.Empty;
                 break;
         }
+
+        if (!UseElkLayout)
+        {
+            MermaidGraph3 = MermaidGraph3.Replace("layout: elk", string.Empty);
+        }
     }
-    
+
+    [ActionMethod]
+    public void ToggleLayout()
+    {
+        UseElkLayout = !UseElkLayout;
+    }
+
     [ActionMethod]
     public void ShowDlg()
     {
@@ -97,5 +118,4 @@ public class MermaidViewVm : ActiveViewModel
     {
         ShowMermaidDlg = false;
     }
-
 }

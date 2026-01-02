@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Copyright>Copyright ©2013-2025 ICT Baden GmbH</Copyright>
+        <Copyright>Copyright ©2013-2026 ICT Baden GmbH</Copyright>
         <Company>ICT Baden GmbH</Company>
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
@@ -125,6 +125,13 @@
         <EmbeddedResource Include="app\src\bootstrap.esm.min.js" />
         <None Remove="app\src\bootstrap.min.js" />
         <EmbeddedResource Include="app\src\bootstrap.min.js" />
+        <None Remove="app\src\fetch.js" />
+        <EmbeddedResource Include="app\src\fetch.js" />
+        <None Remove="app\src\fetch-event-source.js" />
+        <EmbeddedResource Include="app\src\fetch-event-source.js" />
+        <None Remove="app\src\parse.js" />
+        <EmbeddedResource Include="app\src\parse.js" />
+        <None Remove="app\src\parse.spec.js" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />

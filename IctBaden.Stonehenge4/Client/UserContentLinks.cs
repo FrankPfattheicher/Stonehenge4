@@ -18,6 +18,7 @@ public static class UserContentLinks
     private const string ExtensionsInsertPoint = "<!--stonehengeExtensions-->";
     private const string JsUserScriptsInsertPoint = "<!--stonehengeUserScripts-->";
     private const string JsLinkTemplate = "<script type='application/javascript' src='{0}'></script>";
+    private const string JsmLinkTemplate = "<script type='module' src='{0}'></script>";
 
     private static readonly Dictionary<string, string> StyleSheets = new(StringComparer.OrdinalIgnoreCase);
     private static readonly List<string> ThemeInitialized = [];
@@ -117,7 +118,9 @@ public static class UserContentLinks
         const string resourceBaseName = ".app.";
         const string baseNameScripts = resourceBaseName + "scripts.";
         var resourceNames = userAssembly.GetManifestResourceNames();
-        var jsResources = resourceNames.Where(name => name.EndsWith(".js", StringComparison.OrdinalIgnoreCase)).ToList();
+        var jsResources = resourceNames
+            .Where(name => name.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            .ToList();
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var resourceName in jsResources.Where(name => name.Contains(baseNameScripts, StringComparison.OrdinalIgnoreCase)))
         {
@@ -152,8 +155,23 @@ public static class UserContentLinks
                 {
                     js = js.Replace(".js", "{.min}.js", StringComparison.OrdinalIgnoreCase);
                 }
-
                 _extensions += Environment.NewLine + string.Format(JsLinkTemplate, js);
+            }
+            var mjsResources = resources
+                .Where(name => name.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase) && !name.Contains(".chunks.", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var resourceName in mjsResources.Where(name => name.Contains(baseNameSrc, StringComparison.OrdinalIgnoreCase)))
+            {
+                var mjs = ResourceLoader.GetShortResourceName(assembly, resourceBaseName, resourceName)
+                    .Replace('.', '/')
+                    .Replace("/mjs", ".mjs", StringComparison.OrdinalIgnoreCase)
+                    .Replace("/esm.", ".esm.", StringComparison.OrdinalIgnoreCase);
+                if (resources.Contains(resourceName.Replace(".mjs", ".min.mjs"), StringComparer.OrdinalIgnoreCase))
+                {
+                    mjs = mjs.Replace(".mjs", "{.min}.mjs", StringComparison.OrdinalIgnoreCase);
+                }
+                _extensions += Environment.NewLine + string.Format(JsmLinkTemplate, mjs);
             }
 
             var cssResources = resources
@@ -169,7 +187,6 @@ public static class UserContentLinks
                 {
                     css = css.Replace(".css", "{.min}.css");
                 }
-
                 _extensions += Environment.NewLine + string.Format(CssLinkTemplate, css);
             }
         }

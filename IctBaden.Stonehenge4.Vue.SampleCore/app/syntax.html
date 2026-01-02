@@ -1,0 +1,17 @@
+<!--Title:Syntax:70-->
+<!--ViewModel:SyntaxVm-->
+<div style="margin: 2em;">
+
+    <h3>Syntax Highlighting</h3>
+    <p>
+        <b>Using highlight.js</b> see <a href="https://highlightjs.org/" target="_blank">https://highlightjs.org/</a>
+    </p>
+
+    <div style="border: 1px solid black;">
+        <st-syntax-highlight style="padding: 1em;" :source="Source" :language="Language">
+        </st-syntax-highlight>
+    </div>
+
+    <button @click="Update()">update</button>
+
+</div>

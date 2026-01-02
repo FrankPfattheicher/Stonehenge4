@@ -21,7 +21,11 @@ public partial class RedirectableHttpClient : HttpClient
     {
         if (SessionId == null)
         {
-            await DownloadString(address).ConfigureAwait(false);
+            var indexUrl = new UriBuilder(address)
+            {
+                Path = "ViewModel/StartVm"
+            };
+            await DownloadString(indexUrl.ToString()).ConfigureAwait(false);
         }
 
         var url = new UriBuilder(address);
