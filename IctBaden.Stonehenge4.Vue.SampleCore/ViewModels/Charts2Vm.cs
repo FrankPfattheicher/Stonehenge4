@@ -30,8 +30,7 @@ public class Charts2Vm : ActiveViewModel
     public Chart? LineChart { get; private set; }
     public SankeyChart? SankeyChart { get; private set; }
 
-    [SessionVariable]
-    public int Speed { get; private set; } = 500;
+    [SessionVariable] public int Speed { get; private set; } = 500;
     private int _start;
 
     public Charts2Vm(AppSession session) : base(session)
@@ -69,7 +68,7 @@ public class Charts2Vm : ActiveViewModel
         SetUpdateTimer(Speed);
     }
 
-    private void 
+    private void
         CreateLineChart()
     {
         var time = DateTime.Now;
@@ -118,11 +117,7 @@ public class Charts2Vm : ActiveViewModel
     {
         UpdateData();
 
-        NotifyPropertiesChanged(new[]
-        {
-            nameof(LineChart),
-            nameof(SankeyChart)
-        });
+        NotifyPropertiesChanged([ nameof(LineChart), nameof(SankeyChart) ]);
         Session.UpdatePropertiesImmediately();
     }
 
@@ -145,10 +140,9 @@ public class Charts2Vm : ActiveViewModel
 
         SetUpdateTimer(Speed);
     }
-    
+
     public override void OnWindowResized(int width, int height)
     {
         LineChart?.Regenerate();
     }
-
 }
