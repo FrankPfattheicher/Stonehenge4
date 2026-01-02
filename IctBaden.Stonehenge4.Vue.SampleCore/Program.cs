@@ -10,7 +10,7 @@ using IctBaden.Stonehenge.Forms;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Kestrel;
 using IctBaden.Stonehenge.Resources;
-using IctBaden.Stonehenge4.Syntaxhighlight;
+using IctBaden.Stonehenge4.SyntaxHighlight;
 using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore;

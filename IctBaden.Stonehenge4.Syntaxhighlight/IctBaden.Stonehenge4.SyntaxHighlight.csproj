@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>IctBaden.Stonehenge4.Syntaxhighlight</RootNamespace>
+        <RootNamespace>IctBaden.Stonehenge4.SyntaxHighlight</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
