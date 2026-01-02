@@ -111,10 +111,15 @@ stonehengeViewModelName = function component() {
                         this.StonehengeSetViewModelData(data);
                         this.StonehengePostActive = false;
                     }
+
                     if (!this.StonehengePollEventsActive) {
-                        setTimeout(function () {
-                            app.stonehengeViewModelName.StonehengePollEvents(true);
-                        }, this.StonehengePollDelay);
+                        if (stonehengeUseServerSentEvents) {
+                            app.stonehengeViewModelName.RequestStonehengeEvents(true);
+                        } else {
+                            setTimeout(function () {
+                                app.stonehengeViewModelName.StonehengePollEvents(true);
+                            }, this.StonehengePollDelay);
+                        }
                     }
                 })
                 .catch(error => {
@@ -126,6 +131,63 @@ stonehengeViewModelName = function component() {
                 });
         },
 
+        RequestStonehengeEvents: async function (continuePolling) {
+
+            if (!app || app.stonehengeSession === '') return;
+            if(!app.stonehengeViewModelName.model.StonehengeActive) return;
+            //if (app.stonehengeViewModelName.model.StonehengePollEventsActive || app.stonehengeViewModelName.model.StonehengeEventSource) return;
+            
+            if(app.stonehengeViewModelName.model.StonehengeEventSource && app.stonehengeViewModelName.model.StonehengeEventAbort) {
+                app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
+                app.stonehengeViewModelName.model.StonehengeEventAbort = null;
+                app.stonehengeViewModelName.model.StonehengeEventSource = null;
+            }
+            
+            if (!app.stonehengeViewModelName.model.StonehengeEventSource) {
+                
+                if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) start request');
+
+                const module = await import("./src/fetch-event-source.js");
+                app.stonehengeViewModelName.model.StonehengeEventAbort = new AbortController();
+                app.stonehengeViewModelName.model.StonehengeEventSource = module.fetchEventSource('EventSource/stonehengeViewModelName', {
+                    signal: app.stonehengeViewModelName.model.StonehengeEventAbort.signal,
+                    headers: { 'X-Stonehenge-Id': app.stonehengeSession },
+                    onmessage: function (message) {
+                        try {
+                            let data = JSON.parse(message.data);
+                            if (stonehengeDebugBuild) console.log(data)
+                            app.stonehengeViewModelName.StonehengeSetViewModelData(data);
+                            const continuePolling = data.StonehengeContinuePolling ?? true;
+                            if (!continuePolling) {
+                                if (stonehengeDebugBuild) console.log('ServerSentEvents(stonehengeViewModelName) stop');
+                                app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
+                                app.stonehengeViewModelName.model.StonehengeEventSource = null;
+                            }
+                        } catch (e) {
+                            console.log("RequestStonehengeEvents(stonehengeViewModelName) EX: " + e)
+                            if (stonehengeDebugBuild) debugger;
+                            app.stonehengeViewModelName.model.StonehengeEventSource = null;
+                            app.stonehengeViewModelName.RequestStonehengeEvents(continuePolling);
+                        }
+
+                        if (app.stonehengeViewModelName.model.StonehengeEventSource) return;
+
+                        setTimeout(function () {
+                            if (stonehengeDebugBuild) console.log('RequestStonehengeEvents(stonehengeViewModelName) request(timeout)');
+                            app.stonehengeViewModelName.StonehengePollEvents(continuePolling);
+                        }, app.stonehengeViewModelName.model.StonehengePollDelay);
+                    },
+                    onerror: function (message) {
+                        if(!app.stonehengeViewModelName.model.StonehengeEventSource) return;
+                        console.log("ServerSentEvents(stonehengeViewModelName).OnError: " + message)
+                        app.stonehengeViewModelName.model.StonehengeEventAbort.abort();
+                        app.stonehengeViewModelName.model.StonehengeEventSource = null;
+                    }
+                });
+            }
+
+        },
+
         StonehengePollEvents: function (continuePolling) {
             if (!app.stonehengeViewModelName.model.StonehengeActive
                 || app.stonehengeViewModelName.model.StonehengePostActive) return;
@@ -134,6 +196,9 @@ stonehengeViewModelName = function component() {
                 //debugger;
                 return;
             }
+
+            if (stonehengeDebugBuild) console.log('StonehengePollEvents(stonehengeViewModelName) poll');
+            
             let ts = new Date().getTime();
             Vue.http.get('Events/stonehengeViewModelName?ts=' + ts,
                 {
@@ -208,6 +273,9 @@ stonehengeViewModelName = function component() {
         },
 
         StonehengeGetViewModel: function () {
+
+            if (stonehengeDebugBuild) console.log('StonehengeGetViewModel(stonehengeViewModelName) UseServerSentEvents=stonehengeUseServerSentEvents');
+            
             app.activeViewModelName = 'stonehengeViewModelName';
             this.StonehengeCancelVmRequests();
             Vue.http.get('ViewModel/stonehengeViewModelName',
@@ -239,13 +307,19 @@ stonehengeViewModelName = function component() {
                         app.stonehengeViewModelName.model.StonehengeInitialLoading = false;
                         app.stonehengeViewModelName.model.StonehengeIsLoading = false;
                         if (!app.stonehengeViewModelName.model.StonehengePollEventsActive) {
-                            setTimeout(function () {
-                                app.stonehengeViewModelName.StonehengePollEvents(true);
-                            }, app.stonehengeViewModelName.model.StonehengePollDelay);
+
+                            if (stonehengeUseServerSentEvents && !this.StonehengeEventSource) {
+                                app.stonehengeViewModelName.model.StonehengeContinuePolling = true;
+                                app.stonehengeViewModelName.RequestStonehengeEvents(true);
+                            } else {
+                                setTimeout(function () {
+                                    app.stonehengeViewModelName.StonehengePollEvents(true);
+                                }, app.stonehengeViewModelName.model.StonehengePollDelay);
+                            }
                         }
 
                     } catch(e) {
-                        console.log("EX: " + e)   
+                        console.log("StonehengeGetViewModel EX: " + e)   
                     }
                     
                 })
@@ -265,6 +339,8 @@ stonehengeViewModelName = function component() {
             StonehengeActive: false,
             StonehengePollEventsActive: null,
             StonehengePollDelay: stonehengePollDelay,
+            StonehengeEventSource: null,
+            StonehengeEventAbort: null,
             StonehengeInitialLoading: true,
             StonehengeIsLoading: true,
             StonehengeIsDirty: false,

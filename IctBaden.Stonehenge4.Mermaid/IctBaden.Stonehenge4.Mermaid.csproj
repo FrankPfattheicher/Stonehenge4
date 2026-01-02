@@ -15,6 +15,8 @@
     <ItemGroup>
       <None Remove="app\src\mermaid.min.js" />
       <None Remove="app\st-mermaid.html" />
+      <EmbeddedResource Include="app\src\mermaid-layout-elk\chunks\mermaid-layout-elk.core\chunk-ZW26E7AF.mjs" />
+      <EmbeddedResource Include="app\src\mermaid-layout-elk\chunks\mermaid-layout-elk.core\render-2SQLY5QG.mjs" />
       <EmbeddedResource Include="app\st-mermaid.html" />
       <None Remove="app\st-mermaid.js" />
       <EmbeddedResource Include="app\st-mermaid.js" />
@@ -420,9 +422,7 @@
       <None Remove="app\src\mermaid-layout-elk.esm.min.mjs" />
       <EmbeddedResource Include="app\src\mermaid-layout-elk.esm.min.mjs" />
       <None Remove="app\src\chunks\mermaid-layout-elk.core\chunk-ZW26E7AF.mjs" />
-      <EmbeddedResource Include="app\src\chunks\mermaid-layout-elk.core\chunk-ZW26E7AF.mjs" />
       <None Remove="app\src\chunks\mermaid-layout-elk.core\render-2SQLY5QG.mjs" />
-      <EmbeddedResource Include="app\src\chunks\mermaid-layout-elk.core\render-2SQLY5QG.mjs" />
       <None Remove="app\src\chunks\mermaid-layout-elk.esm\chunk-TWI3KLJS.mjs" />
       <EmbeddedResource Include="app\src\chunks\mermaid-layout-elk.esm\chunk-TWI3KLJS.mjs" />
       <None Remove="app\src\chunks\mermaid-layout-elk.esm\render-DDG7AVDI.mjs" />
@@ -445,7 +445,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="app\src\chunks\mermaid-layout-elk.core\" />
       <Folder Include="app\src\chunks\mermaid-layout-elk.esm.min\" />
       <Folder Include="app\src\chunks\mermaid-layout-elk.esm\" />
     </ItemGroup>

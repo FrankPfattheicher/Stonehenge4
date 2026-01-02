@@ -29,6 +29,7 @@ public class StartVm : ActiveViewModel
     public string Browser => Session.Browser;
     public string Platform => Session.Platform;
     public string ClientAddress => Session.ClientAddress;
+    public string ServerPushMode => Session.HostOptions.ServerPushMode.ToString();
     public string UserIdentity => string.IsNullOrEmpty(Session.UserIdentity) ? "<none>" : Session.UserIdentity;
     public string UserIdentityId => Session.UserIdentityId;
     public string UserIdentityEMail => Session.UserIdentityEMail;

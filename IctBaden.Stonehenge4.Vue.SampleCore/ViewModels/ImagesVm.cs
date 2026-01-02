@@ -9,6 +9,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class ImagesVm : ActiveViewModel
 {
+    [SessionVariable]
     public bool IsOn { get; set; }
 
     public string SwitchImg => IsOn 

@@ -216,6 +216,7 @@ internal class VueAppCreator
 
         var text = _controllerTemplate
             .Replace("stonehengeDebugBuild", DebugBuild ? "true" : "false")
+            .Replace("stonehengeUseServerSentEvents", _options.UseServerSentEvents ? "true" : "false")
             .Replace("stonehengeViewModelName", vmName)
             .Replace("stonehengePollDelay", _options.GetPollDelayMs().ToString())
             .Replace("stonehengePollRetries", _options.PollRetries.ToString());
