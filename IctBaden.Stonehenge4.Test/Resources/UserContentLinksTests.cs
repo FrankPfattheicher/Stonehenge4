@@ -29,7 +29,7 @@ public class UserContentLinksTests
 #pragma warning disable IDISP001
         var loader = new ResourceLoader(StonehengeLogger.DefaultLogger, assemblies, typeof(UserContentLinksTests).Assembly);
 #pragma warning restore IDISP001
-        _index = loader.Get(_session, CancellationToken.None,"index.html", new Dictionary<string, string>(System.StringComparer.Ordinal)).Result;
+        _index = loader.Get(_session, CancellationToken.None, loader, "index.html", new Dictionary<string, string>(System.StringComparer.Ordinal)).Result;
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 
+* 8.7.1 - 03.01.2026 Fixed GetI18Names for components
 * 8.7.0 - 02.01.2026 Operating completely without cookies. Added support for esm modules. Support SSE.
 
 * 8.6.7 - 23.12.2025 Allow SessionVariable <T> placeholder in custom name replaced by type name using attribute

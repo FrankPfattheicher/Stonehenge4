@@ -274,7 +274,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         return components.ToArray();
     }
 
-    internal void ActiveViewModelOnLoad()
+    internal void ActiveViewModelOnLoad(IStonehengeResourceProvider stonehengeResourceProvider)
     {
         if (!SupportsEvents)
         {
@@ -318,7 +318,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         
         foreach (var component in GetComponents())
         {
-            component.I18Names = component.GetI18Names(this);
+            component.I18Names = component.GetI18Names(this, stonehengeResourceProvider.GetViewModelInfos());
             component.OnLoad();
         }
     }

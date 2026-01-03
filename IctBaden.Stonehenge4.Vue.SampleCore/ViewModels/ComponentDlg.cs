@@ -1,9 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class ComponentDlg : StonehengeComponent
 {
     public bool Visible { get; private set; }

@@ -57,7 +57,7 @@ public sealed class LoaderTests : IDisposable
     {
         var name = $"icon_{Guid.NewGuid():N}.png";
         _fileTest.CreateBinaryFile(name);
-        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, name, new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("image/png", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -68,7 +68,7 @@ public sealed class LoaderTests : IDisposable
     [Fact]
     public async Task Load_from_resource_icon_png()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "image.jpg", new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, "image.jpg", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("image/jpeg", resource.ContentType);
         Assert.True(resource.IsBinary);
@@ -81,7 +81,7 @@ public sealed class LoaderTests : IDisposable
     {
         var name = $"index_{Guid.NewGuid():N}.html";
         _fileTest.CreateTextFile(name);
-        var resource = await _loader.Get(_session, CancellationToken.None, name, new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, name, new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Equal("text/html", resource.ContentType);
         Assert.False(resource.IsBinary);

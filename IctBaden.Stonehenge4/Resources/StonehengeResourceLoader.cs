@@ -46,7 +46,8 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
         Providers.Clear();
     }
 
-    public async Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
+    public async Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider,
+        string resourceName, IDictionary<string, string> parameters)
     {
         var disableCache = false;
 
@@ -62,7 +63,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
             try
             {
                 loadedResource = await loader
-                    .Get(session, requestAborted, resourceName, parameters)
+                    .Get(session, requestAborted, this, resourceName, parameters)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)

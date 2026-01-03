@@ -245,8 +245,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName,
-        IDictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider, 
+        string resourceName, IDictionary<string, string> parameters)
     {
         if (resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase))
         {
@@ -254,7 +254,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             {
                 if (session.ViewModel is ActiveViewModel activeViewModel)
                 {
-                    activeViewModel.ActiveViewModelOnLoad();
+                    activeViewModel.ActiveViewModelOnLoad(stonehengeResourceProvider);
                     activeViewModel.OnLoad();
                     activeViewModel.UpdateI18n();
                 }

@@ -115,7 +115,8 @@ public partial class StonehengeSession
             var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
             var directoryName = Path.GetDirectoryName(path) ?? "/";
             var resource = resourceLoader != null
-                ? await resourceLoader.Get(null, context.RequestAborted, path.Substring(1).Replace('/', '.'),
+                ? await resourceLoader.Get(null, context.RequestAborted, resourceLoader,  
+                        path.Substring(1).Replace('/', '.'),
                         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase))
                     .ConfigureAwait(false)
                 : null;

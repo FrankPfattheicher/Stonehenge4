@@ -195,7 +195,7 @@ public class StonehengeContent
                 case "GET":
                     appSession?.Accessed(cookies, false);
                     content = resourceLoader != null
-                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceName, parameters).ConfigureAwait(false) 
+                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceLoader, resourceName, parameters).ConfigureAwait(false) 
                         : null;
                     var isIndex = resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase);
                     if (content == null && appSession != null && isIndex)
