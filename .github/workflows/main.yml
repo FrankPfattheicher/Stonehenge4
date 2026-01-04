@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Setup Nuget
-      uses: NuGet/setup-nuget@v1
+      uses: NuGet/setup-nuget@v2
 
     - name: Prepare Artifacts
       run: |
