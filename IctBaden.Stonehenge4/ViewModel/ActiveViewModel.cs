@@ -28,8 +28,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
@@ -492,6 +492,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     private readonly PropertyDescriptorCollection sessionProperties = new([]);
     private readonly List<FieldInfo> sessionFields = [];
 
+    [SuppressMessage("Design", "MA0051:Method is too long")]
     public PropertyDescriptorCollection GetProperties()
     {
         if (properties != null) return properties;

@@ -41,8 +41,12 @@ jobs:
     - name: Build Core
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4/bin/Release/net8.0/IctBaden.Stonehenge4.dll artifacts/lib
-        cp IctBaden.Stonehenge4/bin/Release/net8.0/**/*resources.dll artifacts/lib
+        cp IctBaden.Stonehenge4/bin/Release/net8.0/IctBaden.Stonehenge4.dll 
+        for d in IctBaden.Stonehenge4/bin/Release/net8.0/**/*resources.dll; do
+          pkg="$(basename "$(dirname "$d")")"   # package folder name
+          mkdir -p "artifacts/lib/$pkg"
+          cp -a "$d/." "artifacts/lib/$pkg/"
+        done
     - name: Build Kestrel
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
