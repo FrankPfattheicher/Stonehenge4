@@ -42,6 +42,7 @@ jobs:
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4/bin/Release/net8.0/IctBaden.Stonehenge4.dll artifacts/lib
+        cp IctBaden.Stonehenge4/bin/Release/net8.0/**/*resources.dll artifacts/lib
     - name: Build Kestrel
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
