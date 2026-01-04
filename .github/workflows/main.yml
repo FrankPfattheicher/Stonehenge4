@@ -45,7 +45,7 @@ jobs:
         for d in IctBaden.Stonehenge4/bin/Release/net8.0/**/*resources.dll; do
           pkg="$(basename "$(dirname "$d")")"   # package folder name
           mkdir -p "artifacts/lib/$pkg"
-          cp -a "$d/." "artifacts/lib/$pkg/"
+          cp $d "artifacts/lib/$pkg/"
         done
     - name: Build Kestrel
       run: |
