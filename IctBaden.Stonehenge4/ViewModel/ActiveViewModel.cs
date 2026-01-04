@@ -32,6 +32,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -62,7 +63,7 @@ namespace IctBaden.Stonehenge.ViewModel;
 public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged, IDisposable
 {
     public const string StonehengePropertyNameId = "_stonehenge_";
-    
+
     #region helper classes
 
     class GetMemberBinderEx(string name) : GetMemberBinder(name, false)
@@ -232,11 +233,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         I18n.Clear();
         foreach (var i18Type in I18Types)
         {
-            var cult = i18Type
-                .GetProperties(BindingFlags.Static | BindingFlags.NonPublic)
-                .FirstOrDefault(property => property.PropertyType == typeof(CultureInfo));
-            cult?.SetValue(this, Session.SessionCulture);
-            
+            if (i18Type.FullName == null) continue;
+            var rm = new ResourceManager(i18Type.FullName, i18Type.Assembly);
             var texts = i18Type
                 .GetProperties(BindingFlags.Static | BindingFlags.NonPublic)
                 .Where(property => property.PropertyType == typeof(string))
@@ -244,10 +242,19 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
             foreach (var propertyInfo in texts)
             {
-                if(!I18Names.Contains(propertyInfo.Name, StringComparer.OrdinalIgnoreCase)) continue;
-                I18n.Add(propertyInfo.Name, propertyInfo.GetValue(null)?.ToString() ?? string.Empty);
+                if (!I18Names.Contains(propertyInfo.Name, StringComparer.OrdinalIgnoreCase)) continue;
+                try
+                {
+                    var text = rm.GetString(propertyInfo.Name, Session.SessionCulture);
+                    if (text != null) I18n.Add(propertyInfo.Name, text);
+                }
+                catch
+                {
+                    // ignore
+                }
             }
         }
+
         foreach (var component in GetComponents())
         {
             component.UpdateI18n();
@@ -262,7 +269,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(property => property.PropertyType.IsSubclassOf(typeof(StonehengeComponent)))
             .ToArray();
-        
+
         var components = new List<StonehengeComponent>();
         foreach (var property in componentProperties)
         {
@@ -271,6 +278,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
                 components.Add(component);
             }
         }
+
         return components.ToArray();
     }
 
@@ -284,45 +292,56 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
             var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name.Replace("<T>", GetType().Name);
+            var name = string.IsNullOrWhiteSpace(attribute.Name)
+                ? sp.Name
+                : attribute.Name.Replace("<T>", GetType().Name);
             var sv = Session.Get<object?>(name);
-            if(sv == null) continue;
+            if (sv == null) continue;
 
             try
             {
-                sp.SetValue(this, sv); 
-                Session.Logger.LogDebug("Restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}", name, sp.Name, sv, GetType().Name);
+                sp.SetValue(this, sv);
+                Session.Logger.LogDebug("Restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}",
+                    name, sp.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}", name, sp.Name, sv, GetType().Name);
+                Session.Logger.LogError(ex,
+                    "Failed to restore session property {VarName} ({PropName}) = '{Value}' in {ViewModel}", name,
+                    sp.Name, sv, GetType().Name);
             }
         }
+
         foreach (var sf in sessionFields)
         {
             var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name.Replace("<T>", GetType().Name);
+            var name = string.IsNullOrWhiteSpace(attribute.Name)
+                ? sf.Name
+                : attribute.Name.Replace("<T>", GetType().Name);
             var sv = Session.Get<object?>(name);
-            if(sv == null) continue;
+            if (sv == null) continue;
 
             try
             {
                 sf.SetValue(this, sv);
-                Session.Logger.LogDebug("Restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}", name, sf.Name, sv, GetType().Name);
+                Session.Logger.LogDebug("Restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}",
+                    name, sf.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}", name, sf.Name, sv, GetType().Name);
+                Session.Logger.LogError(ex,
+                    "Failed to restore session field {VarName} ({FieldName}) = '{Value}' in {ViewModel}", name, sf.Name,
+                    sv, GetType().Name);
             }
         }
-        
+
         foreach (var component in GetComponents())
         {
             component.I18Names = component.GetI18Names(this, stonehengeResourceProvider.GetViewModelInfos());
             component.OnLoad();
         }
     }
-    
+
     /// <summary>
     /// Called when application navigates to this view model.
     /// This is an equivalent to a client site onload event.
@@ -470,7 +489,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     }
 
     private PropertyDescriptorCollection? properties;
-    private readonly PropertyDescriptorCollection sessionProperties = new ([]);
+    private readonly PropertyDescriptorCollection sessionProperties = new([]);
     private readonly List<FieldInfo> sessionFields = [];
 
     public PropertyDescriptorCollection GetProperties()
@@ -487,26 +506,35 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             var sessionVariableAttribute = prop.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? prop.Name : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
-                Session.Logger.LogDebug("Adding session property {VarName} ({PropName}) from {ViewModel}", name, prop.Name, GetType().Name);
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name)
+                    ? prop.Name
+                    : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
+                Session.Logger.LogDebug("Adding session property {VarName} ({PropName}) from {ViewModel}", name,
+                    prop.Name, GetType().Name);
                 sessionProperties.Add(desc);
             }
         }
+
         foreach (var field in GetAllFields(GetType()))
         {
             var sessionVariableAttribute = field.GetCustomAttribute<SessionVariableAttribute>();
             if (sessionVariableAttribute != null)
             {
-                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name) ? field.Name : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
-                Session.Logger.LogDebug("Adding session field {Name} ({FieldName}) from {ViewModel}", name, field.Name, GetType().Name);
+                var name = string.IsNullOrWhiteSpace(sessionVariableAttribute.Name)
+                    ? field.Name
+                    : sessionVariableAttribute.Name.Replace("<T>", GetType().Name);
+                Session.Logger.LogDebug("Adding session field {Name} ({FieldName}) from {ViewModel}", name, field.Name,
+                    GetType().Name);
                 sessionFields.Add(field);
             }
         }
+
         foreach (var elem in _dictionary)
         {
             var desc = new PropertyDescriptorEx(elem.Key, null, false);
             properties.Add(desc);
         }
+
         foreach (PropertyDescriptorEx prop in properties)
         {
             foreach (Attribute attribute in prop.Attributes)
@@ -520,6 +548,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
                 _dependencies[da.Name].Add(prop.Name);
             }
         }
+
         var myMethods = GetType()
             .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
         foreach (var method in myMethods)
@@ -533,6 +562,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
                 _dependencies[attribute.Name].Add(method.Name);
             }
         }
+
         return properties;
     }
 
@@ -556,7 +586,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             type = type.BaseType;
         }
     }
-    
+
     private PropertyDescriptorCollection? propertiesAttribute;
 
     public PropertyDescriptorCollection GetProperties(Attribute[]? attributes)
@@ -605,9 +635,9 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             , "NotifyPropertyChanged for unknown property " + name);
         }
 #endif
-        
+
         Task.Run(() => SendPropertyChanged(name)).Wait();
-        
+
         var handler = PropertyChanged;
         if (handler != null)
         {
@@ -660,13 +690,15 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         Converters = { new DoubleConverter() }
     };
 
-    public bool SendingPropertiesChanged() => _serverSentContext != null; 
+    public bool SendingPropertiesChanged() => _serverSentContext != null;
+
     public async Task CancelPropertiesChanged()
     {
         if (_serverSentCancel is { IsCancellationRequested: false })
         {
             await _serverSentCancel.CancelAsync().ConfigureAwait(false);
         }
+
         _serverSentContext = null;
         _serverSentCancel?.Dispose();
         _serverSentCancel = null;
@@ -676,22 +708,22 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         _serverSentContext = context;
         _serverSentCancel?.Dispose();
-        _serverSentCancel = new CancellationTokenSource(); 
+        _serverSentCancel = new CancellationTokenSource();
         await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(false);
     }
 
     internal async Task SendPropertyChanged(string name)
     {
         if (_serverSentContext == null) return;
-        
+
         var value = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(TryGetMember(name), JsonOptions));
         var json = $"data: {{ \"{name}\":{value} }}\r\r";
         await _serverSentContext.Response.WriteAsync(json).ConfigureAwait(false);
         await _serverSentContext.Response.Body.FlushAsync().ConfigureAwait(false);
     }
-    
+
     #endregion
-    
+
     #region MessageBox
 
     public string MessageBoxTitle = string.Empty;
@@ -701,7 +733,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         MessageBoxTitle = title;
         MessageBoxText = text;
-        NotifyPropertyChanged( StonehengePropertyNameId + "StonehengeEval");
+        NotifyPropertyChanged(StonehengePropertyNameId + "StonehengeEval");
     }
 
     #endregion
@@ -850,36 +882,48 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         {
             _serverSentCancel?.Cancel();
         }
+
         _serverSentContext = null;
-        
+
         foreach (PropertyDescriptorEx sp in sessionProperties)
         {
             var attribute = sp.Attributes.OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sp.Name : attribute.Name.Replace("<T>", GetType().Name);
+            var name = string.IsNullOrWhiteSpace(attribute.Name)
+                ? sp.Name
+                : attribute.Name.Replace("<T>", GetType().Name);
             var sv = sp.GetValue(this);
             try
             {
                 Session.Set(name, sv);
-                Session.Logger.LogDebug("Save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}", name, sp.Name, sv, GetType().Name);
+                Session.Logger.LogDebug("Save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}",
+                    name, sp.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}", name, sp.Name, sv, GetType().Name);
+                Session.Logger.LogError(ex,
+                    "Failed to save session property {VarName} ({PropName}) = '{Value}' from {ViewModel}", name,
+                    sp.Name, sv, GetType().Name);
             }
         }
+
         foreach (var sf in sessionFields)
         {
             var attribute = sf.GetCustomAttributes().OfType<SessionVariableAttribute>().First();
-            var name = string.IsNullOrWhiteSpace(attribute.Name) ? sf.Name : attribute.Name.Replace("<T>", GetType().Name);
-            var sv = sf.GetValue(this); 
+            var name = string.IsNullOrWhiteSpace(attribute.Name)
+                ? sf.Name
+                : attribute.Name.Replace("<T>", GetType().Name);
+            var sv = sf.GetValue(this);
             try
             {
                 Session.Set(name, sv);
-                Session.Logger.LogDebug("Save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name, sf.Name, sv, GetType().Name);
+                Session.Logger.LogDebug("Save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name,
+                    sf.Name, sv, GetType().Name);
             }
             catch (Exception ex)
             {
-                Session.Logger.LogError(ex, "Failed to save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name, sf.Name, sv, GetType().Name);
+                Session.Logger.LogError(ex,
+                    "Failed to save session field {VarName} ({FieldName}) = '{Value}' from {ViewModel}", name, sf.Name,
+                    sv, GetType().Name);
             }
         }
 
@@ -890,9 +934,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     public virtual void OnDispose()
     {
     }
-    
+
     public virtual void OnWindowResized(int width, int height)
     {
     }
-
 }
