@@ -40,5 +40,6 @@
         <file src="../icon64.png" target="images"/>
         <file src="lib/*.dll" target="lib/net8.0"/>
         <file src="tools/*.exe" target="tools" />
+        <file src="lib/**/*resources.dll" target="lib\net8.0\" />
     </files>
 </package>

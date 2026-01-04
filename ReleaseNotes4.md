@@ -1,4 +1,5 @@
 
+* 8.7.3 - 04.01.2026 Nuget include resources dlls
 * 8.7.2 - 04.01.2026 Use ResourceManager to resolve I18n names
 * 8.7.1 - 03.01.2026 Fixed GetI18Names for components
 * 8.7.0 - 02.01.2026 Operating completely without cookies. Added support for esm modules. Support SSE.
