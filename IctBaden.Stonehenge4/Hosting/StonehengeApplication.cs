@@ -43,15 +43,10 @@ public static class StonehengeApplication
                 }
             }
 
-            // started as "dotnet <assembly>"
-            var assembly = Assembly.GetEntryAssembly();
-            if (assembly != null)
+            path = Path.GetDirectoryName(AppContext.BaseDirectory);
+            if (Directory.Exists(path))
             {
-                path = Path.GetDirectoryName(assembly.Location);
-                if (Directory.Exists(path))
-                {
-                    return path;
-                }
+                return path;
             }
 
             return Directory.Exists(path) 

@@ -144,8 +144,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
             resLoader.AddAssembly(provider.GetType().Assembly);
         }
 
-        var path = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? Directory.GetCurrentDirectory();
-        var fileLoader = new FileLoader(logger, Path.Combine(path, "app"));
+        var fileLoader = new FileLoader(logger, Path.Combine(AppContext.BaseDirectory, "app"));
 
         var viewModelCreator = new ViewModelProvider(logger);
 

@@ -93,7 +93,7 @@ jobs:
     - name: Pack Nuget
       run: |
         cd artifacts
-        nuget pack ../Stonehenge4.nuspec -BasePath . -Version ${{ env.AssemblyVersion }} -Verbosity diagnostic
+        nuget pack ../Stonehenge4.nuspec -BasePath .  -Verbosity detailed -Version ${{ env.AssemblyVersion }}
     
     - uses: actions/upload-artifact@v4
       with:
