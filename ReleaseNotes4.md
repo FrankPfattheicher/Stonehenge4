@@ -1,4 +1,5 @@
 
+* 8.7.6 - 05.01.2026 Hide mermaid before loading modules
 * 8.7.5 - 05.01.2026 Hide mermaid during rendering
 * 8.7.4 - 04.01.2026 Nuget pack resources dlls
 * 8.7.3 - 04.01.2026 Nuget include resources dlls
