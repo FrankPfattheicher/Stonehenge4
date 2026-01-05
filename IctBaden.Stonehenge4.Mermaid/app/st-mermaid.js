@@ -12,6 +12,9 @@ mounted: async function() {
         suppressErrors: true
     });
 
+    const display = this.$el.style.display;
+    this.$el.style.display = 'none';
+
     const ts = new Date().getMilliseconds();
     const id = 'id' + ts + Math.floor(Math.random() * 100);
     const graphData = this.$props.graphData;
@@ -29,12 +32,16 @@ mounted: async function() {
         }
         this.$el.innerHTML = '';
     }
+    this.$el.style.display = display;
 },
 updated: async function () {
 
     const mermaidModule = await import("./src/mermaid.esm.mjs");
     const mermaid = mermaidModule.default;
 
+    const display = this.$el.style.display;
+    this.$el.style.display = 'none';
+
     const ts = new Date().getMilliseconds();
     const id = 'id' + ts + Math.floor(Math.random() * 100);
     const graphData = this.$props.graphData;
@@ -52,5 +59,6 @@ updated: async function () {
         }
         this.$el.innerHTML = '';
     }
+    this.$el.style.display = display;
 
 }
