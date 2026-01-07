@@ -29,6 +29,7 @@
     <EmbeddedResource Include="app\cookie.html" />
     <EmbeddedResource Include="app\charts1.html" />
     <EmbeddedResource Include="app\charts2.html" />
+    <EmbeddedResource Include="app\images\us.png" />
     <EmbeddedResource Include="app\invisible.html" />
     <EmbeddedResource Include="app\start.html" />
     <EmbeddedResource Include="app\start_user.js" />
