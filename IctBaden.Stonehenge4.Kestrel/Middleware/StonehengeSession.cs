@@ -162,6 +162,12 @@ public partial class StonehengeSession
                 return;
             }
         }
+        else if (session == null && path.StartsWith("/Data/", StringComparison.OrdinalIgnoreCase))
+        {
+            // very dirty fix for old /Data/ links not using cookies
+            var clientAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+            session = appSessions.GetSessionByClientAddress(clientAddress);
+        }
 
         var etag = context.Request.Headers.IfNoneMatch.ToString();
         if (string.Equals(context.Request.Method, "GET", StringComparison.OrdinalIgnoreCase) &&

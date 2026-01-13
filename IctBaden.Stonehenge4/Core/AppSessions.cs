@@ -33,7 +33,15 @@ public class AppSessions
             return _sessions.Find(s => string.Equals(s.Id, sessionId, System.StringComparison.Ordinal));
         }
     }
-    
+
+    public AppSession? GetSessionByClientAddress(string? clientAddress)
+    {
+        lock (_sessions)
+        {
+            return _sessions.Find(s => string.Equals(s.ClientAddress, clientAddress, System.StringComparison.Ordinal));
+        }
+    }
+
     public AppSession? GetSessionByNonce(string? nonce)
     {
         lock (_sessions)
