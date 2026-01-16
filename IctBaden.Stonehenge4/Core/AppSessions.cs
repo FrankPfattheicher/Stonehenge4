@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using IctBaden.Stonehenge.ViewModel;
 
 namespace IctBaden.Stonehenge.Core;
 
@@ -34,11 +35,21 @@ public class AppSessions
         }
     }
 
-    public AppSession? GetSessionByClientAddress(string? clientAddress)
+    public AppSession? GetSessionByDataResourceId(string dataResourceId)
     {
         lock (_sessions)
         {
-            return _sessions.Find(s => string.Equals(s.ClientAddress, clientAddress, System.StringComparison.Ordinal));
+            return _sessions.Find(s => string.Equals((s.ViewModel as ActiveViewModel)?.DataResourceId, dataResourceId, System.StringComparison.Ordinal));
+        }
+    }
+
+    public AppSession? GetSessionByClientAddressAndUserAgent(string clientAddress, string? userAgent)
+    {
+        lock (_sessions)
+        {
+            return _sessions
+                .Find(s => string.Equals(s.ClientAddress, clientAddress, System.StringComparison.Ordinal) 
+                           && string.Equals(s.UserAgent, userAgent, System.StringComparison.Ordinal));
         }
     }
 

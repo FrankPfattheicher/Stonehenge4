@@ -63,6 +63,9 @@ namespace IctBaden.Stonehenge.ViewModel;
 public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyPropertyChanged, IDisposable
 {
     public const string StonehengePropertyNameId = "_stonehenge_";
+    
+    public string DataResourceId { get; private set; } = string.Empty;
+    public string GetDataResourceUri(string name) => $"/Data_{DataResourceId}/{name}";
 
     #region helper classes
 
@@ -284,6 +287,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     internal void ActiveViewModelOnLoad(IStonehengeResourceProvider stonehengeResourceProvider)
     {
+        DataResourceId = Guid.NewGuid().ToString("N");
+        
         if (!SupportsEvents)
         {
             Session.EventsClear(forceEnd: true);

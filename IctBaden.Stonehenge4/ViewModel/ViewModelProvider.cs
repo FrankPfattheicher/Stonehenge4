@@ -270,6 +270,10 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         {
             return GetDataResource(session, resourceName.Substring(5), parameters);
         }
+        else if (session != null && resourceName.StartsWith("Data_", StringComparison.OrdinalIgnoreCase))
+        {
+            return GetDataResource(session, resourceName.Split('/').Last(), parameters);
+        }
 
         return Task.FromResult<Resource?>(null);
     }

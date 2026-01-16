@@ -5,6 +5,15 @@ An open source .NET Framework to use Web UI technologies for desktop and/or web 
 * Core functionality [active view models](docs/active-vm.md)
 * Creating [reusable components](docs/ReusableComponents.md)
 * Using Session Variables [SessionVariable Attribute](docs/SessionVariable.md)
+* Using data resource links [SessionVariable Attribute](docs/SessionVariable.md)
+
+## News
+**January 2026**    
+Operating completely without cookies.   
+Support data resource links.
+
+**December 2025**   
+SessionVariable attribute
 
 ## Version 4
 This version is based on .NET 8. 

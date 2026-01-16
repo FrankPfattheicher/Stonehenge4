@@ -129,7 +129,7 @@ public partial class StonehengeSession
 
             if (directoryName.Length <= 1 || resource == null || string.Equals(directoryName, "\\ViewModel", StringComparison.OrdinalIgnoreCase))
             {
-                // redirect to new session
+                // redirect to a new session
 #pragma warning disable IDISP001
                 session?.Dispose();
                 session = NewSession(logger, context, resourceLoader, appSessions);
@@ -166,7 +166,16 @@ public partial class StonehengeSession
         {
             // very dirty fix for old /Data/ links not using cookies
             var clientAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
-            session = appSessions.GetSessionByClientAddress(clientAddress);
+            var userAgent = context.Request.Headers.UserAgent.ToString();
+            session = appSessions.GetSessionByClientAddressAndUserAgent(clientAddress, userAgent);
+        }
+        else if (session == null && path.StartsWith("/Data", StringComparison.OrdinalIgnoreCase))
+        {
+            var dataResourceMatch = new Regex("/Data_([0-9a-f]+)/").Match(path);
+            if (dataResourceMatch.Success && Guid.TryParse(dataResourceMatch.Groups[1].Value, out var guid))
+            {
+                session = appSessions.GetSessionByDataResourceId(guid.ToString("N"));
+            }
         }
 
         var etag = context.Request.Headers.IfNoneMatch.ToString();

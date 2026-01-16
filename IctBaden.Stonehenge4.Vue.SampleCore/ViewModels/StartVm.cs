@@ -40,6 +40,8 @@ public class StartVm : ActiveViewModel
 
     public string Culture { get; set; } = string.Empty;
     public string UploadFile { get; set; } = string.Empty;
+    
+    public string DateUri => GetDataResourceUri("date.ics");
 
     public bool AppBoxVisible { get; private set; }
     public string AppBoxCaption { get; private set; } = string.Empty;
