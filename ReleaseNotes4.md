@@ -1,4 +1,6 @@
 
+* 8.8.0 - 07.02.2026 Use sessionStorage for session id
+
 * 8.7.8 - 16.01.2026 Improve support for old /Data/ links and added GetDataResourceUri
 * 8.7.7 - 13.01.2026 Very dirty fix for old /Data/ links not using cookies
 * 8.7.6 - 05.01.2026 Hide mermaid before loading modules

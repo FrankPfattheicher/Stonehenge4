@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -47,6 +48,10 @@ public class StonehengeHeaders
                 {
                     context.Response.Headers.Append(header.Key, header.Value);
                 }
+            }
+            if (context.Items["stonehenge.AppSession"] is AppSession appSession)
+            {
+                context.Response.Headers.Append("X-Stonehenge-Id", new[] { appSession.Id });
             }
         }
         catch (Exception ex)

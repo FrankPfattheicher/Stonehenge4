@@ -34,12 +34,18 @@ public class AppSessions
             return _sessions.Find(s => string.Equals(s.Id, sessionId, System.StringComparison.Ordinal));
         }
     }
-
     public AppSession? GetSessionByDataResourceId(string dataResourceId)
     {
         lock (_sessions)
         {
             return _sessions.Find(s => string.Equals((s.ViewModel as ActiveViewModel)?.DataResourceId, dataResourceId, System.StringComparison.Ordinal));
+        }
+    }
+    public AppSession? GetSessionByAuthorizeRedirectUrl(string authorizeRedirectUrl)
+    {
+        lock (_sessions)
+        {
+            return _sessions.Find(s => string.Equals(s.AuthorizeRedirectUrl, authorizeRedirectUrl, System.StringComparison.Ordinal));
         }
     }
 

@@ -108,6 +108,17 @@ public partial class StonehengeSession
             var stonehengeNonce = context.Request.Query["stonehenge-nonce"].FirstOrDefault();
             session = appSessions.GetSessionByNonce(stonehengeNonce);
         }
+        if (session == null)
+        {
+            var isIndex = path.Contains("/index.html", StringComparison.OrdinalIgnoreCase);
+            var ts = context.Request.Query["ts"].FirstOrDefault();
+            if (isIndex && !string.IsNullOrEmpty(ts))
+            {
+                var redirectUri = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}/index.html?ts={ts}";
+                session?.Dispose();
+                session = appSessions.GetSessionByAuthorizeRedirectUrl(redirectUri);
+            }
+        }
         
         if (session == null && path.StartsWith("/ViewModel", StringComparison.OrdinalIgnoreCase))
         {
@@ -120,7 +131,7 @@ public partial class StonehengeSession
                         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase))
                     .ConfigureAwait(false)
                 : null;
-            if (directoryName.Length > 1 && resource == null && stonehengeId != null)
+            if (directoryName.Length > 1 && resource == null && session?.Id != null)
             {
                 logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", 
                     stonehengeId, context.Request.Method, path, context.Request.QueryString);
@@ -174,6 +185,7 @@ public partial class StonehengeSession
             var dataResourceMatch = new Regex("/Data_([0-9a-f]+)/").Match(path);
             if (dataResourceMatch.Success && Guid.TryParse(dataResourceMatch.Groups[1].Value, out var guid))
             {
+                session?.Dispose();
                 session = appSessions.GetSessionByDataResourceId(guid.ToString("N"));
             }
         }

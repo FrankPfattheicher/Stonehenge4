@@ -56,11 +56,11 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
 
     /// User login is requested on next request 
-    public bool RequestLogin;
+    public bool RequestLogin => !string.IsNullOrWhiteSpace(AuthorizeRedirectUrl);
 
     /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
-    /// Respond with 401 to complete unauthorization 
+    /// Respond with 401 to complete un-authorization 
     public bool UnauthorizeRedirect;
 
     /// Access token given from authorization 
@@ -481,6 +481,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
 
     public static readonly AppSession None = new();
+    private static readonly HttpClient Client = new();
 
     public AppSession()
         : this(null, new StonehengeHostOptions(), new AppSessions())
@@ -715,7 +716,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         UserIdentity = identityName;
         UserIdentityId = identityId;
         UserIdentityEMail = identityEMail;
-        RequestLogin = false;
+        AuthorizeRedirectUrl = string.Empty;
     }
 
     public void SetSessionCulture(CultureInfo culture)
@@ -743,7 +744,6 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         var o = HostOptions.UseKeycloakAuthentication;
         if (o == null) return;
 
-        RequestLogin = true;
         AuthorizeRedirectUrl = $"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
         var query = new QueryBuilder
         {
@@ -774,16 +774,15 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         
         if (HostOptions.UseKeycloakAuthentication == null) return false;
 
-        if (string.IsNullOrEmpty(AuthorizeRedirectUrl) || string.IsNullOrEmpty(RefreshToken)) return false;
+        if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(RefreshToken)) return false;
 
         var o = HostOptions.UseKeycloakAuthentication;
 
-        using var client = new HttpClient();
         var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
 
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
-        using var result = client.PostAsync(logoutUrl, content).Result;
+        using var result = Client.PostAsync(logoutUrl, content).Result;
 
         var text = result.Content.ReadAsStringAsync().Result;
         Debug.WriteLine($"UserLogout {result.StatusCode} : {text}");

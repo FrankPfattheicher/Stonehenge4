@@ -17,7 +17,6 @@ using HttpMultipartParser;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
 using IctBaden.Stonehenge.Resources;
-using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -36,6 +35,7 @@ public class StonehengeContent
 {
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
+    private static readonly HttpClient Client = new();
     private readonly RequestDelegate _next;
 
     // ReSharper disable once UnusedMember.Global
@@ -127,12 +127,9 @@ public class StonehengeContent
                     var code = requestQuery["code"];
                     var data = $"grant_type=authorization_code&client_id={o.ClientId}&code={code}&redirect_uri={HttpUtility.UrlEncode(appSession.AuthorizeRedirectUrl)}";
 
-#pragma warning disable IDISP014
-                    using var client = new HttpClient();
-#pragma warning restore IDISP014
                     var tokenUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/token";
                     using var authParams = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
-                    using var result = client.PostAsync(tokenUrl, authParams, context.RequestAborted).Result;
+                    using var result = Client.PostAsync(tokenUrl, authParams, context.RequestAborted).Result;
                     var json = result.Content.ReadAsStringAsync(context.RequestAborted).Result;
                     var authResponse = JsonSerializer.Deserialize<JsonObject>(json);
                     if (authResponse != null)
@@ -160,11 +157,6 @@ public class StonehengeContent
                             appSession.Parameters.Remove("session_state");
                             appSession.Parameters.Remove("iss");
                             appSession.Parameters.Remove("code");
-
-                            var uri = new Uri(appSession.AuthorizeRedirectUrl);
-                            var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
-                            var navigate = $"{uri.Scheme}://{uri.AbsolutePath}?{query}";
-                            (appSession.ViewModel as ActiveViewModel)?.NavigateTo(navigate);
                         }
                     }
 
@@ -172,6 +164,7 @@ public class StonehengeContent
                 }
                 else
                 {
+                    Debugger.Break();
                     var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
                     context.Response.Redirect(newSession);
                     return;
@@ -385,10 +378,10 @@ public class StonehengeContent
                 }
             }
 
-            if (appSession != null)
-            {
-                context.Response.Headers.Append("X-Stonehenge-Id", new[] { appSession.Id });
-            }
+            // if (appSession != null)
+            // {
+            //     context.Response.Headers.Append("X-Stonehenge-Id", new[] { appSession.Id });
+            // }
 
             if (content.IsNoContent)
             {
