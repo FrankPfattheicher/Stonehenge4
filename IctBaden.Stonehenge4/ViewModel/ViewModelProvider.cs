@@ -386,8 +386,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!string.IsNullOrEmpty(activeVm.ClientScript))
         {
             var script = activeVm.ClientScript;
-            data.Add(
-                $"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions));
+            data.Add($"\"StonehengeEval\":{json}");
             activeVm.ClientScript = string.Empty;
         }
 
@@ -404,8 +404,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
         {
             var route = activeVm.NavigateToRoute;
-            data.Add(
-                $"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions));
+            data.Add($"\"StonehengeNavigate\":{json}");
         }
     }
 
