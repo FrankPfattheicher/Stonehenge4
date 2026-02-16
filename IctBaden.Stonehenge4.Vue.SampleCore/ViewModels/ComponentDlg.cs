@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using IctBaden.Stonehenge.Forms.ViewModels;
 using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
 
@@ -11,15 +12,17 @@ public class ComponentDlg : StonehengeComponent
 {
     public bool Visible { get; private set; }
     public string Caption { get; private set; }
-    
-    public string ComponentVar { get; set; } = string.Empty;
 
-    public Action<bool>? Closed; 
+    // component within component
+    public DropEdit ComponentVar { get; set; } = new(["component", "component2", "component3"]);
+
+    public Action<bool>? Closed;
     
     public ComponentDlg(string caption)
     {
         SupportsEvents = false;
         Caption = caption;
+        ComponentVar.OnChange += InputChanged;
     }
     
     public void Show()
@@ -30,7 +33,7 @@ public class ComponentDlg : StonehengeComponent
 
     public override void OnLoad()
     {
-        ComponentVar = "component";
+        ComponentVar.Value = "component";
     }
 
     [ActionMethod]

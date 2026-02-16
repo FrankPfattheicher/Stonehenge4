@@ -4,7 +4,7 @@
     <div class="btn-group" role="group" style="width: 100%;">
         <label style="width: 100%;">
             <input :id="'input-' + model.ComponentId" type="text" v-model="model.Value" class="form-control" 
-                   @change="OnChange(value)">
+                   @change="ValueChanged(value)">
         </label>
         <label class="btn btn-secondary" :for="'drop-' + model.ComponentId">
             <i class="fas fa-caret-down"></i>
@@ -15,7 +15,7 @@
          style="position: absolute; z-index: 1; max-height: 40vh; overflow-y: auto; padding-top: .5em; border: 1px solid var(--bs-gray-400);">
         <ul style="list-style-type: none; margin-left: -2em;">
             <li class="st-drop-edit-item" v-for="v in model.Values" style="margin-left: 1em; margin-right: 1em;" 
-                @click="OnChange(v)">
+                @click="ValueChanged(v)">
                 &nbsp;{{v}}
             </li>
         </ul>

@@ -245,7 +245,7 @@ public class StartVm : ActiveViewModel
             {
                 if (ok)
                 {
-                    SessionVar = ComponentDlg.ComponentVar;
+                    SessionVar = ComponentDlg.ComponentVar.Value;
                 }
             };
     }

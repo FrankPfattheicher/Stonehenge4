@@ -7,9 +7,12 @@ namespace IctBaden.Stonehenge.Forms.ViewModels;
 public class DropEdit : StonehengeComponent
 {
     public string Value { get; set; } = string.Empty;
-    public string[] Values { get; private set; }
+    public string[] Values { get; private set; } = [];
     public bool DropList { get; set; }
 
+    public DropEdit()
+    {
+    }
     public DropEdit(string[] values)
     {
         Values = values;
@@ -19,10 +22,14 @@ public class DropEdit : StonehengeComponent
 
     public override string ToString() => Value;
 
+    public event Action? OnChange; 
+    
     [ActionMethod]
-    public void OnChange(string newValue)
+    public void ValueChanged(string newValue)
     {
         Value = newValue;
         DropList = false;
+        
+        OnChange?.Invoke();
     }
 }
