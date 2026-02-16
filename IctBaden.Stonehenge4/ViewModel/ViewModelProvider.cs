@@ -152,22 +152,12 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
         }
 
-        var targetType = vmType;
+        Type? targetType = vmType;
         var targetObject = session?.ViewModel;
         
-        if (vmType != null && !string.IsNullOrEmpty(componentId))
+        if (vmType != null && targetObject != null && !string.IsNullOrEmpty(componentId))
         {
-            var vmProperties = vmType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            
-            foreach (var prop in vmProperties)
-            {
-                if(!prop.PropertyType.IsSubclassOf(typeof(StonehengeComponent))) continue;
-                var component = (StonehengeComponent)prop.GetValue(session?.ViewModel)!;
-                if (!string.Equals(component.ComponentId, componentId, StringComparison.OrdinalIgnoreCase)) continue;
-                targetType = prop.PropertyType;
-                targetObject = component; 
-                break;
-            }
+            (targetType, targetObject) = GetVmComponent(vmType, targetObject, componentId);
             if (targetType == null)
             {
                 logger.LogWarning("ViewModelProvider: Component with ComponentId={ComponentId} not found in VM={VmTypeName}", componentId, vmTypeName);
@@ -244,6 +234,28 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         return Task.FromResult<Resource?>(new Resource(resourceName, "ViewModelProvider", ResourceType.Json,
             GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }
+
+    private (Type? targetType, object? targetObject) GetVmComponent(Type vmType, object targetViewModel, string componentId)
+    {
+        var vmProperties = vmType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        foreach (var prop in vmProperties)
+        {
+            if(!prop.PropertyType.IsSubclassOf(typeof(StonehengeComponent))) continue;
+            var component = (StonehengeComponent)prop.GetValue(targetViewModel)!;
+            if (string.Equals(component.ComponentId, componentId, StringComparison.OrdinalIgnoreCase))
+            {
+                return (prop.PropertyType, component);
+            }
+            var (subType, subObject) = GetVmComponent(prop.PropertyType, component, componentId);
+            if (subType != null)
+            {
+                return (subType, subObject);
+            }
+        }
+
+        return (null, null);
+    }
+
 
     public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider, 
         string resourceName, IDictionary<string, string> parameters)
