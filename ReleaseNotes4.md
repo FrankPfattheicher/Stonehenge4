@@ -1,4 +1,5 @@
 
+* 8.8.1 - 16.02.2026 DropEdit as control with view model, fixed focus border
 * 8.8.0 - 07.02.2026 Use sessionStorage for session id
 
 * 8.7.8 - 16.01.2026 Improve support for old /Data/ links and added GetDataResourceUri

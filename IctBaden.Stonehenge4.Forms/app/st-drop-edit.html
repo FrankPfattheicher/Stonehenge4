@@ -1,18 +1,21 @@
-<!--CustomElement:id,value,values,change,dropList-->
+<!--CustomElement:model-->
+<!--ViewModel:DropEdit-->
 <div class="st-drop-edit" style="display: inline-table; border-spacing: 0;">
-    <div class="btn-group" role="group">
-        <label>
-            <input type="text" v-model="value" class="form-control" @change="$emit('change',value)">
+    <div class="btn-group" role="group" style="width: 100%;">
+        <label style="width: 100%;">
+            <input :id="'input-' + model.ComponentId" type="text" v-model="model.Value" class="form-control" 
+                   @change="OnChange(value)">
         </label>
-        <label class="btn btn-secondary" :for="id">
+        <label class="btn btn-secondary" :for="'drop-' + model.ComponentId">
             <i class="fas fa-caret-down"></i>
         </label>
     </div>
-    <input :id="id" type="checkbox" v-model="dropList">
+    <input :id="'drop-' + model.ComponentId" type="checkbox" v-model="model.DropList">
     <div class="st-drop-edit-items"
          style="position: absolute; z-index: 1; max-height: 40vh; overflow-y: auto; padding-top: .5em; border: 1px solid var(--bs-gray-400);">
         <ul style="list-style-type: none; margin-left: -2em;">
-            <li class="st-drop-edit-item" v-for="v in values" style="margin-left: 1em; margin-right: 1em;" @click="value=v; dropList=false; $emit('change',v);">
+            <li class="st-drop-edit-item" v-for="v in model.Values" style="margin-left: 1em; margin-right: 1em;" 
+                @click="OnChange(v)">
                 &nbsp;{{v}}
             </li>
         </ul>
