@@ -333,7 +333,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         string json;
         if (!string.Equals(vmTypeName, vmType?.Name, StringComparison.Ordinal))
         {
-            // view model changed !
+            // view model has changed
             json = "{ \"StonehengeContinuePolling\":false";
             if (session == null)
             {
@@ -360,8 +360,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                         $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                 }
 
-                // ******** DO NOT FOR EVENTS ********
-                // AddStonehengeInternalProperties(data, activeVm);
+                // 23.12.2025: ******** DO NOT FOR EVENTS ******** - nicht dokumentiert warum...
+                AddStonehengeInternalProperties(data, activeVm);
             }
             catch
             {
