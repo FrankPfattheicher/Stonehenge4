@@ -9,6 +9,15 @@
     border-bottom-left-radius: 0;
 }
 
+.st-drop-edit:focus-within {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem var(--bs-focus-ring-color);
+    border-radius: var(--bs-border-radius);
+}
+.st-drop-edit .form-control:focus {
+    box-shadow: none;
+}
+
 .st-drop-edit input[type=checkbox] {
     display: none;
 }

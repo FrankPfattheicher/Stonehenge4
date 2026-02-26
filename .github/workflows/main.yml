@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Setup Nuget
-      uses: NuGet/setup-nuget@v1
+      uses: NuGet/setup-nuget@v2
 
     - name: Prepare Artifacts
       run: |
@@ -42,6 +42,12 @@ jobs:
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
         cp IctBaden.Stonehenge4/bin/Release/net8.0/IctBaden.Stonehenge4.dll artifacts/lib
+        for d in IctBaden.Stonehenge4/bin/Release/net8.0/**/*resources.dll; do
+          pkg="$(basename "$(dirname "$d")")"   # package folder name
+          mkdir -p "artifacts/lib/$pkg"
+          cp $d "artifacts/lib/$pkg/"
+          echo "Copied $d to artifacts/lib/$pkg"
+        done
     - name: Build Kestrel
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4.Kestrel/IctBaden.Stonehenge4.Kestrel.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
@@ -87,7 +93,7 @@ jobs:
     - name: Pack Nuget
       run: |
         cd artifacts
-        nuget pack ../Stonehenge4.nuspec -BasePath . -Version ${{ env.AssemblyVersion }}
+        nuget pack ../Stonehenge4.nuspec -BasePath .  -Verbosity detailed -Version ${{ env.AssemblyVersion }}
     
     - uses: actions/upload-artifact@v4
       with:

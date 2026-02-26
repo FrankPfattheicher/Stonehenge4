@@ -13,9 +13,8 @@
                     ComponentVar - optional set Session Variable
                 </td>
                 <td>
-                    <label>
-                        <input class="form-control" v-model="model.ComponentVar" style="width: 30em;" @change="InputChanged()">
-                    </label>
+                    <st-drop-edit :model="model.ComponentVar">
+                    </st-drop-edit>
                 </td>
             </tr>
 

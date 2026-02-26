@@ -38,14 +38,14 @@ public sealed class ControllerCreationTests : IDisposable
     [Fact]
     public void ProviderShouldGenerateStartComponent()
     {
-        var resource = _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = _loader.Get(_session, CancellationToken.None, _loader, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
     }
         
     [Fact]
     public async Task StartComponentShouldHaveExpectedMembers()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, "start.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Contains("VmPropInteger", resource.Text, StringComparison.Ordinal);
         Assert.Contains("VmPropText", resource.Text, StringComparison.Ordinal);
@@ -57,14 +57,14 @@ public sealed class ControllerCreationTests : IDisposable
     [Fact]
     public async Task ProviderShouldGenerateDiComponent()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
     }
         
     [Fact]
     public async Task DiComponentShouldHaveExpectedMembers()
     {
-        var resource = await _loader.Get(_session, CancellationToken.None, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
+        var resource = await _loader.Get(_session, CancellationToken.None, _loader, "dicomponent.js", new Dictionary<string, string>(StringComparer.Ordinal));
         Assert.NotNull(resource);
         Assert.Contains("VmPropInteger", resource.Text, StringComparison.Ordinal);
         Assert.Contains("VmPropText", resource.Text, StringComparison.Ordinal);

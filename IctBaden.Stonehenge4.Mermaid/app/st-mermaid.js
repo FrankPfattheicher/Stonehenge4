@@ -1,6 +1,11 @@
 
 mounted: async function() {
 
+    console.log("Mermaid: mounted");
+
+    const display = this.$el.style.display;
+    this.$el.style.display = 'none';
+
     const mermaidModule = await import("./src/mermaid.esm.mjs");
     const elkLayoutsModule = await import("./src/mermaid-layout-elk.esm.mjs");
     const mermaid = mermaidModule.default;
@@ -29,8 +34,14 @@ mounted: async function() {
         }
         this.$el.innerHTML = '';
     }
+    this.$el.style.display = display;
 },
 updated: async function () {
+
+    console.log("Mermaid: updated");
+
+    const display = this.$el.style.display;
+    this.$el.style.display = 'none';
 
     const mermaidModule = await import("./src/mermaid.esm.mjs");
     const mermaid = mermaidModule.default;
@@ -52,5 +63,6 @@ updated: async function () {
         }
         this.$el.innerHTML = '';
     }
+    this.$el.style.display = display;
 
 }

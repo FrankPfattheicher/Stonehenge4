@@ -1,6 +1,6 @@
 ﻿using IctBaden.Stonehenge.Extensions;
 
-namespace IctBaden.Stonehenge4.Syntaxhighlight;
+namespace IctBaden.Stonehenge4.SyntaxHighlight;
 
 public class SyntaxHighlight : IStonehengeExtension
 {

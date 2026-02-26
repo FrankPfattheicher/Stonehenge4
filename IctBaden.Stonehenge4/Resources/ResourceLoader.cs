@@ -129,7 +129,8 @@ public sealed partial class ResourceLoader : IStonehengeResourceProvider
         .Replace('/', '.');
 
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string name, IDictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider,
+        string name, IDictionary<string, string> parameters)
     {
         if (name.StartsWith("Events/", StringComparison.OrdinalIgnoreCase))
         {

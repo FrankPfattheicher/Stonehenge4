@@ -40,6 +40,8 @@ public class StartVm : ActiveViewModel
 
     public string Culture { get; set; } = string.Empty;
     public string UploadFile { get; set; } = string.Empty;
+    
+    public string DateUri => GetDataResourceUri("date.ics");
 
     public bool AppBoxVisible { get; private set; }
     public string AppBoxCaption { get; private set; } = string.Empty;
@@ -158,25 +160,26 @@ public class StartVm : ActiveViewModel
             return new Resource(resourceName, "Sample", ResourceType.Text, _text, Resource.Cache.None);
         }
 
-        const string cal = @"BEGIN:VCALENDAR
-PRODID:-//ICT Baden GmbH//Framework Library 2016//DE
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:902af1f31c454e5983d707c6d7ee3d4a
-DTSTART:20160501T181500Z
-DTEND:20160501T194500Z
-DTSTAMP:20160501T202905Z
-CREATED:20160501T202905Z
-LAST-MODIFIED:20160501T202905Z
-TRANSP:OPAQUE
-STATUS:CONFIRMED
-ORGANIZER:ARD
-SUMMARY:Tatort
-END:VEVENT
-END:VCALENDAR
-";
+        const string cal = """
+                           BEGIN:VCALENDAR
+                           PRODID:-//ICT Baden GmbH//Framework Library 2016//DE
+                           VERSION:2.0
+                           CALSCALE:GREGORIAN
+                           METHOD:PUBLISH
+                           BEGIN:VEVENT
+                           UID:902af1f31c454e5983d707c6d7ee3d4a
+                           DTSTART:20160501T181500Z
+                           DTEND:20160501T194500Z
+                           DTSTAMP:20160501T202905Z
+                           CREATED:20160501T202905Z
+                           LAST-MODIFIED:20160501T202905Z
+                           TRANSP:OPAQUE
+                           STATUS:CONFIRMED
+                           ORGANIZER:ARD
+                           SUMMARY:Tatort
+                           END:VEVENT
+                           END:VCALENDAR
+                           """;
         return new Resource(resourceName, "Sample", ResourceType.Calendar, cal, Resource.Cache.None);
     }
 
@@ -242,7 +245,7 @@ END:VCALENDAR
             {
                 if (ok)
                 {
-                    SessionVar = ComponentDlg.ComponentVar;
+                    SessionVar = ComponentDlg.ComponentVar.Value;
                 }
             };
     }

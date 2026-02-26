@@ -144,7 +144,10 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
         if (pageText.Contains("<app-message-box", StringComparison.OrdinalIgnoreCase) ||
             pageText.Contains("<app-dialog", StringComparison.OrdinalIgnoreCase))
         {
-            info.I18Names.AddRange(["BtnOK", "BtnClose", "BtnCancel"]);
+            info.I18Names = info.I18Names 
+                .Concat(["BtnOK", "BtnClose", "BtnCancel"])
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
         }
 
         if (!string.IsNullOrEmpty(info.VmName))
@@ -263,8 +266,8 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
     public Task<Resource?> Delete(AppSession? session, string resourceName, IDictionary<string, string> parameters,
         IDictionary<string, string> formData) => Task.FromResult<Resource?>(null);
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName,
-        IDictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider, 
+        string resourceName, IDictionary<string, string> parameters)
     {
         resourceName = resourceName
             .Replace('/', '.')

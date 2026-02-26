@@ -98,7 +98,7 @@ stonehengeViewModelName = function component() {
                 {
                     before(request) {
                         if(app) {
-                            request.headers.set('X-Stonehenge-Id', app.stonehengeSession);
+                            request.headers.set('X-Stonehenge-Id', sessionStorage.getItem("StonehengeSession"));
                         }
                         //app.activeRequests.add(request);
                     }
@@ -133,7 +133,7 @@ stonehengeViewModelName = function component() {
 
         RequestStonehengeEvents: async function (continuePolling) {
 
-            if (!app || app.stonehengeSession === '') return;
+            if (!app || sessionStorage.getItem("StonehengeSession") === '') return;
             if(!app.stonehengeViewModelName.model.StonehengeActive) return;
             if(app.activeViewModelName !== 'stonehengeViewModelName') return;
             //if (app.stonehengeViewModelName.model.StonehengePollEventsActive || app.stonehengeViewModelName.model.StonehengeEventSource) return;
@@ -153,7 +153,7 @@ stonehengeViewModelName = function component() {
                     app.stonehengeViewModelName.model.StonehengeEventAbort = new AbortController();
                     app.stonehengeViewModelName.model.StonehengeEventSource = module.fetchEventSource('EventSource/stonehengeViewModelName', {
                         signal: app.stonehengeViewModelName.model.StonehengeEventAbort.signal,
-                        headers: { 'X-Stonehenge-Id': app.stonehengeSession },
+                        headers: { 'X-Stonehenge-Id': sessionStorage.getItem("StonehengeSession") },
                         onmessage(message) {
                             try {
                                 let data = JSON.parse(message.data);
@@ -209,7 +209,7 @@ stonehengeViewModelName = function component() {
                     before(request) {
                         app.stonehengeViewModelName.model.StonehengePollEventsActive = request;
                         if(app) {
-                            request.headers.set('X-Stonehenge-Id', app.stonehengeSession);
+                            request.headers.set('X-Stonehenge-Id', sessionStorage.getItem("StonehengeSession"));
                         }
                         app.activeRequests.add(request);
                     }
@@ -286,7 +286,7 @@ stonehengeViewModelName = function component() {
                 {
                     before(request) {
                         if(app) {
-                            request.headers.set('X-Stonehenge-Id', app.stonehengeSession);
+                            request.headers.set('X-Stonehenge-Id', sessionStorage.getItem("StonehengeSession"));
                         }
                     }
                 })
@@ -294,7 +294,10 @@ stonehengeViewModelName = function component() {
                     
                     try {
                         if(app) {
-                            app.stonehengeSession = response.headers.get("X-Stonehenge-Id") || '';
+                            let id = response.headers.get("X-Stonehenge-Id") || '';
+                            if(id.length > 0) {
+                                sessionStorage.setItem("StonehengeSession", id);
+                            }
                         }
                         try {
                             if(response.bodyText.startsWith('<')) {

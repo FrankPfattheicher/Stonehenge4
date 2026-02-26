@@ -152,22 +152,12 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
                 "{ \"StonehengeContinuePolling\":false }", Resource.Cache.None));
         }
 
-        var targetType = vmType;
+        Type? targetType = vmType;
         var targetObject = session?.ViewModel;
         
-        if (vmType != null && !string.IsNullOrEmpty(componentId))
+        if (vmType != null && targetObject != null && !string.IsNullOrEmpty(componentId))
         {
-            var vmProperties = vmType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            
-            foreach (var prop in vmProperties)
-            {
-                if(!prop.PropertyType.IsSubclassOf(typeof(StonehengeComponent))) continue;
-                var component = (StonehengeComponent)prop.GetValue(session?.ViewModel)!;
-                if (!string.Equals(component.ComponentId, componentId, StringComparison.OrdinalIgnoreCase)) continue;
-                targetType = prop.PropertyType;
-                targetObject = component; 
-                break;
-            }
+            (targetType, targetObject) = GetVmComponent(vmType, targetObject, componentId);
             if (targetType == null)
             {
                 logger.LogWarning("ViewModelProvider: Component with ComponentId={ComponentId} not found in VM={VmTypeName}", componentId, vmTypeName);
@@ -245,8 +235,30 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             GetViewModelJson(session?.ViewModel), Resource.Cache.None));
     }
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName,
-        IDictionary<string, string> parameters)
+    private (Type? targetType, object? targetObject) GetVmComponent(Type vmType, object targetViewModel, string componentId)
+    {
+        var vmProperties = vmType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        foreach (var prop in vmProperties)
+        {
+            if(!prop.PropertyType.IsSubclassOf(typeof(StonehengeComponent))) continue;
+            var component = (StonehengeComponent)prop.GetValue(targetViewModel)!;
+            if (string.Equals(component.ComponentId, componentId, StringComparison.OrdinalIgnoreCase))
+            {
+                return (prop.PropertyType, component);
+            }
+            var (subType, subObject) = GetVmComponent(prop.PropertyType, component, componentId);
+            if (subType != null)
+            {
+                return (subType, subObject);
+            }
+        }
+
+        return (null, null);
+    }
+
+
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider, 
+        string resourceName, IDictionary<string, string> parameters)
     {
         if (resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase))
         {
@@ -254,7 +266,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             {
                 if (session.ViewModel is ActiveViewModel activeViewModel)
                 {
-                    activeViewModel.ActiveViewModelOnLoad();
+                    activeViewModel.ActiveViewModelOnLoad(stonehengeResourceProvider);
                     activeViewModel.OnLoad();
                     activeViewModel.UpdateI18n();
                 }
@@ -269,6 +281,10 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         else if (session != null && resourceName.StartsWith("Data/", StringComparison.OrdinalIgnoreCase))
         {
             return GetDataResource(session, resourceName.Substring(5), parameters);
+        }
+        else if (session != null && resourceName.StartsWith("Data_", StringComparison.OrdinalIgnoreCase))
+        {
+            return GetDataResource(session, resourceName.Split('/').Last(), parameters);
         }
 
         return Task.FromResult<Resource?>(null);
@@ -382,8 +398,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!string.IsNullOrEmpty(activeVm.ClientScript))
         {
             var script = activeVm.ClientScript;
-            data.Add(
-                $"\"StonehengeEval\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions))}");
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(script, JsonOptions));
+            data.Add($"\"StonehengeEval\":{json}");
             activeVm.ClientScript = string.Empty;
         }
 
@@ -400,8 +416,8 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         if (!string.IsNullOrEmpty(activeVm.NavigateToRoute))
         {
             var route = activeVm.NavigateToRoute;
-            data.Add(
-                $"\"StonehengeNavigate\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions))}");
+            var json = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(route, JsonOptions));
+            data.Add($"\"StonehengeNavigate\":{json}");
         }
     }
 

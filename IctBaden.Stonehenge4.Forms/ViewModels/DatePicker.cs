@@ -36,6 +36,8 @@ public class DatePicker : StonehengeComponent
         CreateCalendar();
     }
 
+    public override string ToString() => RangeText;
+
     private void CreateCalendar()
     {
         WeekDays = GetWeekDayNames();

@@ -1,10 +1,16 @@
 # Stonehenge 4
 An open source .NET Framework to use Web UI technologies for desktop and/or web applications based on the MVVM pattern.
 
-* See a (very) short [getting started introduction here](docs/GettingStarted.md).
-* Core functionality [active view models](docs/active-vm.md)
-* Creating [reusable components](docs/ReusableComponents.md)
-* Using Session Variables [SessionVariable Attribute](docs/SessionVariable.md)
+[Documentation](Reference/Content.md)
+
+
+## News
+**January 2026**    
+Operating completely without cookies.   
+Support data resource links.
+
+**December 2025**   
+SessionVariable attribute
 
 ## Version 4
 This version is based on .NET 8. 

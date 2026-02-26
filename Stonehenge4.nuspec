@@ -12,7 +12,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>X-Platform Web MVVM Application Framework</description>
         <releaseNotes>Stable</releaseNotes>
-        <copyright>Copyright ICT Baden GmbH 2013-2025</copyright>
+        <copyright>Copyright ICT Baden GmbH 2013-2026</copyright>
         <tags>.NET HTML MVVM CSS Kestrel Vue</tags>
         <dependencies>
             <dependency id="HttpMultipartParser" version="8.4.0" />
@@ -40,5 +40,6 @@
         <file src="../icon64.png" target="images"/>
         <file src="lib/*.dll" target="lib/net8.0"/>
         <file src="tools/*.exe" target="tools" />
+        <file src="lib/**/*resources.dll" target="lib/net8.0/" />
     </files>
 </package>

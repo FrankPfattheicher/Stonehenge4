@@ -108,6 +108,17 @@ public partial class StonehengeSession
             var stonehengeNonce = context.Request.Query["stonehenge-nonce"].FirstOrDefault();
             session = appSessions.GetSessionByNonce(stonehengeNonce);
         }
+        if (session == null)
+        {
+            var isIndex = path.Contains("/index.html", StringComparison.OrdinalIgnoreCase);
+            var ts = context.Request.Query["ts"].FirstOrDefault();
+            if (isIndex && !string.IsNullOrEmpty(ts))
+            {
+                var redirectUri = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}/index.html?ts={ts}";
+                session?.Dispose();
+                session = appSessions.GetSessionByAuthorizeRedirectUrl(redirectUri);
+            }
+        }
         
         if (session == null && path.StartsWith("/ViewModel", StringComparison.OrdinalIgnoreCase))
         {
@@ -115,11 +126,12 @@ public partial class StonehengeSession
             var resourceLoader = context.Items["stonehenge.ResourceLoader"] as StonehengeResourceLoader;
             var directoryName = Path.GetDirectoryName(path) ?? "/";
             var resource = resourceLoader != null
-                ? await resourceLoader.Get(null, context.RequestAborted, path.Substring(1).Replace('/', '.'),
+                ? await resourceLoader.Get(null, context.RequestAborted, resourceLoader,  
+                        path.Substring(1).Replace('/', '.'),
                         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase))
                     .ConfigureAwait(false)
                 : null;
-            if (directoryName.Length > 1 && resource == null && stonehengeId != null)
+            if (directoryName.Length > 1 && resource == null && session?.Id != null)
             {
                 logger.LogTrace("Kestrel[{StonehengeId}] Abort {Method} {Path}{QueryString}", 
                     stonehengeId, context.Request.Method, path, context.Request.QueryString);
@@ -128,7 +140,7 @@ public partial class StonehengeSession
 
             if (directoryName.Length <= 1 || resource == null || string.Equals(directoryName, "\\ViewModel", StringComparison.OrdinalIgnoreCase))
             {
-                // redirect to new session
+                // redirect to a new session
 #pragma warning disable IDISP001
                 session?.Dispose();
                 session = NewSession(logger, context, resourceLoader, appSessions);
@@ -159,6 +171,22 @@ public partial class StonehengeSession
                 logger.LogTrace("Kestrel[{StonehengeId}] From {RemoteHost}:{RemotePort} {Forwarded}- redirect to {SessionId}",
                     stonehengeId ?? "<none>", remoteHost, remotePort, forwarded, session.Id);
                 return;
+            }
+        }
+        else if (session == null && path.StartsWith("/Data/", StringComparison.OrdinalIgnoreCase))
+        {
+            // very dirty fix for old /Data/ links not using cookies
+            var clientAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+            var userAgent = context.Request.Headers.UserAgent.ToString();
+            session = appSessions.GetSessionByClientAddressAndUserAgent(clientAddress, userAgent);
+        }
+        else if (session == null && path.StartsWith("/Data", StringComparison.OrdinalIgnoreCase))
+        {
+            var dataResourceMatch = new Regex("/Data_([0-9a-f]+)/").Match(path);
+            if (dataResourceMatch.Success && Guid.TryParse(dataResourceMatch.Groups[1].Value, out var guid))
+            {
+                session?.Dispose();
+                session = appSessions.GetSessionByDataResourceId(guid.ToString("N"));
             }
         }
 

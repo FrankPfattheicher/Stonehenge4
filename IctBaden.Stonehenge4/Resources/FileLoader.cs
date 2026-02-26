@@ -26,7 +26,8 @@ public sealed class FileLoader(ILogger logger, string path) : IStonehengeResourc
     {
     }
 
-    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, string resourceName, IDictionary<string, string> parameters)
+    public Task<Resource?> Get(AppSession? session, CancellationToken requestAborted, IStonehengeResourceProvider stonehengeResourceProvider,
+        string resourceName, IDictionary<string, string> parameters)
     {
         var fullFileName = Path.Combine(RootPath, resourceName);
         if(!File.Exists(fullFileName)) return Task.FromResult<Resource?>(null);

@@ -51,7 +51,7 @@ internal class VueAppCreator
 
     private async Task<string> LoadResourceText(string resourceName)
     {
-        var resource = await _loader.Get(AppSession.None, CancellationToken.None, resourceName,
+        var resource = await _loader.Get(AppSession.None, CancellationToken.None, _loader, resourceName,
             new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(false);
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }

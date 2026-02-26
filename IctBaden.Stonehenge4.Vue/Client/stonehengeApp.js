@@ -27,7 +27,7 @@ function stonehengeMakeRequest(method, url, data) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, url);
         if (app) {
-            xhr.setRequestHeader('X-Stonehenge-Id', app.stonehengeSession);
+            xhr.setRequestHeader('X-Stonehenge-Id', sessionStorage.getItem("StonehengeSession"));
         }
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 400) {
@@ -178,7 +178,6 @@ app = new Vue({
         stonehengeReloadOnError: stonehengeReloadOnError,
         stonehengeCancelRequests: stonehengeCancelRequests,
         stonehengeMakeRequest: stonehengeMakeGetRequest,
-        stonehengeSession: '',
         routes: routes,
         title: 'stonehengeAppTitle',
         activeViewModelName: '',

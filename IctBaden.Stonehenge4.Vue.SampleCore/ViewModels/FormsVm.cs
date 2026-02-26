@@ -35,10 +35,27 @@ public class FormsVm : ActiveViewModel
     public string InputParameter { get; private set; } = string.Empty;
     public string ReceivedParameter { get; private set; } = string.Empty;
 
-    
-    public string DropEditValue1 { get; set; }
-    public string DropEditValue2 { get; set; }
-    public string[] DropEditValues { get; set; }
+
+    private static readonly string[] DropValues =
+    [
+        "unknown",
+        "test",
+        "test-2",
+        "test-3",
+        "last"
+    ];
+    public DropEdit DropEdit1 { get; private set; } = new(DropValues)
+    {
+        Value = "test"
+    };
+    public DropEdit DropEdit2 { get; private set; } = new(DropValues)
+    {
+        Value = "test-2"
+    };
+    public DropEdit DropEdit3 { get; private set; } = new(DropValues)
+    {
+        DropList = true
+    };
 
     public TestModelClass Struct { get; set; } = new();
     
@@ -73,18 +90,8 @@ public class FormsVm : ActiveViewModel
         
         Test = "abcd";
         CheckValue = 5;
-
-        DropEditValue1 = "test";
-        DropEditValue2 = "test-2";
-        DropEditValues =
-        [
-            "unknown",
-            "test",
-            "test-2",
-            "test-3",
-            "last"
-        ];
     }
+
 
     public override void OnLoad()
     {

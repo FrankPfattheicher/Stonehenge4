@@ -219,14 +219,17 @@
         </h4>
 
         <p>
-            Value1: {{DropEditValue1}}, Value2: {{DropEditValue2}}
+            Value1: {{DropEdit1.Value}}, Value2: {{DropEdit2.Value}}, Value3: {{DropEdit3.Value}}
         </p>
 
         <p>
-            <st-drop-edit id="de1" :value="DropEditValue1" :values="DropEditValues" @change="DropEditValue1=$event" style="width: 20em;"></st-drop-edit>
+            <st-drop-edit :model="DropEdit1" style="width: 20em;"></st-drop-edit>
         </p>
         <p>
-            <st-drop-edit id="de2" :value="DropEditValue2" :values="DropEditValues" @change="DropEditValue2=$event" dropList="true" style="width: 10em;"></st-drop-edit>
+            <st-drop-edit :model="DropEdit2" style="width: 10em;"></st-drop-edit>
+        </p>
+        <p>
+            <st-drop-edit :model="DropEdit3" style="width: 10em;"></st-drop-edit>
         </p>
 
     </div>

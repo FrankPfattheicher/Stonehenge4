@@ -1,6 +1,4 @@
 using System;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;

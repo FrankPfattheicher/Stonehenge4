@@ -1,4 +1,17 @@
 
+* 8.8.3 - 16.02.2026 DropEdit.OnChange, added parameterless ctor
+* 8.8.2 - 16.02.2026 DropEdit.SetValues, recursive find matching POST component
+* 8.8.1 - 16.02.2026 DropEdit as control with view model, fixed focus border
+* 8.8.0 - 07.02.2026 Use sessionStorage for session id
+
+* 8.7.8 - 16.01.2026 Improve support for old /Data/ links and added GetDataResourceUri
+* 8.7.7 - 13.01.2026 Very dirty fix for old /Data/ links not using cookies
+* 8.7.6 - 05.01.2026 Hide mermaid before loading modules
+* 8.7.5 - 05.01.2026 Hide mermaid during rendering
+* 8.7.4 - 04.01.2026 Nuget pack resources dlls
+* 8.7.3 - 04.01.2026 Nuget include resources dlls
+* 8.7.2 - 04.01.2026 Use ResourceManager to resolve I18n names
+* 8.7.1 - 03.01.2026 Fixed GetI18Names for components
 * 8.7.0 - 02.01.2026 Operating completely without cookies. Added support for esm modules. Support SSE.
 
 * 8.6.7 - 23.12.2025 Allow SessionVariable <T> placeholder in custom name replaced by type name using attribute
