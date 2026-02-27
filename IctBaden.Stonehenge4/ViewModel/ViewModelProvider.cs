@@ -562,7 +562,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         foreach (var member in members)
         {
             var mProp = structType.GetProperty(member.Key);
-            if (mProp != null && member.Value != null)
+            if (mProp != null && mProp.CanWrite && member.Value != null)
             {
                 try
                 {

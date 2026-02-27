@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using IctBaden.Stonehenge.Types;
 using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable UnusedMember.Global
 
 namespace IctBaden.Stonehenge.Forms.ViewModels;
 
+[SuppressMessage("Design", "MA0046:Use EventHandler<T> to declare events")]
 public class DropEdit : StonehengeComponent
 {
     public string Value { get; set; } = string.Empty;

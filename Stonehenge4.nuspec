@@ -18,9 +18,9 @@
             <dependency id="HttpMultipartParser" version="8.4.0" />
             <dependency id="Microsoft.Extensions.Configuration" version="8.0.0"/>
             <dependency id="Microsoft.Extensions.Http" version="8.0.0"/>
-            <dependency id="Microsoft.Extensions.Logging" version="8.0.0" />
+            <dependency id="Microsoft.Extensions.Logging" version="8.0.1" />
             <dependency id="Microsoft.Extensions.Logging.Abstractions" version="8.0.3" />
-            <dependency id="System.IdentityModel.Tokens.Jwt" version="8.12.1" />
+            <dependency id="System.IdentityModel.Tokens.Jwt" version="8.16.0" />
         </dependencies>
         <references>
             <group targetFramework="net8.0" >
