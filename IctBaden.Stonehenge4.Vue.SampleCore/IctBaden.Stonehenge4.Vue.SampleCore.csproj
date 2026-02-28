@@ -109,12 +109,13 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="IctBaden.Framework" Version="5.1.5" />
     <PackageReference Include="IctBaden.Units" Version="2.2.2" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.236">
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.18">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
