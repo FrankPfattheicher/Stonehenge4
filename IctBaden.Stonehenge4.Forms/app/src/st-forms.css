@@ -115,3 +115,15 @@
 .st-calendar-selected {
     background: lightblue;
 }
+
+
+.st-splitter-separator {
+    cursor: col-resize;
+    background-color: lightblue;
+    width: 10px;
+
+    /* Prevent the browser's built-in drag from interfering */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
