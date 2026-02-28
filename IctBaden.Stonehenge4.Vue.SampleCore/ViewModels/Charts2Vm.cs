@@ -5,6 +5,7 @@ using IctBaden.Framework.Types;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Extension;
 using IctBaden.Stonehenge.Extension.Sankey;
+using IctBaden.Stonehenge.Forms.ViewModels;
 using IctBaden.Stonehenge.ViewModel;
 
 // ReSharper disable ReplaceAutoPropertyWithComputedProperty
@@ -29,6 +30,8 @@ public class Charts2Vm : ActiveViewModel
 
     public Chart? LineChart { get; private set; }
     public SankeyChart? SankeyChart { get; private set; }
+    
+    public Splitter Splitter { get; } = new();
 
     [SessionVariable] public int Speed { get; private set; } = 500;
     private int _start;
@@ -65,11 +68,10 @@ public class Charts2Vm : ActiveViewModel
 
         UpdateData();
 
-        SetUpdateTimer(Speed);
+        //SetUpdateTimer(Speed);
     }
 
-    private void
-        CreateLineChart()
+    private void CreateLineChart()
     {
         var time = DateTime.Now;
         var timeStamps = Enumerable.Range(0, 60)
