@@ -1,5 +1,4 @@
 <!--CustomElement:model-->
 <!--ViewModel:Splitter-->
-<div class="st-splitter-separator" :direction="model.SplitDirection" @onresize="model.Resize()">
-
+<div @moved="Moved($event.detail.first, $event.detail.second)" >
 </div>

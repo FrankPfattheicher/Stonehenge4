@@ -284,8 +284,10 @@ public partial class StonehengeSession
         return CultureInfo.CurrentCulture;
     }
 
+#pragma warning disable MA0009
     [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft | RegexOptions.Compiled)]
     private static partial Regex RegexStonehengeId();
     [GeneratedRegex("[;q=(0-9).]", RegexOptions.Compiled)]
     private static partial Regex RegexRealLanguage();
+#pragma warning restore MA0009
 }

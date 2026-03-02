@@ -278,6 +278,7 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
             : Task.FromResult<Resource?>(null);
     }
 
+#pragma warning disable MA0009
     [GeneratedRegex("<!--ViewModel:(\\w+)-->", RegexOptions.Compiled)]
     private static partial Regex RegexExtractName();
 
@@ -290,4 +291,5 @@ public sealed partial class VueResourceProvider : IStonehengeResourceProvider
     [GeneratedRegex("I18n\\.([a-zA-Z0-9]+)")]
     // ReSharper disable once InconsistentNaming
     private static partial Regex I18nRegex();
+#pragma warning restore MA0009
 }

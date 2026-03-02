@@ -28,6 +28,11 @@ public class Charts2Vm : ActiveViewModel
     public bool FullTimeRange { get; set; } = true;
     public int SortSeriesTooltips { get; set; } = 0;
 
+    [SessionVariable]
+    public int WidthLineChart { get; private set; } = 50;
+    [SessionVariable]
+    public int WidthSankeyChart { get; private set; } = 50;
+    
     public Chart? LineChart { get; private set; }
     public SankeyChart? SankeyChart { get; private set; }
     
@@ -67,8 +72,19 @@ public class Charts2Vm : ActiveViewModel
         }
 
         UpdateData();
+        Splitter.SplitterMoved += SplitterMoved; 
 
-        //SetUpdateTimer(Speed);
+        SetUpdateTimer(Speed);
+    }
+
+    private void SplitterMoved(int first, int second)
+    {
+        LineChart?.Regenerate();
+        SankeyChart?.Regenerate();
+
+        var total = first + second;
+        WidthLineChart = 100 * first / total;
+        WidthSankeyChart = 100 * second / total;
     }
 
     private void CreateLineChart()
