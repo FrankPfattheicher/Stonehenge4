@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+// ReSharper disable MemberCanBePrivate.Global
 
 // ReSharper disable ConvertToUsingDeclaration
 
@@ -109,6 +110,6 @@ public partial class RedirectableHttpClient : HttpClient
 
 #pragma warning disable MA0009
     [GeneratedRegex("stonehenge-id=([a-f0-9A-F]+)", RegexOptions.RightToLeft)]
-#pragma warning restore MA0009
     private static partial Regex StonehengeIdRegex();
+#pragma warning restore MA0009
 }

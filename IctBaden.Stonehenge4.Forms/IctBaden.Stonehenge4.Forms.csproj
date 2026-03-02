@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="app\st-splitter.html" />
       <None Remove="app\st-drop-edit.html" />
       <EmbeddedResource Include="app\st-drop-edit.html" />
       <None Remove="app\st-error-message.html" />
@@ -35,6 +36,8 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>DatePicker.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <None Remove="app\st-splitter.js" />
+      <EmbeddedResource Include="app\st-splitter.js" />
     </ItemGroup>
 
     <ItemGroup>

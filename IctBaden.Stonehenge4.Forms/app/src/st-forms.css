@@ -115,3 +115,23 @@
 .st-calendar-selected {
     background: lightblue;
 }
+
+
+.st-splitter-col {
+    cursor: col-resize;
+    width: 10px;
+
+    /* Prevent the browser's built-in drag from interfering */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.st-splitter-row {
+    cursor: row-resize;
+    height: 10px;
+
+    /* Prevent the browser's built-in drag from interfering */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

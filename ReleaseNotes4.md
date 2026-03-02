@@ -1,4 +1,5 @@
 
+* 8.8.6 - 02.03.2026 Added splitter control
 * 8.8.5 - 27.02.2026 SetMembers only for writable properties
 * 8.8.4 - 26.02.2026 Reactivated AddStonehengeInternalProperties
 * 8.8.3 - 16.02.2026 DropEdit.OnChange, added parameterless ctor
