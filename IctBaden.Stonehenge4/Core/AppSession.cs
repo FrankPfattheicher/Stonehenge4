@@ -569,7 +569,13 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public void Initialize(StonehengeHostOptions hostOptions, string hostUrl, string hostDomain,
         bool isLocal, string clientAddress, int clientPort, string userAgent)
     {
-        HostOptions = hostOptions;
+        // enure per session copy of options
+        HostOptions = hostOptions with
+        {
+            UseKeycloakAuthentication = hostOptions.UseKeycloakAuthentication != null
+                ? hostOptions.UseKeycloakAuthentication with { }
+                : null
+        };
         HostUrl = hostUrl;
         HostDomain = hostDomain;
         IsLocal = isLocal;
