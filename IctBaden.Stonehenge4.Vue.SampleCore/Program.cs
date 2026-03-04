@@ -69,7 +69,7 @@ internal static class Program
             SslCertificatePath = Path.Combine(StonehengeApplication.BaseDirectory, cert),
             SslCertificatePassword = "stonehenge"
         };
-
+        
         // Select client framework
         logger.LogInformation("Using client framework VUE");
 #pragma warning disable IDISP001

@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace IctBaden.Stonehenge.Hosting;
 
-public class StonehengeHostOptions
+public record StonehengeHostOptions
 {
     /// <summary>
     /// Title to be shown in the Title bar.
