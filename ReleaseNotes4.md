@@ -1,4 +1,5 @@
 
+* 8.8.10 - 05.03.2026 Version boost
 * 8.8.9 - 05.03.2026 Use pointer events for splitter control
 * 8.8.8 - 04.03.2026 Enure per session copy of options
 * 8.8.7 - 03.03.2026 Added SortGroups option to Chart
