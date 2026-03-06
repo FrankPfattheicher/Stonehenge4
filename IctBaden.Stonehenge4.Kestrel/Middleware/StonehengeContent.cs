@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -509,8 +510,10 @@ public partial class StonehengeContent
             .Match(context.Request.Host.ToString())
             .Groups[1]  // subdomain
             .Value;
+        
+        var isNumeric = int.TryParse(theme, NumberStyles.Number, CultureInfo.InvariantCulture, out _);
 
-        if(string.IsNullOrWhiteSpace(theme))
+        if(string.IsNullOrWhiteSpace(theme) || isNumeric)
         {
             // from cookie
             theme = context.Request.Cookies
