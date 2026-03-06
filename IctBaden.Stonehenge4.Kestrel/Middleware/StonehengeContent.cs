@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -31,7 +32,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware;
 // ReSharper disable once ClassNeverInstantiated.Global
 [SuppressMessage("Design", "MA0051:Method is too long")]
 [SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
-public class StonehengeContent
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+public partial class StonehengeContent
 {
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
@@ -502,5 +504,22 @@ public class StonehengeContent
         const string placeholderAppTitle = "stonehengeAppTitle";
         var appTitle = context.Items["stonehenge.AppTitle"]?.ToString() ?? string.Empty;
         content.Text = content.Text?.Replace(placeholderAppTitle, appTitle);
+
+        var theme = Theme()
+            .Match(context.Request.Host.ToString())
+            .Groups[1]  // subdomain
+            .Value;
+
+        if(string.IsNullOrWhiteSpace(theme))
+        {
+            // from cookie
+            theme = context.Request.Cookies
+                .FirstOrDefault(c => string.Equals(c.Key, "theme", StringComparison.OrdinalIgnoreCase)).Value;
+        }
+        theme ??= string.Empty;
+        content.Text = content.Text?.Replace("{{theme}}", theme);
     }
+
+    [GeneratedRegex(@"([^.]+)\.(.+)")]
+    private static partial Regex Theme();
 }

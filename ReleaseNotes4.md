@@ -1,4 +1,5 @@
 
+* 8.8.11 - 06.03.2026 Theme handling rewritten and documented
 * 8.8.10 - 05.03.2026 Version boost
 * 8.8.9 - 05.03.2026 Use pointer events for splitter control
 * 8.8.8 - 04.03.2026 Enure per session copy of options

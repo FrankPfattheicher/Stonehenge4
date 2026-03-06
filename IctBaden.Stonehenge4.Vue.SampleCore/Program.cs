@@ -50,7 +50,7 @@ internal static class Program
         var cert = "stonehenge.pfx";
         cert = string.Empty;
         
-        UserContentLinks.AddStyleSheet(string.Empty, "theme/theme{{theme}}.css");
+        UserContentLinks.AddStyleSheet("themes/theme{{theme}}.css");
             
         // select hosting options
         var options = new StonehengeHostOptions

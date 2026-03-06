@@ -1,6 +1,7 @@
 ﻿using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.ViewModel;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
