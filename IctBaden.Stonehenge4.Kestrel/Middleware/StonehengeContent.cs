@@ -190,6 +190,31 @@ public partial class StonehengeContent
             {
                 case "GET":
                     appSession?.Accessed(cookies, false);
+                    context.Request.EnableBuffering();
+                    using (var getBodyReader = new StreamReader(context.Request.Body))
+                    {
+                        // read parameters from body
+                        var getBody = getBodyReader.ReadToEndAsync().Result;
+                        if (getBody.StartsWith('{'))
+                        {
+                            try
+                            {
+                                var jsonObject = JsonSerializer.Deserialize<JsonObject>(getBody);
+                                if (jsonObject != null)
+                                {
+                                    foreach (var kv in jsonObject.AsObject())
+                                    {
+                                        if(kv.Value != null)
+                                            parameters.Add(kv.Key, kv.Value.ToString());
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                logger.LogWarning("Failed to parse get data as json");
+                            }
+                        }
+                    }
                     content = resourceLoader != null
                         ? await resourceLoader.Get(appSession, context.RequestAborted, resourceLoader, resourceName, parameters).ConfigureAwait(false) 
                         : null;
@@ -494,7 +519,7 @@ public partial class StonehengeContent
         if (explorers.Length == 1)
         {
             identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            appSession.SetUser(null, identityId, "", "");
+            appSession.SetUser(null, identityId, string.Empty, string.Empty);
         }
 
         // RDP with more than one session: How to find app and session using request's client IP port
