@@ -225,7 +225,7 @@ public partial class StonehengeContent
                             return;
                         }
 
-                        HandleIndexContent(context, content);
+                        HandleIndexContent(context, appSession, content);
                     }
                     if (content != null && !isIndex)
                     {
@@ -500,20 +500,26 @@ public partial class StonehengeContent
         // RDP with more than one session: How to find app and session using request's client IP port
     }
 
-    private void HandleIndexContent(HttpContext context, Resource content)
+    private void HandleIndexContent(HttpContext context, AppSession? appSession, Resource content)
     {
         const string placeholderAppTitle = "stonehengeAppTitle";
         var appTitle = context.Items["stonehenge.AppTitle"]?.ToString() ?? string.Empty;
         content.Text = content.Text?.Replace(placeholderAppTitle, appTitle);
 
-        var theme = Theme()
-            .Match(context.Request.Host.ToString())
-            .Groups[1]  // subdomain
-            .Value;
-        
-        var isNumeric = int.TryParse(theme, NumberStyles.Number, CultureInfo.InvariantCulture, out _);
-
-        if(string.IsNullOrWhiteSpace(theme) || isNumeric)
+        // handle theme
+        var theme = string.Empty;
+        if (appSession?.HostOptions.UseSubdomainAsTheme == true)
+        {
+            // from subdomain
+            theme = Theme()
+                .Match(context.Request.Host.ToString())
+                .Groups[1]  // subdomain
+                .Value;
+            var isNumeric = int.TryParse(theme, NumberStyles.Number, CultureInfo.InvariantCulture, out _);
+            if(isNumeric) theme = string.Empty;
+        }
+            
+        if(string.IsNullOrWhiteSpace(theme))
         {
             // from cookie
             theme = context.Request.Cookies

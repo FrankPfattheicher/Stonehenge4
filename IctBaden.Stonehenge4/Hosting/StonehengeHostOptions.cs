@@ -106,6 +106,11 @@ public record StonehengeHostOptions
     public bool UseClientLocale { get; init; }
     
     /// <summary>
+    /// This option allows to use the subdomain as the theme name.
+    /// </summary>
+    public bool UseSubdomainAsTheme { get; init; }
+    
+    /// <summary>
     /// Default locale to be used if no Accept-Language header is present.
     /// </summary>
     public string DefaultLocale { get; init; } = CultureInfo.CurrentUICulture.Name;

@@ -1,4 +1,5 @@
 
+* 8.8.13 - 20.03.2026 Option to take theme from subdomain
 * 8.8.12 - 06.03.2026 Ignore numeric subdomains (IP addresses)
 * 8.8.11 - 06.03.2026 Theme handling rewritten and documented
 * 8.8.10 - 05.03.2026 Version boost
