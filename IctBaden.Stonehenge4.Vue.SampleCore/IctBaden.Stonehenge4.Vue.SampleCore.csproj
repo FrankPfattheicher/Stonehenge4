@@ -35,11 +35,11 @@
     <EmbeddedResource Include="app\start_user.js" />
     <EmbeddedResource Include="app\tree.html" />
     <None Remove="app\styles\theme.css" />
-    <EmbeddedResource Include="app\theme\theme.css" />
+    <EmbeddedResource Include="app\themes\theme.css" />
     <None Remove="app\styles\themeblue.css" />
-    <EmbeddedResource Include="app\theme\themeblue.css" />
+    <EmbeddedResource Include="app\themes\themeblue.css" />
     <None Remove="app\styles\themedark.css" />
-    <EmbeddedResource Include="app\theme\themedark.css" />
+    <EmbeddedResource Include="app\themes\themedark.css" />
     <None Remove="app\sample-index.html" />
     <None Remove="app\chart.js" />
     <None Remove="app\chart.html" />

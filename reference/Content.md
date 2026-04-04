@@ -12,9 +12,11 @@
 **Special Features**
 * Focus / Autofocus form element
 * Select / Autofocus and select all text
+* [Themes](Themes.md)
 
 **Dialog Elements**
 * [Splitter](Reference/Splitter.md)
+* TreeView
 * DatePicker
 * Error Message
 * Editable Dropdown

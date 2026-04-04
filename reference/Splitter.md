@@ -1,5 +1,5 @@
 
-## Splitter
+# Splitter
 
 To use a splitter you need to add a div with two div pane's and a `st-splitter` component between to your page.
 

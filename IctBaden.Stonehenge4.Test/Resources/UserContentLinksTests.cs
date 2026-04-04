@@ -44,10 +44,4 @@ public class UserContentLinksTests
         Assert.Contains("styles/test.css", _index?.Text, System.StringComparison.Ordinal);
     }
 
-    [Fact]
-    public void IndexShouldContainLinkToUserTheme()
-    {
-        Assert.Contains("themes/test-theme.css", _index?.Text, System.StringComparison.Ordinal);
-    }
-
 }

@@ -4,11 +4,11 @@
 
     <h3>Cookies</h3>
     <p>
-        Theme: {{Theme}},  Used CSS = 'theme{{Theme}}.css'<br />
+        Theme: '{{Theme}}',  Used CSS = 'theme{{Theme}}.css'<br />
     </p>
     <p>
-        <select v-model="Theme" v-focus
-                onchange="document.cookie='theme=' + this.value; location.reload();" >
+        <select class="form-select" v-model="Theme" v-focus style="width: unset;"
+                onchange="document.cookie='theme=' + this.value; location.replace('index.html?ts=' + new Date().getTime());" >
             <option value="">Light</option>
             <option value="dark">Dark</option>
             <option value="blue">Blue</option>

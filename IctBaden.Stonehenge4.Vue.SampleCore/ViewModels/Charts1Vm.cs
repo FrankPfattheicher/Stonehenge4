@@ -68,16 +68,17 @@ public class Charts1Vm : ActiveViewModel
                 new ChartSeries("Temperature1")
                 {
                     Type = ChartDataType.Bar, 
-                    Group = ShowStacked ? "Temps" : string.Empty,
-                    Format = ".2f"
+                    Group = ShowStacked ? "Temps" : string.Empty
                 },
                 new ChartSeries("Temperature2")
                 {
                     Type = ChartDataType.Bar, 
-                    Group = ShowStacked ? "Temps" : string.Empty
+                    Group = ShowStacked ? "Temps" : string.Empty,
+                    Format = ".2f"
                 }
             ],
-            EnableZoom = true
+            EnableZoom = true,
+            SortGroups = ChartSortOrder.None
         };
     }
 

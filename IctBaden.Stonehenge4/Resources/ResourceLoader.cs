@@ -186,11 +186,10 @@ public sealed partial class ResourceLoader : IStonehengeResourceProvider
                     _logger.LogDebug("ResourceLoader({ResourceName}): {FullName}", resourceName, asmResource.Value.FullName);
                     if (resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        var theme = session?.SubDomain ?? string.Empty;
-                        UserContentLinks.InitializeUserContentLinks(AppAssembly, ResourceAssemblies, string.Empty, theme);
-                        text = UserContentLinks.InsertUserLinks(text,theme);
+                        UserContentLinks.InitializeUserContentLinks(AppAssembly, ResourceAssemblies, string.Empty);
+                        text = UserContentLinks.InsertUserLinks(text);
                     }
-                    text = text.Replace("{.min}", (session?.IsDebug ?? false) ? "" : ".min");
+                    text = text.Replace("{.min}", session?.IsDebug ?? false ? string.Empty : ".min");
                     return Task.FromResult<Resource?>(new Resource(resourceName, "res://" + asmResource.Value.FullName, resourceType, text, Resource.Cache.Revalidate));
                 }
             }

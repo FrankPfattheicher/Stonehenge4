@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -31,7 +33,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware;
 // ReSharper disable once ClassNeverInstantiated.Global
 [SuppressMessage("Design", "MA0051:Method is too long")]
 [SuppressMessage("ReSharper", "ReplaceSubstringWithRangeIndexer")]
-public class StonehengeContent
+[SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
+public partial class StonehengeContent
 {
     private static readonly object LockViews = new();
     private static readonly object LockEvents = new();
@@ -187,6 +190,31 @@ public class StonehengeContent
             {
                 case "GET":
                     appSession?.Accessed(cookies, false);
+                    context.Request.EnableBuffering();
+                    using (var getBodyReader = new StreamReader(context.Request.Body))
+                    {
+                        // read parameters from body
+                        var getBody = getBodyReader.ReadToEndAsync().Result;
+                        if (getBody.StartsWith('{'))
+                        {
+                            try
+                            {
+                                var jsonObject = JsonSerializer.Deserialize<JsonObject>(getBody);
+                                if (jsonObject != null)
+                                {
+                                    foreach (var kv in jsonObject.AsObject())
+                                    {
+                                        if(kv.Value != null)
+                                            parameters.Add(kv.Key, kv.Value.ToString());
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                logger.LogWarning("Failed to parse get data as json");
+                            }
+                        }
+                    }
                     content = resourceLoader != null
                         ? await resourceLoader.Get(appSession, context.RequestAborted, resourceLoader, resourceName, parameters).ConfigureAwait(false) 
                         : null;
@@ -222,7 +250,7 @@ public class StonehengeContent
                             return;
                         }
 
-                        HandleIndexContent(context, content);
+                        HandleIndexContent(context, appSession, content);
                     }
                     if (content != null && !isIndex)
                     {
@@ -491,16 +519,41 @@ public class StonehengeContent
         if (explorers.Length == 1)
         {
             identityId = $"{Environment.UserDomainName}\\{Environment.UserName}";
-            appSession.SetUser(null, identityId, "", "");
+            appSession.SetUser(null, identityId, string.Empty, string.Empty);
         }
 
         // RDP with more than one session: How to find app and session using request's client IP port
     }
 
-    private void HandleIndexContent(HttpContext context, Resource content)
+    private void HandleIndexContent(HttpContext context, AppSession? appSession, Resource content)
     {
         const string placeholderAppTitle = "stonehengeAppTitle";
         var appTitle = context.Items["stonehenge.AppTitle"]?.ToString() ?? string.Empty;
         content.Text = content.Text?.Replace(placeholderAppTitle, appTitle);
+
+        // handle theme
+        var theme = string.Empty;
+        if (appSession?.HostOptions.UseSubdomainAsTheme == true)
+        {
+            // from subdomain
+            theme = Theme()
+                .Match(context.Request.Host.ToString())
+                .Groups[1]  // subdomain
+                .Value;
+            var isNumeric = int.TryParse(theme, NumberStyles.Number, CultureInfo.InvariantCulture, out _);
+            if(isNumeric) theme = string.Empty;
+        }
+            
+        if(string.IsNullOrWhiteSpace(theme))
+        {
+            // from cookie
+            theme = context.Request.Cookies
+                .FirstOrDefault(c => string.Equals(c.Key, "theme", StringComparison.OrdinalIgnoreCase)).Value;
+        }
+        theme ??= string.Empty;
+        content.Text = content.Text?.Replace("{{theme}}", theme);
     }
+
+    [GeneratedRegex(@"([^.]+)\.(.+)")]
+    private static partial Regex Theme();
 }

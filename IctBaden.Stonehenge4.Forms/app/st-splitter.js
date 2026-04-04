@@ -14,7 +14,7 @@ mounted: function() {
         ? "st-splitter-col"
         : "st-splitter-row";
     
-    splitter.onmousedown = function(e) {
+    splitter.onpointerdown = function(e) {
 
         splitter.md = {
             e,
@@ -26,17 +26,14 @@ mounted: function() {
             secondHeight: second.offsetHeight
         };
 
-        window.addEventListener("mousemove", splitter.onmousemove);
-        window.addEventListener("mouseup", splitter.onmousemove);
-
+        splitter.setPointerCapture(e.pointerId);
     }
 
-    splitter.onmouseup = function(e) {
+    splitter.onpointerup = function(e) {
 
         if(!splitter.md) return;
 
-        window.removeEventListener("mousemove", splitter.onmousemove);
-        window.removeEventListener("mouseup", splitter.onmousemove);
+        splitter.releasePointerCapture(e.pointerId);
 
         const params = directionCol
             ? { first: first.style.width.replace('px', ''), second: second.style.width.replace('px', '') }
@@ -46,7 +43,7 @@ mounted: function() {
         splitter.md = null;
     }
 
-    splitter.onmousemove = function(e) {
+    splitter.onpointermove = function(e) {
 
         if(!splitter.md) return;
 

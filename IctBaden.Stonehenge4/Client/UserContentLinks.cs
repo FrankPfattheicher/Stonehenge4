@@ -20,54 +20,45 @@ public static class UserContentLinks
     private const string JsLinkTemplate = "<script type='application/javascript' src='{0}'></script>";
     private const string JsmLinkTemplate = "<script type='module' src='{0}'></script>";
 
-    private static readonly Dictionary<string, string> StyleSheets = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly List<string> ThemeInitialized = [];
+    private static string _styleSheets = string.Empty;
     private static readonly string AppPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
     private static string _userJs = string.Empty;
     private static string _extensions = string.Empty;
 
-    public static void AddStyleSheet(string theme, string css)
+    public static void AddStyleSheet(string css)
     {
         var link = Environment.NewLine + string.Format(CssLinkTemplate, css);
-        StyleSheets.TryAdd(theme, link);
+        _styleSheets += link;
     }
 
-    public static void InitializeUserContentLinks(Assembly appAssembly, IList<Assembly> resourceAssemblies, string appFilesPath, string theme)
+    public static void InitializeUserContentLinks(Assembly appAssembly, IList<Assembly> resourceAssemblies, string appFilesPath)
     {
-        if (ThemeInitialized.Contains(theme, StringComparer.Ordinal))
-        {
-            return;
-        }
-        CreateUserCssLinks(appAssembly, appFilesPath, theme);
+        CreateUserCssLinks(appAssembly, appFilesPath);
         CreateUserJsLinks(appAssembly, appFilesPath);
         CreateExtensionLinks(resourceAssemblies);
-        ThemeInitialized.Add(theme);
     }
 
-    public static string InsertUserLinks(string text, string theme) =>
-        text.Replace(CssInsertPoint, StyleSheets[theme])
+    public static string InsertUserLinks(string text)
+    {
+        return text.Replace(CssInsertPoint, string.Join(Environment.NewLine, _styleSheets))
             .Replace(JsUserScriptsInsertPoint, _userJs)
             .Replace(ExtensionsInsertPoint, _extensions);
+    }
 
-    private static void CreateUserCssLinks(Assembly appAssembly, string appFilesPath, string theme)
+    private static void CreateUserCssLinks(Assembly appAssembly, string appFilesPath)
     {
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
-        var styleSheets = StyleSheets.ContainsKey(theme)
-            ? StyleSheets[theme]
-            : string.Empty;
-
         var path = Path.Combine(appFilesPath, "styles");
         if (Directory.Exists(path))
         {
             var links = Directory.GetFiles(path, "*.css", SearchOption.AllDirectories)
                 .Select(dir => string.Format(CultureInfo.InvariantCulture, CssLinkTemplate,
                     dir.Substring(dir.IndexOf(AppPath, StringComparison.InvariantCulture) + 1).Replace('\\', '/')));
-            styleSheets = string.Join(Environment.NewLine, links);
+            _styleSheets += string.Join(Environment.NewLine, links);
         }
 
         const string resourceBaseName = ".app.";
         const string baseNameStyles = resourceBaseName + "styles.";
-        const string baseNameTheme = resourceBaseName + "themes.";
         var resourceNames = appAssembly.GetManifestResourceNames();
         var cssResources = resourceNames.Where(name => name.EndsWith(".css", StringComparison.OrdinalIgnoreCase)).ToList();
         // styles first
@@ -76,32 +67,8 @@ public static class UserContentLinks
         {
             var css = ResourceLoader.GetShortResourceName(appAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/").Replace("/css", ".css");
-            styleSheets += Environment.NewLine + string.Format(CssLinkTemplate, css);
+            AddStyleSheet(css);
         }
-
-        // then themes
-        // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameTheme + theme, StringComparison.OrdinalIgnoreCase)))
-        {
-            var css = ResourceLoader.GetShortResourceName(appAssembly, resourceBaseName, resourceName)
-                .Replace(".", "/").Replace("/css", ".css");
-            styleSheets += Environment.NewLine + string.Format(CssLinkTemplate, css);
-        }
-
-        path = Path.Combine(appFilesPath, "app", "themes", theme + ".css");
-        if (File.Exists(path))
-        {
-            var css = path.Substring(path.IndexOf(AppPath, StringComparison.InvariantCulture) + 1)
-                .Replace('\\', '/');
-            styleSheets += Environment.NewLine + string.Format(CssLinkTemplate, css);
-        }
-
-        if (StyleSheets.ContainsKey(theme))
-            StyleSheets[theme] += styleSheets;
-        else
-            StyleSheets.TryAdd(theme, styleSheets);
-
-        
     }
 
     private static void CreateUserJsLinks(Assembly userAssembly, string appFilesPath)

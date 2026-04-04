@@ -77,6 +77,7 @@ public class StartVm : ActiveViewModel
     {
         Session.OnNavigate += route => Console.WriteLine(@"Session.OnNavigate " + route);
         Culture = Session.SessionCulture.ToString();
+        EnableRoute("cookie", ShowCookies);
     }
 
     public override void OnUpdateTimer()

@@ -98,6 +98,12 @@ public class Chart
     /// </summary>
     public ChartSortOrder SortSeriesTooltips { get; set; } = ChartSortOrder.DescendValue;
 
+    /// <summary>
+    /// Groups in stacked bars are by default sorted by value (largest first)
+    /// Set to none to use given order
+    /// </summary>
+    public ChartSortOrder SortGroups { get; set; } = ChartSortOrder.DescendValue;
+    
     private object[] Columns
     {
         get
@@ -298,11 +304,11 @@ public class Chart
         }
     }
 
-    public IDictionary<string, object> Data
+    public IDictionary<string, object?> Data
     {
         get
         {
-            var data = new Dictionary<string, object>(StringComparer.Ordinal);
+            var data = new Dictionary<string, object?>(StringComparer.Ordinal);
             if (CategoryAxis != null)
             {
                 data[CategoryAxis.Id] = CategoryAxis.Id;
@@ -321,6 +327,11 @@ public class Chart
             else
             {
                 data["labels"] = ShowLabels;
+            }
+
+            if (SortGroups == ChartSortOrder.None)
+            {
+                data["order"] = null;
             }
 
             return data;

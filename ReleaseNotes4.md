@@ -1,4 +1,12 @@
 
+* 8.8.14 - 20.03.2026 Accept parameters from GET request body
+* 8.8.13 - 20.03.2026 Option to take theme from subdomain
+* 8.8.12 - 06.03.2026 Ignore numeric subdomains (IP addresses)
+* 8.8.11 - 06.03.2026 Theme handling rewritten and documented
+* 8.8.10 - 05.03.2026 Version boost
+* 8.8.9 - 05.03.2026 Use pointer events for splitter control
+* 8.8.8 - 04.03.2026 Enure per session copy of options
+* 8.8.7 - 03.03.2026 Added SortGroups option to Chart
 * 8.8.6 - 02.03.2026 Added splitter control
 * 8.8.5 - 27.02.2026 SetMembers only for writable properties
 * 8.8.4 - 26.02.2026 Reactivated AddStonehengeInternalProperties

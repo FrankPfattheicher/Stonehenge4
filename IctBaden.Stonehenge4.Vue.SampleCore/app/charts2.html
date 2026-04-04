@@ -28,11 +28,11 @@
     </p>
     
     <div style="display: flex; flex-direction: row; height: 50vh;">
-        <div :style="'border: 1px solid gray; padding: 0.5em; width: ' + WidthLineChart + '%;'">
+        <div style="border: 1px solid gray; padding: 0.5em;" :style="'width:' + WidthLineChart + '%;'">
             <st-chart :chartdata="LineChart"></st-chart>
         </div>
         <st-splitter :model="Splitter"></st-splitter>
-        <div :style="'border: 1px solid gray; padding: 0.5em; width: ' + WidthSankeyChart + '%;'">
+        <div style="border: 1px solid gray; padding: 0.5em;" :style="'width:' + WidthSankeyChart + '%;'">
             <st-sankey :chartdata="SankeyChart"></st-sankey>
         </div>
     </div>
