@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -35,7 +36,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
     public AppSession[] GetAllSessions() => _appSessions.GetAllSessions();
     
-    private IWebHost? _webApp;
+    private IHost? _webApp;
     private Task? _host;
     private CancellationTokenSource? _cancel;
 
@@ -152,37 +153,45 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 .Build();
 
             _startup = new Startup(_logger, config, _resourceProvider, _appSessions);
-                
-            var builder = new WebHostBuilder()
-                .UseConfiguration(config)
+
+            var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices(s => { s.AddSingleton(_logger); })
                 .ConfigureServices(s => { s.AddSingleton<IConfiguration>(config); })
                 .ConfigureServices(s => { s.AddSingleton(_appSessions); })
                 .ConfigureServices(s => { s.AddSingleton(_resourceProvider); })
-                .ConfigureServices(s => { s.AddSingleton<IStartup>(_startup); });
+                .ConfigureServices((_, services) =>
+                {
+                    _startup.ConfigureServices(services);
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && _options.UseNtlmAuthentication)
             {
-                _logger.LogInformation("KestrelHost.Start: Using HttpSys mode (NTLM authentication)");
+                _logger.LogInformation("KestrelHost.Start: Using NTLM authentication");
                 builder = WindowsHosting.UseNtlmAuthentication(builder, httpSysAddress);
             }
             else
             {
-                _logger.LogInformation("KestrelHost.Start: Using Kestrel/Sockets mode");
+                _logger.LogInformation("KestrelHost.Start: Using Kestrel");
                 builder = builder
-                    .UseSockets()
-                    .UseKestrel(options =>
+                    .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        // ensure no connection limit
-                        options.Limits.MaxConcurrentConnections = null;
-                        options.Listen(kestrelAddress, hostPort, listenOptions =>
+                        webBuilder.UseKestrel(options =>
                         {
-                            if (useSsl)
+                            // ensure no connection limit
+                            options.Limits.MaxConcurrentConnections = null;
+                            options.Listen(kestrelAddress, hostPort, listenOptions =>
                             {
-                                listenOptions.UseHttps(
-                                    _options.SslCertificatePath,
-                                    _options.SslCertificatePassword);
-                            }
+                                if (useSsl)
+                                {
+                                    listenOptions.UseHttps(
+                                        _options.SslCertificatePath,
+                                        _options.SslCertificatePassword);
+                                }
+                            });
                         });
                     });
             }
@@ -208,21 +217,18 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 }
             }
 
-            var serverAddressesFeature = _webApp.ServerFeatures.Get<IServerAddressesFeature>();
-            if (serverAddressesFeature != null)
+            var serverAddressesFeature = _webApp.Services.GetRequiredService<IServerAddressesFeature>();
+            foreach (var address in serverAddressesFeature.Addresses)
             {
-                foreach (var address in serverAddressesFeature.Addresses)
-                {
-                    _logger.LogInformation("KestrelHost.Start: Listening on {Address}",
-                        address.Replace("0.0.0.0", "127.0.0.1"));
-                }
+                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", 
+                    address.Replace("0.0.0.0", "127.0.0.1", StringComparison.OrdinalIgnoreCase));
             }
 
             _logger.LogInformation("KestrelHost.Start: succeeded");
         }
         catch (Exception ex)
         {
-            if ((ex.InnerException is HttpListenerException {ErrorCode: 5}))
+            if (ex.InnerException is HttpListenerException {ErrorCode: 5})
             {
                 _logger.LogError("Access denied: Try netsh http delete urlacl {BaseUrl}", BaseUrl);
             }

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IctBaden.Stonehenge.Kestrel;
 
-public class Startup : IStartup
+public class Startup : StartupBase
 {
     private readonly string _appTitle;
     private readonly ILogger _logger;
@@ -39,7 +39,7 @@ public class Startup : IStartup
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // ReSharper disable once UnusedMember.Global
-    public IServiceProvider ConfigureServices(IServiceCollection services)
+    public override void ConfigureServices(IServiceCollection services)
     {
         services.AddResponseCompression(options =>
         {
@@ -51,13 +51,10 @@ public class Startup : IStartup
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         }));
-#pragma warning disable IDISP005
-        return services.BuildServiceProvider();
-#pragma warning restore IDISP005
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app)
+    public override void Configure(IApplicationBuilder app)
     {
         app.UseMiddleware<ServerExceptionLogger>();
         app.UseMiddleware<StonehengeAcme>();
@@ -92,4 +89,5 @@ public class Startup : IStartup
         app.UseMiddleware<ServerSentEvents>();
         app.UseMiddleware<StonehengeContent>();
     }
+    
 }

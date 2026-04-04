@@ -258,7 +258,7 @@ public partial class StonehengeSession
         var httpContext = context.Request.HttpContext;
         var clientAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         var clientPort = httpContext.Connection.RemotePort;
-        var hostDomain = context.Request.Host.Value;
+        var hostDomain = context.Request.Host.Value ?? string.Empty;
         var hostUrl = $"{context.Request.Scheme}://{hostDomain}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
         appSessions.AddSession(session);

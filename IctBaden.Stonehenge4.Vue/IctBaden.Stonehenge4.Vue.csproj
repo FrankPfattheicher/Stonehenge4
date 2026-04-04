@@ -4,8 +4,8 @@
         <Company>ICT Baden GmbH</Company>
         <Authors>Frank Pfattheicher</Authors>
         <Product>Web Application Framework</Product>
-        <LangVersion>12</LangVersion>
-        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>14</LangVersion>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>IctBaden.Stonehenge.Vue</RootNamespace>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -141,7 +141,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Meziantou.Analyzer" Version="3.0.18">
+      <PackageReference Include="Meziantou.Analyzer" Version="3.0.44">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

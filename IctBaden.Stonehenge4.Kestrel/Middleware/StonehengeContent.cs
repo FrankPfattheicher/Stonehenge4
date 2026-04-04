@@ -36,8 +36,8 @@ namespace IctBaden.Stonehenge.Kestrel.Middleware;
 [SuppressMessage("Security", "MA0009:Add regex evaluation timeout")]
 public partial class StonehengeContent
 {
-    private static readonly object LockViews = new();
-    private static readonly object LockEvents = new();
+    private static readonly Lock LockViews = new();
+    private static readonly Lock LockEvents = new();
     private static readonly HttpClient Client = new();
     private readonly RequestDelegate _next;
 

@@ -6,9 +6,9 @@
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
     <ApplicationIcon>app\favicon.ico</ApplicationIcon>
-    <LangVersion>12</LangVersion>
+    <LangVersion>14</LangVersion>
     <PackageIcon>icon64.png</PackageIcon>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -42,15 +42,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="3.0.18">
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.44">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
   </ItemGroup>
 
   <ItemGroup>

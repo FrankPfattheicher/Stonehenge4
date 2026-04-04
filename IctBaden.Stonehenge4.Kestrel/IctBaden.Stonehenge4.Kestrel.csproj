@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <Copyright>Copyright ©2013-2026 ICT Baden GmbH</Copyright>
     <Company>ICT Baden GmbH</Company>
     <Authors>Frank Pfattheicher</Authors>
     <Product>Web Application Framework</Product>
-    <LangVersion>12</LangVersion>
+    <LangVersion>14</LangVersion>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>IctBaden.Stonehenge.Kestrel</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -21,16 +21,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HttpMultipartParser" Version="8.4.0" />
+    <PackageReference Include="HttpMultipartParser" Version="10.0.0" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="3.0.18">
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.44">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
   </ItemGroup>
 
   <ItemGroup>
