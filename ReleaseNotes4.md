@@ -1,4 +1,6 @@
 
+* 10.0.0 - 05.04.2026 net10
+
 * 8.8.14 - 20.03.2026 Accept parameters from GET request body
 * 8.8.13 - 20.03.2026 Option to take theme from subdomain
 * 8.8.12 - 06.03.2026 Ignore numeric subdomains (IP addresses)

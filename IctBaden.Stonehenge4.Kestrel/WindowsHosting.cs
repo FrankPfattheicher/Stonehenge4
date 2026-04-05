@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
 
@@ -14,24 +15,18 @@ public static class WindowsHosting
     /// <param name="builder"></param>
     /// <returns>builder</returns>
     // ReSharper disable once InconsistentNaming
-    public static IWebHostBuilder EnableIIS(IWebHostBuilder builder)
-    {
-        return builder
-            .UseIIS() // in-proc hosting
-            .UseIISIntegration(); // out-of-proc hosting   
-    }
+    public static void EnableIIS(ConfigureWebHostBuilder builder) => builder
+        .UseIIS() // in-proc hosting
+        .UseIISIntegration(); // out-of-proc hosting   
 
-    public static IWebHostBuilder UseNtlmAuthentication(IWebHostBuilder builder, string httpSysAddress)
-    {
-        return builder
-            .UseHttpSys(options =>
-            {
-                // netsh http add urlacl url=https://+:32000/ user=TheUser
-                options.Authentication.Schemes =
-                    (AuthenticationSchemes)(System.Net.AuthenticationSchemes.Ntlm |
-                                            System.Net.AuthenticationSchemes.Negotiate);
-                options.Authentication.AllowAnonymous = false;
-                options.UrlPrefixes.Add(httpSysAddress);
-            });
-    }
+    public static void UseNtlmAuthentication(ConfigureWebHostBuilder builder, string httpSysAddress) => builder
+        .UseHttpSys(options =>
+        {
+            // netsh http add urlacl url=https://+:32000/ user=TheUser
+            options.Authentication.Schemes =
+                (AuthenticationSchemes)(System.Net.AuthenticationSchemes.Ntlm |
+                                        System.Net.AuthenticationSchemes.Negotiate);
+            options.Authentication.AllowAnonymous = false;
+            options.UrlPrefixes.Add(httpSysAddress);
+        });
 }
