@@ -109,7 +109,7 @@
     <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IctBaden.Framework" Version="5.1.5" />
+    <PackageReference Include="IctBaden.Framework" Version="10.0.0" />
     <PackageReference Include="IctBaden.Units" Version="2.2.2" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>

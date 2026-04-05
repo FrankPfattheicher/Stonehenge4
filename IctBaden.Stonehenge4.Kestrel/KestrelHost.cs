@@ -219,8 +219,10 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 }
             }
 
-            _logger.LogInformation("KestrelHost.Start: Listening on {Address}",
-                kestrelAddress.ToString().Replace("0.0.0.0", "127.0.0.1", StringComparison.OrdinalIgnoreCase));
+            _logger.LogInformation("KestrelHost.Start: Listening on {Protocol}://{Address}:{Port}", 
+                protocol,
+                kestrelAddress.ToString().Replace("0.0.0.0", "127.0.0.1", StringComparison.OrdinalIgnoreCase),
+                hostPort);
             _logger.LogInformation("KestrelHost.Start: succeeded");
         }
         catch (Exception ex)
