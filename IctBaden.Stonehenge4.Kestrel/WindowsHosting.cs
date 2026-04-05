@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.Extensions.Hosting;
 
 namespace IctBaden.Stonehenge.Kestrel;
 
@@ -15,24 +15,18 @@ public static class WindowsHosting
     /// <param name="builder"></param>
     /// <returns>builder</returns>
     // ReSharper disable once InconsistentNaming
-    public static IHostBuilder EnableIIS(IHostBuilder builder) => builder
-        .ConfigureWebHostDefaults(webBuilder =>
-        {
-            webBuilder.UseIIS(); // in-proc hosting
-            webBuilder.UseIISIntegration(); // out-of-proc hosting   
-        });
+    public static void EnableIIS(ConfigureWebHostBuilder builder) => builder
+        .UseIIS() // in-proc hosting
+        .UseIISIntegration(); // out-of-proc hosting   
 
-    public static IHostBuilder UseNtlmAuthentication(IHostBuilder builder, string httpSysAddress) => builder
-        .ConfigureWebHostDefaults(webBuilder =>
+    public static void UseNtlmAuthentication(ConfigureWebHostBuilder builder, string httpSysAddress) => builder
+        .UseHttpSys(options =>
         {
-            webBuilder.UseHttpSys(options =>
-            {
-                // netsh http add urlacl url=https://+:32000/ user=TheUser
-                options.Authentication.Schemes =
-                    (AuthenticationSchemes)(System.Net.AuthenticationSchemes.Ntlm |
-                                            System.Net.AuthenticationSchemes.Negotiate);
-                options.Authentication.AllowAnonymous = false;
-                options.UrlPrefixes.Add(httpSysAddress);
-            });
+            // netsh http add urlacl url=https://+:32000/ user=TheUser
+            options.Authentication.Schemes =
+                (AuthenticationSchemes)(System.Net.AuthenticationSchemes.Ntlm |
+                                        System.Net.AuthenticationSchemes.Negotiate);
+            options.Authentication.AllowAnonymous = false;
+            options.UrlPrefixes.Add(httpSysAddress);
         });
 }

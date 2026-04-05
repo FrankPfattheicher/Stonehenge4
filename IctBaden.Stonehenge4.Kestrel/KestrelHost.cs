@@ -10,10 +10,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using IctBaden.Stonehenge.Core;
 using IctBaden.Stonehenge.Hosting;
+using IctBaden.Stonehenge.Kestrel.Middleware;
 using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,19 +33,18 @@ namespace IctBaden.Stonehenge.Kestrel;
 public sealed class KestrelHost : IStonehengeHost, IDisposable
 {
     public string BaseUrl { get; private set; } = string.Empty;
-    
+
     private readonly AppSessions _appSessions = new();
 
     public AppSession[] GetAllSessions() => _appSessions.GetAllSessions();
-    
-    private IHost? _webApp;
+
+    private WebApplication? _webApp;
     private Task? _host;
     private CancellationTokenSource? _cancel;
 
     private readonly IStonehengeResourceProvider _resourceProvider;
     private readonly StonehengeHostOptions _options;
     private readonly ILogger _logger;
-    private Startup? _startup;
 
     public KestrelHost(IStonehengeResourceProvider provider)
         : this(provider, new StonehengeHostOptions())
@@ -76,8 +77,9 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         if (!isAspNetCoreApp)
         {
-            throw new NotSupportedException("Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">" + 
-                                            Environment.NewLine + "AppContext=" + ctx);
+            throw new NotSupportedException(
+                "Project has to be based on web SDK: <Project Sdk=\"Microsoft.NET.Sdk.Web\">" +
+                Environment.NewLine + "AppContext=" + ctx);
         }
 
         if (provider is StonehengeResourceLoader loader)
@@ -88,7 +90,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
     public void Dispose()
     {
-        _webApp?.Dispose();
+        (_webApp as IHost)?.Dispose();
         _host?.Dispose();
         _cancel?.Dispose();
     }
@@ -105,15 +107,17 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
             IPAddress kestrelAddress;
             var useSsl = File.Exists(_options.SslCertificatePath);
-            if(!string.IsNullOrEmpty(_options.SslCertificatePath))
+            if (!string.IsNullOrEmpty(_options.SslCertificatePath))
             {
                 if (useSsl)
                 {
-                    _logger.LogInformation("KestrelHost.Start: Using SSL using certificate {SslCertificatePath}", _options.SslCertificatePath);
+                    _logger.LogInformation("KestrelHost.Start: Using SSL using certificate {SslCertificatePath}",
+                        _options.SslCertificatePath);
                 }
                 else
                 {
-                    _logger.LogError("KestrelHost.Start: NOT using SSL - certificate not found: {SslCertificatePath}", _options.SslCertificatePath);
+                    _logger.LogError("KestrelHost.Start: NOT using SSL - certificate not found: {SslCertificatePath}",
+                        _options.SslCertificatePath);
                 }
             }
 
@@ -152,58 +156,56 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 .Add(mem)
                 .Build();
 
-            _startup = new Startup(_logger, config, _resourceProvider, _appSessions);
+            var builder = WebApplication.CreateBuilder();
+            var services = builder.Services;
+            services.AddSingleton(_logger);
+            services.AddSingleton<IConfiguration>(config);
+            services.AddSingleton(_appSessions);
+            services.AddSingleton(_resourceProvider);
 
-            var builder = Host.CreateDefaultBuilder()
-                .ConfigureServices(s => { s.AddSingleton(_logger); })
-                .ConfigureServices(s => { s.AddSingleton<IConfiguration>(config); })
-                .ConfigureServices(s => { s.AddSingleton(_appSessions); })
-                .ConfigureServices(s => { s.AddSingleton(_resourceProvider); })
-                .ConfigureServices((_, services) =>
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                options.EnableForHttps = true;
+            });
+            services.AddCors(o => o.AddPolicy("StonehengePolicy", policy => policy
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin()));
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                _logger.LogInformation("KestrelHost.Start: Using Kestrel");
+                options.UseSystemd();
+                // ensure no connection limit
+                options.Limits.MaxConcurrentConnections = null;
+                options.Listen(kestrelAddress, hostPort, listenOptions =>
                 {
-                    _startup.ConfigureServices(services);
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
+                    if (useSsl)
+                    {
+                        listenOptions.UseHttps(
+                            _options.SslCertificatePath,
+                            _options.SslCertificatePassword);
+                    }
                 });
+            });
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && _options.UseNtlmAuthentication)
             {
                 _logger.LogInformation("KestrelHost.Start: Using NTLM authentication");
-                builder = WindowsHosting.UseNtlmAuthentication(builder, httpSysAddress);
-            }
-            else
-            {
-                _logger.LogInformation("KestrelHost.Start: Using Kestrel");
-                builder = builder
-                    .ConfigureWebHostDefaults(webBuilder =>
-                    {
-                        webBuilder.UseKestrel(options =>
-                        {
-                            // ensure no connection limit
-                            options.Limits.MaxConcurrentConnections = null;
-                            options.Listen(kestrelAddress, hostPort, listenOptions =>
-                            {
-                                if (useSsl)
-                                {
-                                    listenOptions.UseHttps(
-                                        _options.SslCertificatePath,
-                                        _options.SslCertificatePassword);
-                                }
-                            });
-                        });
-                    });
+                WindowsHosting.UseNtlmAuthentication(builder.WebHost, httpSysAddress);
             }
 
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 _logger.LogInformation("KestrelHost.Start: Enable hosting in IIS");
-                builder = WindowsHosting.EnableIIS(builder);
+                WindowsHosting.EnableIIS(builder.WebHost);
             }
 
-            _webApp?.Dispose();
+            (_webApp as IHost)?.Dispose();
             _webApp = builder.Build();
+
+            ConfigureWebApplication(_webApp, config);
 
             _cancel?.Dispose();
             _cancel = new CancellationTokenSource();
@@ -217,18 +219,13 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
                 }
             }
 
-            var serverAddressesFeature = _webApp.Services.GetRequiredService<IServerAddressesFeature>();
-            foreach (var address in serverAddressesFeature.Addresses)
-            {
-                _logger.LogInformation("KestrelHost.Start: Listening on {Address}", 
-                    address.Replace("0.0.0.0", "127.0.0.1", StringComparison.OrdinalIgnoreCase));
-            }
-
+            _logger.LogInformation("KestrelHost.Start: Listening on {Address}",
+                kestrelAddress.ToString().Replace("0.0.0.0", "127.0.0.1", StringComparison.OrdinalIgnoreCase));
             _logger.LogInformation("KestrelHost.Start: succeeded");
         }
         catch (Exception ex)
         {
-            if (ex.InnerException is HttpListenerException {ErrorCode: 5})
+            if (ex.InnerException is HttpListenerException { ErrorCode: 5 })
             {
                 _logger.LogError("Access denied: Try netsh http delete urlacl {BaseUrl}", BaseUrl);
             }
@@ -247,11 +244,45 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
             _logger.LogError("KestrelHost.Start: {Message}", message);
             _host?.Dispose();
             _host = null;
-            
+
             Debugger.Break();
         }
 
         return _host != null;
+    }
+
+    private void ConfigureWebApplication(WebApplication webApp, IConfigurationRoot config)
+    {
+        webApp.UseMiddleware<ServerExceptionLogger>();
+        webApp.UseMiddleware<StonehengeAcme>();
+        webApp.Use((context, next) =>
+        {
+            context.Items.Add("stonehenge.Logger", _logger);
+            context.Items.Add("stonehenge.AppSessions", _appSessions);
+            context.Items.Add("stonehenge.AppTitle", config["AppTitle"] ?? string.Empty);
+            context.Items.Add("stonehenge.HostOptions", _options);
+            context.Items.Add("stonehenge.ResourceLoader", _resourceProvider);
+            return next.Invoke();
+        });
+        foreach (var cm in _options.CustomMiddleware)
+        {
+            var cmType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .FirstOrDefault(type => string.Equals(type.Name, cm, StringComparison.Ordinal));
+            if (cmType != null)
+            {
+                webApp.UseMiddleware(cmType);
+            }
+        }
+
+        webApp.UseResponseCompression();
+        webApp.UseCors("StonehengePolicy");
+        webApp.UseMiddleware<StonehengeSession>();
+        webApp.UseMiddleware<StonehengeHeaders>();
+        webApp.UseMiddleware<StonehengeRoot>();
+
+        webApp.UseMiddleware<ServerSentEvents>();
+        webApp.UseMiddleware<StonehengeContent>();
     }
 
     public void Terminate()
@@ -273,8 +304,8 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         try
         {
-            _logger.LogInformation("KestrelHost.Terminate: WebApp...");
-            _webApp?.Dispose();
+            _logger.LogInformation("KestrelHost.Terminate: Web_webApp...");
+            (_webApp as IHost)?.Dispose();
             _webApp = null;
         }
         catch (Exception ex)
@@ -285,7 +316,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         _logger.LogInformation("KestrelHost.Terminate: Terminated");
     }
-        
+
     public void SetLogLevel(LogLevel level)
     {
         // TODO
@@ -299,5 +330,4 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
             viewModel?.EnableRoute(route, enabled);
         }
     }
-
 }
