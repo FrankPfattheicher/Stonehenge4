@@ -110,12 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="IctBaden.Framework" Version="10.0.0" />
-    <PackageReference Include="IctBaden.Units" Version="2.2.2" />
+    <PackageReference Include="IctBaden.Units" Version="10.0.0" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Meziantou.Analyzer" Version="3.0.44">
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.46">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
