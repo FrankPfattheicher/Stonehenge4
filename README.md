@@ -1,7 +1,7 @@
 # Stonehenge 4
 An open source .NET Framework to use Web UI technologies for desktop and/or web applications based on the MVVM pattern.
 
-[Documentation](reference/Content.md)
+[Documentation](reference/content.md)
 
 
 ## News

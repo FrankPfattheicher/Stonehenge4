@@ -1,21 +1,21 @@
 
 # stonehenge Reference
 
-* See a (very) short [getting started introduction here](Reference/GettingStarted.md)
+* See a (very) short [getting started introduction here](getting-started.md)
 
 **Essential Functionality**
-* Core functionality [active view models](Reference/active-vm.md)
-* Creating [reusable components](Reference/ReusableComponents.md)
-* Using Session Variables [SessionVariable Attribute](Reference/SessionVariable.md)
-* Using data resource links [SessionVariable Attribute](Reference/SessionVariable.md)
+* Core functionality [active view models](active-vm.md)
+* Creating [reusable components](reusable-components.md)
+* Using Session Variables [SessionVariable Attribute](session-variable.md)
+* Using data resource links [SessionVariable Attribute](data-resources.md)
 
 **Special Features**
 * Focus / Autofocus form element
 * Select / Autofocus and select all text
-* [Themes](Themes.md)
+* [Themes](themes.md)
 
 **Dialog Elements**
-* [Splitter](Reference/Splitter.md)
+* [Splitter](splitter.md)
 * TreeView
 * DatePicker
 * Error Message
