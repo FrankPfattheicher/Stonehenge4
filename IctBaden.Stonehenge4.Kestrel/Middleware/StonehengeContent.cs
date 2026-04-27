@@ -106,6 +106,7 @@ public partial class StonehengeContent
                 .ToDictionary(key => key!, key => queryString[key]!, StringComparer.Ordinal);
             
             Resource? content = null;
+            var disableCache = false;
 
             appSession?.SetParameters(parameters);
             if ((appSession?.UseBasicAuth ?? false) && !CheckBasicAuthFromContext(appSession, context))
@@ -251,6 +252,7 @@ public partial class StonehengeContent
                         }
 
                         HandleIndexContent(context, appSession, content);
+                        disableCache = true;
                     }
                     if (content != null && !isIndex)
                     {
@@ -380,7 +382,7 @@ public partial class StonehengeContent
 
             context.Response.ContentType = content.ContentType;
 
-            if (context.Items["stonehenge.HostOptions"] is StonehengeHostOptions { DisableClientCache: true })
+            if (disableCache || context.Items["stonehenge.HostOptions"] is StonehengeHostOptions { DisableClientCache: true })
             {
                 context.Response.Headers.Append("Cache-Control",
                     (string[]) ["no-cache", "no-store", "must-revalidate", "proxy-revalidate"]);

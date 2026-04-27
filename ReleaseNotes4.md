@@ -1,4 +1,5 @@
 
+* 10.0.2 - 27.04.2026 Disable cache for index.html
 * 10.0.1 - 11.04.2026 Replace reference to System.IdentityModel.Tokens.Jwt with Microsoft.AspNetCore.Authentication.JwtBearer
 * 10.0.0 - 05.04.2026 net10
 
