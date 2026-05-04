@@ -30,14 +30,14 @@ public class ServerSentEvents
             if (appSession == null)
             {
                 logger?.LogDebug("EventSource Request - NO SESSION");
-                await _next.Invoke(context).ConfigureAwait(false);
+                await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
                 return;
             }
             var viewModel = appSession.ViewModel as ActiveViewModel;
             if (viewModel == null)
             {
                 logger?.LogDebug("EventSource Request({VmName}) - VM is no ActiveViewModel", appSession.ViewModel?.GetType().Name ?? "<NONE>");
-                await _next.Invoke(context).ConfigureAwait(false);
+                await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
                 return;
             }
             
@@ -46,38 +46,38 @@ public class ServerSentEvents
             if (!string.Equals(rqVmName, appVmName, StringComparison.OrdinalIgnoreCase))
             {
                 logger?.LogDebug("EventSource Request({RqVmName}) - FAIL: Active VM is {AppVmName}", rqVmName, appVmName);
-                // await viewModel.CancelPropertiesChanged().ConfigureAwait(false);
-                await Terminate(context).ConfigureAwait(false);
+                // await viewModel.CancelPropertiesChanged().ConfigureAwait(Program.ConfigureAwait);
+                await Terminate(context).ConfigureAwait(Program.ConfigureAwait);
                 return;
             }
 
             if (viewModel.SendingPropertiesChanged())
             {
                 logger?.LogDebug("EventSource Request({RqVmName}) - New request - Terminate previous", rqVmName);
-                await viewModel.CancelPropertiesChanged().ConfigureAwait(false);
+                await viewModel.CancelPropertiesChanged().ConfigureAwait(Program.ConfigureAwait);
             }
             context.Response.Headers.Append("Content-Type", "text/event-stream");
-            await viewModel.SendPropertiesChanged(context).ConfigureAwait(false);
+            await viewModel.SendPropertiesChanged(context).ConfigureAwait(Program.ConfigureAwait);
 
             if (viewModel.SendingPropertiesChanged())
             {
                 logger?.LogDebug("EventSource Request({RqVmName}) - Terminating", rqVmName);
-                await viewModel.CancelPropertiesChanged().ConfigureAwait(false);
+                await viewModel.CancelPropertiesChanged().ConfigureAwait(Program.ConfigureAwait);
             }
-            await Terminate(context).ConfigureAwait(false);
+            await Terminate(context).ConfigureAwait(Program.ConfigureAwait);
             return;
         }
 
-        await _next.Invoke(context).ConfigureAwait(false);
+        await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
     }
 
     private static async Task Terminate(HttpContext context)
     {
         const string json = "data: { \"StonehengeContinuePolling\": false }\r\r";
-        await context.Response.WriteAsync(json).ConfigureAwait(false);
-        await context.Response.Body.FlushAsync().ConfigureAwait(false);
+        await context.Response.WriteAsync(json).ConfigureAwait(Program.ConfigureAwait);
+        await context.Response.Body.FlushAsync().ConfigureAwait(Program.ConfigureAwait);
         context.Response.Body.Close();
-        await context.Response.CompleteAsync().ConfigureAwait(false);
+        await context.Response.CompleteAsync().ConfigureAwait(Program.ConfigureAwait);
         context.Abort();
     }
     

@@ -702,7 +702,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         if (_serverSentCancel is { IsCancellationRequested: false })
         {
-            await _serverSentCancel.CancelAsync().ConfigureAwait(false);
+            await _serverSentCancel.CancelAsync().ConfigureAwait(Program.ConfigureAwait);
         }
 
         _serverSentContext = null;
@@ -715,7 +715,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         _serverSentContext = context;
         _serverSentCancel?.Dispose();
         _serverSentCancel = new CancellationTokenSource();
-        await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(false);
+        await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(Program.ConfigureAwait);
     }
 
     internal async Task SendPropertyChanged(string name)
@@ -724,8 +724,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         var value = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(TryGetMember(name), JsonOptions));
         var json = $"data: {{ \"{name}\":{value} }}\r\r";
-        await _serverSentContext.Response.WriteAsync(json).ConfigureAwait(false);
-        await _serverSentContext.Response.Body.FlushAsync().ConfigureAwait(false);
+        await _serverSentContext.Response.WriteAsync(json).ConfigureAwait(Program.ConfigureAwait);
+        await _serverSentContext.Response.Body.FlushAsync().ConfigureAwait(Program.ConfigureAwait);
     }
 
     #endregion

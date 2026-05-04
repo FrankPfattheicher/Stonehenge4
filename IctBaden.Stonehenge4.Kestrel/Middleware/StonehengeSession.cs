@@ -53,7 +53,7 @@ public partial class StonehengeSession
         if (path.ToLower(CultureInfo.InvariantCulture).Contains("/user/"))
         {
             logger.LogTrace("Kestrel Begin USER {Method} {Path}", context.Request.Method, path);
-            await _next.Invoke(context).ConfigureAwait(false);
+            await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
             logger.LogTrace("Kestrel End USER {Method} {Path}", context.Request.Method, path);
             return;
         }
@@ -129,7 +129,7 @@ public partial class StonehengeSession
                 ? await resourceLoader.Get(null, context.RequestAborted, resourceLoader,  
                         path.Substring(1).Replace('/', '.'),
                         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase))
-                    .ConfigureAwait(false)
+                    .ConfigureAwait(Program.ConfigureAwait)
                 : null;
             if (directoryName.Length > 1 && resource == null && session?.Id != null)
             {
@@ -201,7 +201,7 @@ public partial class StonehengeSession
         else
         {
             context.Items.Add("stonehenge.AppSession", session);
-            await _next.Invoke(context).ConfigureAwait(false);
+            await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
         }
 
         timer.Stop();
