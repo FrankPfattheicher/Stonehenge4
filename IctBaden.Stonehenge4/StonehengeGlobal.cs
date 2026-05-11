@@ -7,5 +7,5 @@ public static class StonehengeGlobal
 {
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     /// Global setting to enable/disable ConfigureAwait. 
-    public static bool ConfigureAwait = true;
+    public static bool ConfigureAwait = false;
 }
