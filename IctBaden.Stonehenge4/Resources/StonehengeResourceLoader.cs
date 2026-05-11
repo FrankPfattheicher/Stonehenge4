@@ -64,7 +64,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
             {
                 loadedResource = await loader
                     .Get(session, requestAborted, this, resourceName, parameters)
-                    .ConfigureAwait(Program.ConfigureAwait);
+                    .ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Post(session, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+            var resource = await provider.Post(session, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             if (resource != null) return resource;
         }
         return null;
@@ -178,7 +178,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Put(session, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+            var resource = await provider.Put(session, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             if (resource != null) return resource;
         }
         return null;
@@ -187,7 +187,7 @@ public sealed class StonehengeResourceLoader(ILogger logger, IList<IStonehengeRe
     {
         foreach (var provider in Providers)
         {
-            var resource = await provider.Delete(session, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+            var resource = await provider.Delete(session, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             if (resource != null) return resource;
         }
         return null;

@@ -33,9 +33,9 @@ public class StonehengeAcme
             {
                 context.Response.Headers.Append("Cache-Control", (string[]) ["no-cache"]);
 
-                var acmeData = await File.ReadAllBytesAsync(acmeFile).ConfigureAwait(Program.ConfigureAwait);
+                var acmeData = await File.ReadAllBytesAsync(acmeFile).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 var writer = new BinaryWriter(response);
-                await using (writer.ConfigureAwait(Program.ConfigureAwait))
+                await using (writer.ConfigureAwait(StonehengeGlobal.ConfigureAwait))
                 {
                     writer.Write(acmeData);
 
@@ -46,7 +46,7 @@ public class StonehengeAcme
             logger?.LogError("No ACME data found");
         }
 
-        await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
+        await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 
 }

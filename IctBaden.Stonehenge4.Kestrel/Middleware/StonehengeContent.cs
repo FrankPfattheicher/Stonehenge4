@@ -217,7 +217,7 @@ public partial class StonehengeContent
                         }
                     }
                     content = resourceLoader != null
-                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceLoader, resourceName, parameters).ConfigureAwait(Program.ConfigureAwait) 
+                        ? await resourceLoader.Get(appSession, context.RequestAborted, resourceLoader, resourceName, parameters).ConfigureAwait(StonehengeGlobal.ConfigureAwait) 
                         : null;
                     var isIndex = resourceName.EndsWith("index.html", StringComparison.InvariantCultureIgnoreCase);
                     if (content == null && appSession != null && isIndex)
@@ -305,7 +305,7 @@ public partial class StonehengeContent
                             try
                             {
                                 context.Request.Body.Seek(0, SeekOrigin.Begin);
-                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body).ConfigureAwait(Program.ConfigureAwait);
+                                var parser = await MultipartFormDataParser.ParseAsync(context.Request.Body).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                                 foreach (var p in parser.Parameters)
                                 {
                                     formData.Add(p.Name, p.Data);
@@ -316,9 +316,9 @@ public partial class StonehengeContent
                                     // Save temp file
                                     var fileName = Path.GetTempFileName();
                                     var file = File.OpenWrite(fileName);
-                                    await using (file.ConfigureAwait(Program.ConfigureAwait))
+                                    await using (file.ConfigureAwait(StonehengeGlobal.ConfigureAwait))
                                     {
-                                        await f.Data.CopyToAsync(file, context.RequestAborted).ConfigureAwait(Program.ConfigureAwait);
+                                        await f.Data.CopyToAsync(file, context.RequestAborted).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                                     file.Close();
                                     formData.Add(f.Name, fileName);
                                     formData.Add(f.Name + ".SourceName", f.FileName);
@@ -338,13 +338,13 @@ public partial class StonehengeContent
                             {
                                 case "PUT":
                                 case "PATCH":
-                                    content = await resourceLoader.Put(appSession, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+                                    content = await resourceLoader.Put(appSession, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                                     break;
                                 case "DELETE":
-                                    content = await resourceLoader.Delete(appSession, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+                                    content = await resourceLoader.Delete(appSession, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                                     break;
                                 default: // POST
-                                    content = await resourceLoader.Post(appSession, resourceName, parameters, formData).ConfigureAwait(Program.ConfigureAwait);
+                                    content = await resourceLoader.Post(appSession, resourceName, parameters, formData).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                                     break;
                             }
                         }
@@ -376,7 +376,7 @@ public partial class StonehengeContent
 
             if (content == null)
             {
-                await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
+                await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 return;
             }
 
@@ -420,17 +420,17 @@ public partial class StonehengeContent
             else if (content.IsBinary)
             {
                 var writer = new StreamWriter(response);
-                await using (writer.ConfigureAwait(Program.ConfigureAwait))
+                await using (writer.ConfigureAwait(StonehengeGlobal.ConfigureAwait))
                 {
-                    await writer.BaseStream.WriteAsync(content.Data, context.RequestAborted).ConfigureAwait(Program.ConfigureAwait);
+                    await writer.BaseStream.WriteAsync(content.Data, context.RequestAborted).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 }
             }
             else
             {
                 var writer = new StreamWriter(response);
-                await using (writer.ConfigureAwait(Program.ConfigureAwait))
+                await using (writer.ConfigureAwait(StonehengeGlobal.ConfigureAwait))
                 {
-                    await writer.WriteAsync(content.Text).ConfigureAwait(Program.ConfigureAwait);
+                    await writer.WriteAsync(content.Text).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 }
             }
         }

@@ -59,7 +59,7 @@ public class StonehengeHeaders
             logger.LogError("Error handling default headers: {Message}\r\n{StackTrace}", ex.Message, ex.StackTrace);
             Debugger.Break();
         }
-        await _next.Invoke(context).ConfigureAwait(Program.ConfigureAwait);
+        await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 
     private void LoadHeaders(ILogger logger)

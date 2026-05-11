@@ -64,6 +64,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 {
     public const string StonehengePropertyNameId = "_stonehenge_";
     
+    /// Ephemeral id for data resources
     public string DataResourceId { get; private set; } = string.Empty;
     public string GetDataResourceUri(string name) => $"/Data_{DataResourceId}/{name}";
 
@@ -702,7 +703,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         if (_serverSentCancel is { IsCancellationRequested: false })
         {
-            await _serverSentCancel.CancelAsync().ConfigureAwait(Program.ConfigureAwait);
+            await _serverSentCancel.CancelAsync().ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         }
 
         _serverSentContext = null;
@@ -715,7 +716,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         _serverSentContext = context;
         _serverSentCancel?.Dispose();
         _serverSentCancel = new CancellationTokenSource();
-        await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(Program.ConfigureAwait);
+        await Task.WhenAny(Task.Delay(Timeout.Infinite, _serverSentCancel.Token)).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 
     internal async Task SendPropertyChanged(string name)
@@ -724,8 +725,8 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
         var value = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(TryGetMember(name), JsonOptions));
         var json = $"data: {{ \"{name}\":{value} }}\r\r";
-        await _serverSentContext.Response.WriteAsync(json).ConfigureAwait(Program.ConfigureAwait);
-        await _serverSentContext.Response.Body.FlushAsync().ConfigureAwait(Program.ConfigureAwait);
+        await _serverSentContext.Response.WriteAsync(json).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
+        await _serverSentContext.Response.Body.FlushAsync().ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 
     #endregion
