@@ -3,15 +3,25 @@
 <div style="margin: 2em;">
 
     <h3>Syntax Highlighting</h3>
-    <p>
-        <b>Using highlight.js</b> see <a href="https://highlightjs.org/" target="_blank">https://highlightjs.org/</a>
-    </p>
 
-    <div style="border: 1px solid black;">
-        <st-syntax-highlight style="padding: 1em;" :source="Source" :language="Language">
+    <div style="border: 1px solid black; height: 50vh;">
+        <st-syntax-highlight v-if="ScEdit && ScEdit.ComponentId"
+                             style="padding: 1em;"
+                             :model="ScEdit">
         </st-syntax-highlight>
     </div>
 
-    <button @click="Update()">update</button>
+    <p>&nbsp;</p>
+    <button class="btn btn-primary" @click="Compile()">Compile Script</button>
+    <p>&nbsp;</p>
 
+    <div v-if="Errors.length > 0">
+        <ul>
+            <li v-for="error in Errors">{{ error }}</li>
+        </ul>
+    </div>
+    <div v-else="">
+        <b>OK</b>
+    </div>
+    
 </div>

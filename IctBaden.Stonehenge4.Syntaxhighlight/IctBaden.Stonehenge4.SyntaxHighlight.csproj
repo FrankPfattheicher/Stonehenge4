@@ -8,23 +8,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="app\src\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="app\src\highlight.min.js" />
+      <EmbeddedResource Include="app\styles\st-syntax-highlight.css" />
       <None Remove="app\st-syntax-highlight.js" />
       <EmbeddedResource Include="app\st-syntax-highlight.js" />
-      <None Remove="app\src\default.min.css" />
-      <EmbeddedResource Include="app\src\highlight.css" />
       <None Remove="app\st-syntax-highlight.html" />
       <EmbeddedResource Include="app\st-syntax-highlight.html" />
-      <None Remove="app\src\highlight.js" />
-      <EmbeddedResource Include="app\src\highlight.js" />
+      <None Remove="app\src\st-csharp-highlighter.js" />
+      <EmbeddedResource Include="app\src\st-csharp-highlighter.js" />
+      <None Remove="app\src\st-syntax-highlight.css" />
+      <EmbeddedResource Include="app\src\st-syntax-highlight.css" />
+      <None Remove="app\styles\st-syntax-highlight.css" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\IctBaden.Stonehenge4\IctBaden.Stonehenge4.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.3.0" />
     </ItemGroup>
 
 </Project>
