@@ -2,7 +2,7 @@
 
 namespace IctBaden.Stonehenge4.SyntaxHighlight;
 
-public class SyntaxHighlight : IStonehengeExtension
+public class SyntaxHighlightEditor : IStonehengeExtension
 {
     public string Version => "1.0.0";
 }

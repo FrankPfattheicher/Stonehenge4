@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace IctBaden.Stonehenge4.SyntaxHighlight.ViewModels;
 
-public class ScriptEditor : StonehengeComponent
+public class CSharpScriptEditor : StonehengeComponent
 {
     public string Source { get; set; } = string.Empty;
 
