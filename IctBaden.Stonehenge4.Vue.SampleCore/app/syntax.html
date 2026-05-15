@@ -2,7 +2,7 @@
 <!--ViewModel:SyntaxVm-->
 <div style="margin: 2em;">
 
-    <h3>Syntax Highlighting</h3>
+    <h3>C# Script Syntax Highlighting</h3>
 
     <div style="border: 1px solid black; height: 50vh;">
         <st-syntax-highlight v-if="ScEdit && ScEdit.ComponentId"
@@ -13,6 +13,8 @@
 
     <p>&nbsp;</p>
     <button class="btn btn-primary" @click="Compile()">Compile Script</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-primary" @click="Evaluate()">Evaluate Script Expression</button>
     <p>&nbsp;</p>
 
     <div v-if="Errors.length > 0">
@@ -22,6 +24,8 @@
     </div>
     <div v-else="">
         <b>OK</b>
+        &nbsp;&nbsp;
+        {{Result}}
     </div>
     
 </div>

@@ -23,12 +23,35 @@ mounted: function () {
         return '';
     };
 
+    self._readDiagnostics = function () {
+        var editorModel = self._getEditorModel();
+        if (!editorModel) {
+            return [];
+        }
+        if (editorModel.DiagnosticMarkers && editorModel.DiagnosticMarkers.length) {
+            return editorModel.DiagnosticMarkers;
+        }
+        if (editorModel.diagnosticMarkers && editorModel.diagnosticMarkers.length) {
+            return editorModel.diagnosticMarkers;
+        }
+        return [];
+    };
+
     self._writeSource = function (value) {
         var editorModel = self._getEditorModel();
         if (!editorModel) {
             return;
         }
         editorModel.Source = value;
+    };
+
+    self._clearDiagnostics = function () {
+        var editorModel = self._getEditorModel();
+        if (!editorModel) {
+            return;
+        }
+        editorModel.DiagnosticMarkers = [];
+        editorModel.diagnosticMarkers = [];
     };
 
     self._refreshHighlight = function () {
@@ -40,7 +63,7 @@ mounted: function () {
             self._highlight.textContent = text;
             return;
         }
-        StCsharpHighlighter.renderElement(self._highlight, text, 'csharp');
+        StCsharpHighlighter.renderElement(self._highlight, text, 'csharp', self._readDiagnostics());
     };
 
     self._syncFromModel = function () {
@@ -65,6 +88,7 @@ mounted: function () {
 
     self._onInput = function () {
         self._internalChange = true;
+        self._clearDiagnostics();
         self._writeSource(self._input.value);
         self._refreshHighlight();
         self._syncScroll();
@@ -97,6 +121,20 @@ mounted: function () {
         },
         function () {
             self._syncFromModel();
+        },
+        { deep: true }
+    );
+
+    self.$watch(
+        function () {
+            var editorModel = self._getEditorModel();
+            if (!editorModel) {
+                return null;
+            }
+            return editorModel.DiagnosticMarkers || editorModel.diagnosticMarkers;
+        },
+        function () {
+            self._refreshHighlight();
         },
         { deep: true }
     );

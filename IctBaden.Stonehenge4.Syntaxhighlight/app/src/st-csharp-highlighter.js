@@ -32,8 +32,75 @@ var StCsharpHighlighter = (function () {
             .replace(/>/g, '&gt;');
     }
 
-    function span(className, text) {
-        return '<span class="' + className + '">' + escapeHtml(text) + '</span>';
+    function normalizeDiagnostics(diagnostics) {
+        if (!diagnostics || !diagnostics.length) {
+            return [];
+        }
+
+        return diagnostics.map(function (item) {
+            return {
+                start: item.Start ?? item.start ?? 0,
+                length: item.Length ?? item.length ?? 0,
+                message: item.Message ?? item.message ?? '',
+                severity: (item.Severity ?? item.severity ?? 'Error').toString().toLowerCase()
+            };
+        }).filter(function (item) {
+            return item.length > 0;
+        }).sort(function (a, b) {
+            return a.start - b.start;
+        });
+    }
+
+    function findDiagnostic(start, end, diagnostics) {
+        for (let index = 0; index < diagnostics.length; index++) {
+            const marker = diagnostics[index];
+            const markerEnd = marker.start + marker.length;
+            if (start < markerEnd && end > marker.start) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    function span(className, text, startIndex, diagnostics) {
+        if (!text) {
+            return '';
+        }
+
+        if (!diagnostics || !diagnostics.length) {
+            return '<span class="' + className + '">' + escapeHtml(text) + '</span>';
+        }
+
+        let html = '';
+        const segmentStart = startIndex ?? 0;
+        for (let offset = 0; offset < text.length; offset++) {
+            const charStart = segmentStart + offset;
+            const charEnd = charStart + 1;
+            const marker = findDiagnostic(charStart, charEnd, diagnostics);
+            let chunkEnd = offset + 1;
+            while (chunkEnd < text.length) {
+                const nextMarker = findDiagnostic(segmentStart + chunkEnd, segmentStart + chunkEnd + 1, diagnostics);
+                if ((marker === null && nextMarker !== null) ||
+                    (marker !== null && nextMarker !== marker)) {
+                    break;
+                }
+                chunkEnd++;
+            }
+
+            const chunk = text.slice(offset, chunkEnd);
+            if (marker) {
+                const diagClass = marker.severity.indexOf('warning') >= 0
+                    ? 'st-sh-diagnostic-warning'
+                    : 'st-sh-diagnostic-error';
+                const title = escapeHtml(marker.message).replace(/"/g, '&quot;');
+                html += '<span class="' + className + ' ' + diagClass + '" title="' + title + '">' + escapeHtml(chunk) + '</span>';
+            } else {
+                html += '<span class="' + className + '">' + escapeHtml(chunk) + '</span>';
+            }
+            offset = chunkEnd - 1;
+        }
+
+        return html;
     }
 
     function isIdentStart(ch) {
@@ -265,11 +332,12 @@ var StCsharpHighlighter = (function () {
         return i < source.length ? source[i] : '';
     }
 
-    function highlight(source) {
+    function highlight(source, diagnostics) {
         if (!source) {
             return '';
         }
 
+        const markers = normalizeDiagnostics(diagnostics);
         let i = 0;
         let result = '';
         let lineStart = true;
@@ -304,7 +372,7 @@ var StCsharpHighlighter = (function () {
                 const match = /^#\s*([a-zA-Z_][\w]*)/.exec(directive);
                 const name = match ? match[1].toLowerCase() : '';
                 const cls = SCRIPT_DIRECTIVES.has(name) ? 'st-sh-script-directive' : 'st-sh-preprocessor';
-                result += span(cls, directive);
+                result += span(cls, directive, i, markers);
                 i = end;
                 lineStart = false;
                 continue;
@@ -314,35 +382,35 @@ var StCsharpHighlighter = (function () {
 
             if (ch === '/' && source[i + 1] === '/') {
                 const end = readLineComment(source, i);
-                result += span('st-sh-comment', source.slice(i, end));
+                result += span('st-sh-comment', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
 
             if (ch === '/' && source[i + 1] === '*') {
                 const end = readBlockComment(source, i);
-                result += span('st-sh-comment', source.slice(i, end));
+                result += span('st-sh-comment', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
 
             if (ch === '"' && i + 2 < source.length && source[i + 1] === '"' && source[i + 2] === '"') {
                 const end = readRawString(source, i);
-                result += span('st-sh-string', source.slice(i, end));
+                result += span('st-sh-string', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
 
             if (ch === '"' || ch === '$' || (ch === '@' && source[i + 1] === '"')) {
                 const end = readString(source, i);
-                result += span('st-sh-string', source.slice(i, end));
+                result += span('st-sh-string', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
 
             if (ch === '\'') {
                 const end = readCharLiteral(source, i);
-                result += span('st-sh-string', source.slice(i, end));
+                result += span('st-sh-string', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
@@ -355,7 +423,7 @@ var StCsharpHighlighter = (function () {
                 if (j < source.length && (isIdentStart(source[j]) || source[j] === ']')) {
                     const close = source.indexOf(']', j);
                     if (close !== -1) {
-                        result += span('st-sh-attribute', source.slice(i, close + 1));
+                        result += span('st-sh-attribute', source.slice(i, close + 1), i, markers);
                         i = close + 1;
                         continue;
                     }
@@ -364,7 +432,7 @@ var StCsharpHighlighter = (function () {
 
             if ((ch >= '0' && ch <= '9') || (ch === '.' && i + 1 < source.length && source[i + 1] >= '0' && source[i + 1] <= '9')) {
                 const end = readNumber(source, i);
-                result += span('st-sh-number', source.slice(i, end));
+                result += span('st-sh-number', source.slice(i, end), i, markers);
                 i = end;
                 continue;
             }
@@ -372,13 +440,13 @@ var StCsharpHighlighter = (function () {
             if (isIdentStart(ch)) {
                 const text = readIdentifier(source, i);
                 const next = peekNextNonWhitespace(source, i + text.length);
-                result += span(classifyIdentifier(text, next), text);
+                result += span(classifyIdentifier(text, next), text, i, markers);
                 i += text.length;
                 continue;
             }
 
             if ('+-*/%=<>!&|^~?:.,;(){}[]'.includes(ch)) {
-                result += span('st-sh-operator', ch);
+                result += span('st-sh-operator', ch, i, markers);
                 i++;
                 continue;
             }
@@ -593,7 +661,7 @@ var StCsharpHighlighter = (function () {
         return false;
     }
 
-    function renderElement(element, source, language) {
+    function renderElement(element, source, language, diagnostics) {
         if (!element) {
             return;
         }
@@ -603,7 +671,7 @@ var StCsharpHighlighter = (function () {
         }
 
         if (isCSharpLanguage(language)) {
-            element.innerHTML = highlight(source ?? '');
+            element.innerHTML = highlight(source ?? '', diagnostics);
         } else {
             element.innerHTML = highlightPlain(source ?? '');
         }

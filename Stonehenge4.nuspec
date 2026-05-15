@@ -29,6 +29,7 @@
                 <reference file="IctBaden.Stonehenge4.ChartsC3.dll"/>
                 <reference file="IctBaden.Stonehenge4.Forms.dll"/>
                 <reference file="IctBaden.Stonehenge4.Mermaid.dll"/>
+                <reference file="IctBaden.Stonehenge4.SyntaxHighlight.dll"/>
             </group>
         </references>
     </metadata>

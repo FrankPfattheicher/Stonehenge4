@@ -1,4 +1,6 @@
 
+* 10.1.0 - 15.05.2026 Added C# syntax highlite editor control
+
 * 10.0.4 - 11.05.2026 Fixed mermaid chunk paths, updated d3, ConfigureAwait set false
 * 10.0.3 - 04.05.2026 Global ConfigureAwait setting set to true
 * 10.0.2 - 27.04.2026 Disable cache for index.html

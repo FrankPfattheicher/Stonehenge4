@@ -112,3 +112,13 @@
     color: #af00db;
     font-weight: 600;
 }
+
+.st-sh-csharp .st-sh-diagnostic-error {
+    text-decoration: underline wavy #d13438;
+    text-underline-offset: 2px;
+}
+
+.st-sh-csharp .st-sh-diagnostic-warning {
+    text-decoration: underline wavy #ca5010;
+    text-underline-offset: 2px;
+}

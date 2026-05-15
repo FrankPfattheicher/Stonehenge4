@@ -8,15 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="app\styles\st-syntax-highlight.css" />
       <None Remove="app\st-syntax-highlight.js" />
+      <EmbeddedResource Include="app\src\st-syntax-highlight.css" />
       <EmbeddedResource Include="app\st-syntax-highlight.js" />
       <None Remove="app\st-syntax-highlight.html" />
       <EmbeddedResource Include="app\st-syntax-highlight.html" />
       <None Remove="app\src\st-csharp-highlighter.js" />
       <EmbeddedResource Include="app\src\st-csharp-highlighter.js" />
       <None Remove="app\src\st-syntax-highlight.css" />
-      <EmbeddedResource Include="app\src\st-syntax-highlight.css" />
       <None Remove="app\styles\st-syntax-highlight.css" />
     </ItemGroup>
 
