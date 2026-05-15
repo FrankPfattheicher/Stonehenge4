@@ -49,7 +49,7 @@ public static partial class ContentDeliveryNetworkSupport
             return page;
 
         var protocol = isSecureConnection ? "https://" : "http://";
-        var script = RegexScript1();
+        var script = RegexScript1;
 
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
         var resultLines = from line in page.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -67,7 +67,7 @@ public static partial class ContentDeliveryNetworkSupport
             return page;
 
         var protocol = isSecureConnection ? "https://" : "http://";
-        var script = RegexScript2();
+        var script = RegexScript2;
 
         // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
         var resultLines = from line in page.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -80,7 +80,7 @@ public static partial class ContentDeliveryNetworkSupport
     }
 
     [GeneratedRegex("(?<a><script.*src=\"(?<b>(?<c>.*\\.js))\".*)|(?<a><link.*href=\"(?<b>(?<c>.*\\.css))\".*)", RegexOptions.Compiled)]
-    private static partial Regex RegexScript1();
+    private static partial Regex RegexScript1 { get; }
     [GeneratedRegex("(?<map>'(?<id>.+)' *: *'(?<path>.*)'.*)", RegexOptions.Compiled)]
-    private static partial Regex RegexScript2();
+    private static partial Regex RegexScript2 { get; }
 }
