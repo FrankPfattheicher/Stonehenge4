@@ -41,7 +41,7 @@ jobs:
     - name: Build Core
       run: |
         dotnet build --configuration Release ./IctBaden.Stonehenge4/IctBaden.Stonehenge4.csproj -p:AssemblyVersion=${{ env.AssemblyVersion }} -p:Version=${{ env.LibMainVersion }}
-        cp IctBaden.Stonehenge4/bin/Release/net10.0/IctBaden.Stonehenge4.dll 
+        cp IctBaden.Stonehenge4/bin/Release/net10.0/IctBaden.Stonehenge4.dll artifacts/lib
         for d in IctBaden.Stonehenge4/bin/Release/net10.0/**/*resources.dll; do
           pkg="$(basename "$(dirname "$d")")"   # package folder name
           mkdir -p "artifacts/lib/$pkg"
