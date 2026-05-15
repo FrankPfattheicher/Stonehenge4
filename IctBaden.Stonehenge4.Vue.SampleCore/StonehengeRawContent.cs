@@ -30,14 +30,14 @@ public class StonehengeRawContent
             context.Response.Headers.ContentType = MediaTypeNames.Text.Plain;
 
             var writer = new StreamWriter(response);
-            await using (writer.ConfigureAwait(false))
+            await using (writer.ConfigureAwait(StonehengeGlobal.ConfigureAwait))
             {
-                await writer.WriteAsync("test test test test test test").ConfigureAwait(false);
+                await writer.WriteAsync("test test test test test test").ConfigureAwait(StonehengeGlobal.ConfigureAwait);
 
             return;
             }
         }
 
-        await _next.Invoke(context).ConfigureAwait(false);
+        await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 }

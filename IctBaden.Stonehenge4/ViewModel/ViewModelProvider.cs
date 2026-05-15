@@ -347,7 +347,7 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         var data = new List<string> { "\"StonehengeContinuePolling\":true" };
         var events = session == null
             ? []
-            : await session.CollectEvents(requestAborted).ConfigureAwait(false);
+            : await session.CollectEvents(requestAborted).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         if (session?.ViewModel is ActiveViewModel activeVm)
         {
             try

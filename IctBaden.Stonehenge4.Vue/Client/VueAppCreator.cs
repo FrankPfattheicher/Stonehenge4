@@ -52,7 +52,7 @@ internal class VueAppCreator
     private async Task<string> LoadResourceText(string resourceName)
     {
         var resource = await _loader.Get(AppSession.None, CancellationToken.None, _loader, resourceName,
-            new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(false);
+            new Dictionary<string, string>(StringComparer.Ordinal)).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         return resource?.Text ?? LoadResourceText(_appAssembly, resourceName);
     }
 
@@ -385,11 +385,11 @@ internal class VueAppCreator
                 elementJs = elementJs.Replace("stonehengeCustomElementProps", string.Join(',', bindings),
                     StringComparison.Ordinal);
 
-                var template = await LoadResourceText($"{source}.html").ConfigureAwait(false);
+                var template = await LoadResourceText($"{source}.html").ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 template = JsonSerializer.Serialize(template);
                 elementJs = elementJs.Replace("'stonehengeElementTemplate'", template, StringComparison.Ordinal);
 
-                var methods = await LoadResourceText($"{source}.js").ConfigureAwait(false);
+                var methods = await LoadResourceText($"{source}.js").ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 if (!string.IsNullOrEmpty(methods)) methods = "," + methods;
                 elementJs = elementJs.Replace("//stonehengeElementMethods", methods, StringComparison.Ordinal);
 

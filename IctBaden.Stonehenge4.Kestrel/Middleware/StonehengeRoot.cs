@@ -28,6 +28,6 @@ public class StonehengeRoot
             return;
         }
 
-        await _next.Invoke(context).ConfigureAwait(false);
+        await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 }

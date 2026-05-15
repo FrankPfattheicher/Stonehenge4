@@ -129,7 +129,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             while (IsWaitingForEvents && !requestAborted.IsCancellationRequested)
             {
-                await Task.Delay(1000, requestAborted).ConfigureAwait(false);
+                await Task.Delay(1000, requestAborted).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             }
         }
         catch
@@ -137,7 +137,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             // ignore TaskCanceledException on request abort
         }
 
-        await WaitForEvents().ConfigureAwait(false);
+        await WaitForEvents().ConfigureAwait(StonehengeGlobal.ConfigureAwait);
 
         lock (_events)
         {
@@ -165,7 +165,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             var max = _eventTimeoutMs / 100;
             while (!_forceUpdate && max > 0 && _eventRelease != null)
             {
-                await Wait(_eventRelease, 100).ConfigureAwait(false);
+                await Wait(_eventRelease, 100).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 max--;
             }
 
@@ -175,7 +175,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 max = 50;
                 while (!_forceUpdate && max > 0 && _eventRelease != null)
                 {
-                    await Wait(_eventRelease, 10).ConfigureAwait(false);
+                    await Wait(_eventRelease, 10).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                     max--;
                 }
             }
@@ -214,7 +214,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                         _forceUpdate = true;
                     }
                 }, TaskContinuationOptions.None)
-                .ConfigureAwait(false);
+                .ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         }
         catch
         {

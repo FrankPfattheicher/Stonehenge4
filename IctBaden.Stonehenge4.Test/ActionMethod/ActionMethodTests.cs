@@ -77,7 +77,7 @@ public sealed class ActionMethodTests : IDisposable
 
         var resource = await _loader
             .Post(_session, "ViewModel/TestVm/TestAction", parameters, formData)
-            .ConfigureAwait(false);
+            .ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         Assert.NotNull(resource);
 
         var vmData = JsonSerializer.Deserialize<TestVm>(resource.Text ?? "{}");

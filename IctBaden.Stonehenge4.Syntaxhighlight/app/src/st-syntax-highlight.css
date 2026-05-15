@@ -1,0 +1,124 @@
+.st-sh-editor {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+}
+
+.st-sh-csharp {
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    tab-size: 4;
+}
+
+.st-sh-highlight,
+.st-sh-input {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.75em;
+    border: none;
+    width: 100%;
+    height: 100%;
+    white-space: pre;
+    overflow: auto;
+    word-wrap: normal;
+    overflow-wrap: normal;
+}
+
+.st-sh-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    color: #1e1e1e;
+    background: transparent;
+    pointer-events: none;
+}
+
+.st-sh-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    resize: none;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    caret-color: #1e1e1e;
+    background: transparent;
+    outline: none;
+}
+
+.st-sh-input::selection {
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: rgba(0, 120, 215, 0.35);
+}
+
+.st-sh-csharp .st-sh-keyword {
+    color: #0000ff;
+    font-weight: 600;
+}
+
+.st-sh-csharp .st-sh-type {
+    color: #2b91af;
+}
+
+.st-sh-csharp .st-sh-method {
+    color: #795e26;
+}
+
+.st-sh-csharp .st-sh-identifier {
+    color: #1e1e1e;
+}
+
+.st-sh-csharp .st-sh-string {
+    color: #a31515;
+}
+
+.st-sh-csharp .st-sh-comment {
+    color: #008000;
+    font-style: italic;
+}
+
+.st-sh-csharp .st-sh-number {
+    color: #098658;
+}
+
+.st-sh-csharp .st-sh-literal {
+    color: #0000ff;
+}
+
+.st-sh-csharp .st-sh-operator {
+    color: #1e1e1e;
+}
+
+.st-sh-csharp .st-sh-attribute {
+    color: #811f3f;
+}
+
+.st-sh-csharp .st-sh-preprocessor {
+    color: #808080;
+}
+
+.st-sh-csharp .st-sh-script-directive {
+    color: #af00db;
+    font-weight: 600;
+}
+
+.st-sh-csharp .st-sh-diagnostic-error {
+    text-decoration: underline wavy #d13438;
+    text-underline-offset: 2px;
+}
+
+.st-sh-csharp .st-sh-diagnostic-warning {
+    text-decoration: underline wavy #ca5010;
+    text-underline-offset: 2px;
+}

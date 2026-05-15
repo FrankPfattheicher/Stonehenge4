@@ -26,21 +26,21 @@ public partial class RedirectableHttpClient : HttpClient
             {
                 Path = "ViewModel/StartVm"
             };
-            await DownloadString(indexUrl.ToString()).ConfigureAwait(false);
+            await DownloadString(indexUrl.ToString()).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         }
 
         var url = new UriBuilder(address);
         var query = HttpUtility.ParseQueryString(url.Query);
         query["stonehenge-id"] = SessionId;
         url.Query = query.ToString() ?? string.Empty;
-        return await DownloadString(url.ToString()).ConfigureAwait(false);
+        return await DownloadString(url.ToString()).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
     }
 
     public async Task<string> DownloadString(string address)
     {
         for (var redirect = 0; redirect < 10; redirect++)
         {
-            using var response = await GetAsync(address).ConfigureAwait(false);
+            using var response = await GetAsync(address).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
 
             var redirectUrl = response.Headers.Location;
             string? redirectAddr = null;
@@ -88,7 +88,7 @@ public partial class RedirectableHttpClient : HttpClient
     {
         DefaultRequestHeaders.Add("X-Stonehenge-Id", SessionId);
         using var content = new StringContent(data);
-        using var response = await PostAsync(address, content).ConfigureAwait(false);
+        using var response = await PostAsync(address, content).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         var body = response.Content.ReadAsStringAsync().Result;
         return body;
     }
@@ -96,14 +96,14 @@ public partial class RedirectableHttpClient : HttpClient
     public async Task<string> Put(string address, string data)
     {
         using var content = new StringContent(data);
-        using var response = await PutAsync(address, content).ConfigureAwait(false);
+        using var response = await PutAsync(address, content).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         var body = response.Content.ReadAsStringAsync().Result;
         return body;
     }
     
     public async Task<string> Delete(string address)
     {
-        using var response = await DeleteAsync(address).ConfigureAwait(false);
+        using var response = await DeleteAsync(address).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
         var body = response.Content.ReadAsStringAsync().Result;
         return body;
     }

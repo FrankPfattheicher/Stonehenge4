@@ -1,4 +1,10 @@
 
+* 10.1.0 - 15.05.2026 Added C# syntax highlite editor control
+
+* 10.0.4 - 11.05.2026 Fixed mermaid chunk paths, updated d3, ConfigureAwait set false
+* 10.0.3 - 04.05.2026 Global ConfigureAwait setting set to true
+* 10.0.2 - 27.04.2026 Disable cache for index.html
+* 10.0.1 - 11.04.2026 Replace reference to System.IdentityModel.Tokens.Jwt with Microsoft.AspNetCore.Authentication.JwtBearer
 * 10.0.0 - 05.04.2026 net10
 
 * 8.8.14 - 20.03.2026 Accept parameters from GET request body
