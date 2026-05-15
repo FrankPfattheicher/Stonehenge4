@@ -9,7 +9,7 @@ namespace IctBaden.Stonehenge.Vue.SampleCore.ViewModels;
 
 public class SyntaxVm : ActiveViewModel
 {
-    public ScriptEditor ScEdit { get; set; } = new();
+    public CSharpScriptEditor ScEdit { get; set; } = new();
     public string Result { get; set; } = string.Empty;
 
     public string[] Errors => ScEdit.Diagnostics

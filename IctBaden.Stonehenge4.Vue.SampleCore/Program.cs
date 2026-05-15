@@ -82,7 +82,7 @@ internal static class Program
         loader.AddResourceAssembly(typeof(AppDialog).Assembly);
         loader.AddResourceAssembly(typeof(FormControls).Assembly);
         loader.AddResourceAssembly(typeof(Mermaid).Assembly);
-        loader.AddResourceAssembly(typeof(SyntaxHighlight).Assembly);
+        loader.AddResourceAssembly(typeof(SyntaxHighlightEditor).Assembly);
         loader.Services.AddService(typeof(ILogger), logger);
             
         // Select hosting technology
