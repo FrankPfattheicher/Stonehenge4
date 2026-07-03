@@ -48,17 +48,17 @@ public class TreeVm : ActiveViewModel
         {
             Name = "America",
             Icon = "fa fa-folder",
-            Area = Continents.Where(c => c.Name.Contains("America")).Select(c => c.Area).Sum(),
-            Countries = Continents.Where(c => c.Name.Contains("America")).Select(c => c.Countries).Sum(),
-            Children = Continents.Where(c => c.Name.Contains("America")).ToList()
+            Area = Continents.Where(c => c.Name.Contains("America", System.StringComparison.Ordinal)).Select(c => c.Area).Sum(),
+            Countries = Continents.Where(c => c.Name.Contains("America", System.StringComparison.Ordinal)).Select(c => c.Countries).Sum(),
+            Children = Continents.Where(c => c.Name.Contains("America", System.StringComparison.Ordinal)).ToList()
         });
         Continents.Add(new Continent
         {
             Name = "Eurasia",
             Icon = "fa fa-folder",
-            Area = Continents.Where(c => c.Name.Contains("Eur") || c.Name.Contains("sia")).Select(c => c.Area).Sum(),
-            Countries = Continents.Where(c => c.Name.Contains("Eur") || c.Name.Contains("sia")).Select(c => c.Countries).Sum(),
-            Children = Continents.Where(c => c.Name.Contains("Eur") || c.Name.Contains("sia")).ToList()
+            Area = Continents.Where(c => c.Name.Contains("Eur", System.StringComparison.Ordinal) || c.Name.Contains("sia", System.StringComparison.Ordinal)).Select(c => c.Area).Sum(),
+            Countries = Continents.Where(c => c.Name.Contains("Eur", System.StringComparison.Ordinal) || c.Name.Contains("sia", System.StringComparison.Ordinal)).Select(c => c.Countries).Sum(),
+            Children = Continents.Where(c => c.Name.Contains("Eur", System.StringComparison.Ordinal) || c.Name.Contains("sia", System.StringComparison.Ordinal)).ToList()
         });
 
         var world = new Continent

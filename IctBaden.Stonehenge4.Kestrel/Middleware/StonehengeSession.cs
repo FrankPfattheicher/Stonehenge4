@@ -50,7 +50,7 @@ public partial class StonehengeSession
 
         var path = context.Request.Path.ToString();
 
-        if (path.ToLower(CultureInfo.InvariantCulture).Contains("/user/"))
+        if (path.ToLower(CultureInfo.InvariantCulture).Contains("/user/", StringComparison.OrdinalIgnoreCase))
         {
             logger.LogTrace("Kestrel Begin USER {Method} {Path}", context.Request.Method, path);
             await _next.Invoke(context).ConfigureAwait(StonehengeGlobal.ConfigureAwait);

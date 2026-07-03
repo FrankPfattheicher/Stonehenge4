@@ -145,7 +145,7 @@ public static class UserContentLinks
                 .Where(name => name.EndsWith(".css", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameSrc)))
+            foreach (var resourceName in cssResources.Where(name => name.Contains(baseNameSrc, StringComparison.OrdinalIgnoreCase)))
             {
                 var css = ResourceLoader.GetShortResourceName(assembly, resourceBaseName, resourceName)
                     .Replace(".", "/")

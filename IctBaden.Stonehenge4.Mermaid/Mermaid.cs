@@ -3,10 +3,10 @@
 namespace IctBaden.Stonehenge.Extension;
 
 /// <summary>
-/// Mermaid V11.9
+/// Mermaid
 /// https://cdn.jsdelivr.net/npm/mermaid@latest/dist
 /// </summary>
 public class Mermaid : IStonehengeExtension
 {
-    public string Version => "11.12.2";
+    public string Version => "11.16.0";
 }

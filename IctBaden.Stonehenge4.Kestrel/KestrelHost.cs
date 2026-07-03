@@ -65,13 +65,13 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         var isAspNetCoreApp = true;
         var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? string.Empty;
-        if (!string.IsNullOrEmpty(ctx) && !ctx.Contains("Microsoft.AspNetCore.App"))
+        if (!string.IsNullOrEmpty(ctx) && !ctx.Contains("Microsoft.AspNetCore.App", StringComparison.OrdinalIgnoreCase))
         {
             isAspNetCoreApp = false;
             if (File.Exists(ctx))
             {
                 var dependencies = File.ReadAllText(ctx);
-                isAspNetCoreApp = dependencies.Contains("Microsoft.AspNetCore.App");
+                isAspNetCoreApp = dependencies.Contains("Microsoft.AspNetCore.App", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -231,7 +231,7 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
             {
                 _logger.LogError("Access denied: Try netsh http delete urlacl {BaseUrl}", BaseUrl);
             }
-            else if (ex is MissingMemberException && ex.Message.Contains("Microsoft.Owin.Host.HttpListener"))
+            else if (ex is MissingMemberException && ex.Message.Contains("Microsoft.Owin.Host.HttpListener", StringComparison.OrdinalIgnoreCase))
             {
                 _logger.LogError("Missing reference to nuget package 'Microsoft.Owin.Host.HttpListener'");
             }

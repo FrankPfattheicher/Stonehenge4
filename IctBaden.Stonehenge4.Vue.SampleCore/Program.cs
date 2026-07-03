@@ -94,8 +94,8 @@ internal static class Program
         // ReSharper disable once AccessToDisposedClosure
         Console.CancelKeyPress += (_, _) => { terminate.Set(); };
 
-        var window = Environment.CommandLine.Contains("/window");
-        var host = Environment.CommandLine.Contains("/localhost") ? "localhost" : "*";
+        var window = Environment.CommandLine.Contains("/window", StringComparison.OrdinalIgnoreCase);
+        var host = Environment.CommandLine.Contains("/localhost", StringComparison.OrdinalIgnoreCase) ? "localhost" : "*";
         if (_server.Start(host, window ? 0 : 32000))
         {
             if (window)

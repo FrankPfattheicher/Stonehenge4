@@ -1,4 +1,5 @@
 
+* 10.1.1 - 03.07.2026 Using bundled mermaid V11.6
 * 10.1.0 - 15.05.2026 Added C# syntax highlite editor control
 
 * 10.0.4 - 11.05.2026 Fixed mermaid chunk paths, updated d3, ConfigureAwait set false

@@ -6,12 +6,9 @@ mounted: async function() {
     const display = this.$el.style.display;
     this.$el.style.display = 'none';
 
-    const mermaidModule = await import("./src/mermaid.esm.mjs");
-    const elkLayoutsModule = await import("./src/mermaid-layout-elk.esm.mjs");
+    const mermaidModule = await import("./src/mermaid-elk.mjs");
     const mermaid = mermaidModule.default;
-    const elkLayouts = elkLayoutsModule.default;
-
-    mermaid.registerLayoutLoaders(elkLayouts);
+    
     mermaid.initialize({
         startOnLoad: false,
         suppressErrors: true
@@ -43,7 +40,7 @@ updated: async function () {
     const display = this.$el.style.display;
     this.$el.style.display = 'none';
 
-    const mermaidModule = await import("./src/mermaid.esm.mjs");
+    const mermaidModule = await import("./src/mermaid-elk.mjs");
     const mermaid = mermaidModule.default;
 
     const ts = new Date().getMilliseconds();

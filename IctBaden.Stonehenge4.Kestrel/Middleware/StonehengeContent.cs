@@ -52,7 +52,7 @@ public partial class StonehengeContent
     {
         if (context.Request.Path.Value == null) return Task.CompletedTask;
             
-        if (context.Request.Path.Value.Contains("/Events"))
+        if (context.Request.Path.Value.Contains("/Events", StringComparison.OrdinalIgnoreCase))
         {
             lock (LockEvents)
             {
@@ -119,7 +119,7 @@ public partial class StonehengeContent
 
             if (appSession?.HostOptions.UseKeycloakAuthentication != null
                 && appSession.RequestLogin
-                && !context.Request.Path.Value.Contains("/Events"))
+                && !context.Request.Path.Value.Contains("/Events", StringComparison.OrdinalIgnoreCase))
             {
                 var o = appSession.HostOptions.UseKeycloakAuthentication;
                 var requestQuery =
