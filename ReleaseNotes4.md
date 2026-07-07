@@ -1,4 +1,5 @@
 
+* 10.1.2 - 07.07.2026 Respond with empty map files on requests
 * 10.1.1 - 03.07.2026 Using bundled mermaid V11.6
 * 10.1.0 - 15.05.2026 Added C# syntax highlite editor control
 

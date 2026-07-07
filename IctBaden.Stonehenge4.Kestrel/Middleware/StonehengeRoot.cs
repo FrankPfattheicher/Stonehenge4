@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 
@@ -25,6 +26,14 @@ public class StonehengeRoot
             var uri = "/index.html";
             if(query.Count > 0) uri += $"?{query}"; 
             context.Response.Redirect(uri);
+            return;
+        }
+        if (path != null && path.EndsWith(".map", System.StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response
+                .WriteAsync("{}", cancellationToken: context.RequestAborted)
+                .ConfigureAwait(StonehengeGlobal.ConfigureAwait);
             return;
         }
 
