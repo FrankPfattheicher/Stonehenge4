@@ -24,7 +24,8 @@ public static class UserContentLinks
     private static readonly string AppPath = Path.DirectorySeparatorChar + "app" + Path.DirectorySeparatorChar;
     private static string _userJs = string.Empty;
     private static string _extensions = string.Empty;
-
+    private static bool _initialized;
+    
     public static void AddStyleSheet(string css)
     {
         var link = Environment.NewLine + string.Format(CssLinkTemplate, css);
@@ -33,6 +34,8 @@ public static class UserContentLinks
 
     public static void InitializeUserContentLinks(Assembly appAssembly, IList<Assembly> resourceAssemblies, string appFilesPath)
     {
+        if (_initialized) return;
+        _initialized = true;
         CreateUserCssLinks(appAssembly, appFilesPath);
         CreateUserJsLinks(appAssembly, appFilesPath);
         CreateExtensionLinks(resourceAssemblies);
@@ -40,7 +43,7 @@ public static class UserContentLinks
 
     public static string InsertUserLinks(string text)
     {
-        return text.Replace(CssInsertPoint, string.Join(Environment.NewLine, _styleSheets))
+        return text.Replace(CssInsertPoint, _styleSheets)
             .Replace(JsUserScriptsInsertPoint, _userJs)
             .Replace(ExtensionsInsertPoint, _extensions);
     }
@@ -74,12 +77,13 @@ public static class UserContentLinks
     private static void CreateUserJsLinks(Assembly userAssembly, string appFilesPath)
     {
         var path = Path.Combine(appFilesPath, "scripts");
+        var userJsLinks = new List<string>();
         if (Directory.Exists(path))
         {
             var links = Directory.GetFiles(path, "*.js", SearchOption.AllDirectories)
                 .Select(dir => string.Format(CultureInfo.InvariantCulture, JsLinkTemplate,
                     dir.Substring(dir.IndexOf(AppPath, StringComparison.InvariantCulture) + 1).Replace('\\', '/')));
-            _userJs = string.Join(Environment.NewLine, links);
+            userJsLinks.AddRange(links);
         }
 
         const string resourceBaseName = ".app.";
@@ -94,14 +98,17 @@ public static class UserContentLinks
             var js = ResourceLoader.GetShortResourceName(userAssembly, resourceBaseName, resourceName)
                 .Replace(".", "/")
                 .Replace("/js", ".js");
-            _userJs += Environment.NewLine + string.Format(JsLinkTemplate, js);
+            userJsLinks.Add(string.Format(JsLinkTemplate, js));
         }
+        
+        _userJs = string.Join(Environment.NewLine, userJsLinks.Distinct(StringComparer.OrdinalIgnoreCase));
     }
 
     private static void CreateExtensionLinks(IList<Assembly> assemblies)
     {
         const string resourceBaseName = ".app.";
         const string baseNameSrc = resourceBaseName + "src.";
+        var extensionLinks = new List<string>();
         foreach (var assembly in assemblies)
         {
             if (assembly.GetTypes().FirstOrDefault(t => t.GetInterfaces().Contains(typeof(IStonehengeExtension))) ==
@@ -122,7 +129,7 @@ public static class UserContentLinks
                 {
                     js = js.Replace(".js", "{.min}.js", StringComparison.OrdinalIgnoreCase);
                 }
-                _extensions += Environment.NewLine + string.Format(JsLinkTemplate, js);
+                extensionLinks.Add(string.Format(JsLinkTemplate, js));
             }
             var mjsResources = resources
                 .Where(name => name.EndsWith(".mjs", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase) && !name.Contains(".chunks.", StringComparison.OrdinalIgnoreCase))
@@ -138,9 +145,8 @@ public static class UserContentLinks
                 {
                     mjs = mjs.Replace(".mjs", "{.min}.mjs", StringComparison.OrdinalIgnoreCase);
                 }
-                _extensions += Environment.NewLine + string.Format(JsmLinkTemplate, mjs);
+                extensionLinks.Add(string.Format(JsmLinkTemplate, mjs));
             }
-
             var cssResources = resources
                 .Where(name => name.EndsWith(".css", StringComparison.OrdinalIgnoreCase) && !name.Contains(".min.", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
@@ -154,9 +160,10 @@ public static class UserContentLinks
                 {
                     css = css.Replace(".css", "{.min}.css");
                 }
-                _extensions += Environment.NewLine + string.Format(CssLinkTemplate, css);
+                extensionLinks.Add(string.Format(CssLinkTemplate, css));
             }
         }
+        _extensions = string.Join(Environment.NewLine, extensionLinks.Distinct(StringComparer.OrdinalIgnoreCase));
     }
     
 }

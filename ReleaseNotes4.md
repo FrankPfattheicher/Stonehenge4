@@ -1,7 +1,8 @@
 
+* 10.1.3 - 07.07.2026 Avoid multiple extension links in CreateExtensionLinks
 * 10.1.2 - 07.07.2026 Respond with empty map files on requests
 * 10.1.1 - 03.07.2026 Using bundled mermaid V11.6
-* 10.1.0 - 15.05.2026 Added C# syntax highlite editor control
+* 10.1.0 - 15.05.2026 Added C# syntax highlighte editor control
 
 * 10.0.4 - 11.05.2026 Fixed mermaid chunk paths, updated d3, ConfigureAwait set false
 * 10.0.3 - 04.05.2026 Global ConfigureAwait setting set to true
