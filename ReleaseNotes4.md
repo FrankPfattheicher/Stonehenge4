@@ -1,4 +1,6 @@
 
+* 10.2.0 - 22.07.2026 Added host option BasePath and read from ENV as BASE_PATH
+
 * 10.1.3 - 07.07.2026 Avoid multiple extension links in CreateExtensionLinks
 * 10.1.2 - 07.07.2026 Respond with empty map files on requests
 * 10.1.1 - 03.07.2026 Using bundled mermaid V11.6

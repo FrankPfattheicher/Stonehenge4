@@ -114,7 +114,15 @@ public partial class StonehengeSession
             var ts = context.Request.Query["ts"].FirstOrDefault();
             if (isIndex && !string.IsNullOrEmpty(ts))
             {
-                var redirectUri = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}/index.html?ts={ts}";
+                var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
+                var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
+                hostDomain ??= context.Request.Host.Value ?? string.Empty;
+                var hostPort = context.Request.Headers["X-Forwarded-Port"].FirstOrDefault();
+                if(!string.IsNullOrEmpty(hostPort))
+                {
+                    hostDomain += $":{hostPort}";
+                }
+                var redirectUri = $"{context.Request.Scheme}://{hostDomain}{options.BasePath}/index.html?ts={ts}";
                 session?.Dispose();
                 session = appSessions.GetSessionByAuthorizeRedirectUrl(redirectUri);
             }
@@ -151,7 +159,7 @@ public partial class StonehengeSession
                 
                 session.Nonce = Guid.NewGuid().ToString("N");
 
-                var redirectUrl = "/index.html";
+                var redirectUrl = session.HostOptions.BasePath + "/index.html";
                 var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                 query.Remove("stonehenge-nonce");
                 query.Add("stonehenge-nonce", session.Nonce);
@@ -258,8 +266,14 @@ public partial class StonehengeSession
         var httpContext = context.Request.HttpContext;
         var clientAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         var clientPort = httpContext.Connection.RemotePort;
-        var hostDomain = context.Request.Host.Value ?? string.Empty;
-        var hostUrl = $"{context.Request.Scheme}://{hostDomain}";
+        var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
+        hostDomain ??= context.Request.Host.Value ?? string.Empty;
+        var hostPort = context.Request.Headers["X-Forwarded-Port"].FirstOrDefault();
+        if(!string.IsNullOrEmpty(hostPort))
+        {
+            hostDomain += $":{hostPort}";
+        }
+        var hostUrl = $"{context.Request.Scheme}://{hostDomain}{options.BasePath}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
         appSessions.AddSession(session);
         logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);

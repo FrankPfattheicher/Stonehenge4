@@ -169,7 +169,16 @@ public partial class StonehengeContent
                 else
                 {
                     Debugger.Break();
-                    var newSession = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.Path}?stonehenge-id=new";
+
+                    var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
+                    var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
+                    hostDomain ??= context.Request.Host.Value ?? string.Empty;
+                    var hostPort = context.Request.Headers["X-Forwarded-Port"].FirstOrDefault();
+                    if(!string.IsNullOrEmpty(hostPort))
+                    {
+                        hostDomain += $":{hostPort}";
+                    }
+                    var newSession = $"{context.Request.Scheme}://{hostDomain}{options.BasePath}{context.Request.Path}?stonehenge-id=new";
                     context.Response.Redirect(newSession);
                     return;
                 }
@@ -226,7 +235,7 @@ public partial class StonehengeContent
 
                         var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
                         query["stonehenge-id"] = appSession.Id;
-                        context.Response.Redirect($"/index.html?{query}");
+                        context.Response.Redirect($"{appSession.HostOptions.BasePath}/index.html?{query}");
                         return;
                     }
 
@@ -241,7 +250,7 @@ public partial class StonehengeContent
                             appSession.Parameters.Remove("iss");
                             appSession.Parameters.Remove("code");
 
-                            var url = "/index.html";
+                            var url = appSession.HostOptions.BasePath + "/index.html";
                             var query = string.Join('&', appSession.Parameters.Select(p => $"{p.Key}={p.Value}"));
                             if (!string.IsNullOrEmpty(query))
                             {
@@ -433,6 +442,10 @@ public partial class StonehengeContent
                     await writer.WriteAsync(content.Text).ConfigureAwait(StonehengeGlobal.ConfigureAwait);
                 }
             }
+        }
+        catch(OperationCanceledException)
+        {
+            logger.LogWarning("StonehengeContent write response: Operation canceled");
         }
         catch (Exception ex)
         {

@@ -89,6 +89,12 @@ public record StonehengeHostOptions
     public bool DisableClientCache { get; init; }
 
     /// <summary>
+    /// Base path to be used in application.
+    /// This setting is loaded from environment variable "BASE_PATH"
+    /// </summary>
+    public string BasePath { get; init; } = string.Empty;
+    
+    /// <summary>
     /// Allow custom middleware (by type name) to be inserted
     /// before StonehengeContent is called
     /// </summary>

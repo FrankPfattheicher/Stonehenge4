@@ -63,6 +63,14 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
         _options = options;
         _logger = logger;
 
+        if (string.IsNullOrWhiteSpace(_options.BasePath))
+        {
+            _options = options with
+            {
+                BasePath = Environment.GetEnvironmentVariable("BASE_PATH") ?? string.Empty   
+            };
+        }
+        
         var isAspNetCoreApp = true;
         var ctx = AppContext.GetData("APP_CONTEXT_DEPS_FILES")?.ToString() ?? string.Empty;
         if (!string.IsNullOrEmpty(ctx) && !ctx.Contains("Microsoft.AspNetCore.App", StringComparison.OrdinalIgnoreCase))
@@ -204,6 +212,12 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
             (_webApp as IHost)?.Dispose();
             _webApp = builder.Build();
+
+            if (!string.IsNullOrWhiteSpace(_options.BasePath))
+            {
+                _webApp.UsePathBase(_options.BasePath);
+            }
+            _webApp.UseRouting();   // Add explicitly - AFTER UsePathBase
 
             ConfigureWebApplication(_webApp, config);
 

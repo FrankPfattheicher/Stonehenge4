@@ -1,6 +1,6 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web;
+using IctBaden.Stonehenge.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace IctBaden.Stonehenge.Kestrel.Middleware;
@@ -22,8 +22,9 @@ public class StonehengeRoot
         var path = context.Request.Path.Value?.Replace("//", "/", System.StringComparison.OrdinalIgnoreCase);
         if (string.Equals(path, "/", System.StringComparison.Ordinal))
         {
+            var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
             var query = HttpUtility.ParseQueryString(context.Request.QueryString.ToString());
-            var uri = "/index.html";
+            var uri = options.BasePath + "/index.html";
             if(query.Count > 0) uri += $"?{query}"; 
             context.Response.Redirect(uri);
             return;
