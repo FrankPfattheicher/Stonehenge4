@@ -1,4 +1,5 @@
 
+* 10.2.1 - 11.08.2026 Use default .htpasswd file name for basic auth
 * 10.2.0 - 22.07.2026 Added host option BasePath and read from ENV as BASE_PATH
 
 * 10.1.3 - 07.07.2026 Avoid multiple extension links in CreateExtensionLinks

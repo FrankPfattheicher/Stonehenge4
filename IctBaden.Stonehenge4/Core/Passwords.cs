@@ -4,24 +4,42 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using IctBaden.Stonehenge.Hosting;
 
 namespace IctBaden.Stonehenge.Core;
 
 public class Passwords
 {
-    private readonly string _fileName;
+    private readonly string _fileName = string.Empty;
 
+    /// <summary>
+    /// Use default .htpasswd password file
+    /// </summary>
+    public Passwords() 
+        : this(".htpasswd")
+    {
+    }
+    
     /// <summary>
     /// Use mosquitto_passwd to create and maintain password file
     /// </summary>
     /// <param name="fileName"></param>
     public Passwords(string fileName)
     {
-        _fileName = fileName;
+        if(!File.Exists(fileName))
+        {
+            fileName = Path.Combine(StonehengeApplication.BaseDirectory, fileName);
+        }
+        if(File.Exists(fileName))
+        {
+            _fileName = fileName;
+        }
     }
 
     public IList<string> GetUsers()
     {
+        if (string.IsNullOrEmpty(_fileName)) return [];
+        
         var users = new List<string>();
         var lines = File.ReadAllLines(_fileName);
         // ReSharper disable once LoopCanBeConvertedToQuery
@@ -38,6 +56,7 @@ public class Passwords
     // ReSharper disable once UnusedMember.Global
     public bool IsValid(string user, string password)
     {
+        if (string.IsNullOrEmpty(_fileName)) return false;
         if (string.IsNullOrEmpty(password)) return false;
 
         var lines = File.ReadAllLines(_fileName);
