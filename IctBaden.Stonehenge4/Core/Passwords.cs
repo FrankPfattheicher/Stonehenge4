@@ -16,14 +16,6 @@ public class Passwords
     public readonly string FileName = string.Empty;
 
     /// <summary>
-    /// Use default .htpasswd password file
-    /// </summary>
-    public Passwords() 
-        : this(".htpasswd")
-    {
-    }
-    
-    /// <summary>
     /// Use mosquitto_passwd to create and maintain password file
     /// </summary>
     /// <param name="fileName"></param>

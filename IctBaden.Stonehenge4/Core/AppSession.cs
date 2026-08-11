@@ -526,10 +526,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         SessionCulture = new CultureInfo(options.DefaultLocale);
 
         UseBasicAuth = options.UseBasicAuth;
-        Passwords = new Passwords();
+        Passwords = new Passwords(options.BasicAuthFileName);
         if (string.IsNullOrEmpty(Passwords.FileName))
         {
-            Logger.LogError("Option UseBasicAuth requires .htpasswd file");
+            Logger.LogError("Option UseBasicAuth requires .htpasswd file {BasicAuthFileName}", options.BasicAuthFileName);
         }
 
         _eventTimeoutMs = options.GetEventTimeoutMs();

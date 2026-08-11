@@ -62,6 +62,10 @@ public record StonehengeHostOptions
     public bool UseBasicAuth { get; init; }
 
     /// <summary>
+    /// File name to use for basic authentication.
+    /// </summary>
+    public string BasicAuthFileName { get; init; } = ".htpasswd";
+    /// <summary>
     /// If not null, contains all options
     /// to handle Keycloak user authentication
     /// </summary>
