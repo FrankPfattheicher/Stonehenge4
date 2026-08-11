@@ -526,14 +526,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         SessionCulture = new CultureInfo(options.DefaultLocale);
 
         UseBasicAuth = options.UseBasicAuth;
-        var htpasswd = Path.Combine(StonehengeApplication.BaseDirectory, ".htpasswd");
-        if (File.Exists(htpasswd))
+        Passwords = new Passwords();
+        if (string.IsNullOrEmpty(Passwords.FileName))
         {
-            Passwords = new Passwords(htpasswd);
-        }
-        else if (UseBasicAuth)
-        {
-            Logger.LogError("Option UseBasicAuth requires .htpasswd file {Htpasswd}", htpasswd);
+            Logger.LogError("Option UseBasicAuth requires .htpasswd file");
         }
 
         _eventTimeoutMs = options.GetEventTimeoutMs();

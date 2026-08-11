@@ -10,7 +10,10 @@ namespace IctBaden.Stonehenge.Core;
 
 public class Passwords
 {
-    private readonly string _fileName = string.Empty;
+    /// <summary>
+    /// File name used for basic auth passwords
+    /// </summary>
+    public readonly string FileName = string.Empty;
 
     /// <summary>
     /// Use default .htpasswd password file
@@ -32,16 +35,16 @@ public class Passwords
         }
         if(File.Exists(fileName))
         {
-            _fileName = fileName;
+            FileName = fileName;
         }
     }
 
     public IList<string> GetUsers()
     {
-        if (string.IsNullOrEmpty(_fileName)) return [];
+        if (string.IsNullOrEmpty(FileName)) return [];
         
         var users = new List<string>();
-        var lines = File.ReadAllLines(_fileName);
+        var lines = File.ReadAllLines(FileName);
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var line in lines)
         {
@@ -56,10 +59,10 @@ public class Passwords
     // ReSharper disable once UnusedMember.Global
     public bool IsValid(string user, string password)
     {
-        if (string.IsNullOrEmpty(_fileName)) return false;
+        if (string.IsNullOrEmpty(FileName)) return false;
         if (string.IsNullOrEmpty(password)) return false;
 
-        var lines = File.ReadAllLines(_fileName);
+        var lines = File.ReadAllLines(FileName);
         foreach (var line in lines)
         {
             var userPw = line.Split(':');
@@ -96,7 +99,7 @@ public class Passwords
     private List<string> LinesWithoutUser(string user)
     {
         var newLines = new List<string>();
-        var lines = File.ReadAllLines(_fileName);
+        var lines = File.ReadAllLines(FileName);
         foreach (var line in lines)
         {
             var userPw = line.Split(':');
@@ -112,7 +115,7 @@ public class Passwords
     public void RemoveUser(string user)
     {
         var newLines = LinesWithoutUser(user);
-        File.WriteAllLines(_fileName, newLines);
+        File.WriteAllLines(FileName, newLines);
     }
 
     public void SetPassword(string user, string password)
@@ -131,7 +134,7 @@ public class Passwords
         var newLine = $"{user}:$6${Convert.ToBase64String(salt)}${hash}";
         newLines.Add(newLine);
 
-        File.WriteAllLines(_fileName, newLines);
+        File.WriteAllLines(FileName, newLines);
     }
 
 }
