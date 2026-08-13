@@ -13,7 +13,6 @@ public static class WindowsHosting
     /// https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/iis/?view=aspnetcore-2.2#enable-the-iisintegration-components
     /// </summary>
     /// <param name="builder"></param>
-    /// <returns>builder</returns>
     // ReSharper disable once InconsistentNaming
     public static void EnableIIS(ConfigureWebHostBuilder builder) => builder
         .UseIIS() // in-proc hosting

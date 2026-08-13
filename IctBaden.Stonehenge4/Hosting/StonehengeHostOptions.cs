@@ -56,8 +56,9 @@ public record StonehengeHostOptions
     /// <summary>
     /// Internally check basic Authentication.
     /// Place .htpasswd file in application directory.
-    /// Encoding apache specific salted MD5 (insecure but common).
-    /// htpasswd -nbm myName myPassword
+    /// Supports common htpasswd encodings: bcrypt, Apache MD5 ($apr1$),
+    /// SHA-1 ({SHA}), SHA-256/512 crypt, DES crypt, plaintext,
+    /// and mosquitto_passwd SHA-256/512 / PBKDF2.
     /// </summary>
     public bool UseBasicAuth { get; init; }
 
