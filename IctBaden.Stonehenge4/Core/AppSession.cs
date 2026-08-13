@@ -92,7 +92,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public string PermanentSessionId { get; private set; } = string.Empty;
 
     public bool UseBasicAuth;
-    public readonly Passwords Passwords = new(string.Empty);
+    public readonly Passwords Passwords;
     public string VerifiedBasicAuth = string.Empty;
 
     private readonly int _eventTimeoutMs;
@@ -526,14 +526,10 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         SessionCulture = new CultureInfo(options.DefaultLocale);
 
         UseBasicAuth = options.UseBasicAuth;
-        var htpasswd = Path.Combine(StonehengeApplication.BaseDirectory, ".htpasswd");
-        if (File.Exists(htpasswd))
+        Passwords = new Passwords(options.BasicAuthFileName);
+        if (string.IsNullOrEmpty(Passwords.FileName))
         {
-            Passwords = new Passwords(htpasswd);
-        }
-        else if (UseBasicAuth)
-        {
-            Logger.LogError("Option UseBasicAuth requires .htpasswd file {Htpasswd}", htpasswd);
+            Logger.LogError("Option UseBasicAuth requires .htpasswd file {BasicAuthFileName}", options.BasicAuthFileName);
         }
 
         _eventTimeoutMs = options.GetEventTimeoutMs();
@@ -740,10 +736,12 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     {
         SetUser(null, string.Empty, string.Empty, string.Empty);
         AuthorizeRedirectUrl = string.Empty;
+        VerifiedBasicAuth = string.Empty;
 
         if (useBasicAuth)
         {
             UseBasicAuth = true;
+            (ViewModel as ActiveViewModel)?.NavigateTo($"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             return;
         }
 
@@ -769,6 +767,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         if (HostOptions.UseBasicAuth || UseBasicAuth)
         {
             UseBasicAuth = HostOptions.UseBasicAuth;
+            VerifiedBasicAuth = string.Empty;
             SetUser(null, string.Empty, string.Empty, string.Empty);
             if (ViewModel is ActiveViewModel avm)
             {
