@@ -97,7 +97,7 @@ public sealed class MultiAppTests : IDisposable
         Assert.NotNull(response);
         Assert.Single(_app2.Server.GetAllSessions());
         
-        Assert.NotEqual(_app1.Server.GetAllSessions().First().Id, _app2.Server.GetAllSessions().First().Id);
+        Assert.False(string.Equals(_app1.Server.GetAllSessions().First().Id, _app2.Server.GetAllSessions().First().Id, StringComparison.InvariantCulture));
     }
 
 }
