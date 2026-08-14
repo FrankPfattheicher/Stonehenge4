@@ -33,6 +33,15 @@ public sealed class PasswordsTests : IDisposable
         Assert.Equal(["test"], passwords.GetUsers());
     }
 
+    [Fact]
+    public void Apr1_AdminAdmin_AcceptsPassword()
+    {
+        WriteFile("admin:$apr1$HkyYuXAb$.qph5iZUFqn.T2K9wvrhr/");
+        var passwords = new Passwords(_fileName);
+        Assert.True(passwords.IsValid("admin", "admin"));
+        Assert.False(passwords.IsValid("admin", "wrong"));
+    }
+
     [Theory]
     [InlineData("myName:$apr1$r31.....$HqJZimcKQFAMYayBlzkrA/", "myPassword")]
     [InlineData("myName:{SHA}VBPuJHI7uixaa6LQGWx4s+5GKNE=", "myPassword")]
@@ -130,4 +139,5 @@ public sealed class PasswordsTests : IDisposable
     {
         File.WriteAllText(_fileName, content + Environment.NewLine);
     }
+    
 }
