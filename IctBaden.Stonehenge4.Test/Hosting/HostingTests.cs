@@ -64,7 +64,7 @@ public class HostingTests
         startOk = host2.Start("localhost", 32003);
         Assert.True(startOk, "Start host2 failed");
 
-        Assert.NotEqual(host1.BaseUrl, host2.BaseUrl);
+        Assert.NotEqual(host1.BaseUrl, host2.BaseUrl, StringComparer.OrdinalIgnoreCase);
 
         var response1 = string.Empty;
         var response2 = string.Empty;

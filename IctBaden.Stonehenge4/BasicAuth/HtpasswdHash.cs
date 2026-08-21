@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
-using IctBaden.Stonehenge.Core;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace IctBaden.Stonehenge.BasicAuth;

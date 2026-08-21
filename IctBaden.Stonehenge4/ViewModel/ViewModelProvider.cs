@@ -115,6 +115,10 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
         {
             return PostDataResource(session, resourceName.Substring(5), parameters, formData);
         }
+        if (session != null && resourceName.StartsWith("Data_", StringComparison.OrdinalIgnoreCase))
+        {
+            return PostDataResource(session, resourceName.Split('/').Last(), parameters, formData);
+        }
 
         if (!resourceName.StartsWith("ViewModel/", StringComparison.OrdinalIgnoreCase)) return Task.FromResult<Resource?>(null);
 

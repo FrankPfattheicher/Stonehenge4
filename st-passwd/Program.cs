@@ -1,5 +1,4 @@
 ﻿using IctBaden.Stonehenge.BasicAuth;
-using IctBaden.Stonehenge.Core;
 
 // ReSharper disable ReplaceSubstringWithRangeIndexer
 

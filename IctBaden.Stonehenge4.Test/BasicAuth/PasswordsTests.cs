@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using IctBaden.Stonehenge.BasicAuth;
-using IctBaden.Stonehenge.Core;
 using Xunit;
 
 namespace IctBaden.Stonehenge.Test.BasicAuth;

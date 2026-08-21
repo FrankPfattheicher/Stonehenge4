@@ -1,4 +1,5 @@
 
+* 10.2.5 - 21.08.2026 Handle data resource uploads with GetDataResourceUri
 * 10.2.4 - 13.08.2026 Support all common htpasswd formats for basic auth
 * 10.2.3 - 11.08.2026 Reload on basic auth login
 * 10.2.2 - 11.08.2026 Option BasicAuthFileName

@@ -183,7 +183,7 @@ public class FormsVm : ActiveViewModel
         switch (RangeDays)
         {
             case 1:
-                DateTime.TryParseExact(RangeValue, ["yyyy-MM-dd"], CultureInfo.CurrentCulture,
+                _ = DateTime.TryParseExact(RangeValue, ["yyyy-MM-dd"], CultureInfo.CurrentCulture,
                     DateTimeStyles.AssumeLocal, out var day);
                 RangeStart = day.ToString("d");
                 RangeEnd = day.ToString("d");

@@ -417,7 +417,7 @@ public sealed class HostWindow : IDisposable
                 _ui?.Dispose();
                 _ui = Process.Start(pi);
 
-                bool.TryParse(_ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty, out var exists);
+                _ = bool.TryParse(_ui?.StandardOutput.ReadToEnd().Trim() ?? string.Empty, out var exists);
                 if (!exists) break;
             }
 

@@ -39,6 +39,7 @@ public class StartVm : ActiveViewModel
     public bool ShowCookies => IsRouteEnabled("cookie");
 
     public string Culture { get; set; } = string.Empty;
+    public string UploadUri { get; private set; } = string.Empty;
     public string UploadFile { get; set; } = string.Empty;
     
     public string DateUri => GetDataResourceUri("date.ics");
@@ -77,6 +78,7 @@ public class StartVm : ActiveViewModel
     {
         Session.OnNavigate += route => Console.WriteLine(@"Session.OnNavigate " + route);
         Culture = Session.SessionCulture.ToString();
+        UploadUri = GetDataResourceUri("Upload");
         EnableRoute("cookie", ShowCookies);
     }
 
