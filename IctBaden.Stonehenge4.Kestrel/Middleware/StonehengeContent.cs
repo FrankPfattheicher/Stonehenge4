@@ -487,7 +487,7 @@ public partial class StonehengeContent
             
             appSession.VerifiedBasicAuth = auth;
             appSession.SetUser(null, user, user, string.Empty);
-            appSession.UpdateProperty(nameof(appSession.UserIdentity));
+            appSession.UpdateProperty(nameof(appSession.UserIdentity), ClientEventSource.ServerEvent);
             return isValid;
         }
 

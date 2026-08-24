@@ -27,6 +27,12 @@ public class Charts2Vm : ActiveViewModel
 
     public bool FullTimeRange { get; set; } = true;
     public int SortSeriesTooltips { get; set; } = 0;
+    
+    public bool VmSupportsEvents
+    {
+        get => SupportsEvents;
+        set => SupportsEvents = value;
+    }
 
     [SessionVariable]
     public int WidthLineChart { get; private set; } = 50;
@@ -72,8 +78,9 @@ public class Charts2Vm : ActiveViewModel
         }
 
         UpdateData();
-        Splitter.SplitterMoved += SplitterMoved; 
+        Splitter.SplitterMoved += SplitterMoved;
 
+        SupportsEvents = true;
         SetUpdateTimer(Speed);
     }
 
@@ -135,7 +142,7 @@ public class Charts2Vm : ActiveViewModel
     {
         UpdateData();
 
-        NotifyPropertiesChanged([ nameof(LineChart), nameof(SankeyChart) ]);
+        NotifyPropertiesChanged([ nameof(LineChart), nameof(SankeyChart) ], ClientEventSource.UpdateTimer);
         Session.UpdatePropertiesImmediately();
     }
 
@@ -143,6 +150,12 @@ public class Charts2Vm : ActiveViewModel
     [ActionMethod]
     public void ChangeFullTimeRange()
     {
+    }
+
+    [ActionMethod]
+    public void ForceUpdate()
+    {
+        NotifyAllPropertiesChanged();
     }
 
     [ActionMethod]

@@ -357,11 +357,10 @@ public sealed class ViewModelProvider(ILogger logger) : IStonehengeResourceProvi
             try
             {
                 // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (var property in events)
+                foreach (var property in events.Select(x => x.Name))
                 {
                     var value = activeVm.TryGetMember(property);
-                    data.Add(
-                        $"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
+                    data.Add($"\"{property}\":{Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(value, JsonOptions))}");
                 }
 
                 // 23.12.2025: ******** DO NOT FOR EVENTS ******** - nicht dokumentiert warum...

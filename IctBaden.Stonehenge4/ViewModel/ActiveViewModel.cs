@@ -264,7 +264,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
             component.UpdateI18n();
         }
 
-        NotifyPropertyChanged(nameof(I18n));
+        NotifyPropertyChanged(nameof(I18n), ClientEventSource.UpdateI18N);
     }
 
     internal StonehengeComponent[] GetComponents()
@@ -362,7 +362,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         {
             if (!string.IsNullOrEmpty(args.PropertyName))
             {
-                parent.NotifyPropertyChanged(args.PropertyName);
+                parent.NotifyPropertyChanged(args.PropertyName, ClientEventSource.ServerEvent);
             }
         };
     }
@@ -436,12 +436,12 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         if (pi != null)
         {
             pi.Info.SetValue(pi.Obj, value, null);
-            NotifyPropertyChanged(binder.Name);
+            NotifyPropertyChanged(binder.Name, ClientEventSource.ServerEvent);
             return true;
         }
 
         _dictionary[binder.Name] = value;
-        NotifyPropertyChanged(binder.Name);
+        NotifyPropertyChanged(binder.Name, ClientEventSource.ServerEvent);
         return true;
     }
 
@@ -618,13 +618,13 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void ExecuteHandler(PropertyChangedEventHandler handler, string name)
+    private void ExecuteHandler(PropertyChangedEventHandler handler, string name, ClientEventSource _)
     {
         var args = new PropertyChangedEventArgs(name);
         handler(this, args);
     }
 
-    protected internal void NotifyPropertyChanged(string name)
+    protected internal void NotifyPropertyChanged(string name, ClientEventSource source = ClientEventSource.ManualPropertyChanged)
     {
 #if xDEBUG
         foreach (var component in GetComponents())
@@ -643,12 +643,15 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
 #endif
 
-        Task.Run(() => SendPropertyChanged(name)).Wait();
+        if(SupportsEvents || source == ClientEventSource.ManualPropertyChanged)
+        {
+            Task.Run(() => SendPropertyChanged(name)).Wait();
+        }
 
         var handler = PropertyChanged;
         if (handler != null)
         {
-            ExecuteHandler(handler, name);
+            ExecuteHandler(handler, name, source);
         }
 
         if (!_dependencies.TryGetValue(name, out var dependency))
@@ -658,26 +661,26 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         {
             if (handler != null)
             {
-                ExecuteHandler(handler, dependentName);
+                ExecuteHandler(handler, dependentName, source);
             }
         }
     }
 
-    protected void NotifyPropertiesChanged(string[] names)
+    protected void NotifyPropertiesChanged(string[] names, ClientEventSource source = ClientEventSource.ManualPropertyChanged)
     {
         foreach (var name in names)
         {
-            NotifyPropertyChanged(name);
+            NotifyPropertyChanged(name, source);
         }
     }
 
-    public void NotifyAllPropertiesChanged()
+    public void NotifyAllPropertiesChanged(ClientEventSource source = ClientEventSource.ManualPropertyChanged)
     {
         if (properties != null)
         {
             foreach (PropertyDescriptorEx prop in properties)
             {
-                NotifyPropertyChanged(prop.Name);
+                NotifyPropertyChanged(prop.Name, source);
             }
         }
 
@@ -740,7 +743,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
     {
         MessageBoxTitle = title;
         MessageBoxText = text;
-        NotifyPropertyChanged(StonehengePropertyNameId + "StonehengeEval");
+        NotifyPropertyChanged(StonehengePropertyNameId + "StonehengeEval", ClientEventSource.ClientScript);
     }
 
     #endregion

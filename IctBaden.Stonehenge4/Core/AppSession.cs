@@ -21,6 +21,7 @@ using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -61,6 +62,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     /// Redirect URL used to complete authorization 
     public string AuthorizeRedirectUrl = string.Empty;
+
     /// Respond with 401 to complete un-authorization 
     public bool UnauthorizeRedirect;
 
@@ -72,11 +74,14 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
 
     /// Security token issued on login (only if provided by identity provider) 
-    public JwtSecurityToken? SecurityToken { get; private set; } 
+    public JwtSecurityToken? SecurityToken { get; private set; }
+
     /// Name of user identity 
     public string UserIdentity { get; private set; } = string.Empty;
+
     /// Name of user identity 
     public string UserIdentityId { get; private set; } = string.Empty;
+
     /// Name of user identity 
     public string UserIdentityEMail { get; private set; } = string.Empty;
 
@@ -98,7 +103,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     private readonly int _eventTimeoutMs;
 
-    private readonly List<string> _events = [];
+    private readonly List<ClientEvent> _events = [];
     private readonly AppSessions _appSessions;
 
     private CancellationTokenSource? _eventRelease;
@@ -124,7 +129,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
     public readonly ILogger Logger;
 
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
-    public async Task<string[]> CollectEvents(CancellationToken requestAborted)
+    public async Task<ClientEvent[]> CollectEvents(CancellationToken requestAborted)
     {
         try
         {
@@ -142,11 +147,9 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
         lock (_events)
         {
-            if (ViewModel is ActiveViewModel { SupportsEvents: false })
-            {
-                _events.Clear();
-            }
-            var events = _events.ToArray();
+            var events = ViewModel is ActiveViewModel { SupportsEvents: false }
+                ? _events.Where(ev => ev.Source != ClientEventSource.ServerEvent).ToArray()
+                : _events.ToArray();
             _events.Clear();
             return events;
         }
@@ -246,6 +249,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
             {
                 SetSessionCulture(SessionCulture);
             }
+
             notifyPropertyChanged.PropertyChanged += (sender, args) =>
             {
                 if (sender is not ActiveViewModel activeViewModel) return;
@@ -254,7 +258,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 {
                     if (!string.IsNullOrEmpty(args.PropertyName))
                     {
-                        activeViewModel.Session.UpdateProperty(args.PropertyName);
+                        activeViewModel.Session.UpdateProperty(args.PropertyName, ClientEventSource.ServerEvent);
                     }
                 }
             };
@@ -530,7 +534,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         Passwords = new Passwords(options.BasicAuthFileName);
         if (string.IsNullOrEmpty(Passwords.FileName))
         {
-            Logger.LogError("Option UseBasicAuth requires .htpasswd file {BasicAuthFileName}", options.BasicAuthFileName);
+            Logger.LogError("Option UseBasicAuth requires .htpasswd file {BasicAuthFileName}",
+                options.BasicAuthFileName);
         }
 
         _eventTimeoutMs = options.GetEventTimeoutMs();
@@ -657,7 +662,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
 
     public void UpdatePropertyImmediately(string name)
     {
-        UpdateProperty(name);
+        UpdateProperty(name, ClientEventSource.ManualPropertyChanged);
         UpdatePropertiesImmediately();
     }
 
@@ -666,13 +671,13 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         _forceUpdate = true;
     }
 
-    public void UpdateProperty(string name)
+    public void UpdateProperty(string name, ClientEventSource source)
     {
         lock (_events)
         {
-            if (!_events.Contains(name, StringComparer.Ordinal))
+            if (_events.TrueForAll(ev => !string.Equals(ev.Name, name, StringComparison.OrdinalIgnoreCase)))
             {
-                _events.Add(name);
+                _events.Add(new ClientEvent(name, source));
             }
 
             try
@@ -686,7 +691,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         }
     }
 
-    public static string GetResourceETag(string path) => AppInstanceId + StringComparer.Ordinal.GetHashCode(path).ToString("x8");
+    public static string GetResourceETag(string path) =>
+        AppInstanceId + StringComparer.Ordinal.GetHashCode(path).ToString("x8");
 
     public override string ToString()
     {
@@ -709,6 +715,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         {
             Parameters[parameter.Key] = parameter.Value;
         }
+
         Parameters.Remove("stonehenge-id");
         Parameters.Remove("stonehenge-nonce");
     }
@@ -742,7 +749,8 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         if (useBasicAuth)
         {
             UseBasicAuth = true;
-            (ViewModel as ActiveViewModel)?.NavigateTo($"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
+            (ViewModel as ActiveViewModel)?.NavigateTo(
+                $"{HostUrl}/index.html?ts={DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
             return;
         }
 
@@ -775,16 +783,18 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 UnauthorizeRedirect = true;
                 avm.ExecuteClientScript("");
             }
+
             return true;
         }
-        
+
         if (HostOptions.UseKeycloakAuthentication == null) return false;
 
         if (string.IsNullOrEmpty(AccessToken) || string.IsNullOrEmpty(RefreshToken)) return false;
 
         var o = HostOptions.UseKeycloakAuthentication;
 
-        var data = $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
+        var data =
+            $"client_id={o.ClientId}&state={Id}&&refresh_token={RefreshToken}&redirect_uri={HttpUtility.UrlEncode(AuthorizeRedirectUrl)}";
 
         var logoutUrl = $"{o.AuthUrl}/realms/{o.Realm}/protocol/openid-connect/logout";
         using var content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
