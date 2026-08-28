@@ -358,11 +358,12 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     protected void SetParent(ActiveViewModel parent)
     {
-        PropertyChanged += (_, args) =>
+        PropertyChanged += (source, args) =>
         {
             if (!string.IsNullOrEmpty(args.PropertyName))
             {
-                parent.NotifyPropertyChanged(args.PropertyName, ClientEventSource.ServerEvent);
+                parent.NotifyPropertyChanged(args.PropertyName, 
+                    source is ClientEventSource clientEventSource ? clientEventSource : ClientEventSource.ServerEvent);
             }
         };
     }
@@ -618,10 +619,10 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void ExecuteHandler(PropertyChangedEventHandler handler, string name, ClientEventSource _)
+    private void ExecuteHandler(PropertyChangedEventHandler handler, string name, ClientEventSource source)
     {
         var args = new PropertyChangedEventArgs(name);
-        handler(this, args);
+        handler(source, args);
     }
 
     protected internal void NotifyPropertyChanged(string name, ClientEventSource source = ClientEventSource.ManualPropertyChanged)

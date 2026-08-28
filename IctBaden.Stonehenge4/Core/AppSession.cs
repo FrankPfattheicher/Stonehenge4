@@ -148,7 +148,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         lock (_events)
         {
             var events = ViewModel is ActiveViewModel { SupportsEvents: false }
-                ? _events.Where(ev => ev.Source != ClientEventSource.ServerEvent).ToArray()
+                ? _events.Where(ev => ev.Source == ClientEventSource.ManualPropertyChanged).ToArray()
                 : _events.ToArray();
             _events.Clear();
             return events;
@@ -250,15 +250,16 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
                 SetSessionCulture(SessionCulture);
             }
 
-            notifyPropertyChanged.PropertyChanged += (sender, args) =>
+            notifyPropertyChanged.PropertyChanged += (source, args) =>
             {
-                if (sender is not ActiveViewModel activeViewModel) return;
+                if(ViewModel is not ActiveViewModel activeViewModel) return;
 
                 lock (activeViewModel.Session._events)
                 {
                     if (!string.IsNullOrEmpty(args.PropertyName))
                     {
-                        activeViewModel.Session.UpdateProperty(args.PropertyName, ClientEventSource.ServerEvent);
+                        activeViewModel.Session.UpdateProperty(args.PropertyName, 
+                            source is ClientEventSource clientEventSource ? clientEventSource : ClientEventSource.ServerEvent);
                     }
                 }
             };

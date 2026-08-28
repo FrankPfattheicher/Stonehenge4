@@ -1,4 +1,5 @@
 
+* 10.3.1 - 28.08.2026 Use ClientEventSource as PropertyChanged sender
 * 10.3.0 - 24.08.2026 Introduce ClientEventSource to enable manual update without SupportEvents
 
 * 10.2.5 - 21.08.2026 Handle data resource uploads with GetDataResourceUri
