@@ -148,7 +148,7 @@ public sealed class AppSession : INotifyPropertyChanged, IDisposable
         lock (_events)
         {
             var events = ViewModel is ActiveViewModel { SupportsEvents: false }
-                ? _events.Where(ev => ev.Source == ClientEventSource.ManualPropertyChanged).ToArray()
+                ? _events.Where(ev => ev.Source is ClientEventSource.ManualPropertyChanged or ClientEventSource.ClientScript).ToArray()
                 : _events.ToArray();
             _events.Clear();
             return events;

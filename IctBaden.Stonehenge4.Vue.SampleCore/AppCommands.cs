@@ -7,13 +7,20 @@ using Microsoft.Extensions.Logging;
 namespace IctBaden.Stonehenge.Vue.SampleCore;
 
 // ReSharper disable once UnusedType.Global
-public class AppCommands(ILogger logger) : IStonehengeAppCommands
+public class AppCommands : IStonehengeAppCommands
 {
+    private readonly ILogger _logger;
+
+    public AppCommands(ILogger logger)
+    {
+        _logger = logger;
+    }
+
     // ReSharper disable once UnusedMember.Global
-    public void FileOpen(AppSession session)
+    public void FileOpen(AppSession session, string param)
     {
         var vm = session.ViewModel as ActiveViewModel;
-        vm?.MessageBox("AppCommand", "FileOpen");
+        vm?.MessageBox("AppCommand", $"FileOpen({param})");
     }
         
     public void WindowResized(AppSession session, int width, int height)
@@ -23,8 +30,8 @@ public class AppCommands(ILogger logger) : IStonehengeAppCommands
         var paramHeight = session.Parameters
             .FirstOrDefault(p => string.Equals(p.Key, "height", System.StringComparison.OrdinalIgnoreCase)).Value;
             
-        logger.LogTrace("AppCommands.WindowResized(URL): width={ParamWidth}, height={ParamHeight}", paramWidth, paramHeight);
-        logger.LogTrace("AppCommands.WindowResized(binding): width={Width}, height={Height}", width, height);
+        _logger.LogTrace("AppCommands.WindowResized(URL): width={ParamWidth}, height={ParamHeight}", paramWidth, paramHeight);
+        _logger.LogTrace("AppCommands.WindowResized(binding): width={Width}, height={Height}", width, height);
 
         // Obsolete - use OnWindowResized
         // var chartVm = session.ViewModel as Charts1Vm;

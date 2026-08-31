@@ -165,8 +165,8 @@ Vue.directive('select', {
 })
 
 // Global App Commands
-function AppCommand(cmdName) {
-    stonehengeMakePostRequest('Command/' + cmdName);
+function AppCommand(cmdName, param) {
+    stonehengeMakePostRequest('Command/' + cmdName + (param ? '?param=' + param : ''));
 }
 // Components
 

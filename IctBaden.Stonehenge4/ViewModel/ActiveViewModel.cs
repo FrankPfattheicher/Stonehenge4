@@ -644,7 +644,7 @@ public class ActiveViewModel : DynamicObject, ICustomTypeDescriptor, INotifyProp
         }
 #endif
 
-        if(SupportsEvents || source == ClientEventSource.ManualPropertyChanged)
+        if(SupportsEvents || source == ClientEventSource.ManualPropertyChanged || source == ClientEventSource.ClientScript)
         {
             Task.Run(() => SendPropertyChanged(name)).Wait();
         }

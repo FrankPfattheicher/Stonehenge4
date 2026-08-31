@@ -105,7 +105,7 @@ public class StartVm : ActiveViewModel
         CloseAppBox();
         AppBoxVisible = true;
         AppBoxCaption = "Stonehenge";
-        AppBoxText = $"Server side application box request.";
+        AppBoxText = "Server side application box request.";
     }
 
     [ActionMethod]
