@@ -1,4 +1,5 @@
 
+* 10.3.3 - 01.09.2026 Respect X-Forwarded-* for auth redirect uri
 * 10.3.2 - 31.08.2026 Allow AppCommands with parameter
 * 10.3.1 - 28.08.2026 Use ClientEventSource as PropertyChanged sender
 * 10.3.0 - 24.08.2026 Introduce ClientEventSource to enable manual update without SupportEvents

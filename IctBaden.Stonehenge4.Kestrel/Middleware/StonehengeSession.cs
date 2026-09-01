@@ -266,15 +266,22 @@ public partial class StonehengeSession
         var httpContext = context.Request.HttpContext;
         var clientAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         var clientPort = httpContext.Connection.RemotePort;
+        
+        var hostScheme = context.Request.Headers["X-Forwarded-Proto"].FirstOrDefault() ?? context.Request.Scheme;
+
         var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
         hostDomain ??= context.Request.Host.Value ?? string.Empty;
+        hostDomain = context.Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? hostDomain;
+        
         var hostPort = context.Request.Headers["X-Forwarded-Port"].FirstOrDefault();
         if(!string.IsNullOrEmpty(hostPort))
         {
             hostDomain += $":{hostPort}";
         }
-        var hostUrl = $"{context.Request.Scheme}://{hostDomain}{options.BasePath}";
+        
+        var hostUrl = $"{hostScheme}://{hostDomain}{options.BasePath}";
         session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
+        
         appSessions.AddSession(session);
         logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
         return session;
