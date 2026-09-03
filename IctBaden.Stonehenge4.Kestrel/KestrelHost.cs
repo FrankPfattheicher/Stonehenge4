@@ -15,6 +15,7 @@ using IctBaden.Stonehenge.Resources;
 using IctBaden.Stonehenge.ViewModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
@@ -293,6 +294,11 @@ public sealed class KestrelHost : IStonehengeHost, IDisposable
 
         webApp.UseResponseCompression();
         webApp.UseCors("StonehengePolicy");
+        webApp.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
+        
         webApp.UseMiddleware<StonehengeSession>();
         webApp.UseMiddleware<StonehengeHeaders>();
         webApp.UseMiddleware<StonehengeRoot>();

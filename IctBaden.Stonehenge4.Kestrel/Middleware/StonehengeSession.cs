@@ -115,14 +115,8 @@ public partial class StonehengeSession
             if (isIndex && !string.IsNullOrEmpty(ts))
             {
                 var options = context.Items["stonehenge.HostOptions"] as StonehengeHostOptions ?? new StonehengeHostOptions();
-                var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
-                hostDomain ??= context.Request.Host.Value ?? string.Empty;
-                var hostPort = context.Request.Headers["X-Forwarded-Port"].FirstOrDefault();
-                if(!string.IsNullOrEmpty(hostPort))
-                {
-                    hostDomain += $":{hostPort}";
-                }
-                var redirectUri = $"{context.Request.Scheme}://{hostDomain}{options.BasePath}/index.html?ts={ts}";
+                var hostUrl = GetHostUrl(options, context);
+                var redirectUri = $"{hostUrl}/index.html?ts={ts}";
                 session?.Dispose();
                 session = appSessions.GetSessionByAuthorizeRedirectUrl(redirectUri);
             }
@@ -267,6 +261,20 @@ public partial class StonehengeSession
         var clientAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
         var clientPort = httpContext.Connection.RemotePort;
         
+        var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
+        hostDomain ??= context.Request.Host.Value ?? string.Empty;
+        hostDomain = context.Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? hostDomain;
+
+        var hostUrl = GetHostUrl(options, context);
+        session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
+        
+        appSessions.AddSession(session);
+        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
+        return session;
+    }
+
+    private static string GetHostUrl(StonehengeHostOptions options, HttpContext context)
+    {
         var hostScheme = context.Request.Headers["X-Forwarded-Proto"].FirstOrDefault() ?? context.Request.Scheme;
 
         var hostDomain = context.Request.Headers["Host"].FirstOrDefault();
@@ -279,14 +287,9 @@ public partial class StonehengeSession
             hostDomain += $":{hostPort}";
         }
         
-        var hostUrl = $"{hostScheme}://{hostDomain}{options.BasePath}";
-        session.Initialize(options, hostUrl, hostDomain, isLocal, clientAddress, clientPort, userAgent);
-        
-        appSessions.AddSession(session);
-        logger.LogInformation("Kestrel New session {SessionId}. {Count} sessions", session.Id, appSessions.Count);
-        return session;
+        return $"{hostScheme}://{hostDomain}{options.BasePath}";
     }
-
+    
     private static CultureInfo GetCulture(string languages)
     {
         if (string.IsNullOrEmpty(languages)) return CultureInfo.CurrentCulture;
