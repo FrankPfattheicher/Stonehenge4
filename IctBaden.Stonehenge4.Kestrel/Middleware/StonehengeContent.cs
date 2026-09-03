@@ -119,7 +119,8 @@ public partial class StonehengeContent
 
             if (appSession?.HostOptions.UseKeycloakAuthentication != null
                 && appSession.RequestLogin
-                && !context.Request.Path.Value.Contains("/Events", StringComparison.OrdinalIgnoreCase))
+                && !context.Request.Path.Value.Contains("/Events", StringComparison.OrdinalIgnoreCase)
+                && !context.Request.Path.Value.Contains("/Command", StringComparison.OrdinalIgnoreCase))
             {
                 var o = appSession.HostOptions.UseKeycloakAuthentication;
                 var requestQuery =

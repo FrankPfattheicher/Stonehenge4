@@ -1,4 +1,5 @@
 
+* 10.3.5 - 03.09.2026 Do not redirect to new session on command request
 * 10.3.4 - 03.09.2026 Added UseForwardedHeaders in Kestrel host
 * 10.3.3 - 01.09.2026 Respect X-Forwarded-* for auth redirect uri
 * 10.3.2 - 31.08.2026 Allow AppCommands with parameter
